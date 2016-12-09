@@ -1,0 +1,126 @@
+﻿
+@{
+    ViewBag.Title = "ProjectYield";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+@if (ViewBag.pjkey != null)
+{
+    <div class="row">
+        <div class="col-md-3">
+            <h2>@ViewBag.pjkey Yield</h2>
+        </div>
+        <div class="col-md-2">
+            <h2><a data-toggle="tooltip" title="Goto Project Detail" href="/Project/ProjectDetail?ProjectKey=@(ViewBag.pjkey)"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></a></h2>
+        </div>
+        <div class="col-md-7"></div>
+    </div>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-3">
+            <h2>Project Yield</h2>
+        </div>
+        <div class="col-md-2">
+            <h2><a data-toggle="tooltip" title="Goto ViewAll" href="/Project/ViewAll"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></a></h2>
+        </div>
+        <div class="col-md-7"></div>
+    </div>
+}
+
+
+
+<hr/>
+
+<form>
+    @if (ViewBag.pjkey != null)
+    {
+        <input  value="@(ViewBag.pjkey)" id="pjkey" name="pjkey" type="hidden" />
+    }
+</form>
+
+@if (ViewBag.chartscript != null)
+{ 
+    @Html.Raw(ViewBag.chartscript)
+
+    <script src="~/Scripts/highcharts.js"></script>
+    <script src="~/Scripts/exporting.js"></script>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Yield</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="col-md-12">
+                        <div id="weeklyyield" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<hr/>
+
+<script>
+    function ShowMonthlyYield()
+    {
+        window.location.href = "/Project/ProjectMonthlyYield?ProjectKey=@ViewBag.pjkey";
+    }
+
+    function ShowPeriodYield() {
+        if (document.getElementById("StartDate").value && document.getElementById("EndDate").value)
+        {
+            window.location.href = '/Project/ProjectPeriodYield?ProjectKey=@ViewBag.pjkey' + '&StartDate=' + document.getElementById("StartDate").value + '&EndDate=' + document.getElementById("EndDate").value;
+        }
+    }
+
+    function ShowDailyYield() {
+        if (document.getElementById("StartDate").value && document.getElementById("EndDate").value) {
+            window.location.href = '/Project/ProjectDailyYield?ProjectKey=@ViewBag.pjkey' + '&StartDate=' + document.getElementById("StartDate").value + '&EndDate=' + document.getElementById("EndDate").value;
+        }
+    }
+</script>
+
+<div class="row">
+    <div class="col-md-2">
+        <button class="form-control" onclick="ShowMonthlyYield()">Yield In Months</button>
+    </div>
+    <div class="col-md-1">
+        <label class="control-label" for="StartDate">StartDate</label>
+    </div>
+    <div class="col-md-2">
+        <input class="form-control text-box single-line" id="StartDate" name="StartDate" type="text" value="" />
+    </div>
+    <div class="col-md-1">
+        <label class="control-label" for="EndDate">EndDate</label>
+    </div>
+    <div class="col-md-2">
+        <input class="form-control text-box single-line" id="EndDate" name="EndDate" type="text" value="" />
+    </div>
+    <div class="col-md-2">
+        <button class="form-control" onclick="ShowPeriodYield()">Yield In Period</button>
+    </div>
+    <div class="col-md-2">
+        <button class="form-control" onclick="ShowDailyYield()">Yield In Days</button>
+    </div>
+    <script type="text/javascript">
+                            $(document).ready(function () {
+                                $("#StartDate").datepicker({
+                                    changeMonth: true,
+                                    changeYear: true,
+                                    dateFormat: 'yy-mm-dd'
+                                });
+                                $("#EndDate").datepicker({
+                                    changeMonth: true,
+                                    changeYear: true,
+                                    dateFormat: 'yy-mm-dd'
+                                });
+                            });
+    </script>
+</div>

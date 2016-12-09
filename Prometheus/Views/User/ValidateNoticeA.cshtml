@@ -1,0 +1,17 @@
+﻿
+@{
+    ViewBag.Title = "ValidateNotice";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Notice</h2>
+@Html.Raw(string.IsNullOrEmpty(ViewBag.loginerror) ? "&nbsp;" : ViewBag.loginerror)
+@if (!string.IsNullOrEmpty(ViewBag.loginerror))
+{
+    ViewBag.loginerror = "";
+}
+<hr/>
+<h3> Welcome on the board.</h3>
+<h3> A active email has been send to your email address.</h3>
+<h3> Please check your email and click the link to active your account.</h3>
+<h3> Have fun!</h3>

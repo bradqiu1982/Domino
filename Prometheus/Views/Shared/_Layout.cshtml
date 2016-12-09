@@ -1,0 +1,86 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=8,IE=9,IE=10" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+
+
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <link href="@Url.Content("~/Content/themes/base/jquery-ui.css")" rel="stylesheet" type="text/css" />
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jquery-ui")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/datatables")
+    <link href="@Url.Content("~/Content/themes/bootstrapfileinput.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/themes/jquery.dataTables.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/domino.css")" rel="stylesheet" type="text/css" />
+
+    <script src="~/Scripts/jquery.stickytableheaders.js"></script>
+</head>
+
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+
+                <div class="navbar-header">
+                    <button type = "button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                        @Html.ActionLink("Minipaper", "ViewAll", "Domino/MiniPaper", null, new { @class = "navbar-brand" })
+                </div>
+
+                <div id = "navbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown">
+                            <a href = "#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">MiniPaper<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    @Html.ActionLink("View All MiniPaper", "ViewAll", "Domino/MiniPaper")
+                                </li>
+                                <li>
+                                    @Html.ActionLink("Create MiniPaper", "CreateMiniPaper", "Domino/MiniPaper")
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">User<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    @Html.ActionLink("User Center", "UserCenter", "Domino/User")
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    @Html.Partial("_LoginPartial")
+                </div>
+
+           </div>
+        </nav>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - MiniPaper Trace System</p>
+        </footer>
+    </div>
+
+    @*@Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")*@
+</body>
+</html>

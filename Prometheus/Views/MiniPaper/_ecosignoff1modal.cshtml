@@ -1,0 +1,39 @@
+﻿<div class="modal" id="cardtag" tabindex="-1" role="dialog" aria-labelledby="cardtagLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="cardtagLabel">Share Issue Tag</h4>
+            </div>
+            <div class="row"></div>
+            <hr />
+            <div class="row"></div>
+            @if (ViewBag.tobechoosetags != null)
+            {
+                for (var idx = 0; idx < ViewBag.tobechoosetags.Count; idx++)
+                {
+                    <div class="col-md-4">
+                        <div class="col-md-3">
+                            <input type="checkbox" id="cardtagcheck@(idx)" name="cardtagcheck@(idx)" value="@(ViewBag.tobechoosetags[idx])"/>
+                        </div>
+                        <div class="col-md-9">
+                            <label class="control-label">@(ViewBag.tobechoosetags[idx])</label>
+                        </div>
+                    </div>
+                }
+            }
+            <div class="row"></div>
+            <hr />
+            <div class="row"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="submitmodal()">Done</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function submitmodal() {
+        $("#cardtag").modal('hide');
+        window.location.href = "/Domino/MiniPaper/AddOne";
+    }
+</script>
