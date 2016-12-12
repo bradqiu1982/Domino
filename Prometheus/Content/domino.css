@@ -22,26 +22,34 @@
     vertical-align: middle;
 }
 
-.panel-default > .panel-heading-blue {
+.panel-default > .panel-heading-working {
     background: #A0CFEC; color: #fff;
 }
 
-.panel-default > .panel-body-blue {
+.panel-default > .panel-body-working {
     background: #79BAEC; color: #fff;
 }
 
-.panel-default > .panel-heading-red {
+.panel-default > .panel-heading-pending {
     background: #F75D59; color: #fff;
 }
 
-.panel-default > .panel-body-red {
+.panel-default > .panel-body-pending {
     background: #E41B17; color: #fff;
 }
 
-.panel-default > .panel-heading-green {
+.panel-default > .panel-heading-done {
     background: #5FFB17; color: #fff;
 }
 
-.panel-default > .panel-body-green {
+.panel-default > .panel-body-done {
     background: #59E817; color: #fff;
+}
+
+.panel-default > .panel-heading-info {
+    background: #B6B6B4; color: #fff;
+}
+
+.panel-default > .panel-body-info {
+    background: #736F6E; color: #fff;
 }

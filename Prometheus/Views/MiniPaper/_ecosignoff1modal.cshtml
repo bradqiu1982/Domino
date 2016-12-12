@@ -6,22 +6,7 @@
             </div>
             <div class="row"></div>
             <hr />
-            <div class="row"></div>
-            @if (ViewBag.tobechoosetags != null)
-            {
-                for (var idx = 0; idx < ViewBag.tobechoosetags.Count; idx++)
-                {
-                    <div class="col-md-4">
-                        <div class="col-md-3">
-                            <input type="checkbox" id="cardtagcheck@(idx)" name="cardtagcheck@(idx)" value="@(ViewBag.tobechoosetags[idx])"/>
-                        </div>
-                        <div class="col-md-9">
-                            <label class="control-label">@(ViewBag.tobechoosetags[idx])</label>
-                        </div>
-                    </div>
-                }
-            }
-            <div class="row"></div>
+            <div class="row">Eco Sign Off 1</div>
             <hr />
             <div class="row"></div>
             <div class="modal-footer">

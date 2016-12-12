@@ -795,6 +795,8 @@
     <Content Include="Views\User\ILearn.cshtml" />
     <Content Include="Views\MiniPaper\ViewAll.cshtml" />
     <Content Include="Views\MiniPaper\_ecosignoff1modal.cshtml" />
+    <Content Include="Views\MiniPaper\_ecopendingmodal.cshtml" />
+    <Content Include="Views\MiniPaper\SingalECO.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="userfiles\docs\" />
