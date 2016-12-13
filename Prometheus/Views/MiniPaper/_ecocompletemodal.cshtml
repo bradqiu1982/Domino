@@ -1,4 +1,4 @@
-﻿@using (Html.BeginForm("ECOSignoff1", "MiniPaper", FormMethod.Post, new { enctype = "multipart/form-data" }))
+﻿@using (Html.BeginForm("ECOComplete", "MiniPaper", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
 
@@ -6,7 +6,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="cardtagLabel">ECO Sign Off 1</h4>
+                    <h4 class="modal-title" id="cardtagLabel">ECO Complete</h4>
                 </div>
                 <div class="row"></div>
                 <hr />
@@ -46,4 +46,3 @@
     }
     </script>
 }
-

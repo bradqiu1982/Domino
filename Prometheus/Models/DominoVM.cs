@@ -14,6 +14,21 @@ namespace Domino.Models
         public static string info = "info";
     }
 
+    public class DominoCardType
+    {
+        public static string ECOPending = "ECOPending";
+        public static string ECOSignoff1 = "ECOSignoff1";
+        public static string ECOComplete = "ECOComplete";
+        public static string SampleOrdering = "SampleOrdering";
+        public static string SampleBuilding = "SampleBuilding";
+        public static string SampleShipment = "SampleShipment";
+        public static string SampleCustomerApproval = "SampleCustomerApproval";
+        public static string MiniPIPComplete = "MiniPIPComplete";
+        public static string FACustomerApproval = "FACustomerApproval";
+        public static string ECOSignoff2 = "ECOSignoff2";
+        public static string CustomerApprovalHold = "CustomerApprovalHold";
+    }
+
     public class ECOBaseInfo
     {
         public string ECOKey { set; get; }
@@ -55,6 +70,23 @@ namespace Domino.Models
             namedict.Add("ECOReviewSignoff", "ECO TECH Review");
             namedict.Add("ECOCCBSignoff", "ECO CCB Signoff");
             namedict.Add("QTRInit", "QTR Initiation");
+
+            ECONum = string.Empty;
+            PNDesc = string.Empty;
+            Customer = string.Empty;
+            Complex = string.Empty;
+            RSM = string.Empty;
+            PE = string.Empty;
+            RiskBuild = string.Empty;
+            InitRevison = string.Empty;
+            FinalRevison = string.Empty;
+            TLAAvailable = string.Empty;
+            OpsEntry = string.Empty;
+            TestModification = string.Empty;
+            ECOSubmit = string.Empty;
+            ECOReviewSignoff = string.Empty;
+            ECOCCBSignoff = string.Empty;
+            QTRInit = string.Empty;
         }
 
         public static List<KeyValuePair<string, string>> RetrieveBaseInfo(ECOBaseInfo info)
@@ -78,6 +110,26 @@ namespace Domino.Models
             }//end foreach
 
             return ret;
+        }
+
+        public void SetDefaultDateValue()
+        {
+            if (string.IsNullOrEmpty(InitRevison))
+                InitRevison = "1982-05-06 10:00:00";
+            if (string.IsNullOrEmpty(FinalRevison))
+                FinalRevison = "1982-05-06 10:00:00";
+            if (string.IsNullOrEmpty(TLAAvailable))
+                TLAAvailable = "1982-05-06 10:00:00";
+            if (string.IsNullOrEmpty(OpsEntry))
+                OpsEntry = "1982-05-06 10:00:00";
+            if (string.IsNullOrEmpty(TestModification))
+                TestModification = "1982-05-06 10:00:00";
+            if (string.IsNullOrEmpty(ECOSubmit))
+                ECOSubmit = "1982-05-06 10:00:00";
+            if (string.IsNullOrEmpty(ECOReviewSignoff))
+                ECOReviewSignoff = "1982-05-06 10:00:00";
+            if (string.IsNullOrEmpty(ECOCCBSignoff))
+                ECOCCBSignoff = "1982-05-06 10:00:00";
         }
 
 
