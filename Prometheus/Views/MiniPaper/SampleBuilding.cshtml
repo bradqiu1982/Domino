@@ -1,0 +1,33 @@
+﻿@using (Html.BeginForm("SampleBuilding", "MiniPaper", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+
+    @Html.AntiForgeryToken()
+    <div class="form-horizontal">
+        <div class="form-group">
+            <div class="row col-lg-12">
+                <label class="control-label col-lg-4">Page Name</label>
+                <div class="col-lg-8">
+                    <input class="form-control text-box single-line" value="@ViewBag.CardDetailPage" readonly="readonly" id="modalname" name="modalname" type="text" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row col-lg-12">
+                <label class="control-label col-lg-4">ECO Key</label>
+                <div class="col-lg-8">
+                    <input class="form-control text-box single-line" value="@ViewBag.ECOKey" readonly="readonly" id="ECOKey" name="ECOKey" type="text" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row col-lg-12">
+                <label class="control-label col-lg-4">Card Key</label>
+                <div class="col-lg-8">
+                    <input class="form-control text-box single-line" value="@ViewBag.CardKey" readonly="readonly" id="CardKey" name="CardKey" type="text" />
+                </div>
+            </div>
+        </div>
+        <hr />
+        <input type="submit" value="Submit" id="modalinput" name="modalinput" class="btn btn-default" />
+    </div>
+}

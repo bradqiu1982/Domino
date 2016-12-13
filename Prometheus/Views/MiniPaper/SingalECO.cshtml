@@ -6,13 +6,13 @@
 }
 
 <div class="row">
-    <div class="col-lg-2">
+    <div class="col-lg-4">
             <h2>Current ECO</h2>
     </div>
     <div class="col-lg-2">
         <h2><a data-toggle="tooltip" title="Goto ViewAll" href="/Domino/MiniPaper/ViewAll"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></a></h2>
     </div>
-    <div class="col-lg-8">
+    <div class="col-lg-6">
     </div>
     </div>
 <hr/>
@@ -27,30 +27,29 @@
             <div class="row">
                 <div class="col-lg-12">
                     @foreach (var kvp in keyvals)
-                        {
-                        <div class="col-lg-2">
-                            <div class="col-lg-11">
-                                <div class="panel panel-default" style="height:60px;width:180px;">
-                                    <div class="panel-heading  panel-heading-info" style="height:28px;">
-                                        <div class="text-center" style="font-size:10px">
-                                            <strong>
-                                                @kvp.Key
-                                            </strong>
+                    {
+                            <div class="col-lg-2">
+                                <div class="col-lg-11">
+                                    <div class="panel panel-default" style="height:60px;width:180px;">
+                                        <div class="panel-heading  panel-heading-info" style="height:28px;">
+                                            <div class="text-center" style="font-size:10px">
+                                                <strong>
+                                                    @kvp.Key
+                                                </strong>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div class="panel-body panel-body-info" style="height:32px;">
-                                        <div class="text-center" style="font-size:11px">
-                                            <strong>
-                                                @kvp.Value
-                                            </strong>
+                                        <div class="panel-body panel-body-info" style="height:32px;">
+                                            <div class="text-center" style="font-size:11px">
+                                                <strong>
+                                                    @kvp.Value
+                                                </strong>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-lg-1"></div>
                             </div>
-                            <div class="col-lg-1"></div>
-                        </div>
-
                     }
                 </div>
             </div>
@@ -60,7 +59,7 @@
             <div class="col-lg-12">
                 @foreach (var card in item)
                     {
-                    <div class="col-lg-1 divclickable" ModalName="@card.CardModalName" ECOKey="@card.ECOkey" CardKey="@card.Cardkey">
+                    <div class="col-lg-1 divclickable" CardType="@card.CardType" ECOKey="@card.ECOkey" CardKey="@card.Cardkey">
                         <div class="col-lg-11">
                             <div class="panel panel-default" style="height:100px;width:90px;">
                                 <div class="panel-heading  panel-heading-@card.CardStatus" style="height:30px;">
@@ -70,7 +69,11 @@
                                 </div>
 
                                 <div class="panel-body panel-body-@card.CardStatus" style="height:70px;">
-                                    <h5 class="text-center"><strong>@card.CardContent</strong></h5>
+                                    <div class="row col-lg-12 text-center" style="font-size:11px">
+                                        <strong>
+                                            @card.CardContent
+                                        </strong>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -79,32 +82,27 @@
                 }
             </div>
         </div>
-            <hr />
+       <hr />
     }
 }
 
 
-@if (ViewBag.modalname != null)
-            {
-                string partialpagename = ViewBag.modalname;
+@if (ViewBag.CardDetailPage != null)
+{
+    string partialpagename = ViewBag.CardDetailPage;
     @Html.Partial(partialpagename);
-
-    <script type="text/javascript">
-                    $(document).ready(function () {
-                        $("#cardtag").modal({ backdrop: 'static' });
-                    });
-    </script>
 }
 
 <script type="text/javascript">
                 $(document).ready(function () {
                     $('.divclickable').click(function () {
-                        var modalname = this.getAttribute("ModalName");
+
+                        var cardtype = this.getAttribute("CardType");
                         var ecokey = this.getAttribute("ECOKey");
                         var cardkey = this.getAttribute("CardKey");
 
-                        if (modalname && ecokey) {
-                            window.location.href = '/Domino/MiniPaper/CallCardModal?ModalName=' + modalname + '&ECOKey=' + ecokey + '&CardKey=' + cardkey;
+                        if (cardtype && cardkey && ecokey) {
+                            window.location.href = '/Domino/MiniPaper/' + cardtype + '?ECOKey=' + ecokey + '&CardKey=' + cardkey;
                         }
                     });
                 });
