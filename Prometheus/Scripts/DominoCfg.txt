@@ -1,0 +1,4 @@
+﻿MINIPIPECOFOLDER:::\\Sny-netapp-01\share_ipoh\Department\Product Engineering\Mini-PIP's
+MINIPIPECOFILENAME:::Mini-PIP_log_current.xlsm
+MINIPIPSHEETNAME:::Mini-PIP
+

@@ -216,6 +216,7 @@
     <Compile Include="Models\DBUtility.cs" />
     <Compile Include="Models\DominoVM.cs" />
     <Compile Include="Models\EmailUtility.cs" />
+    <Compile Include="Models\ExcelReader.cs" />
     <Compile Include="Models\IssueViewModels.cs" />
     <Compile Include="Models\MESUtility.cs" />
     <Compile Include="Models\ParetoData.cs" />
@@ -680,8 +681,11 @@
     <Content Include="Content\bootstrap\badges.less" />
     <Content Include="Content\bootstrap\alerts.less" />
     <Content Include="Scripts\burn_in_pn_list.xlsx" />
-    <None Include="Properties\PublishProfiles\dominotest.pubxml" />
+    <None Include="Properties\PublishProfiles\dominotest.pubxml">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\DominoCfg.txt" />
     <Content Include="Scripts\exporting.js" />
     <Content Include="Scripts\HeartBeat.exe" />
     <Content Include="Scripts\heartbeat.txt" />

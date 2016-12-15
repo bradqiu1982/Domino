@@ -20,11 +20,11 @@
             var ckdict = CookieUtility.UnpackCookie(Request);
             if (ckdict.ContainsKey("logonuser") && !string.IsNullOrEmpty(ckdict["logonuser"]))
             {
-                <li>@Html.ActionLink("Log out", "LoginOutUser", "Domino/User")</li>
+                <li>@Html.ActionLink("Log out", "LoginOutUser", "User")</li>
             }
             else
             {
-                <li>@Html.ActionLink("Log in", "LoginUser", "Domino/User")</li>
+                <li>@Html.ActionLink("Log in", "LoginUser", "User")</li>
             }
 
         }
