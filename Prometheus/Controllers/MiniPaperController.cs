@@ -87,7 +87,7 @@ namespace Domino.Controllers
             return pslist;
         }
 
-        private bool LoginUnit(Dictionary<string,string> ckdict, string ECOKey, string CardKey)
+        private bool LoginSystem(Dictionary<string,string> ckdict, string ECOKey, string CardKey)
         {
             if (ckdict.ContainsKey("logonuser") 
                 && !string.IsNullOrEmpty(ckdict["logonuser"]))
@@ -109,7 +109,7 @@ namespace Domino.Controllers
         public ActionResult ECOPending(string ECOKey, string CardKey)
         {
             var ckdict = CookieUtility.UnpackCookie(this);
-            if (!LoginUnit(ckdict, ECOKey, CardKey))
+            if (!LoginSystem(ckdict, ECOKey, CardKey))
             {
                 return RedirectToAction("LoginUser", "User");
             }
@@ -364,7 +364,7 @@ namespace Domino.Controllers
         public ActionResult ECOSignoff1(string ECOKey, string CardKey)
         {
             var ckdict = CookieUtility.UnpackCookie(this);
-            if (!LoginUnit(ckdict, ECOKey, CardKey))
+            if (!LoginSystem(ckdict, ECOKey, CardKey))
             {
                 return RedirectToAction("LoginUser", "User");
             }
@@ -413,6 +413,16 @@ namespace Domino.Controllers
 
         public ActionResult ECOComplete(string ECOKey, string CardKey)
         {
+            var ckdict = CookieUtility.UnpackCookie(this);
+            if (!LoginSystem(ckdict, ECOKey, CardKey))
+            {
+                return RedirectToAction("LoginUser", "User");
+            }
+            if (string.IsNullOrEmpty(ECOKey))
+                ECOKey = ckdict["ECOKey"];
+            if (string.IsNullOrEmpty(CardKey))
+                CardKey = ckdict["CardKey"];
+
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
             var vm = new List<List<DominoVM>>();
             foreach (var item in baseinfos)
@@ -432,6 +442,9 @@ namespace Domino.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult ECOCompletePost()
         {
+            var ckdict = CookieUtility.UnpackCookie(this);
+            var updater = ckdict["logonuser"].Split(new char[] { '|' })[0];
+
             var ECOKey = Request.Form["ECOKey"];
             var CardKey = Request.Form["CardKey"];
             DominoVM.UpdateCardStatus(ECOKey, CardKey, DominoCardStatus.done);
@@ -477,6 +490,16 @@ namespace Domino.Controllers
 
         public ActionResult FACustomerApproval(string ECOKey, string CardKey)
         {
+            var ckdict = CookieUtility.UnpackCookie(this);
+            if (!LoginSystem(ckdict, ECOKey, CardKey))
+            {
+                return RedirectToAction("LoginUser", "User");
+            }
+            if (string.IsNullOrEmpty(ECOKey))
+                ECOKey = ckdict["ECOKey"];
+            if (string.IsNullOrEmpty(CardKey))
+                CardKey = ckdict["CardKey"];
+
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
             var vm = new List<List<DominoVM>>();
             foreach (var item in baseinfos)
@@ -496,6 +519,9 @@ namespace Domino.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult FACustomerApprovalPost()
         {
+            var ckdict = CookieUtility.UnpackCookie(this);
+            var updater = ckdict["logonuser"].Split(new char[] { '|' })[0];
+
             var ECOKey = Request.Form["ECOKey"];
             var CardKey = Request.Form["CardKey"];
             DominoVM.UpdateCardStatus(ECOKey, CardKey, DominoCardStatus.done);
@@ -533,7 +559,7 @@ namespace Domino.Controllers
         public ActionResult ECOSignoff2(string ECOKey, string CardKey)
         {
             var ckdict = CookieUtility.UnpackCookie(this);
-            if (!LoginUnit(ckdict, ECOKey, CardKey))
+            if (!LoginSystem(ckdict, ECOKey, CardKey))
             {
                 return RedirectToAction("LoginUser", "User");
             }
@@ -581,6 +607,16 @@ namespace Domino.Controllers
 
         public ActionResult CustomerApprovalHold(string ECOKey, string CardKey)
         {
+            var ckdict = CookieUtility.UnpackCookie(this);
+            if (!LoginSystem(ckdict, ECOKey, CardKey))
+            {
+                return RedirectToAction("LoginUser", "User");
+            }
+            if (string.IsNullOrEmpty(ECOKey))
+                ECOKey = ckdict["ECOKey"];
+            if (string.IsNullOrEmpty(CardKey))
+                CardKey = ckdict["CardKey"];
+
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
             var vm = new List<List<DominoVM>>();
             foreach (var item in baseinfos)
@@ -601,6 +637,9 @@ namespace Domino.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult CustomerApprovalHoldPost()
         {
+            var ckdict = CookieUtility.UnpackCookie(this);
+            var updater = ckdict["logonuser"].Split(new char[] { '|' })[0];
+
             var ECOKey = Request.Form["ECOKey"];
             var CardKey = Request.Form["CardKey"];
             DominoVM.UpdateCardStatus(ECOKey, CardKey, DominoCardStatus.done);
@@ -638,6 +677,16 @@ namespace Domino.Controllers
 
         public ActionResult SampleOrdering(string ECOKey, string CardKey)
         {
+            var ckdict = CookieUtility.UnpackCookie(this);
+            if (!LoginSystem(ckdict, ECOKey, CardKey))
+            {
+                return RedirectToAction("LoginUser", "User");
+            }
+            if (string.IsNullOrEmpty(ECOKey))
+                ECOKey = ckdict["ECOKey"];
+            if (string.IsNullOrEmpty(CardKey))
+                CardKey = ckdict["CardKey"];
+
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
             var vm = new List<List<DominoVM>>();
             foreach (var item in baseinfos)
@@ -658,6 +707,9 @@ namespace Domino.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult SampleOrderingPost()
         {
+            var ckdict = CookieUtility.UnpackCookie(this);
+            var updater = ckdict["logonuser"].Split(new char[] { '|' })[0];
+
             var ECOKey = Request.Form["ECOKey"];
             var CardKey = Request.Form["CardKey"];
             DominoVM.UpdateCardStatus(ECOKey, CardKey, DominoCardStatus.done);
@@ -674,6 +726,16 @@ namespace Domino.Controllers
 
         public ActionResult SampleBuilding(string ECOKey, string CardKey)
         {
+            var ckdict = CookieUtility.UnpackCookie(this);
+            if (!LoginSystem(ckdict, ECOKey, CardKey))
+            {
+                return RedirectToAction("LoginUser", "User");
+            }
+            if (string.IsNullOrEmpty(ECOKey))
+                ECOKey = ckdict["ECOKey"];
+            if (string.IsNullOrEmpty(CardKey))
+                CardKey = ckdict["CardKey"];
+
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
             var vm = new List<List<DominoVM>>();
             foreach (var item in baseinfos)
@@ -694,6 +756,9 @@ namespace Domino.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult SampleBuildingPost()
         {
+            var ckdict = CookieUtility.UnpackCookie(this);
+            var updater = ckdict["logonuser"].Split(new char[] { '|' })[0];
+
             var ECOKey = Request.Form["ECOKey"];
             var CardKey = Request.Form["CardKey"];
             DominoVM.UpdateCardStatus(ECOKey, CardKey, DominoCardStatus.done);
@@ -710,6 +775,16 @@ namespace Domino.Controllers
 
         public ActionResult SampleShipment(string ECOKey, string CardKey)
         {
+            var ckdict = CookieUtility.UnpackCookie(this);
+            if (!LoginSystem(ckdict, ECOKey, CardKey))
+            {
+                return RedirectToAction("LoginUser", "User");
+            }
+            if (string.IsNullOrEmpty(ECOKey))
+                ECOKey = ckdict["ECOKey"];
+            if (string.IsNullOrEmpty(CardKey))
+                CardKey = ckdict["CardKey"];
+
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
             var vm = new List<List<DominoVM>>();
             foreach (var item in baseinfos)
@@ -730,6 +805,9 @@ namespace Domino.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult SampleShipmentPost()
         {
+            var ckdict = CookieUtility.UnpackCookie(this);
+            var updater = ckdict["logonuser"].Split(new char[] { '|' })[0];
+
             var ECOKey = Request.Form["ECOKey"];
             var CardKey = Request.Form["CardKey"];
             DominoVM.UpdateCardStatus(ECOKey, CardKey, DominoCardStatus.done);
@@ -745,6 +823,16 @@ namespace Domino.Controllers
 
         public ActionResult SampleCustomerApproval(string ECOKey, string CardKey)
         {
+            var ckdict = CookieUtility.UnpackCookie(this);
+            if (!LoginSystem(ckdict, ECOKey, CardKey))
+            {
+                return RedirectToAction("LoginUser", "User");
+            }
+            if (string.IsNullOrEmpty(ECOKey))
+                ECOKey = ckdict["ECOKey"];
+            if (string.IsNullOrEmpty(CardKey))
+                CardKey = ckdict["CardKey"];
+
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
             var vm = new List<List<DominoVM>>();
             foreach (var item in baseinfos)
@@ -765,6 +853,9 @@ namespace Domino.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult SampleCustomerApprovalPost()
         {
+            var ckdict = CookieUtility.UnpackCookie(this);
+            var updater = ckdict["logonuser"].Split(new char[] { '|' })[0];
+
             var ECOKey = Request.Form["ECOKey"];
             var CardKey = Request.Form["CardKey"];
             DominoVM.UpdateCardStatus(ECOKey, CardKey, DominoCardStatus.done);
@@ -793,6 +884,16 @@ namespace Domino.Controllers
 
         public ActionResult MiniPIPComplete(string ECOKey, string CardKey)
         {
+            var ckdict = CookieUtility.UnpackCookie(this);
+            if (!LoginSystem(ckdict, ECOKey, CardKey))
+            {
+                return RedirectToAction("LoginUser", "User");
+            }
+            if (string.IsNullOrEmpty(ECOKey))
+                ECOKey = ckdict["ECOKey"];
+            if (string.IsNullOrEmpty(CardKey))
+                CardKey = ckdict["CardKey"];
+
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
             var vm = new List<List<DominoVM>>();
             foreach (var item in baseinfos)
@@ -813,6 +914,9 @@ namespace Domino.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult MiniPIPCompletePost()
         {
+            var ckdict = CookieUtility.UnpackCookie(this);
+            var updater = ckdict["logonuser"].Split(new char[] { '|' })[0];
+
             var ECOKey = Request.Form["ECOKey"];
             var CardKey = Request.Form["CardKey"];
             DominoVM.UpdateCardStatus(ECOKey, CardKey, DominoCardStatus.done);
