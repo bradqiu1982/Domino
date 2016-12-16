@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 
@@ -545,6 +546,39 @@ namespace Domino.Models
             return ret;
         }
 
+
+        private static List<DominoVM> RetrieveCard(string ECOKey, string CardKey)
+        {
+            var ret = new List<DominoVM>();
+
+            var sql = "select ECOKey,CardKey,CardType,CardStatus from ECOCard where ECOKey = '<ECOKey>' and CardKey = '<CardKey>' and DeleteMark <> 'true' order by CardCreateTime ASC";
+            sql = sql.Replace("<ECOKey>", ECOKey).Replace("<CardKey>", CardKey);
+
+            var dbret = DBUtility.ExeLocalSqlWithRes(sql);
+            var idx = 1;
+            foreach (var line in dbret)
+            {
+                var tempitem = new DominoVM();
+                tempitem.ECOkey = Convert.ToString(line[0]);
+                tempitem.Cardkey = Convert.ToString(line[1]);
+                tempitem.CardType = Convert.ToString(line[2]);
+                tempitem.CardStatus = Convert.ToString(line[3]);
+                tempitem.CardNo = idx.ToString();
+                tempitem.CardContent = tempitem.ECOContentDict[tempitem.CardType];
+                //tempitem.EBaseInfo = baseinfo;
+
+                tempitem.CommentList = RetrieveCardComments(tempitem.Cardkey);
+                tempitem.AttachList = RetrieveCardAttachment(tempitem.Cardkey);
+
+                ret.Add(tempitem);
+
+                idx = idx + 1;
+            }
+
+            return ret;
+        }
+
+
         public static void RollBack2This(string ECOKey, string CardKey)
         {
             var sql = "select CardCreateTime from ECOCard where ECOKey = '<ECOKey>' and CardKey = '<CardKey>'";
@@ -658,7 +692,7 @@ namespace Domino.Models
             catch (Exception ex) { return string.Empty; }
         }
 
-        private static void updatesystem(List<List<string>> data, Controller ctrl,string localdir,string urlfolder)
+        private static void updateecolist(List<List<string>> data, Controller ctrl,string localdir,string urlfolder)
         {
             var syscfgdict = GetSysConfig(ctrl);
             var baseinfos = ECOBaseInfo.RetrieveAllECOBaseInfo();
@@ -809,7 +843,7 @@ namespace Domino.Models
             }
         }
 
-        public static void RefreshSystem(Controller ctrl)
+        public static void RefreshECOList(Controller ctrl)
         {
             var syscfgdict = GetSysConfig(ctrl);
 
@@ -834,10 +868,116 @@ namespace Domino.Models
                 if (System.IO.File.Exists(desfile))
                     {
                         var data = ExcelReader.RetrieveDataFromExcel(desfile, syscfgdict["MINIPIPSHEETNAME"]);
-                        updatesystem(data,ctrl,imgdir, datestring);
+                        updateecolist(data,ctrl,imgdir, datestring);
                     }
             }
             catch (Exception ex) { }
+        }
+
+        private static string RMSpectialCh(string str)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (char c in str)
+            {
+                if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'))
+                {
+                    sb.Append(c);
+                }
+            }
+            return sb.ToString();
+        }
+
+        private static void RefreshQAEEPROMFAI(ECOBaseInfo baseinfo, string CardKey, Controller ctrl)
+        {
+
+            var syscfgdict = GetSysConfig(ctrl);
+            var srcrootfolder = syscfgdict["QAEEPROMFAI"];
+            var eepromfilter = syscfgdict["QAEEPROMCHECKLISTFILTER"];
+
+            if (Directory.Exists(srcrootfolder))
+            {
+                var currentcard  = RetrieveCard(baseinfo.ECOKey, CardKey);
+                if (currentcard.Count == 0)
+                    return;
+
+                var destfolderlist = new List<string>();
+                var srcfolders = Directory.EnumerateDirectories(srcrootfolder);
+                foreach (var fd in srcfolders)
+                {
+                    if (fd.ToUpper().Contains(baseinfo.PNDesc.ToUpper()))
+                    {
+                        destfolderlist.Add(fd);
+                    }
+                }//end foreach get folder contains PNDESC
+
+                var destfiles = new List<string>();
+                foreach (var fd in destfolderlist)
+                {
+                    var qafiles = Directory.EnumerateFiles(fd);
+                    foreach (var qaf in qafiles)
+                    {
+                        if (Path.GetFileName(qaf).ToUpper().Contains(eepromfilter))
+                        {
+                            destfiles.Add(qaf);
+                        }
+                    }
+                }
+
+                foreach (var desf in destfiles)
+                {
+                    var fn = Path.GetFileName(desf);
+                    fn = fn.Replace(" ", "_").Replace("#", "")
+                            .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
+
+                    var pathstrs = desf.Split(Path.DirectorySeparatorChar);
+                    var uplevel = pathstrs[pathstrs.Length - 2];
+                    var prefix = RMSpectialCh(uplevel);
+
+                    var attfn = prefix + "_" + fn;
+
+                    string datestring = DateTime.Now.ToString("yyyyMMdd");
+                    string imgdir = ctrl.Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
+                    if (!Directory.Exists(imgdir))
+                        Directory.CreateDirectory(imgdir);
+
+                    var attpath = imgdir + attfn;
+                    var url = "/userfiles/docs/" + datestring + "/" + attfn;
+
+                    var attexist = false;
+                    foreach (var att in currentcard[0].AttachList)
+                    {
+                        if (att.Contains(attfn))
+                        {
+                            attexist = true;
+                            break;
+                        }
+                    }
+
+                    if (!attexist)
+                    {
+                        try
+                        {
+                            System.IO.File.Copy(desf, attpath,true);
+                            DominoVM.StoreCardAttachment(CardKey, url);
+                        }
+                        catch (Exception ex){ }
+                    }
+
+                }//end foreach
+
+            }//end if
+
+        }
+
+        private static void RefreshQALabelFAI(ECOBaseInfo baseinfo, string CardKey, Controller ctrl)
+        {
+            var syscfgdict = GetSysConfig(ctrl);
+        }
+
+        public static void RefreshQAFAI(ECOBaseInfo baseinfo, string CardKey, Controller ctrl)
+        {
+            RefreshQAEEPROMFAI(baseinfo, CardKey, ctrl);
+            RefreshQALabelFAI(baseinfo, CardKey, ctrl);
         }
 
     }

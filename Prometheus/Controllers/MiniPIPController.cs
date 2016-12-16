@@ -57,7 +57,7 @@ namespace Domino.Controllers
 
         public ActionResult RefreshSys()
         {
-            DominoVM.RefreshSystem(this);
+            DominoVM.RefreshECOList(this);
             return RedirectToAction("ViewAll", "MiniPIP");
         }
 
@@ -355,6 +355,16 @@ namespace Domino.Controllers
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
             if (baseinfos.Count > 0)
             {
+                var currentcard = DominoVM.RetrieveSpecialCard(baseinfos[0], DominoCardType.ECOSignoff1);
+                if (currentcard.Count > 0)
+                {
+                    if (string.Compare(currentcard[0].CardStatus, DominoCardStatus.done, true) != 0
+                        && !string.IsNullOrEmpty(baseinfos[0].PNDesc))
+                    {
+                        DominoVM.RefreshQAFAI(baseinfos[0], CardKey, this);
+                    }//if card is not finished,we refresh qa folder to get files
+                }
+
                 var vm = new List<List<DominoVM>>();
                 var cardlist = DominoVM.RetrieveECOCards(baseinfos[0]);
                 vm.Add(cardlist);
@@ -624,6 +634,16 @@ namespace Domino.Controllers
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
             if (baseinfos.Count > 0)
             {
+                var currentcard = DominoVM.RetrieveSpecialCard(baseinfos[0], DominoCardType.ECOSignoff2);
+                if (currentcard.Count > 0)
+                {
+                    if (string.Compare(currentcard[0].CardStatus, DominoCardStatus.done, true) != 0
+                        && !string.IsNullOrEmpty(baseinfos[0].PNDesc))
+                    {
+                        DominoVM.RefreshQAFAI(baseinfos[0], CardKey, this);
+                    }//if card is not finished,we refresh qa folder to get files
+                }
+
                 var vm = new List<List<DominoVM>>();
                 var cardlist = DominoVM.RetrieveECOCards(baseinfos[0]);
                 vm.Add(cardlist);
