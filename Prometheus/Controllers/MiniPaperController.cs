@@ -285,71 +285,37 @@ namespace Domino.Controllers
 
                 baseinfos[0].UpdateECO();
 
-                DominoVM.UpdateCardStatus(ECOKey, CardKey, DominoCardStatus.done);
-
                 StoreAttachAndComment(CardKey, updater);
+
+                DominoVM.UpdateCardStatus(ECOKey, CardKey, DominoCardStatus.done);
 
                 var newcardkey = DominoVM.GetUniqKey();
 
                 if (string.Compare(baseinfos[0].ECOType, DominoECOType.DVS) == 0
                     || string.Compare(baseinfos[0].ECOType, DominoECOType.DVNS) == 0)
                 {
-                    var nextcardexist = DominoVM.RetrieveSpecialCard(baseinfos[0], DominoCardType.ECOSignoff1);
-                    if (nextcardexist.Count == 0)
-                    {
-                        DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.ECOSignoff1, DominoCardStatus.pending);
+                        var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.ECOSignoff1, DominoCardStatus.pending);
                         var dict = new RouteValueDictionary();
                         dict.Add("ECOKey", ECOKey);
-                        dict.Add("CardKey", newcardkey);
+                        dict.Add("CardKey", realcardkey);
                         return RedirectToAction(DominoCardType.ECOSignoff1, "MiniPaper", dict);
-                    }
-                    else
-                    {
-                        var dict = new RouteValueDictionary();
-                        dict.Add("ECOKey", ECOKey);
-                        dict.Add("CardKey", nextcardexist[0].Cardkey);
-                        return RedirectToAction(DominoCardType.ECOSignoff1, "MiniPaper", dict);
-                    }
-
                 }
                 else if (string.Compare(baseinfos[0].ECOType, DominoECOType.RVS) == 0
                     || string.Compare(baseinfos[0].ECOType, DominoECOType.RVNS) == 0)
                 {
-                    var nextcardexist = DominoVM.RetrieveSpecialCard(baseinfos[0], DominoCardType.ECOSignoff2);
-                    if (nextcardexist.Count == 0)
-                    {
-                        DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.ECOSignoff2, DominoCardStatus.pending);
+                        var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.ECOSignoff2, DominoCardStatus.pending);
                         var dict = new RouteValueDictionary();
                         dict.Add("ECOKey", ECOKey);
-                        dict.Add("CardKey", newcardkey);
+                        dict.Add("CardKey", realcardkey);
                         return RedirectToAction(DominoCardType.ECOSignoff2, "MiniPaper", dict);
-                    }
-                    else
-                    {
-                        var dict = new RouteValueDictionary();
-                        dict.Add("ECOKey", ECOKey);
-                        dict.Add("CardKey", nextcardexist[0].Cardkey);
-                        return RedirectToAction(DominoCardType.ECOSignoff2, "MiniPaper", dict);
-                    }
                 }
                 else
                 {
-                    var nextcardexist = DominoVM.RetrieveSpecialCard(baseinfos[0], DominoCardType.ECOSignoff1);
-                    if (nextcardexist.Count == 0)
-                    {
-                        DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.ECOSignoff1, DominoCardStatus.pending);
+                        var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.ECOSignoff1, DominoCardStatus.pending);
                         var dict = new RouteValueDictionary();
                         dict.Add("ECOKey", ECOKey);
-                        dict.Add("CardKey", newcardkey);
+                        dict.Add("CardKey", realcardkey);
                         return RedirectToAction(DominoCardType.ECOSignoff1, "MiniPaper", dict);
-                    }
-                    else
-                    {
-                        var dict = new RouteValueDictionary();
-                        dict.Add("ECOKey", ECOKey);
-                        dict.Add("CardKey", nextcardexist[0].Cardkey);
-                        return RedirectToAction(DominoCardType.ECOSignoff1, "MiniPaper", dict);
-                    }
                 }
             }
             else
@@ -374,18 +340,29 @@ namespace Domino.Controllers
                 CardKey = ckdict["CardKey"];
 
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
-            var vm = new List<List<DominoVM>>();
-            foreach (var item in baseinfos)
+            if (baseinfos.Count > 0)
             {
-                var templist = DominoVM.RetrieveECOCards(item);
-                vm.Add(templist);
+                var vm = new List<List<DominoVM>>();
+                var cardlist = DominoVM.RetrieveECOCards(baseinfos[0]);
+                vm.Add(cardlist);
+
+                foreach (var card in cardlist)
+                {
+                    if (string.Compare(card.CardType, DominoCardType.ECOSignoff1) == 0)
+                    {
+                        ViewBag.CurrentCard = card;
+                        break;
+                    }
+                }
+
+                ViewBag.ECOKey = ECOKey;
+                ViewBag.CardKey = CardKey;
+                ViewBag.CardDetailPage = DominoCardType.ECOSignoff1;
+
+                return View("SingalECO", vm);
             }
 
-            ViewBag.CardDetailPage = DominoCardType.ECOSignoff1;
-            ViewBag.ECOKey = ECOKey;
-            ViewBag.CardKey = CardKey;
-
-            return View("SingalECO", vm);
+            return RedirectToAction("ViewAll", "MiniPaper");
 
         }
 
@@ -399,16 +376,31 @@ namespace Domino.Controllers
 
             var ECOKey = Request.Form["ECOKey"];
             var CardKey = Request.Form["CardKey"];
-            DominoVM.UpdateCardStatus(ECOKey, CardKey, DominoCardStatus.done);
 
-            var newcardkey = DominoVM.GetUniqKey();
-            DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.ECOComplete, DominoCardStatus.pending);
+            var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
+            if (baseinfos.Count > 0)
+            {
 
-            var dict = new RouteValueDictionary();
-            dict.Add("ECOKey", ECOKey);
-            dict.Add("CardKey", newcardkey);
-            return RedirectToAction(DominoCardType.ECOComplete, "MiniPaper", dict);
-        }
+                StoreAttachAndComment(CardKey, updater);
+
+                DominoVM.UpdateCardStatus(ECOKey, CardKey, DominoCardStatus.done);
+
+                var newcardkey = DominoVM.GetUniqKey();
+
+                var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.ECOComplete, DominoCardStatus.pending);
+                var dict = new RouteValueDictionary();
+                dict.Add("ECOKey", ECOKey);
+                dict.Add("CardKey", realcardkey);
+                return RedirectToAction(DominoCardType.ECOComplete, "MiniPaper", dict);
+            }
+            else
+            {
+                var dict = new RouteValueDictionary();
+                dict.Add("ECOKey", ECOKey);
+                dict.Add("CardKey", CardKey);
+                return RedirectToAction(DominoCardType.ECOSignoff1, "MiniPaper", dict);
+            }
+}
 
 
         public ActionResult ECOComplete(string ECOKey, string CardKey)
@@ -424,18 +416,30 @@ namespace Domino.Controllers
                 CardKey = ckdict["CardKey"];
 
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
-            var vm = new List<List<DominoVM>>();
-            foreach (var item in baseinfos)
+            if (baseinfos.Count > 0)
             {
-                var templist = DominoVM.RetrieveECOCards(item);
-                vm.Add(templist);
+                var vm = new List<List<DominoVM>>();
+                var cardlist = DominoVM.RetrieveECOCards(baseinfos[0]);
+                vm.Add(cardlist);
+
+                foreach (var card in cardlist)
+                {
+                    if (string.Compare(card.CardType, DominoCardType.ECOComplete) == 0)
+                    {
+                        ViewBag.CurrentCard = card;
+                        break;
+                    }
+                }
+
+                ViewBag.ECOKey = ECOKey;
+                ViewBag.CardKey = CardKey;
+                ViewBag.CardDetailPage = DominoCardType.ECOComplete;
+
+                return View("SingalECO", vm);
             }
 
-            ViewBag.CardDetailPage = DominoCardType.ECOComplete;
-            ViewBag.ECOKey = ECOKey;
-            ViewBag.CardKey = CardKey;
+            return RedirectToAction("ViewAll", "MiniPaper");
 
-            return View("SingalECO", vm);
         }
 
         [HttpPost, ActionName("ECOComplete")]
@@ -447,45 +451,57 @@ namespace Domino.Controllers
 
             var ECOKey = Request.Form["ECOKey"];
             var CardKey = Request.Form["CardKey"];
-            DominoVM.UpdateCardStatus(ECOKey, CardKey, DominoCardStatus.done);
 
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
+            if (baseinfos.Count > 0)
+            {
 
-            var newcardkey = DominoVM.GetUniqKey();
-            if (string.Compare(baseinfos[0].ECOType, DominoECOType.DVS) == 0
-                || string.Compare(baseinfos[0].ECOType, DominoECOType.RVNS) == 0)
-            {
-                DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.SampleOrdering, DominoCardStatus.pending);
-                var dict = new RouteValueDictionary();
-                dict.Add("ECOKey", ECOKey);
-                dict.Add("CardKey", newcardkey);
-                return RedirectToAction(DominoCardType.SampleOrdering, "MiniPaper", dict);
-            }
-            else if (string.Compare(baseinfos[0].ECOType, DominoECOType.DVNS) == 0)
-            {
-                DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.FACustomerApproval, DominoCardStatus.pending);
-                var dict = new RouteValueDictionary();
-                dict.Add("ECOKey", ECOKey);
-                dict.Add("CardKey", newcardkey);
-                return RedirectToAction(DominoCardType.FACustomerApproval, "MiniPaper", dict);
-            }
-            else if (string.Compare(baseinfos[0].ECOType, DominoECOType.RVS) == 0)
-            {
-                DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.MiniPIPComplete, DominoCardStatus.pending);
-                var dict = new RouteValueDictionary();
-                dict.Add("ECOKey", ECOKey);
-                dict.Add("CardKey", newcardkey);
-                return RedirectToAction(DominoCardType.MiniPIPComplete, "MiniPaper", dict);
+                StoreAttachAndComment(CardKey, updater);
+
+                DominoVM.UpdateCardStatus(ECOKey, CardKey, DominoCardStatus.done);
+
+                var newcardkey = DominoVM.GetUniqKey();
+                if (string.Compare(baseinfos[0].ECOType, DominoECOType.DVS) == 0
+                    || string.Compare(baseinfos[0].ECOType, DominoECOType.RVNS) == 0)
+                {
+                    var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.SampleOrdering, DominoCardStatus.pending);
+                    var dict = new RouteValueDictionary();
+                    dict.Add("ECOKey", ECOKey);
+                    dict.Add("CardKey", realcardkey);
+                    return RedirectToAction(DominoCardType.SampleOrdering, "MiniPaper", dict);
+                }
+                else if (string.Compare(baseinfos[0].ECOType, DominoECOType.DVNS) == 0)
+                {
+                    var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.FACustomerApproval, DominoCardStatus.pending);
+                    var dict = new RouteValueDictionary();
+                    dict.Add("ECOKey", ECOKey);
+                    dict.Add("CardKey", realcardkey);
+                    return RedirectToAction(DominoCardType.FACustomerApproval, "MiniPaper", dict);
+                }
+                else if (string.Compare(baseinfos[0].ECOType, DominoECOType.RVS) == 0)
+                {
+                    var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.MiniPIPComplete, DominoCardStatus.pending);
+                    var dict = new RouteValueDictionary();
+                    dict.Add("ECOKey", ECOKey);
+                    dict.Add("CardKey", realcardkey);
+                    return RedirectToAction(DominoCardType.MiniPIPComplete, "MiniPaper", dict);
+                }
+                else
+                {
+                    var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.SampleOrdering, DominoCardStatus.pending);
+                    var dict = new RouteValueDictionary();
+                    dict.Add("ECOKey", ECOKey);
+                    dict.Add("CardKey", realcardkey);
+                    return RedirectToAction(DominoCardType.SampleOrdering, "MiniPaper", dict);
+                }
             }
             else
             {
-                DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.SampleOrdering, DominoCardStatus.pending);
                 var dict = new RouteValueDictionary();
                 dict.Add("ECOKey", ECOKey);
-                dict.Add("CardKey", newcardkey);
-                return RedirectToAction(DominoCardType.SampleOrdering, "MiniPaper", dict);
+                dict.Add("CardKey", CardKey);
+                return RedirectToAction(DominoCardType.ECOComplete, "MiniPaper", dict);
             }
-
         }
 
         public ActionResult FACustomerApproval(string ECOKey, string CardKey)
@@ -501,18 +517,29 @@ namespace Domino.Controllers
                 CardKey = ckdict["CardKey"];
 
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
-            var vm = new List<List<DominoVM>>();
-            foreach (var item in baseinfos)
+            if (baseinfos.Count > 0)
             {
-                var templist = DominoVM.RetrieveECOCards(item);
-                vm.Add(templist);
+                var vm = new List<List<DominoVM>>();
+                var cardlist = DominoVM.RetrieveECOCards(baseinfos[0]);
+                vm.Add(cardlist);
+
+                foreach (var card in cardlist)
+                {
+                    if (string.Compare(card.CardType, DominoCardType.FACustomerApproval) == 0)
+                    {
+                        ViewBag.CurrentCard = card;
+                        break;
+                    }
+                }
+
+                ViewBag.ECOKey = ECOKey;
+                ViewBag.CardKey = CardKey;
+                ViewBag.CardDetailPage = DominoCardType.FACustomerApproval;
+
+                return View("SingalECO", vm);
             }
 
-            ViewBag.CardDetailPage = DominoCardType.FACustomerApproval;
-            ViewBag.ECOKey = ECOKey;
-            ViewBag.CardKey = CardKey;
-
-            return View("SingalECO", vm);
+            return RedirectToAction("ViewAll", "MiniPaper");
         }
 
         [HttpPost, ActionName("FACustomerApproval")]
@@ -531,26 +558,26 @@ namespace Domino.Controllers
             var newcardkey = DominoVM.GetUniqKey();
             if (string.Compare(baseinfos[0].ECOType, DominoECOType.DVNS) == 0)
             {
-                DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.SampleOrdering, DominoCardStatus.pending);
+                var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.SampleOrdering, DominoCardStatus.pending);
                 var dict = new RouteValueDictionary();
                 dict.Add("ECOKey", ECOKey);
-                dict.Add("CardKey", newcardkey);
+                dict.Add("CardKey", realcardkey);
                 return RedirectToAction(DominoCardType.SampleOrdering, "MiniPaper", dict);
             }
             else if (string.Compare(baseinfos[0].ECOType, DominoECOType.RVNS) == 0)
             {
-                DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.ECOComplete, DominoCardStatus.pending);
+                var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.ECOComplete, DominoCardStatus.pending);
                 var dict = new RouteValueDictionary();
                 dict.Add("ECOKey", ECOKey);
-                dict.Add("CardKey", newcardkey);
+                dict.Add("CardKey", realcardkey);
                 return RedirectToAction(DominoCardType.ECOComplete, "MiniPaper", dict);
             }
             else
             {
-                DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.SampleOrdering, DominoCardStatus.pending);
+                var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.SampleOrdering, DominoCardStatus.pending);
                 var dict = new RouteValueDictionary();
                 dict.Add("ECOKey", ECOKey);
-                dict.Add("CardKey", newcardkey);
+                dict.Add("CardKey", realcardkey);
                 return RedirectToAction(DominoCardType.SampleOrdering, "MiniPaper", dict);
             }
 
@@ -567,20 +594,31 @@ namespace Domino.Controllers
                 ECOKey = ckdict["ECOKey"];
             if (string.IsNullOrEmpty(CardKey))
                 CardKey = ckdict["CardKey"];
-            
+
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
-            var vm = new List<List<DominoVM>>();
-            foreach (var item in baseinfos)
+            if (baseinfos.Count > 0)
             {
-                var templist = DominoVM.RetrieveECOCards(item);
-                vm.Add(templist);
+                var vm = new List<List<DominoVM>>();
+                var cardlist = DominoVM.RetrieveECOCards(baseinfos[0]);
+                vm.Add(cardlist);
+
+                foreach (var card in cardlist)
+                {
+                    if (string.Compare(card.CardType, DominoCardType.ECOSignoff2) == 0)
+                    {
+                        ViewBag.CurrentCard = card;
+                        break;
+                    }
+                }
+
+                ViewBag.ECOKey = ECOKey;
+                ViewBag.CardKey = CardKey;
+                ViewBag.CardDetailPage = DominoCardType.ECOSignoff2;
+
+                return View("SingalECO", vm);
             }
 
-            ViewBag.CardDetailPage = DominoCardType.ECOSignoff2;
-            ViewBag.ECOKey = ECOKey;
-            ViewBag.CardKey = CardKey;
-
-            return View("SingalECO", vm);
+            return RedirectToAction("ViewAll", "MiniPaper");
 
         }
 
@@ -596,11 +634,11 @@ namespace Domino.Controllers
             DominoVM.UpdateCardStatus(ECOKey, CardKey, DominoCardStatus.done);
 
             var newcardkey = DominoVM.GetUniqKey();
-            DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.CustomerApprovalHold, DominoCardStatus.pending);
+            var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.CustomerApprovalHold, DominoCardStatus.pending);
 
             var dict = new RouteValueDictionary();
             dict.Add("ECOKey", ECOKey);
-            dict.Add("CardKey", newcardkey);
+            dict.Add("CardKey", realcardkey);
             return RedirectToAction(DominoCardType.CustomerApprovalHold, "MiniPaper", dict);
         }
 
@@ -618,18 +656,29 @@ namespace Domino.Controllers
                 CardKey = ckdict["CardKey"];
 
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
-            var vm = new List<List<DominoVM>>();
-            foreach (var item in baseinfos)
+            if (baseinfos.Count > 0)
             {
-                var templist = DominoVM.RetrieveECOCards(item);
-                vm.Add(templist);
+                var vm = new List<List<DominoVM>>();
+                var cardlist = DominoVM.RetrieveECOCards(baseinfos[0]);
+                vm.Add(cardlist);
+
+                foreach (var card in cardlist)
+                {
+                    if (string.Compare(card.CardType, DominoCardType.CustomerApprovalHold) == 0)
+                    {
+                        ViewBag.CurrentCard = card;
+                        break;
+                    }
+                }
+
+                ViewBag.ECOKey = ECOKey;
+                ViewBag.CardKey = CardKey;
+                ViewBag.CardDetailPage = DominoCardType.CustomerApprovalHold;
+
+                return View("SingalECO", vm);
             }
 
-            ViewBag.CardDetailPage = DominoCardType.CustomerApprovalHold;
-            ViewBag.ECOKey = ECOKey;
-            ViewBag.CardKey = CardKey;
-
-            return View("SingalECO", vm);
+            return RedirectToAction("ViewAll", "MiniPaper");
 
         }
 
@@ -650,26 +699,26 @@ namespace Domino.Controllers
 
             if (string.Compare(baseinfos[0].ECOType, DominoECOType.RVS) == 0)
             {
-                DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.SampleOrdering, DominoCardStatus.pending);
+                var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.SampleOrdering, DominoCardStatus.pending);
                 var dict = new RouteValueDictionary();
                 dict.Add("ECOKey", ECOKey);
-                dict.Add("CardKey", newcardkey);
+                dict.Add("CardKey", realcardkey);
                 return RedirectToAction(DominoCardType.SampleOrdering, "MiniPaper", dict);
             }
             else if (string.Compare(baseinfos[0].ECOType, DominoECOType.RVNS) == 0)
             {
-                DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.FACustomerApproval, DominoCardStatus.pending);
+                var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.FACustomerApproval, DominoCardStatus.pending);
                 var dict = new RouteValueDictionary();
                 dict.Add("ECOKey", ECOKey);
-                dict.Add("CardKey", newcardkey);
+                dict.Add("CardKey", realcardkey);
                 return RedirectToAction(DominoCardType.FACustomerApproval, "MiniPaper", dict);
             }
             else
             {
-                DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.SampleOrdering, DominoCardStatus.pending);
+                var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.SampleOrdering, DominoCardStatus.pending);
                 var dict = new RouteValueDictionary();
                 dict.Add("ECOKey", ECOKey);
-                dict.Add("CardKey", newcardkey);
+                dict.Add("CardKey", realcardkey);
                 return RedirectToAction(DominoCardType.SampleOrdering, "MiniPaper", dict);
             }
         }
@@ -688,18 +737,29 @@ namespace Domino.Controllers
                 CardKey = ckdict["CardKey"];
 
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
-            var vm = new List<List<DominoVM>>();
-            foreach (var item in baseinfos)
+            if (baseinfos.Count > 0)
             {
-                var templist = DominoVM.RetrieveECOCards(item);
-                vm.Add(templist);
+                var vm = new List<List<DominoVM>>();
+                var cardlist = DominoVM.RetrieveECOCards(baseinfos[0]);
+                vm.Add(cardlist);
+
+                foreach (var card in cardlist)
+                {
+                    if (string.Compare(card.CardType, DominoCardType.SampleOrdering) == 0)
+                    {
+                        ViewBag.CurrentCard = card;
+                        break;
+                    }
+                }
+
+                ViewBag.ECOKey = ECOKey;
+                ViewBag.CardKey = CardKey;
+                ViewBag.CardDetailPage = DominoCardType.SampleOrdering;
+
+                return View("SingalECO", vm);
             }
 
-            ViewBag.CardDetailPage = DominoCardType.SampleOrdering;
-            ViewBag.ECOKey = ECOKey;
-            ViewBag.CardKey = CardKey;
-
-            return View("SingalECO", vm);
+            return RedirectToAction("ViewAll", "MiniPaper");
 
         }
 
@@ -715,11 +775,11 @@ namespace Domino.Controllers
             DominoVM.UpdateCardStatus(ECOKey, CardKey, DominoCardStatus.done);
 
             var newcardkey = DominoVM.GetUniqKey();
-            DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.SampleBuilding, DominoCardStatus.pending);
+            var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.SampleBuilding, DominoCardStatus.pending);
 
             var dict = new RouteValueDictionary();
             dict.Add("ECOKey", ECOKey);
-            dict.Add("CardKey", newcardkey);
+            dict.Add("CardKey", realcardkey);
             return RedirectToAction(DominoCardType.SampleBuilding, "MiniPaper", dict);
         }
 
@@ -737,18 +797,29 @@ namespace Domino.Controllers
                 CardKey = ckdict["CardKey"];
 
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
-            var vm = new List<List<DominoVM>>();
-            foreach (var item in baseinfos)
+            if (baseinfos.Count > 0)
             {
-                var templist = DominoVM.RetrieveECOCards(item);
-                vm.Add(templist);
+                var vm = new List<List<DominoVM>>();
+                var cardlist = DominoVM.RetrieveECOCards(baseinfos[0]);
+                vm.Add(cardlist);
+
+                foreach (var card in cardlist)
+                {
+                    if (string.Compare(card.CardType, DominoCardType.SampleBuilding) == 0)
+                    {
+                        ViewBag.CurrentCard = card;
+                        break;
+                    }
+                }
+
+                ViewBag.ECOKey = ECOKey;
+                ViewBag.CardKey = CardKey;
+                ViewBag.CardDetailPage = DominoCardType.SampleBuilding;
+
+                return View("SingalECO", vm);
             }
 
-            ViewBag.CardDetailPage = DominoCardType.SampleBuilding;
-            ViewBag.ECOKey = ECOKey;
-            ViewBag.CardKey = CardKey;
-
-            return View("SingalECO", vm);
+            return RedirectToAction("ViewAll", "MiniPaper");
 
         }
 
@@ -764,11 +835,11 @@ namespace Domino.Controllers
             DominoVM.UpdateCardStatus(ECOKey, CardKey, DominoCardStatus.done);
 
             var newcardkey = DominoVM.GetUniqKey();
-            DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.SampleShipment, DominoCardStatus.pending);
+            var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.SampleShipment, DominoCardStatus.pending);
 
             var dict = new RouteValueDictionary();
             dict.Add("ECOKey", ECOKey);
-            dict.Add("CardKey", newcardkey);
+            dict.Add("CardKey", realcardkey);
             return RedirectToAction(DominoCardType.SampleShipment, "MiniPaper", dict);
         }
 
@@ -786,18 +857,29 @@ namespace Domino.Controllers
                 CardKey = ckdict["CardKey"];
 
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
-            var vm = new List<List<DominoVM>>();
-            foreach (var item in baseinfos)
+            if (baseinfos.Count > 0)
             {
-                var templist = DominoVM.RetrieveECOCards(item);
-                vm.Add(templist);
+                var vm = new List<List<DominoVM>>();
+                var cardlist = DominoVM.RetrieveECOCards(baseinfos[0]);
+                vm.Add(cardlist);
+
+                foreach (var card in cardlist)
+                {
+                    if (string.Compare(card.CardType, DominoCardType.SampleShipment) == 0)
+                    {
+                        ViewBag.CurrentCard = card;
+                        break;
+                    }
+                }
+
+                ViewBag.ECOKey = ECOKey;
+                ViewBag.CardKey = CardKey;
+                ViewBag.CardDetailPage = DominoCardType.SampleShipment;
+
+                return View("SingalECO", vm);
             }
 
-            ViewBag.CardDetailPage = DominoCardType.SampleShipment;
-            ViewBag.ECOKey = ECOKey;
-            ViewBag.CardKey = CardKey;
-
-            return View("SingalECO", vm);
+            return RedirectToAction("ViewAll", "MiniPaper");
 
         }
 
@@ -813,11 +895,11 @@ namespace Domino.Controllers
             DominoVM.UpdateCardStatus(ECOKey, CardKey, DominoCardStatus.done);
 
             var newcardkey = DominoVM.GetUniqKey();
-            DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.SampleCustomerApproval, DominoCardStatus.pending);
+            var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.SampleCustomerApproval, DominoCardStatus.pending);
 
             var dict = new RouteValueDictionary();
             dict.Add("ECOKey", ECOKey);
-            dict.Add("CardKey", newcardkey);
+            dict.Add("CardKey", realcardkey);
             return RedirectToAction(DominoCardType.SampleCustomerApproval, "MiniPaper", dict);
         }
 
@@ -834,18 +916,29 @@ namespace Domino.Controllers
                 CardKey = ckdict["CardKey"];
 
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
-            var vm = new List<List<DominoVM>>();
-            foreach (var item in baseinfos)
+            if (baseinfos.Count > 0)
             {
-                var templist = DominoVM.RetrieveECOCards(item);
-                vm.Add(templist);
+                var vm = new List<List<DominoVM>>();
+                var cardlist = DominoVM.RetrieveECOCards(baseinfos[0]);
+                vm.Add(cardlist);
+
+                foreach (var card in cardlist)
+                {
+                    if (string.Compare(card.CardType, DominoCardType.SampleCustomerApproval) == 0)
+                    {
+                        ViewBag.CurrentCard = card;
+                        break;
+                    }
+                }
+
+                ViewBag.ECOKey = ECOKey;
+                ViewBag.CardKey = CardKey;
+                ViewBag.CardDetailPage = DominoCardType.SampleCustomerApproval;
+
+                return View("SingalECO", vm);
             }
 
-            ViewBag.CardDetailPage = DominoCardType.SampleCustomerApproval;
-            ViewBag.ECOKey = ECOKey;
-            ViewBag.CardKey = CardKey;
-
-            return View("SingalECO", vm);
+            return RedirectToAction("ViewAll", "MiniPaper");
 
         }
 
@@ -865,18 +958,18 @@ namespace Domino.Controllers
 
             if (string.Compare(baseinfos[0].ECOType, DominoECOType.RVS) == 0)
             {
-                DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.ECOComplete, DominoCardStatus.pending);
+                var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.ECOComplete, DominoCardStatus.pending);
                 var dict = new RouteValueDictionary();
                 dict.Add("ECOKey", ECOKey);
-                dict.Add("CardKey", newcardkey);
+                dict.Add("CardKey", realcardkey);
                 return RedirectToAction(DominoCardType.ECOComplete, "MiniPaper", dict);
             }
             else
             {
-                DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.MiniPIPComplete, DominoCardStatus.pending);
+                var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.MiniPIPComplete, DominoCardStatus.pending);
                 var dict = new RouteValueDictionary();
                 dict.Add("ECOKey", ECOKey);
-                dict.Add("CardKey", newcardkey);
+                dict.Add("CardKey", realcardkey);
                 return RedirectToAction(DominoCardType.MiniPIPComplete, "MiniPaper", dict);
             }
         }
@@ -895,18 +988,29 @@ namespace Domino.Controllers
                 CardKey = ckdict["CardKey"];
 
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
-            var vm = new List<List<DominoVM>>();
-            foreach (var item in baseinfos)
+            if (baseinfos.Count > 0)
             {
-                var templist = DominoVM.RetrieveECOCards(item);
-                vm.Add(templist);
+                var vm = new List<List<DominoVM>>();
+                var cardlist = DominoVM.RetrieveECOCards(baseinfos[0]);
+                vm.Add(cardlist);
+
+                foreach (var card in cardlist)
+                {
+                    if (string.Compare(card.CardType, DominoCardType.MiniPIPComplete) == 0)
+                    {
+                        ViewBag.CurrentCard = card;
+                        break;
+                    }
+                }
+
+                ViewBag.ECOKey = ECOKey;
+                ViewBag.CardKey = CardKey;
+                ViewBag.CardDetailPage = DominoCardType.MiniPIPComplete;
+
+                return View("SingalECO", vm);
             }
 
-            ViewBag.CardDetailPage = DominoCardType.MiniPIPComplete;
-            ViewBag.ECOKey = ECOKey;
-            ViewBag.CardKey = CardKey;
-
-            return View("SingalECO", vm);
+            return RedirectToAction("ViewAll", "MiniPaper");
 
         }
 

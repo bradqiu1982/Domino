@@ -436,11 +436,20 @@ namespace Domino.Models
         }
 
 
-        public static void CreateCard(string ECOKey,string CardKey,string CardType,string CardStatus)
+        public static string CreateCard(string ECOKey,string NewCardKey,string CardType,string CardStatus)
         {
-            var sql = "insert into ECOCard(ECOKey,CardKey,CardType,CardStatus,CardCreateTime) values('<ECOKey>','<CardKey>','<CardType>','<CardStatus>','<CardCreateTime>')";
-            sql = sql.Replace("<ECOKey>", ECOKey).Replace("<CardKey>", CardKey).Replace("<CardType>", CardType).Replace("<CardStatus>", CardStatus).Replace("<CardCreateTime>",DateTime.Now.ToString());
-            DBUtility.ExeLocalSqlNoRes(sql);
+            var cardexist = DominoVM.RetrieveSpecialCard(ECOKey, CardType);
+            if (cardexist.Count == 0)
+            {
+                var sql = "insert into ECOCard(ECOKey,CardKey,CardType,CardStatus,CardCreateTime) values('<ECOKey>','<CardKey>','<CardType>','<CardStatus>','<CardCreateTime>')";
+                sql = sql.Replace("<ECOKey>", ECOKey).Replace("<CardKey>", NewCardKey).Replace("<CardType>", CardType).Replace("<CardStatus>", CardStatus).Replace("<CardCreateTime>", DateTime.Now.ToString());
+                DBUtility.ExeLocalSqlNoRes(sql);
+                return NewCardKey;
+            }
+            else
+            {
+                return cardexist[0].Cardkey;
+            }
         }
 
         public static List<DominoVM> RetrieveECOCards(ECOBaseInfo baseinfo)
@@ -493,6 +502,37 @@ namespace Domino.Models
                 tempitem.CardNo = idx.ToString();
                 tempitem.CardContent = tempitem.ECOContentDict[tempitem.CardType];
                 tempitem.EBaseInfo = baseinfo;
+
+                tempitem.CommentList = RetrieveCardComments(tempitem.Cardkey);
+                tempitem.AttachList = RetrieveCardAttachment(tempitem.Cardkey);
+
+                ret.Add(tempitem);
+
+                idx = idx + 1;
+            }
+
+            return ret;
+        }
+
+        private static List<DominoVM> RetrieveSpecialCard(string ECOKey, string CardType)
+        {
+            var ret = new List<DominoVM>();
+
+            var sql = "select ECOKey,CardKey,CardType,CardStatus from ECOCard where ECOKey = '<ECOKey>' and CardType = '<CardType>' and DeleteMark <> 'true' order by CardCreateTime ASC";
+            sql = sql.Replace("<ECOKey>", ECOKey).Replace("<CardType>", CardType);
+
+            var dbret = DBUtility.ExeLocalSqlWithRes(sql);
+            var idx = 1;
+            foreach (var line in dbret)
+            {
+                var tempitem = new DominoVM();
+                tempitem.ECOkey = Convert.ToString(line[0]);
+                tempitem.Cardkey = Convert.ToString(line[1]);
+                tempitem.CardType = Convert.ToString(line[2]);
+                tempitem.CardStatus = Convert.ToString(line[3]);
+                tempitem.CardNo = idx.ToString();
+                tempitem.CardContent = tempitem.ECOContentDict[tempitem.CardType];
+                //tempitem.EBaseInfo = baseinfo;
 
                 tempitem.CommentList = RetrieveCardComments(tempitem.Cardkey);
                 tempitem.AttachList = RetrieveCardAttachment(tempitem.Cardkey);
