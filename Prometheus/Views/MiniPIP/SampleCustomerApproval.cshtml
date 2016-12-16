@@ -1,6 +1,6 @@
 ﻿@if (ViewBag.CurrentCard != null)
 {
-    using (Html.BeginForm("FACustomerApproval", "MiniPaper", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    using (Html.BeginForm("SampleCustomerApproval", "MiniPIP", FormMethod.Post, new { enctype = "multipart/form-data" }))
     {
         @Html.AntiForgeryToken()
 

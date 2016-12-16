@@ -1,4 +1,7 @@
 ﻿MINIPIPECOFOLDER:::\\Sny-netapp-01\share_ipoh\Department\Product Engineering\Mini-PIP's
 MINIPIPECOFILENAME:::Mini-PIP_log_current.xlsm
 MINIPIPSHEETNAME:::Mini-PIP
+QAEEPROMFAI:::\\wux-fs\PUBLIC\Quality\31. Parallel TQM\3_FAI Check\FAI-EEPROM
+QALABELFAI:::\\wux-fs\PUBLIC\Quality\31. Parallel TQM\3_FAI Check\FLI
+
 

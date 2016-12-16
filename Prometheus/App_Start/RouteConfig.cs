@@ -16,13 +16,13 @@ namespace Domino
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}",
-                defaults: new { controller = "MiniPaper", action = "ViewAll" }
+                defaults: new { controller = "MiniPIP", action = "ViewAll" }
             );
 
             routes.MapRoute(
                 name: "Domino",
                 url: "Domino/{controller}/{action}",
-                defaults: new { controller = "MiniPaper", action = "ViewAll" }
+                defaults: new { controller = "MiniPIP", action = "ViewAll" }
             );
         }
     }

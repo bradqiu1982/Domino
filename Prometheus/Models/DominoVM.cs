@@ -155,7 +155,6 @@ namespace Domino.Models
             namedict.Add("MCOIssued", "MCO Issued");
             namedict.Add("ECOType", "ECO Type");
             namedict.Add("FirstArticleNeed", "Order Info");
-            namedict.Add("FlowInfo", "Flow Info");
 
             ECONum = string.Empty;
             PNDesc = string.Empty;
@@ -191,7 +190,8 @@ namespace Domino.Models
                     try { val = Convert.ToString(property.GetValue(info)); }
                     catch (Exception ex) { val = string.Empty; }
 
-                    if (!string.IsNullOrEmpty(val))
+                    if (!string.IsNullOrEmpty(val)
+                        && string.Compare(val,"N/A",true) != 0)
                     {
                         ret.Add(new KeyValuePair<string,string>(info.NameDict[property.Name], val));
                     }

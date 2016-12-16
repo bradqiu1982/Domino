@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<IEnumerable<Domino.Models.DominoVM>>
 
 @{
-    ViewBag.Title = "SingalECO";
+    ViewBag.Title = "CurrentECO";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -10,7 +10,7 @@
             <h2>Current ECO</h2>
     </div>
     <div class="col-lg-2">
-        <h2><a data-toggle="tooltip" title="Goto ViewAll" href="/Domino/MiniPaper/ViewAll"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></a></h2>
+        <h2><a data-toggle="tooltip" title="Goto ViewAll" href="/Domino/MiniPIP/ViewAll"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></a></h2>
     </div>
     <div class="col-lg-6">
     </div>
@@ -102,7 +102,7 @@
                         var cardkey = this.getAttribute("CardKey");
 
                         if (cardtype && cardkey && ecokey) {
-                            window.location.href = '/Domino/MiniPaper/' + cardtype + '?ECOKey=' + ecokey + '&CardKey=' + cardkey;
+                            window.location.href = '/Domino/MiniPIP/' + cardtype + '?ECOKey=' + ecokey + '&CardKey=' + cardkey;
                         }
                     });
                 });

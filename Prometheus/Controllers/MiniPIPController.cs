@@ -11,9 +11,9 @@ using System.IO;
 
 namespace Domino.Controllers
 {
-    public class MiniPaperController : Controller
+    public class MiniPIPController : Controller
     {
-        // GET: MiniPapers
+        // GET: MiniPIPs
         public ActionResult ViewAll()
         {
             //DominoVM.CleanDB();
@@ -38,7 +38,7 @@ namespace Domino.Controllers
             else
             {
                 var ck = new Dictionary<string, string>();
-                ck.Add("logonredirectctrl", "MiniPaper");
+                ck.Add("logonredirectctrl", "MiniPIP");
                 ck.Add("logonredirectact", "ViewAll");
                 CookieUtility.SetCookie(this, ck);
                 return RedirectToAction("LoginUser", "User");
@@ -58,7 +58,7 @@ namespace Domino.Controllers
         public ActionResult RefreshSys()
         {
             DominoVM.RefreshSystem(this);
-            return RedirectToAction("ViewAll", "MiniPaper");
+            return RedirectToAction("ViewAll", "MiniPIP");
         }
 
 
@@ -97,7 +97,7 @@ namespace Domino.Controllers
             else
             {
                 var ck = new Dictionary<string, string>();
-                ck.Add("logonredirectctrl", "MiniPaper");
+                ck.Add("logonredirectctrl", "MiniPIP");
                 ck.Add("logonredirectact", "ECOPending");
                 ck.Add("ECOKey", ECOKey);
                 ck.Add("CardKey", CardKey);
@@ -143,10 +143,10 @@ namespace Domino.Controllers
                 ViewBag.CardKey = CardKey;
                 ViewBag.CardDetailPage = DominoCardType.ECOPending;
                 
-                return View("SingalECO", vm);
+                return View("CurrentECO", vm);
             }
 
-            return RedirectToAction("ViewAll", "MiniPaper");
+            return RedirectToAction("ViewAll", "MiniPIP");
         }
 
         private static bool IsDigitsOnly(string str)
@@ -283,9 +283,22 @@ namespace Domino.Controllers
                     baseinfos[0].ECOType = DominoECOType.RVNS;
                 }
 
+                if (!string.IsNullOrEmpty(Request.Form["MCOIssued"]))
+                {
+                    baseinfos[0].MCOIssued = Request.Form["MCOIssued"];
+                }
+
                 baseinfos[0].UpdateECO();
 
                 StoreAttachAndComment(CardKey, updater);
+
+                if (string.IsNullOrEmpty(baseinfos[0].ECONum))
+                {
+                    var dict = new RouteValueDictionary();
+                    dict.Add("ECOKey", ECOKey);
+                    dict.Add("CardKey", CardKey);
+                    return RedirectToAction(DominoCardType.ECOPending, "MiniPIP", dict);
+                }
 
                 DominoVM.UpdateCardStatus(ECOKey, CardKey, DominoCardStatus.done);
 
@@ -298,7 +311,7 @@ namespace Domino.Controllers
                         var dict = new RouteValueDictionary();
                         dict.Add("ECOKey", ECOKey);
                         dict.Add("CardKey", realcardkey);
-                        return RedirectToAction(DominoCardType.ECOSignoff1, "MiniPaper", dict);
+                        return RedirectToAction(DominoCardType.ECOSignoff1, "MiniPIP", dict);
                 }
                 else if (string.Compare(baseinfos[0].ECOType, DominoECOType.RVS) == 0
                     || string.Compare(baseinfos[0].ECOType, DominoECOType.RVNS) == 0)
@@ -307,7 +320,7 @@ namespace Domino.Controllers
                         var dict = new RouteValueDictionary();
                         dict.Add("ECOKey", ECOKey);
                         dict.Add("CardKey", realcardkey);
-                        return RedirectToAction(DominoCardType.ECOSignoff2, "MiniPaper", dict);
+                        return RedirectToAction(DominoCardType.ECOSignoff2, "MiniPIP", dict);
                 }
                 else
                 {
@@ -315,7 +328,7 @@ namespace Domino.Controllers
                         var dict = new RouteValueDictionary();
                         dict.Add("ECOKey", ECOKey);
                         dict.Add("CardKey", realcardkey);
-                        return RedirectToAction(DominoCardType.ECOSignoff1, "MiniPaper", dict);
+                        return RedirectToAction(DominoCardType.ECOSignoff1, "MiniPIP", dict);
                 }
             }
             else
@@ -323,7 +336,7 @@ namespace Domino.Controllers
                 var dict = new RouteValueDictionary();
                 dict.Add("ECOKey", ECOKey);
                 dict.Add("CardKey", CardKey);
-                return RedirectToAction(DominoCardType.ECOPending, "MiniPaper", dict);
+                return RedirectToAction(DominoCardType.ECOPending, "MiniPIP", dict);
             }
         }
 
@@ -359,10 +372,10 @@ namespace Domino.Controllers
                 ViewBag.CardKey = CardKey;
                 ViewBag.CardDetailPage = DominoCardType.ECOSignoff1;
 
-                return View("SingalECO", vm);
+                return View("CurrentECO", vm);
             }
 
-            return RedirectToAction("ViewAll", "MiniPaper");
+            return RedirectToAction("ViewAll", "MiniPIP");
 
         }
 
@@ -391,14 +404,14 @@ namespace Domino.Controllers
                 var dict = new RouteValueDictionary();
                 dict.Add("ECOKey", ECOKey);
                 dict.Add("CardKey", realcardkey);
-                return RedirectToAction(DominoCardType.ECOComplete, "MiniPaper", dict);
+                return RedirectToAction(DominoCardType.ECOComplete, "MiniPIP", dict);
             }
             else
             {
                 var dict = new RouteValueDictionary();
                 dict.Add("ECOKey", ECOKey);
                 dict.Add("CardKey", CardKey);
-                return RedirectToAction(DominoCardType.ECOSignoff1, "MiniPaper", dict);
+                return RedirectToAction(DominoCardType.ECOSignoff1, "MiniPIP", dict);
             }
 }
 
@@ -435,10 +448,10 @@ namespace Domino.Controllers
                 ViewBag.CardKey = CardKey;
                 ViewBag.CardDetailPage = DominoCardType.ECOComplete;
 
-                return View("SingalECO", vm);
+                return View("CurrentECO", vm);
             }
 
-            return RedirectToAction("ViewAll", "MiniPaper");
+            return RedirectToAction("ViewAll", "MiniPIP");
 
         }
 
@@ -468,7 +481,7 @@ namespace Domino.Controllers
                     var dict = new RouteValueDictionary();
                     dict.Add("ECOKey", ECOKey);
                     dict.Add("CardKey", realcardkey);
-                    return RedirectToAction(DominoCardType.SampleOrdering, "MiniPaper", dict);
+                    return RedirectToAction(DominoCardType.SampleOrdering, "MiniPIP", dict);
                 }
                 else if (string.Compare(baseinfos[0].ECOType, DominoECOType.DVNS) == 0)
                 {
@@ -476,7 +489,7 @@ namespace Domino.Controllers
                     var dict = new RouteValueDictionary();
                     dict.Add("ECOKey", ECOKey);
                     dict.Add("CardKey", realcardkey);
-                    return RedirectToAction(DominoCardType.FACustomerApproval, "MiniPaper", dict);
+                    return RedirectToAction(DominoCardType.FACustomerApproval, "MiniPIP", dict);
                 }
                 else if (string.Compare(baseinfos[0].ECOType, DominoECOType.RVS) == 0)
                 {
@@ -484,7 +497,7 @@ namespace Domino.Controllers
                     var dict = new RouteValueDictionary();
                     dict.Add("ECOKey", ECOKey);
                     dict.Add("CardKey", realcardkey);
-                    return RedirectToAction(DominoCardType.MiniPIPComplete, "MiniPaper", dict);
+                    return RedirectToAction(DominoCardType.MiniPIPComplete, "MiniPIP", dict);
                 }
                 else
                 {
@@ -492,7 +505,7 @@ namespace Domino.Controllers
                     var dict = new RouteValueDictionary();
                     dict.Add("ECOKey", ECOKey);
                     dict.Add("CardKey", realcardkey);
-                    return RedirectToAction(DominoCardType.SampleOrdering, "MiniPaper", dict);
+                    return RedirectToAction(DominoCardType.SampleOrdering, "MiniPIP", dict);
                 }
             }
             else
@@ -500,7 +513,7 @@ namespace Domino.Controllers
                 var dict = new RouteValueDictionary();
                 dict.Add("ECOKey", ECOKey);
                 dict.Add("CardKey", CardKey);
-                return RedirectToAction(DominoCardType.ECOComplete, "MiniPaper", dict);
+                return RedirectToAction(DominoCardType.ECOComplete, "MiniPIP", dict);
             }
         }
 
@@ -536,10 +549,10 @@ namespace Domino.Controllers
                 ViewBag.CardKey = CardKey;
                 ViewBag.CardDetailPage = DominoCardType.FACustomerApproval;
 
-                return View("SingalECO", vm);
+                return View("CurrentECO", vm);
             }
 
-            return RedirectToAction("ViewAll", "MiniPaper");
+            return RedirectToAction("ViewAll", "MiniPIP");
         }
 
         [HttpPost, ActionName("FACustomerApproval")]
@@ -567,7 +580,7 @@ namespace Domino.Controllers
                     var dict = new RouteValueDictionary();
                     dict.Add("ECOKey", ECOKey);
                     dict.Add("CardKey", realcardkey);
-                    return RedirectToAction(DominoCardType.SampleOrdering, "MiniPaper", dict);
+                    return RedirectToAction(DominoCardType.SampleOrdering, "MiniPIP", dict);
                 }
                 else if (string.Compare(baseinfos[0].ECOType, DominoECOType.RVNS) == 0)
                 {
@@ -575,7 +588,7 @@ namespace Domino.Controllers
                     var dict = new RouteValueDictionary();
                     dict.Add("ECOKey", ECOKey);
                     dict.Add("CardKey", realcardkey);
-                    return RedirectToAction(DominoCardType.ECOComplete, "MiniPaper", dict);
+                    return RedirectToAction(DominoCardType.ECOComplete, "MiniPIP", dict);
                 }
                 else
                 {
@@ -583,7 +596,7 @@ namespace Domino.Controllers
                     var dict = new RouteValueDictionary();
                     dict.Add("ECOKey", ECOKey);
                     dict.Add("CardKey", realcardkey);
-                    return RedirectToAction(DominoCardType.SampleOrdering, "MiniPaper", dict);
+                    return RedirectToAction(DominoCardType.SampleOrdering, "MiniPIP", dict);
                 }
             }
             else
@@ -591,7 +604,7 @@ namespace Domino.Controllers
                 var dict = new RouteValueDictionary();
                 dict.Add("ECOKey", ECOKey);
                 dict.Add("CardKey", CardKey);
-                return RedirectToAction(DominoCardType.FACustomerApproval, "MiniPaper", dict);
+                return RedirectToAction(DominoCardType.FACustomerApproval, "MiniPIP", dict);
             }
 
         }
@@ -628,10 +641,10 @@ namespace Domino.Controllers
                 ViewBag.CardKey = CardKey;
                 ViewBag.CardDetailPage = DominoCardType.ECOSignoff2;
 
-                return View("SingalECO", vm);
+                return View("CurrentECO", vm);
             }
 
-            return RedirectToAction("ViewAll", "MiniPaper");
+            return RedirectToAction("ViewAll", "MiniPIP");
 
         }
 
@@ -659,14 +672,14 @@ namespace Domino.Controllers
                 var dict = new RouteValueDictionary();
                 dict.Add("ECOKey", ECOKey);
                 dict.Add("CardKey", realcardkey);
-                return RedirectToAction(DominoCardType.CustomerApprovalHold, "MiniPaper", dict);
+                return RedirectToAction(DominoCardType.CustomerApprovalHold, "MiniPIP", dict);
             }
             else
             {
                 var dict = new RouteValueDictionary();
                 dict.Add("ECOKey", ECOKey);
                 dict.Add("CardKey", CardKey);
-                return RedirectToAction(DominoCardType.ECOSignoff2, "MiniPaper", dict);
+                return RedirectToAction(DominoCardType.ECOSignoff2, "MiniPIP", dict);
             }
         }
 
@@ -703,10 +716,10 @@ namespace Domino.Controllers
                 ViewBag.CardKey = CardKey;
                 ViewBag.CardDetailPage = DominoCardType.CustomerApprovalHold;
 
-                return View("SingalECO", vm);
+                return View("CurrentECO", vm);
             }
 
-            return RedirectToAction("ViewAll", "MiniPaper");
+            return RedirectToAction("ViewAll", "MiniPIP");
 
         }
 
@@ -736,7 +749,7 @@ namespace Domino.Controllers
                     var dict = new RouteValueDictionary();
                     dict.Add("ECOKey", ECOKey);
                     dict.Add("CardKey", realcardkey);
-                    return RedirectToAction(DominoCardType.SampleOrdering, "MiniPaper", dict);
+                    return RedirectToAction(DominoCardType.SampleOrdering, "MiniPIP", dict);
                 }
                 else if (string.Compare(baseinfos[0].ECOType, DominoECOType.RVNS) == 0)
                 {
@@ -744,7 +757,7 @@ namespace Domino.Controllers
                     var dict = new RouteValueDictionary();
                     dict.Add("ECOKey", ECOKey);
                     dict.Add("CardKey", realcardkey);
-                    return RedirectToAction(DominoCardType.FACustomerApproval, "MiniPaper", dict);
+                    return RedirectToAction(DominoCardType.FACustomerApproval, "MiniPIP", dict);
                 }
                 else
                 {
@@ -752,7 +765,7 @@ namespace Domino.Controllers
                     var dict = new RouteValueDictionary();
                     dict.Add("ECOKey", ECOKey);
                     dict.Add("CardKey", realcardkey);
-                    return RedirectToAction(DominoCardType.SampleOrdering, "MiniPaper", dict);
+                    return RedirectToAction(DominoCardType.SampleOrdering, "MiniPIP", dict);
                 }
             }
             else
@@ -760,7 +773,7 @@ namespace Domino.Controllers
                 var dict = new RouteValueDictionary();
                 dict.Add("ECOKey", ECOKey);
                 dict.Add("CardKey", CardKey);
-                return RedirectToAction(DominoCardType.CustomerApprovalHold, "MiniPaper", dict);
+                return RedirectToAction(DominoCardType.CustomerApprovalHold, "MiniPIP", dict);
             }
         }
 
@@ -797,10 +810,10 @@ namespace Domino.Controllers
                 ViewBag.CardKey = CardKey;
                 ViewBag.CardDetailPage = DominoCardType.SampleOrdering;
 
-                return View("SingalECO", vm);
+                return View("CurrentECO", vm);
             }
 
-            return RedirectToAction("ViewAll", "MiniPaper");
+            return RedirectToAction("ViewAll", "MiniPIP");
 
         }
 
@@ -827,14 +840,14 @@ namespace Domino.Controllers
                 var dict = new RouteValueDictionary();
                 dict.Add("ECOKey", ECOKey);
                 dict.Add("CardKey", realcardkey);
-                return RedirectToAction(DominoCardType.SampleBuilding, "MiniPaper", dict);
+                return RedirectToAction(DominoCardType.SampleBuilding, "MiniPIP", dict);
             }
             else
             {
                 var dict = new RouteValueDictionary();
                 dict.Add("ECOKey", ECOKey);
                 dict.Add("CardKey", CardKey);
-                return RedirectToAction(DominoCardType.SampleOrdering, "MiniPaper", dict);
+                return RedirectToAction(DominoCardType.SampleOrdering, "MiniPIP", dict);
             }
 
         }
@@ -872,10 +885,10 @@ namespace Domino.Controllers
                 ViewBag.CardKey = CardKey;
                 ViewBag.CardDetailPage = DominoCardType.SampleBuilding;
 
-                return View("SingalECO", vm);
+                return View("CurrentECO", vm);
             }
 
-            return RedirectToAction("ViewAll", "MiniPaper");
+            return RedirectToAction("ViewAll", "MiniPIP");
 
         }
 
@@ -902,14 +915,14 @@ namespace Domino.Controllers
                 var dict = new RouteValueDictionary();
                 dict.Add("ECOKey", ECOKey);
                 dict.Add("CardKey", realcardkey);
-                return RedirectToAction(DominoCardType.SampleShipment, "MiniPaper", dict);
+                return RedirectToAction(DominoCardType.SampleShipment, "MiniPIP", dict);
             }
             else
             {
                 var dict = new RouteValueDictionary();
                 dict.Add("ECOKey", ECOKey);
                 dict.Add("CardKey", CardKey);
-                return RedirectToAction(DominoCardType.SampleBuilding, "MiniPaper", dict);
+                return RedirectToAction(DominoCardType.SampleBuilding, "MiniPIP", dict);
             }
         }
 
@@ -946,10 +959,10 @@ namespace Domino.Controllers
                 ViewBag.CardKey = CardKey;
                 ViewBag.CardDetailPage = DominoCardType.SampleShipment;
 
-                return View("SingalECO", vm);
+                return View("CurrentECO", vm);
             }
 
-            return RedirectToAction("ViewAll", "MiniPaper");
+            return RedirectToAction("ViewAll", "MiniPIP");
 
         }
 
@@ -976,14 +989,14 @@ namespace Domino.Controllers
                 var dict = new RouteValueDictionary();
                 dict.Add("ECOKey", ECOKey);
                 dict.Add("CardKey", realcardkey);
-                return RedirectToAction(DominoCardType.SampleCustomerApproval, "MiniPaper", dict);
+                return RedirectToAction(DominoCardType.SampleCustomerApproval, "MiniPIP", dict);
             }
             else
             {
                 var dict = new RouteValueDictionary();
                 dict.Add("ECOKey", ECOKey);
                 dict.Add("CardKey", CardKey);
-                return RedirectToAction(DominoCardType.SampleShipment, "MiniPaper", dict);
+                return RedirectToAction(DominoCardType.SampleShipment, "MiniPIP", dict);
             }
         }
 
@@ -1019,10 +1032,10 @@ namespace Domino.Controllers
                 ViewBag.CardKey = CardKey;
                 ViewBag.CardDetailPage = DominoCardType.SampleCustomerApproval;
 
-                return View("SingalECO", vm);
+                return View("CurrentECO", vm);
             }
 
-            return RedirectToAction("ViewAll", "MiniPaper");
+            return RedirectToAction("ViewAll", "MiniPIP");
 
         }
 
@@ -1051,7 +1064,7 @@ namespace Domino.Controllers
                     var dict = new RouteValueDictionary();
                     dict.Add("ECOKey", ECOKey);
                     dict.Add("CardKey", realcardkey);
-                    return RedirectToAction(DominoCardType.ECOComplete, "MiniPaper", dict);
+                    return RedirectToAction(DominoCardType.ECOComplete, "MiniPIP", dict);
                 }
                 else
                 {
@@ -1059,7 +1072,7 @@ namespace Domino.Controllers
                     var dict = new RouteValueDictionary();
                     dict.Add("ECOKey", ECOKey);
                     dict.Add("CardKey", realcardkey);
-                    return RedirectToAction(DominoCardType.MiniPIPComplete, "MiniPaper", dict);
+                    return RedirectToAction(DominoCardType.MiniPIPComplete, "MiniPIP", dict);
                 }
             }
             else
@@ -1067,7 +1080,7 @@ namespace Domino.Controllers
                 var dict = new RouteValueDictionary();
                 dict.Add("ECOKey", ECOKey);
                 dict.Add("CardKey", CardKey);
-                return RedirectToAction(DominoCardType.SampleCustomerApproval, "MiniPaper", dict);
+                return RedirectToAction(DominoCardType.SampleCustomerApproval, "MiniPIP", dict);
             }
         }
 
@@ -1104,10 +1117,10 @@ namespace Domino.Controllers
                 ViewBag.CardKey = CardKey;
                 ViewBag.CardDetailPage = DominoCardType.MiniPIPComplete;
 
-                return View("SingalECO", vm);
+                return View("CurrentECO", vm);
             }
 
-            return RedirectToAction("ViewAll", "MiniPaper");
+            return RedirectToAction("ViewAll", "MiniPIP");
 
         }
 
@@ -1134,7 +1147,7 @@ namespace Domino.Controllers
             var dict = new RouteValueDictionary();
             dict.Add("ECOKey", ECOKey);
             dict.Add("CardKey", CardKey);
-            return RedirectToAction(DominoCardType.MiniPIPComplete, "MiniPaper", dict);
+            return RedirectToAction(DominoCardType.MiniPIPComplete, "MiniPIP", dict);
         }
 
     }

@@ -76,7 +76,7 @@ bool updateLinks)
                         }
                         else
                         {
-                            line.Add(valueArray[row, col].ToString().Trim());
+                            line.Add(valueArray[row, col].ToString().Trim().Replace("'",""));
                         }
                     }
                     //if (!WholeLineEmpty(line))

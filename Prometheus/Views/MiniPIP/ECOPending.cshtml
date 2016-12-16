@@ -1,6 +1,6 @@
 ﻿@if (ViewBag.CurrentCard != null)
 {
-    using (Html.BeginForm("ECOPending", "MiniPaper", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    using (Html.BeginForm("ECOPending", "MiniPIP", FormMethod.Post, new { enctype = "multipart/form-data" }))
     {
         @Html.AntiForgeryToken()
 
@@ -15,6 +15,11 @@
                     </div>
                 </div>
                 <div class="row col-lg-6">
+                    <label class="control-label col-lg-2">MCO Issued</label>
+                    <div class="col-lg-10">
+                        <input class="form-control text-box single-line" typeof="text" value="@ViewBag.CurrentCard.EBaseInfo.MCOIssued" id="MCOIssued" name="MCOIssued" data-val="true" data-val-length="The field Project must be a string with a minimum length of 1 and a maximum length of 30." data-val-length-max="30" data-val-length-min="1" data-val-regex="The field should not contain \'" data-val-regex-pattern="^(?!.*&#39;).*$" />
+                        <span class="field-validation-valid text-danger" data-valmsg-for="MCOIssued" data-valmsg-replace="true"></span>
+                    </div>
                 </div>
             </div>
 

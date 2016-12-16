@@ -200,7 +200,7 @@
     <Compile Include="Controllers\DBManageController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\IssueController.cs" />
-    <Compile Include="Controllers\MiniPaperController.cs" />
+    <Compile Include="Controllers\MiniPIPController.cs" />
     <Compile Include="Controllers\PJReportController.cs" />
     <Compile Include="Controllers\ProjectController.cs" />
     <Compile Include="Controllers\ShareDataController.cs" />
@@ -800,19 +800,19 @@
     <Content Include="Views\User\AddShareTag.cshtml" />
     <Content Include="Views\User\IBook.cshtml" />
     <Content Include="Views\User\ILearn.cshtml" />
-    <Content Include="Views\MiniPaper\ViewAll.cshtml" />
-    <Content Include="Views\MiniPaper\ECOSignoff1.cshtml" />
-    <Content Include="Views\MiniPaper\ECOPending.cshtml" />
-    <Content Include="Views\MiniPaper\SingalECO.cshtml" />
-    <Content Include="Views\MiniPaper\ECOComplete.cshtml" />
-    <Content Include="Views\MiniPaper\ECOSignoff2.cshtml" />
-    <Content Include="Views\MiniPaper\SampleOrdering.cshtml" />
-    <Content Include="Views\MiniPaper\SampleBuilding.cshtml" />
-    <Content Include="Views\MiniPaper\SampleShipment.cshtml" />
-    <Content Include="Views\MiniPaper\SampleCustomerApproval.cshtml" />
-    <Content Include="Views\MiniPaper\MiniPIPComplete.cshtml" />
-    <Content Include="Views\MiniPaper\FACustomerApproval.cshtml" />
-    <Content Include="Views\MiniPaper\CustomerApprovalHold.cshtml" />
+    <Content Include="Views\MiniPIP\ViewAll.cshtml" />
+    <Content Include="Views\MiniPIP\ECOSignoff1.cshtml" />
+    <Content Include="Views\MiniPIP\ECOPending.cshtml" />
+    <Content Include="Views\MiniPIP\CurrentECO.cshtml" />
+    <Content Include="Views\MiniPIP\ECOComplete.cshtml" />
+    <Content Include="Views\MiniPIP\ECOSignoff2.cshtml" />
+    <Content Include="Views\MiniPIP\SampleOrdering.cshtml" />
+    <Content Include="Views\MiniPIP\SampleBuilding.cshtml" />
+    <Content Include="Views\MiniPIP\SampleShipment.cshtml" />
+    <Content Include="Views\MiniPIP\SampleCustomerApproval.cshtml" />
+    <Content Include="Views\MiniPIP\MiniPIPComplete.cshtml" />
+    <Content Include="Views\MiniPIP\FACustomerApproval.cshtml" />
+    <Content Include="Views\MiniPIP\CustomerApprovalHold.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="userfiles\docs\" />

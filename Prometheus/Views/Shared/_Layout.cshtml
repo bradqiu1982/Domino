@@ -36,19 +36,19 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                        @Html.ActionLink("Minipaper", "ViewAll", "MiniPaper", null, new { @class = "navbar-brand" })
+                        @Html.ActionLink("MiniPIP", "ViewAll", "MiniPIP", null, new { @class = "navbar-brand" })
                 </div>
 
                 <div id = "navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
                         <li class="dropdown">
-                            <a href = "#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">MiniPaper<span class="caret"></span></a>
+                            <a href = "#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">MiniPIP<span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li>
-                                    @Html.ActionLink("View All MiniPaper", "ViewAll", "MiniPaper")
+                                    @Html.ActionLink("View All MiniPIP", "ViewAll", "MiniPIP")
                                 </li>
                                 <li>
-                                    @Html.ActionLink("Create MiniPaper", "CreateMiniPaper", "MiniPaper")
+                                    @Html.ActionLink("Create MiniPIP", "CreateMiniPIP", "MiniPIP")
                                 </li>
                             </ul>
                         </li>
@@ -76,7 +76,7 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - MiniPaper Trace System</p>
+            <p>&copy; @DateTime.Now.Year - MiniPIP Trace System</p>
         </footer>
     </div>
 
