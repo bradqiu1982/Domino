@@ -547,12 +547,12 @@ namespace Domino.Models
         }
 
 
-        private static List<DominoVM> RetrieveCard(string ECOKey, string CardKey)
+        public static List<DominoVM> RetrieveCard( string CardKey)
         {
             var ret = new List<DominoVM>();
 
-            var sql = "select ECOKey,CardKey,CardType,CardStatus from ECOCard where ECOKey = '<ECOKey>' and CardKey = '<CardKey>' and DeleteMark <> 'true' order by CardCreateTime ASC";
-            sql = sql.Replace("<ECOKey>", ECOKey).Replace("<CardKey>", CardKey);
+            var sql = "select ECOKey,CardKey,CardType,CardStatus from ECOCard where CardKey = '<CardKey>' and DeleteMark <> 'true' order by CardCreateTime ASC";
+            sql = sql.Replace("<CardKey>", CardKey);
 
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
             var idx = 1;
@@ -896,7 +896,7 @@ namespace Domino.Models
 
             if (Directory.Exists(srcrootfolder))
             {
-                var currentcard  = RetrieveCard(baseinfo.ECOKey, CardKey);
+                var currentcard  = RetrieveCard(CardKey);
                 if (currentcard.Count == 0)
                     return;
 
@@ -972,6 +972,92 @@ namespace Domino.Models
         private static void RefreshQALabelFAI(ECOBaseInfo baseinfo, string CardKey, Controller ctrl)
         {
             var syscfgdict = GetSysConfig(ctrl);
+            var srcrootfolder = syscfgdict["QALABELFAI"];
+            var labelfilter = syscfgdict["QALABELFILTER"];
+
+            if (Directory.Exists(srcrootfolder))
+            {
+                var currentcard = RetrieveCard(CardKey);
+                if (currentcard.Count == 0)
+                    return;
+
+
+                var firstleveldirs = new List<string>();
+                var ffold = Directory.EnumerateDirectories(srcrootfolder);
+                firstleveldirs.AddRange(ffold);
+
+                var seconfleveldir = new List<string>();
+                foreach (var ffd in ffold)
+                {
+                    var sfd = Directory.EnumerateDirectories(ffd);
+                    seconfleveldir.AddRange(sfd);
+                }
+
+                var destfolderlist = new List<string>();
+                foreach (var desf in seconfleveldir)
+                {
+                    if (desf.ToUpper().Contains(baseinfo.PNDesc.ToUpper()))
+                    {
+                        destfolderlist.Add(desf);
+                    }
+                }
+
+                var destfiles = new List<string>();
+                foreach (var fd in destfolderlist)
+                {
+                    var qafiles = Directory.EnumerateFiles(fd);
+                    foreach (var qaf in qafiles)
+                    {
+                        if (Path.GetFileName(qaf).ToUpper().Contains(labelfilter))
+                        {
+                            destfiles.Add(qaf);
+                        }
+                    }
+                }
+
+                foreach (var desf in destfiles)
+                {
+                    var fn = Path.GetFileName(desf);
+                    fn = fn.Replace(" ", "_").Replace("#", "")
+                            .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
+
+                    var pathstrs = desf.Split(Path.DirectorySeparatorChar);
+                    var uplevel = pathstrs[pathstrs.Length - 2];
+                    var prefix = RMSpectialCh(uplevel);
+
+                    var attfn = prefix + "_" + fn;
+
+                    string datestring = DateTime.Now.ToString("yyyyMMdd");
+                    string imgdir = ctrl.Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
+                    if (!Directory.Exists(imgdir))
+                        Directory.CreateDirectory(imgdir);
+
+                    var attpath = imgdir + attfn;
+                    var url = "/userfiles/docs/" + datestring + "/" + attfn;
+
+                    var attexist = false;
+                    foreach (var att in currentcard[0].AttachList)
+                    {
+                        if (att.Contains(attfn))
+                        {
+                            attexist = true;
+                            break;
+                        }
+                    }
+
+                    if (!attexist)
+                    {
+                        try
+                        {
+                            System.IO.File.Copy(desf, attpath, true);
+                            DominoVM.StoreCardAttachment(CardKey, url);
+                        }
+                        catch (Exception ex) { }
+                    }
+                }//end foreach
+
+            }//end if
+
         }
 
         public static void RefreshQAFAI(ECOBaseInfo baseinfo, string CardKey, Controller ctrl)
