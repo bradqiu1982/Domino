@@ -46,6 +46,20 @@ namespace Domino.Models
         public static string Revise = "Revise";
     }
 
+    public class DominoPNImplement
+    {
+        public static string NA = "N/A";
+        public static string Roll = "Rolling Change/No Purge";
+        public static string CutOverImm = "Cut-Over with Stop-Ship Immediately Upon Mini-PIP Submission";
+        public static string CutOverAft = "Cut-Over with Stop-Ship After New First-Article Sample Approval";
+    }
+
+    public class DominoYESNO
+    {
+        public static string YES = "YES";
+        public static string NO = "NO";
+    }
+
     public class ECOCardComments
     {
         public string CardKey { set; get; }
@@ -131,6 +145,7 @@ namespace Domino.Models
         public string ECOCCBSignoff { set; get; }
         public string QTRInit { set; get; }
         public string MCOIssued { set; get; }
+        public string PNImplement { set; get; }
 
         private Dictionary<string, string> namedict = new Dictionary<string, string>();
         public Dictionary<string, string> NameDict { get { return namedict; } }
@@ -154,7 +169,7 @@ namespace Domino.Models
             namedict.Add("ECOCCBSignoff", "ECO CCB Signoff");
             namedict.Add("QTRInit", "QTR Initiation");
             namedict.Add("MCOIssued", "MCO Issued");
-            namedict.Add("ECOType", "ECO Type");
+            namedict.Add("ECOType", "MiniPIP Flow");
             namedict.Add("FirstArticleNeed", "Order Info");
 
             ECONum = string.Empty;
@@ -177,6 +192,7 @@ namespace Domino.Models
             MCOIssued = string.Empty;
             FirstArticleNeed = string.Empty;
             FlowInfo = string.Empty;
+            PNImplement = string.Empty;
         }
 
         public static List<KeyValuePair<string, string>> RetrieveBaseInfo(ECOBaseInfo info)
@@ -228,16 +244,16 @@ namespace Domino.Models
             SetDefaultDateValue();
 
             var sql = "insert into ECOBaseInfo(ECOKey,ECONum,ECOType,PNDesc,Customer,Complex,RSM,PE,RiskBuild,InitRevison,FinalRevison"
-                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo)"
+                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement)"
                 + " values('<ECOKey>','<ECONum>','<ECOType>','<PNDesc>','<Customer>','<Complex>','<RSM>','<PE>','<RiskBuild>','<InitRevison>','<FinalRevison>'"
-                + ",'<TLAAvailable>','<OpsEntry>','<TestModification>','<ECOSubmit>','<ECOReviewSignoff>','<ECOCCBSignoff>','<QTRInit>','<MCOIssued>','<FirstArticleNeed>','<FlowInfo>')";
+                + ",'<TLAAvailable>','<OpsEntry>','<TestModification>','<ECOSubmit>','<ECOReviewSignoff>','<ECOCCBSignoff>','<QTRInit>','<MCOIssued>','<FirstArticleNeed>','<FlowInfo>','<PNImplement>')";
 
 
             sql = sql.Replace("<ECOKey>", ECOKey).Replace("<ECONum>", ECONum).Replace("<ECOType>", ECOType).Replace("<PNDesc>", PNDesc).Replace("<Customer>", Customer)
                 .Replace("<Complex>", Complex).Replace("<RSM>", RSM).Replace("<PE>", PE).Replace("<RiskBuild>", RiskBuild).Replace("<InitRevison>", InitRevison)
                 .Replace("<FinalRevison>", FinalRevison).Replace("<TLAAvailable>", TLAAvailable).Replace("<OpsEntry>", OpsEntry).Replace("<TestModification>", TestModification)
                 .Replace("<ECOSubmit>", ECOSubmit).Replace("<ECOReviewSignoff>", ECOReviewSignoff).Replace("<ECOCCBSignoff>", ECOCCBSignoff)
-                .Replace("<QTRInit>", QTRInit).Replace("<MCOIssued>", MCOIssued).Replace("<FirstArticleNeed>", FirstArticleNeed).Replace("<FlowInfo>", FlowInfo);
+                .Replace("<QTRInit>", QTRInit).Replace("<MCOIssued>", MCOIssued).Replace("<FirstArticleNeed>", FirstArticleNeed).Replace("<FlowInfo>", FlowInfo).Replace("<PNImplement>", PNImplement);
 
             DBUtility.ExeLocalSqlNoRes(sql);
         }
@@ -248,13 +264,13 @@ namespace Domino.Models
             SetDefaultDateValue();
 
             var sql = "update ECOBaseInfo set ECONum='<ECONum>',ECOType='<ECOType>',PNDesc='<PNDesc>',Customer='<Customer>',Complex='<Complex>',RSM='<RSM>',PE='<PE>',RiskBuild='<RiskBuild>',InitRevison='<InitRevison>',FinalRevison='<FinalRevison>'"
-                + ",TLAAvailable='<TLAAvailable>',OpsEntry='<OpsEntry>',TestModification='<TestModification>',ECOSubmit='<ECOSubmit>',ECOReviewSignoff='<ECOReviewSignoff>',ECOCCBSignoff='<ECOCCBSignoff>',QTRInit='<QTRInit>',MCOIssued='<MCOIssued>',FirstArticleNeed='<FirstArticleNeed>',FlowInfo='<FlowInfo>' where ECOKey='<ECOKey>'";
+                + ",TLAAvailable='<TLAAvailable>',OpsEntry='<OpsEntry>',TestModification='<TestModification>',ECOSubmit='<ECOSubmit>',ECOReviewSignoff='<ECOReviewSignoff>',ECOCCBSignoff='<ECOCCBSignoff>',QTRInit='<QTRInit>',MCOIssued='<MCOIssued>',FirstArticleNeed='<FirstArticleNeed>',FlowInfo='<FlowInfo>',PNImplement='<PNImplement>' where ECOKey='<ECOKey>'";
             
             sql = sql.Replace("<ECOKey>", ECOKey).Replace("<ECONum>", ECONum).Replace("<ECOType>", ECOType).Replace("<PNDesc>", PNDesc).Replace("<Customer>", Customer)
                 .Replace("<Complex>", Complex).Replace("<RSM>", RSM).Replace("<PE>", PE).Replace("<RiskBuild>", RiskBuild).Replace("<InitRevison>", InitRevison)
                 .Replace("<FinalRevison>", FinalRevison).Replace("<TLAAvailable>", TLAAvailable).Replace("<OpsEntry>", OpsEntry).Replace("<TestModification>", TestModification)
                 .Replace("<ECOSubmit>", ECOSubmit).Replace("<ECOReviewSignoff>", ECOReviewSignoff).Replace("<ECOCCBSignoff>", ECOCCBSignoff).Replace("<QTRInit>", QTRInit)
-                .Replace("<MCOIssued>", MCOIssued).Replace("<FirstArticleNeed>", FirstArticleNeed).Replace("<FlowInfo>", FlowInfo);
+                .Replace("<MCOIssued>", MCOIssued).Replace("<FirstArticleNeed>", FirstArticleNeed).Replace("<FlowInfo>", FlowInfo).Replace("<PNImplement>", PNImplement);
 
             DBUtility.ExeLocalSqlNoRes(sql);
         }
@@ -280,7 +296,7 @@ namespace Domino.Models
         {
             var ret = new List<ECOBaseInfo>();
             var sql = "select ECOKey,ECONum,ECOType,PNDesc,Customer,Complex,RSM,PE,RiskBuild,InitRevison,FinalRevison"
-                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo from ECOBaseInfo";
+                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement from ECOBaseInfo";
 
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
             foreach (var line in dbret)
@@ -309,6 +325,7 @@ namespace Domino.Models
                 tempitem.MCOIssued = Convert.ToString(line[18]);
                 tempitem.FirstArticleNeed = Convert.ToString(line[19]);
                 tempitem.FlowInfo = Convert.ToString(line[20]);
+                tempitem.PNImplement = Convert.ToString(line[21]);
 
                 ret.Add(tempitem);
             }
@@ -320,7 +337,7 @@ namespace Domino.Models
         {
             var ret = new List<ECOBaseInfo>();
             var sql = "select ECOKey,ECONum,ECOType,PNDesc,Customer,Complex,RSM,PE,RiskBuild,InitRevison,FinalRevison"
-                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo from ECOBaseInfo where ECOKey='<ECOKey>'";
+                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement from ECOBaseInfo where ECOKey='<ECOKey>'";
             sql = sql.Replace("<ECOKey>", ECOKey);
 
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
@@ -350,6 +367,7 @@ namespace Domino.Models
                 tempitem.MCOIssued = Convert.ToString(line[18]);
                 tempitem.FirstArticleNeed = Convert.ToString(line[19]);
                 tempitem.FlowInfo = Convert.ToString(line[20]);
+                tempitem.PNImplement = Convert.ToString(line[21]);
 
                 ret.Add(tempitem);
             }
@@ -420,6 +438,10 @@ namespace Domino.Models
             ecocontentdict.Add(DominoCardType.FACustomerApproval,"FA Customer Approval");
             ecocontentdict.Add(DominoCardType.ECOSignoff2,"ECO Signoff-2");
             ecocontentdict.Add(DominoCardType.CustomerApprovalHold,"Customer Approval Hold");
+
+            MiniPIPWeeklyUpdate = string.Empty;
+            MiniPIPHold = string.Empty;
+            WeeklyUpdateTime = string.Empty;
         }
 
         public static void CleanDB()
@@ -593,10 +615,10 @@ namespace Domino.Models
             }
         }
 
-        public static void UpdateCardStatus(string ECOKey, string CardKey, string CardStatus)
+        public static void UpdateCardStatus(string CardKey, string CardStatus)
         {
-            var sql = "update ECOCard set CardStatus = '<CardStatus>' where ECOKey='<ECOKey>' and CardKey='<CardKey>'";
-            sql = sql.Replace("<ECOKey>", ECOKey).Replace("<CardKey>", CardKey).Replace("<CardStatus>", CardStatus);
+            var sql = "update ECOCard set CardStatus = '<CardStatus>' where CardKey='<CardKey>'";
+            sql = sql.Replace("<CardKey>", CardKey).Replace("<CardStatus>", CardStatus);
             DBUtility.ExeLocalSqlNoRes(sql);
         }
 
@@ -656,11 +678,147 @@ namespace Domino.Models
             return ret;
         }
 
+        public static List<string> RetrieveCardExistedAttachment(string CardKey)
+        {
+            var ret = new List<string>();
+            var csql = "select Attachment from ECOCardAttachment where CardKey = '<CardKey>' order by UpdateTime ASC";
+            csql = csql.Replace("<CardKey>", CardKey);
+
+            var cdbret = DBUtility.ExeLocalSqlWithRes(csql);
+            foreach (var r in cdbret)
+            {
+                ret.Add(Convert.ToString(r[0]));
+            }
+            return ret;
+        }
+
         public static void DeleteCardAttachment(string CardKey, string fn)
         {
             var csql = "update ECOCardAttachment set DeleteMark = 'true' where CardKey = '<CardKey>' and Attachment like '%<cond>%'";
             csql = csql.Replace("<CardKey>", CardKey).Replace("<cond>", fn);
             DBUtility.ExeLocalSqlNoRes(csql);
+        }
+
+        public string MiniPIPWeeklyUpdate { set; get; }
+        public string MiniPIPHold { set; get; }
+        public string WeeklyUpdateTime { set; get; }
+
+        public static void StoreECOPendingInfo(string cardkey,string hold)
+        {
+            var sql = "delete from ECOCardContent where CardKey = '<CardKey>'";
+            sql = sql.Replace("<CardKey>", cardkey);
+            DBUtility.ExeLocalSqlNoRes(sql);
+
+            sql = "insert into ECOCardContent(CardKey,APVal2) values('<CardKey>','<APVal2>')";
+            sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal2>", hold);
+            DBUtility.ExeLocalSqlNoRes(sql);
+        }
+
+        private static void UpdateECOPendingInfo_UpdateInfo(string cardkey, string weeklyupdate)
+        {
+            var sql = "Update ECOCardContent Set APVal1 = '<APVal1>',APVal3='<APVal3>'  where CardKey = '<CardKey>'";
+            sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal1>", weeklyupdate).Replace("<APVal3>", DateTime.Now.ToString());
+            DBUtility.ExeLocalSqlNoRes(sql);
+        }
+
+        public static void UpdateECOPendingInfo(string cardkey, string ecohold)
+        {
+            var sql = "Update ECOCardContent Set APVal2 = '<APVal2>'  where CardKey = '<CardKey>'";
+            sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal2>", ecohold);
+            DBUtility.ExeLocalSqlNoRes(sql);
+        }
+
+        public static DominoVM RetrieveECOPendingInfo(string cardkey)
+        {
+            var ret = new DominoVM();
+            var sql = "select CardKey,APVal1,APVal2,APVal3 from ECOCardContent where CardKey = '<CardKey>'";
+            sql = sql.Replace("<CardKey>", cardkey);
+            var dbret = DBUtility.ExeLocalSqlWithRes(sql);
+            if (dbret.Count > 0)
+            {
+                ret.Cardkey = Convert.ToString(dbret[0][0]);
+                ret.MiniPIPWeeklyUpdate = Convert.ToString(dbret[0][1]);
+                ret.MiniPIPHold = Convert.ToString(dbret[0][2]);
+                ret.WeeklyUpdateTime = Convert.ToString(dbret[0][3]);
+            }
+            return ret;
+        }
+
+
+        public static void UpdateECOWeeklyUpdate(Controller ctrl,ECOBaseInfo baseinfo,string cardkey)
+        {
+            var syscfgdict = GetSysConfig(ctrl);
+
+            string datestring = DateTime.Now.ToString("yyyyMMdd");
+            string imgdir = ctrl.Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
+
+            var vm = RetrieveECOPendingInfo(cardkey);
+            if (!string.IsNullOrEmpty(vm.WeeklyUpdateTime))
+            {
+                if ((DateTime.Now - DateTime.Parse(vm.WeeklyUpdateTime)).Hours < 48)
+                {
+                    return;
+                }
+            }
+
+
+            var desfolder = syscfgdict["WEEKLYUPDATE"];
+            var sheetname = syscfgdict["MINIPIPSHEETNAME"];
+            try
+            {
+                if (!Directory.Exists(imgdir))
+                {
+                    Directory.CreateDirectory(imgdir);
+                }
+
+                if (Directory.Exists(desfolder))
+                {
+                    var fds = Directory.EnumerateFiles(desfolder);
+                    foreach (var fd in fds)
+                    {
+                        try
+                        {
+                            var fn = imgdir + Path.GetFileName(fd);
+                            System.IO.File.Copy(fd, fn,true);
+                            var data = ExcelReader.RetrieveDataFromExcel(fn,sheetname);
+                            foreach (var line in data)
+                            {
+                                if (string.Compare(line[2], baseinfo.PNDesc, true) == 0
+                                    && string.Compare(DateTime.Parse(line[12]).ToString("yyyy-MM-dd"), DateTime.Parse(baseinfo.InitRevison).ToString("yyyy-MM-dd"), true) == 0)
+                                {
+                                    var update = line[85];
+                                    DominoVM.UpdateECOPendingInfo_UpdateInfo(cardkey, update);
+                                    return;
+                                }//end if
+                            }//end foreach
+                        }
+                        catch (Exception ex) { }
+                   }//end foreach
+                }
+            }
+            catch (Exception ex) { }
+
+        }
+
+        public string QAEEPROMChecked { set; get; }
+        public string QALabelChecked { set; get; }
+        public string PeerReviewEngineer { set; get; }
+        public string PeerReviewed { set; get; }
+        public string ECOTRApprover { set; get; }
+        public string ECOTRApproved { set; get; }
+        public string FACategory { set; get; }
+        public string RSMSendDate { set; get; }
+        public string RSMApproveDate { set; get; }
+
+        public static void StoreSignoffInfo()
+        {
+
+        }
+
+        public static DominoVM RetrieveSignoffInfo()
+        {
+            var ret = new DominoVM();
+            return ret;
         }
 
 
@@ -769,6 +927,14 @@ namespace Domino.Models
 
                             if (pendingcard.Count > 0)
                             {
+                                if (!string.IsNullOrEmpty(item.ECONum)
+                                && string.Compare(pendingcard[0].CardStatus,DominoCardStatus.working) == 0)
+                                {
+                                    DominoVM.UpdateCardStatus(pendingcard[0].Cardkey, DominoCardType.ECOPending);
+                                }
+
+                                var allattach = DominoVM.RetrieveCardExistedAttachment(pendingcard[0].Cardkey);
+
                                 var MiniPIPDocFolder = syscfgdict["MINIPIPECOFOLDER"] + "\\" + baseinfo.Customer + "\\" + baseinfo.PNDesc;
                                 if (Directory.Exists(MiniPIPDocFolder))
                                 {
@@ -780,7 +946,7 @@ namespace Domino.Models
                                                 .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
                                         
                                         bool attachexist = false;
-                                        foreach (var att in pendingcard[0].AttachList)
+                                        foreach (var att in allattach)
                                         {
                                             if (att.Contains(fn))
                                             {
@@ -814,7 +980,15 @@ namespace Domino.Models
                         baseinfo.CreateECO();
 
                         var CardKey = DominoVM.GetUniqKey();
-                        DominoVM.CreateCard(baseinfo.ECOKey, CardKey, DominoCardType.ECOPending, DominoCardStatus.pending);
+                        
+                        if (string.IsNullOrEmpty(baseinfo.ECONum))
+                        {
+                            DominoVM.CreateCard(baseinfo.ECOKey, CardKey, DominoCardType.ECOPending, DominoCardStatus.working);
+                        }
+                        else
+                        {
+                            DominoVM.CreateCard(baseinfo.ECOKey, CardKey, DominoCardType.ECOPending, DominoCardStatus.pending);
+                        }
 
                         var MiniPIPDocFolder = syscfgdict["MINIPIPECOFOLDER"] + "\\" + baseinfo.Customer + "\\" + baseinfo.PNDesc;
                         if (Directory.Exists(MiniPIPDocFolder))
@@ -840,6 +1014,22 @@ namespace Domino.Models
                     }
 
                 }
+            }
+        }
+
+        public static void SetForceECORefresh(Controller ctrl)
+        {
+            var syscfgdict = GetSysConfig(ctrl);
+            string datestring = DateTime.Now.ToString("yyyyMMdd");
+            string imgdir = ctrl.Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
+            var desfile = imgdir + syscfgdict["MINIPIPECOFILENAME"];
+            if (System.IO.File.Exists(desfile))
+            {
+                try
+                {
+                    System.IO.File.Delete(desfile);
+                }
+                catch (Exception ex) { }
             }
         }
 
@@ -900,6 +1090,8 @@ namespace Domino.Models
                 if (currentcard.Count == 0)
                     return;
 
+                var allattach = DominoVM.RetrieveCardExistedAttachment(currentcard[0].Cardkey);
+
                 var destfolderlist = new List<string>();
                 var srcfolders = Directory.EnumerateDirectories(srcrootfolder);
                 foreach (var fd in srcfolders)
@@ -944,7 +1136,7 @@ namespace Domino.Models
                     var url = "/userfiles/docs/" + datestring + "/" + attfn;
 
                     var attexist = false;
-                    foreach (var att in currentcard[0].AttachList)
+                    foreach (var att in allattach)
                     {
                         if (att.Contains(attfn))
                         {
@@ -981,6 +1173,7 @@ namespace Domino.Models
                 if (currentcard.Count == 0)
                     return;
 
+                var allattach = DominoVM.RetrieveCardExistedAttachment(currentcard[0].Cardkey);
 
                 var firstleveldirs = new List<string>();
                 var ffold = Directory.EnumerateDirectories(srcrootfolder);
@@ -1036,7 +1229,7 @@ namespace Domino.Models
                     var url = "/userfiles/docs/" + datestring + "/" + attfn;
 
                     var attexist = false;
-                    foreach (var att in currentcard[0].AttachList)
+                    foreach (var att in allattach)
                     {
                         if (att.Contains(attfn))
                         {

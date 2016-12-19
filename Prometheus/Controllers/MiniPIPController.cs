@@ -57,6 +57,7 @@ namespace Domino.Controllers
 
         public ActionResult RefreshSys()
         {
+            DominoVM.SetForceECORefresh(this);
             DominoVM.RefreshECOList(this);
             return RedirectToAction("ViewAll", "MiniPIP");
         }
@@ -130,6 +131,11 @@ namespace Domino.Controllers
                 asilist.AddRange(ecoflows);
                 ViewBag.FlowInfoList = CreateSelectList(asilist, baseinfos[0].FlowInfo);
 
+                var pnimpls = new string[] { DominoPNImplement.NA, DominoPNImplement.Roll, DominoPNImplement.CutOverImm, DominoPNImplement.CutOverAft };
+                asilist = new List<string>();
+                asilist.AddRange(pnimpls);
+                ViewBag.PNImplementList= CreateSelectList(asilist, baseinfos[0].PNImplement);
+
                 foreach (var card in cardlist)
                 {
                     if (string.Compare(card.CardType, DominoCardType.ECOPending) == 0)
@@ -138,6 +144,24 @@ namespace Domino.Controllers
                         break;
                     }
                 }
+
+                DominoVM cardinfo = DominoVM.RetrieveECOPendingInfo(ViewBag.CurrentCard.Cardkey);
+                if (string.IsNullOrEmpty(cardinfo.MiniPIPHold))
+                {
+                    DominoVM.StoreECOPendingInfo(ViewBag.CurrentCard.Cardkey, DominoYESNO.NO);
+                }
+
+                DominoVM.UpdateECOWeeklyUpdate(this, baseinfos[0], CardKey);
+
+                cardinfo = DominoVM.RetrieveECOPendingInfo(ViewBag.CurrentCard.Cardkey);
+                ViewBag.CurrentCard.MiniPIPHold = cardinfo.MiniPIPHold;
+                ViewBag.CurrentCard.MiniPIPWeeklyUpdate = cardinfo.MiniPIPWeeklyUpdate;
+
+                
+                var pipholds = new string[] { DominoYESNO.YES,DominoYESNO.NO};
+                asilist = new List<string>();
+                asilist.AddRange(pipholds);
+                ViewBag.MiniPIPHoldList = CreateSelectList(asilist, cardinfo.MiniPIPHold);
 
                 ViewBag.ECOKey = ECOKey;
                 ViewBag.CardKey = CardKey;
@@ -288,8 +312,13 @@ namespace Domino.Controllers
                     baseinfos[0].MCOIssued = Request.Form["MCOIssued"];
                 }
 
+                baseinfos[0].PNImplement = Request.Form["PNImplementList"].ToString();
+
                 baseinfos[0].UpdateECO();
 
+                var ecohold = Request.Form["MiniPIPHoldList"].ToString();
+                DominoVM.UpdateECOPendingInfo(CardKey, ecohold);
+                
                 StoreAttachAndComment(CardKey, updater);
 
                 if (string.IsNullOrEmpty(baseinfos[0].ECONum))
@@ -300,7 +329,7 @@ namespace Domino.Controllers
                     return RedirectToAction(DominoCardType.ECOPending, "MiniPIP", dict);
                 }
 
-                DominoVM.UpdateCardStatus(ECOKey, CardKey, DominoCardStatus.done);
+                DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
 
                 var newcardkey = DominoVM.GetUniqKey();
 
@@ -378,6 +407,8 @@ namespace Domino.Controllers
                     }
                 }
 
+
+
                 ViewBag.ECOKey = ECOKey;
                 ViewBag.CardKey = CardKey;
                 ViewBag.CardDetailPage = DominoCardType.ECOSignoff1;
@@ -406,7 +437,7 @@ namespace Domino.Controllers
 
                 StoreAttachAndComment(CardKey, updater);
 
-                DominoVM.UpdateCardStatus(ECOKey, CardKey, DominoCardStatus.done);
+                DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
 
                 var newcardkey = DominoVM.GetUniqKey();
 
@@ -481,7 +512,7 @@ namespace Domino.Controllers
 
                 StoreAttachAndComment(CardKey, updater);
 
-                DominoVM.UpdateCardStatus(ECOKey, CardKey, DominoCardStatus.done);
+                DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
 
                 var newcardkey = DominoVM.GetUniqKey();
                 if (string.Compare(baseinfos[0].ECOType, DominoECOType.DVS) == 0
@@ -581,7 +612,7 @@ namespace Domino.Controllers
 
                 StoreAttachAndComment(CardKey, updater);
 
-                DominoVM.UpdateCardStatus(ECOKey, CardKey, DominoCardStatus.done);
+                DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
 
                 var newcardkey = DominoVM.GetUniqKey();
                 if (string.Compare(baseinfos[0].ECOType, DominoECOType.DVNS) == 0)
@@ -684,7 +715,7 @@ namespace Domino.Controllers
 
                 StoreAttachAndComment(CardKey, updater);
 
-                DominoVM.UpdateCardStatus(ECOKey, CardKey, DominoCardStatus.done);
+                DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
 
                 var newcardkey = DominoVM.GetUniqKey();
                 var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.CustomerApprovalHold, DominoCardStatus.pending);
@@ -759,7 +790,7 @@ namespace Domino.Controllers
 
                 StoreAttachAndComment(CardKey, updater);
 
-                DominoVM.UpdateCardStatus(ECOKey, CardKey, DominoCardStatus.done);
+                DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
 
                 var newcardkey = DominoVM.GetUniqKey();
 
@@ -852,7 +883,7 @@ namespace Domino.Controllers
             {
                 StoreAttachAndComment(CardKey, updater);
 
-                DominoVM.UpdateCardStatus(ECOKey, CardKey, DominoCardStatus.done);
+                DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
 
                 var newcardkey = DominoVM.GetUniqKey();
                 var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.SampleBuilding, DominoCardStatus.pending);
@@ -927,7 +958,7 @@ namespace Domino.Controllers
             {
                 StoreAttachAndComment(CardKey, updater);
 
-                DominoVM.UpdateCardStatus(ECOKey, CardKey, DominoCardStatus.done);
+                DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
 
                 var newcardkey = DominoVM.GetUniqKey();
                 var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.SampleShipment, DominoCardStatus.pending);
@@ -1001,7 +1032,7 @@ namespace Domino.Controllers
             {
                 StoreAttachAndComment(CardKey, updater);
 
-                DominoVM.UpdateCardStatus(ECOKey, CardKey, DominoCardStatus.done);
+                DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
 
                 var newcardkey = DominoVM.GetUniqKey();
                 var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.SampleCustomerApproval, DominoCardStatus.pending);
@@ -1074,7 +1105,7 @@ namespace Domino.Controllers
             {
                 StoreAttachAndComment(CardKey, updater);
 
-                DominoVM.UpdateCardStatus(ECOKey, CardKey, DominoCardStatus.done);
+                DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
 
                 var newcardkey = DominoVM.GetUniqKey();
 
@@ -1160,7 +1191,7 @@ namespace Domino.Controllers
                 StoreAttachAndComment(CardKey, updater);
                 if (!string.IsNullOrEmpty(baseinfos[0].MCOIssued))
                 {
-                    DominoVM.UpdateCardStatus(ECOKey, CardKey, DominoCardStatus.done);
+                    DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
                 }
             }
 
@@ -1168,6 +1199,17 @@ namespace Domino.Controllers
             dict.Add("ECOKey", ECOKey);
             dict.Add("CardKey", CardKey);
             return RedirectToAction(DominoCardType.MiniPIPComplete, "MiniPIP", dict);
+        }
+
+        public ActionResult DeleteCardAttachment(string CardKey, string FileName)
+        {
+            DominoVM.DeleteCardAttachment(CardKey, FileName);
+
+            var vm = DominoVM.RetrieveCard(CardKey);
+            var dict = new RouteValueDictionary();
+            dict.Add("ECOKey", vm[0].ECOkey);
+            dict.Add("CardKey", vm[0].Cardkey);
+            return RedirectToAction(vm[0].CardType, "MiniPIP", dict);
         }
 
     }

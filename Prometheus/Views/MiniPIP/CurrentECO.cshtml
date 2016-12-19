@@ -107,5 +107,11 @@
                         }
                     });
                 });
+
+                function DeleteCardAttachment(oBT) {
+                    if (confirm("Do you real want to delete this attachment?")) {
+                        window.location.href = '/MiniPIP/DeleteCardAttachment?CardKey=' + document.getElementById("CardKey").value + '&FileName=' + oBT.value
+                    }
+                }
 </script>
 

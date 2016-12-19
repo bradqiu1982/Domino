@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Web;
 using Excel = Microsoft.Office.Interop.Excel;
 
@@ -8,10 +9,11 @@ namespace Domino.Models
 {
     public class ExcelReader
     {
-        private static Excel.Workbook OpenBook(Excel.Application excelInstance, string fileName, bool readOnly, bool editable,
+        private static Excel.Workbook OpenBook(Excel.Workbooks books, string fileName, bool readOnly, bool editable,
 bool updateLinks)
         {
-            Excel.Workbook book = excelInstance.Workbooks.Open(
+            
+            Excel.Workbook book = books.Open(
                 fileName, updateLinks, readOnly,
                 Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing,
                 Type.Missing, editable, Type.Missing, Type.Missing, Type.Missing,
@@ -52,11 +54,16 @@ bool updateLinks)
             var data = new List<List<string>>();
             Excel.Application excel = null;
             Excel.Workbook wkb = null;
+            Excel.Workbooks books = null;
 
             try
             {
+                
                 excel = new Excel.Application();
-                wkb = OpenBook(excel, wholefn, true, false, false);
+                excel.DisplayAlerts = false;
+                books = excel.Workbooks;
+                wkb = OpenBook(books, wholefn, true, false, false);
+
                 Excel.Worksheet sheet = wkb.Sheets[sheetname] as Excel.Worksheet;
 
                 var excelRange = sheet.UsedRange;
@@ -85,8 +92,14 @@ bool updateLinks)
                     //}
                 }
 
+                
                 wkb.Close();
                 excel.Quit();
+
+                Marshal.ReleaseComObject(sheet);
+                Marshal.ReleaseComObject(wkb);
+                Marshal.ReleaseComObject(books);
+                Marshal.ReleaseComObject(excel);
 
                 return data;
             }
