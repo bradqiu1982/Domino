@@ -166,7 +166,8 @@ namespace Domino.Controllers
                 ViewBag.ECOKey = ECOKey;
                 ViewBag.CardKey = CardKey;
                 ViewBag.CardDetailPage = DominoCardType.ECOPending;
-                
+
+                GetNoticeInfo();
                 return View("CurrentECO", vm);
             }
 
@@ -262,6 +263,35 @@ namespace Domino.Controllers
 
         }
 
+
+        public void SetNoticeInfo(string noticinfo)
+        {
+            var dict = new Dictionary<string, string>();
+            dict.Add("DominoNoticeInfo", noticinfo);
+            CookieUtility.SetCookie(this, dict);
+        }
+
+        public void GetNoticeInfo()
+        {
+            var ckdict = CookieUtility.UnpackCookie(this);
+            if (ckdict.ContainsKey("DominoNoticeInfo"))
+            {
+                if (!string.IsNullOrEmpty(ckdict["DominoNoticeInfo"]))
+                {
+                    ViewBag.DominoNoticeInfo = ckdict["DominoNoticeInfo"];
+                    SetNoticeInfo(string.Empty);
+                }
+                else
+                {
+                    ViewBag.DominoNoticeInfo = null;
+                }
+            }
+            else
+            {
+                ViewBag.DominoNoticeInfo = null;
+            }
+        }
+
         [HttpPost, ActionName("ECOPending")]
         [ValidateAntiForgeryToken]
         public ActionResult ECOPendingPost()
@@ -326,6 +356,18 @@ namespace Domino.Controllers
                     var dict = new RouteValueDictionary();
                     dict.Add("ECOKey", ECOKey);
                     dict.Add("CardKey", CardKey);
+                    SetNoticeInfo("ECO Number is not ready");
+
+                    return RedirectToAction(DominoCardType.ECOPending, "MiniPIP", dict);
+                }
+
+                if (string.Compare(ecohold, DominoYESNO.YES) == 0)
+                {
+                    var dict = new RouteValueDictionary();
+                    dict.Add("ECOKey", ECOKey);
+                    dict.Add("CardKey", CardKey);
+                    SetNoticeInfo("ECO Status is on hold");
+
                     return RedirectToAction(DominoCardType.ECOPending, "MiniPIP", dict);
                 }
 
