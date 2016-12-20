@@ -60,6 +60,14 @@ namespace Domino.Models
         public static string NO = "NO";
     }
 
+    public class DominoFACategory
+    {
+        public static string EEPROMFA = "EEPROM FA";
+        public static string LABELFA = "LABEL FA";
+        public static string LABELEEPROMFA = "LABEL/EEPROM FA";
+    }
+
+
     public class ECOCardComments
     {
         public string CardKey { set; get; }
@@ -442,6 +450,30 @@ namespace Domino.Models
             MiniPIPWeeklyUpdate = string.Empty;
             MiniPIPHold = string.Empty;
             WeeklyUpdateTime = string.Empty;
+
+            QAEEPROMCheck = string.Empty;
+            QALabelCheck = string.Empty;
+
+            PeerReviewEngineer = string.Empty;
+            PeerReview = string.Empty;
+
+            ECOAttachmentCheck = string.Empty;
+            ECOQRFile = string.Empty;
+            EEPROMPeerReview = string.Empty;
+            ECOTraceview = string.Empty;
+            SpecCompresuite = string.Empty;
+
+            ECOTRApprover = string.Empty;
+            ECOMDApprover = string.Empty;
+
+            MiniPVTCheck = string.Empty;
+            AgileCodeFile = string.Empty;
+            AgileSpecFile = string.Empty;
+            AgileTestFile = string.Empty;
+
+            FACategory = string.Empty;
+            RSMSendDate = string.Empty;
+            RSMApproveDate = string.Empty;
         }
 
         public static void CleanDB()
@@ -745,7 +777,104 @@ namespace Domino.Models
         }
 
 
-        public static void UpdateECOWeeklyUpdate(Controller ctrl,ECOBaseInfo baseinfo,string cardkey)
+
+
+        public string QAEEPROMCheck { set; get; }
+        public string QALabelCheck { set; get; }
+
+        public string PeerReviewEngineer { set; get; }
+        public string PeerReview { set; get; }
+
+        public string ECOAttachmentCheck { set; get; }
+        public string ECOQRFile { set; get; }
+        public string EEPROMPeerReview { set; get; }
+        public string ECOTraceview { set; get; }
+        public string SpecCompresuite { set; get; }
+        
+        public string ECOTRApprover { set; get; }
+        public string ECOMDApprover { set; get; }
+
+        public string MiniPVTCheck { set; get; }
+        public string AgileCodeFile { set; get; }
+        public string AgileSpecFile { set; get; }
+        public string AgileTestFile { set; get; }
+        
+        public string FACategory { set; get; }
+        public string RSMSendDate { set; get; }
+        public string RSMApproveDate { set; get; }
+
+        public void UpdateSignoffInfo(string cardkey)
+        {
+            var infoexist = RetrieveSignoffInfo(cardkey);
+
+            if (string.IsNullOrEmpty(infoexist.Cardkey))
+            {
+                var csql = "insert into ECOCardContent(CardKey,APVal1) values('<CardKey>','<APVal1>')";
+                csql = csql.Replace("<CardKey>", cardkey).Replace("<APVal1>", string.Empty);
+                DBUtility.ExeLocalSqlNoRes(csql);
+            }
+
+            var sql = "Update ECOCardContent Set APVal1 = '<APVal1>',APVal2 = '<APVal2>',APVal3 = '<APVal3>',APVal4 = '<APVal4>',APVal5 = '<APVal5>',APVal6 = '<APVal6>'"
+                +",APVal7 = '<APVal7>',APVal8 = '<APVal8>',APVal9 = '<APVal9>',APVal10 = '<APVal10>',APVal11 = '<APVal11>',APVal12 = '<APVal12>',APVal13 = '<APVal13>'"
+                + ",APVal14 = '<APVal14>',APVal15 = '<APVal15>',APVal16 = '<APVal16>',APVal17 = '<APVal17>',APVal18 = '<APVal18>' where CardKey = '<CardKey>'";
+
+            sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal1>", QAEEPROMCheck).Replace("<APVal2>", QALabelCheck).Replace("<APVal3>", PeerReviewEngineer)
+                .Replace("<APVal4>", PeerReview).Replace("<APVal5>", ECOAttachmentCheck).Replace("<APVal6>", ECOQRFile).Replace("<APVal7>", EEPROMPeerReview)
+                .Replace("<APVal8>", ECOTraceview).Replace("<APVal9>", SpecCompresuite).Replace("<APVal10>", ECOTRApprover).Replace("<APVal11>", ECOMDApprover)
+                .Replace("<APVal12>", MiniPVTCheck).Replace("<APVal13>", AgileCodeFile).Replace("<APVal14>", AgileSpecFile).Replace("<APVal15>", AgileTestFile)
+                .Replace("<APVal16>", FACategory).Replace("<APVal17>", RSMSendDate).Replace("<APVal18>", RSMApproveDate);
+
+            DBUtility.ExeLocalSqlNoRes(sql);
+        }
+
+        public static DominoVM RetrieveSignoffInfo(string cardkey)
+        {
+            var ret = new DominoVM();
+            var sql = "select CardKey,APVal1,APVal2,APVal3,APVal4,APVal5,APVal6,APVal7,APVal8,APVal9,APVal10,APVal11,APVal12,APVal13,APVal14,APVal15,APVal16,APVal17,APVal18 from ECOCardContent where CardKey = '<CardKey>'";
+            sql = sql.Replace("<CardKey>", cardkey);
+            var dbret = DBUtility.ExeLocalSqlWithRes(sql);
+            if (dbret.Count > 0)
+            {
+                ret.Cardkey = Convert.ToString(dbret[0][0]);
+                ret.QAEEPROMCheck = Convert.ToString(dbret[0][1]);
+                ret.QALabelCheck = Convert.ToString(dbret[0][2]);
+                ret.PeerReviewEngineer = Convert.ToString(dbret[0][3]);
+                ret.PeerReview = Convert.ToString(dbret[0][4]);
+                ret.ECOAttachmentCheck = Convert.ToString(dbret[0][5]);
+                ret.ECOQRFile = Convert.ToString(dbret[0][6]);
+                ret.EEPROMPeerReview = Convert.ToString(dbret[0][7]);
+                ret.ECOTraceview = Convert.ToString(dbret[0][8]);
+                ret.SpecCompresuite = Convert.ToString(dbret[0][9]);
+                ret.ECOTRApprover = Convert.ToString(dbret[0][10]);
+                ret.ECOMDApprover = Convert.ToString(dbret[0][11]);
+                ret.MiniPVTCheck = Convert.ToString(dbret[0][12]);
+                ret.AgileCodeFile = Convert.ToString(dbret[0][13]);
+                ret.AgileSpecFile = Convert.ToString(dbret[0][14]);
+                ret.AgileTestFile = Convert.ToString(dbret[0][15]);
+                ret.FACategory = Convert.ToString(dbret[0][16]);
+                ret.RSMSendDate = Convert.ToString(dbret[0][17]);
+                ret.RSMApproveDate = Convert.ToString(dbret[0][18]);
+            }
+            return ret;
+        }
+
+
+        private static Dictionary<string, string> GetSysConfig(Controller ctrl)
+        {
+            var lines = System.IO.File.ReadAllLines(ctrl.Server.MapPath("~/Scripts/DominoCfg.txt"));
+            var ret = new Dictionary<string, string>();
+            foreach (var line in lines)
+            {
+                if (line.Contains(":::"))
+                {
+                    var kvpair = line.Split(new string[] { ":::" }, StringSplitOptions.RemoveEmptyEntries);
+                    ret.Add(kvpair[0].Trim(), kvpair[1].Trim());
+                }
+            }
+            return ret;
+        }
+
+        public static void UpdateECOWeeklyUpdate(Controller ctrl, ECOBaseInfo baseinfo, string cardkey)
         {
             var syscfgdict = GetSysConfig(ctrl);
 
@@ -779,8 +908,8 @@ namespace Domino.Models
                         try
                         {
                             var fn = imgdir + Path.GetFileName(fd);
-                            System.IO.File.Copy(fd, fn,true);
-                            var data = ExcelReader.RetrieveDataFromExcel(fn,sheetname);
+                            System.IO.File.Copy(fd, fn, true);
+                            var data = ExcelReader.RetrieveDataFromExcel(fn, sheetname);
                             foreach (var line in data)
                             {
                                 if (string.Compare(line[2], baseinfo.PNDesc, true) == 0
@@ -793,48 +922,11 @@ namespace Domino.Models
                             }//end foreach
                         }
                         catch (Exception ex) { }
-                   }//end foreach
+                    }//end foreach
                 }
             }
             catch (Exception ex) { }
 
-        }
-
-        public string QAEEPROMChecked { set; get; }
-        public string QALabelChecked { set; get; }
-        public string PeerReviewEngineer { set; get; }
-        public string PeerReviewed { set; get; }
-        public string ECOTRApprover { set; get; }
-        public string ECOTRApproved { set; get; }
-        public string FACategory { set; get; }
-        public string RSMSendDate { set; get; }
-        public string RSMApproveDate { set; get; }
-
-        public static void StoreSignoffInfo()
-        {
-
-        }
-
-        public static DominoVM RetrieveSignoffInfo()
-        {
-            var ret = new DominoVM();
-            return ret;
-        }
-
-
-        private static Dictionary<string, string> GetSysConfig(Controller ctrl)
-        {
-            var lines = System.IO.File.ReadAllLines(ctrl.Server.MapPath("~/Scripts/DominoCfg.txt"));
-            var ret = new Dictionary<string, string>();
-            foreach (var line in lines)
-            {
-                if (line.Contains(":::"))
-                {
-                    var kvpair = line.Split(new string[] { ":::" }, StringSplitOptions.RemoveEmptyEntries);
-                    ret.Add(kvpair[0].Trim(), kvpair[1].Trim());
-                }
-            }
-            return ret;
         }
 
         private static string ConvertToDate(string datestr)

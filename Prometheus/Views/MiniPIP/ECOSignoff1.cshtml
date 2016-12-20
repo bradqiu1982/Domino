@@ -20,68 +20,196 @@
 
             <div class="form-group">
                 <div class="row col-lg-6">
-                    <label class="control-label col-lg-2">QA EEPROM Checked</label>
+                    <label class="control-label col-lg-2">QA EEPROM Check</label>
                     <div class="col-lg-10">
-                        
+                        @Html.DropDownList("QAEEPROMCheckList", null, new { @id = "QAEEPROMCheckList", @class = "form-control" })
                     </div>
                 </div>
                 <div class="row col-lg-6">
-                    <label class="control-label col-lg-2">QA Label Checked</label>
+                    <label class="control-label col-lg-2">QA Label Check</label>
                     <div class="col-lg-10">
-                        
+                        @Html.DropDownList("QALabelCheckList", null, new { @id = "QALabelCheckList", @class = "form-control" })
                     </div>
                 </div>
             </div>
-
+            <hr/>
             <div class="form-group">
                 <div class="row col-lg-6">
                     <label class="control-label col-lg-2">Peer Review Engineer</label>
                     <div class="col-lg-10">
-
+                        @Html.DropDownList("PeerReviewEngineerList", null, new { @id = "PeerReviewEngineerList", @class = "form-control" })
                     </div>
                 </div>
                 <div class="row col-lg-6">
-                    <label class="control-label col-lg-2">Peer Review Done</label>
+                    <label class="control-label col-lg-2">Peer Reviewed</label>
                     <div class="col-lg-10">
-
+                        @Html.DropDownList("PeerReviewList", null, new { @id = "PeerReviewList", @class = "form-control" })
                     </div>
+                </div>
+            </div>
+            <hr/>
+            <div class="form-group">
+                <div class="row col-lg-6">
+                    <label class="control-label col-lg-2">ECO Attachment Check</label>
+                    <div class="col-lg-10">
+                        @Html.DropDownList("ECOAttachmentCheckList", null, new { @id = "ECOAttachmentCheckList", @class = "form-control" })
+                    </div>
+                </div>
+                <div class="row col-lg-6">
                 </div>
             </div>
 
             <div class="form-group">
-                <div class="row col-lg-6">
-                    <label class="control-label col-lg-2">ECO TR/MD Approver</label>
-                    <div class="col-lg-10">
-
-                    </div>
+                <div class="row col-lg-12">
+                    <label class="control-label col-lg-1 text-left">ECO QR File</label>
+                    @if (!string.IsNullOrEmpty(ViewBag.CurrentCard.ECOQRFile))
+                    {
+                        var fns = ViewBag.CurrentCard.ECOQRFile.Split(new char[] { '/' });
+                        var fn = fns[fns.Length - 1];
+                        <div class="col-lg-11 text-left">
+                            <a href="@ViewBag.CurrentCard.ECOQRFile" target="_blank">@fn</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <label class="control-label col-lg-11 text-left"></label>
+                    }
                 </div>
+            </div>
+            <div class="form-group">
+                <div class="row col-lg-12">
+                    <label class="control-label col-lg-1 text-left">EEPROM Peer Review</label>
+                    @if (!string.IsNullOrEmpty(ViewBag.CurrentCard.EEPROMPeerReview))
+                    {
+                        var fns = ViewBag.CurrentCard.EEPROMPeerReview.Split(new char[] { '/' });
+                        var fn = fns[fns.Length - 1];
+                        <div class="col-lg-11 text-left">
+                            <a href="@ViewBag.CurrentCard.EEPROMPeerReview" target="_blank">@fn</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <label class="control-label col-lg-11 text-left"></label>
+                    }
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row col-lg-12">
+                    <label class="control-label col-lg-1 text-left">ECO Traceview</label>
+                    @if (!string.IsNullOrEmpty(ViewBag.CurrentCard.ECOTraceview))
+                    {
+                        var fns = ViewBag.CurrentCard.ECOTraceview.Split(new char[] { '/' });
+                        var fn = fns[fns.Length - 1];
+                        <div class="col-lg-11 text-left">
+                            <a href="@ViewBag.CurrentCard.ECOTraceview" target="_blank">@fn</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <label class="control-label col-lg-11 text-left"></label>
+                    }
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row col-lg-12">
+                    <label class="control-label col-lg-1 text-left">Spec Compresuite</label>
+                    @if (!string.IsNullOrEmpty(ViewBag.CurrentCard.SpecCompresuite))
+                    {
+                        var fns = ViewBag.CurrentCard.SpecCompresuite.Split(new char[] { '/' });
+                        var fn = fns[fns.Length - 1];
+                        <div class="col-lg-11 text-left">
+                            <a href="@ViewBag.CurrentCard.SpecCompresuite" target="_blank">@fn</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <label class="control-label col-lg-11 text-left"></label>
+                    }
+                </div>
+            </div>
 
-                <div class="row col-lg-6">
-                    <label class="control-label col-lg-2">ECO TR/MD Approved</label>
-                    <div class="col-lg-10">
+            <hr/>
 
+            <div class="form-group">
+                <div class="row col-lg-12">
+                    <label class="control-label col-lg-1">ECO TR Approver</label>
+                    <div class="col-lg-11">
+                        <textarea class="form-control col-md-12" id="ECOTRApprover" name="ECOTRApprover"  style="height:36px;min-width:800px;">@(ViewBag.CurrentCard.ECOTRApprover)</textarea>
                     </div>
                 </div>
             </div>
 
             <div class="form-group">
                 <div class="row col-lg-12">
-                    <label class="control-label col-lg-1">Code File:</label>
-                    <label class="control-label col-lg-11"></label>
+                    <label class="control-label col-lg-1">ECO MD Approver</label>
+                    <div class="col-lg-11">
+                        <textarea class="form-control col-md-12" id="ECOMDApprover" name="ECOMDApprover" style="height:36px;min-width:800px;">@(ViewBag.CurrentCard.ECOMDApprover)</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <hr/>
+
+            <div class="form-group">
+                <div class="row col-lg-6">
+                    <label class="control-label col-lg-2">Mini PVT Check</label>
+                    <div class="col-lg-10">
+                        @Html.DropDownList("MiniPVTCheckList", null, new { @id = "MiniPVTCheckList", @class = "form-control" })
+                    </div>
+                </div>
+                <div class="row col-lg-6">
                 </div>
             </div>
 
             <div class="form-group">
                 <div class="row col-lg-12">
-                    <label class="control-label col-lg-1">Spec File:</label>
-                    <label class="control-label col-lg-11"></label>
+                    <label class="control-label col-lg-1 text-left">Agile Code File</label>
+                    @if (!string.IsNullOrEmpty(ViewBag.CurrentCard.AgileCodeFile))
+                    {
+                        var fns = ViewBag.CurrentCard.AgileCodeFile.Split(new char[] { '/' });
+                        var fn = fns[fns.Length - 1];
+                        <div class="col-lg-11 text-left">
+                            <a href="@ViewBag.CurrentCard.AgileCodeFile" target="_blank">@fn</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <label class="control-label col-lg-11 text-left"></label>
+                    }
                 </div>
             </div>
-
             <div class="form-group">
                 <div class="row col-lg-12">
-                    <label class="control-label col-lg-1">Testing File:</label>
-                    <label class="control-label col-lg-11"></label>
+                    <label class="control-label col-lg-1 text-left">Agile Spec File</label>
+                    @if (!string.IsNullOrEmpty(ViewBag.CurrentCard.AgileSpecFile))
+                    {
+                        var fns = ViewBag.CurrentCard.AgileSpecFile.Split(new char[] { '/' });
+                        var fn = fns[fns.Length - 1];
+                        <div class="col-lg-11 text-left">
+                            <a href="@ViewBag.CurrentCard.AgileSpecFile" target="_blank">@fn</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <label class="control-label col-lg-11 text-left"></label>
+                    }
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row col-lg-12">
+                    <label class="control-label col-lg-1 text-left">Agile Testing File</label>
+                    @if (!string.IsNullOrEmpty(ViewBag.CurrentCard.AgileTestFile))
+                    {
+                        var fns = ViewBag.CurrentCard.AgileTestFile.Split(new char[] { '/' });
+                        var fn = fns[fns.Length - 1];
+                        <div class="col-lg-11 text-left">
+                            <a href="@ViewBag.CurrentCard.AgileTestFile" target="_blank">@fn</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <label class="control-label col-lg-11 text-left"></label>
+                    }
                 </div>
             </div>
 
@@ -94,24 +222,51 @@
                 </div>
             </div>
 
+            <hr/>
+            
+            <div class="form-group">
+                <div class="row col-lg-6">
+                    <label class="control-label col-lg-2">FA Category</label>
+                    <div class="col-lg-10">
+                        @Html.DropDownList("FACategoryList", null, new { @id = "FACategoryList", @class = "form-control" })
+                    </div>
+                </div>
+                <div class="row col-lg-6">
+                </div>
+            </div>
+
             <div class="form-group">
                 <div class="row col-lg-6">
                     <label class="control-label col-lg-2">RSM Send Date</label>
                     <div class="col-lg-10">
-
+                        <input class="form-control text-box single-line" id="RSMSendDate" name="RSMSendDate" type="text" value="@ViewBag.CurrentCard.RSMSendDate" />
                     </div>
                 </div>
 
                 <div class="row col-lg-6">
                     <label class="control-label col-lg-2">RSM Approve Date</label>
                     <div class="col-lg-10">
-
+                        <input class="form-control text-box single-line" id="RSMApproveDate" name="RSMApproveDate" type="text" value="@ViewBag.CurrentCard.RSMApproveDate" />
                     </div>
                 </div>
-
+                <script type="text/javascript">
+                    $(document).ready(function () {
+                        $("#RSMSendDate").datepicker({
+                            changeMonth: true,
+                            changeYear: true,
+                            dateFormat: 'yy-mm-dd'
+                        });
+                        $("#RSMApproveDate").datepicker({
+                            changeMonth: true,
+                            changeYear: true,
+                            dateFormat: 'yy-mm-dd'
+                        });
+                    });
+                </script>
             </div>
 
             <hr />
+
             <div class="form-group">
                 <div class="col-lg-12">
                     <div class="col-lg-4">
@@ -132,6 +287,103 @@
                                 function ShowFileNames3(oFile) {
                                     $('#showfile3').text(oFile.value);
                                     document.getElementById("attachmentupload").value = oFile.value;
+                                }
+                </script>
+            </div>
+
+
+            <div class="form-group">
+                <div class="col-lg-12">
+                    <div class="col-lg-4">
+                        <span class="btn btn-default btn-file" id="choosefile4">
+                            QR File <input type="file" name="file4" id="file4" runat="server" onchange="ShowFileNames4(this)" />
+                        </span>
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="col-lg-11">
+                            <label class="control-label" id="showfile4" name="showfile4"></label>
+                        </div>
+                        <div class="col-lg-1">
+                            <input class="form-control text-box single-line" value="" id="qrfileupload" name="qrfileupload" type="hidden" />
+                        </div>
+                    </div>
+                </div>
+                <script type="text/javascript">
+                                function ShowFileNames4(oFile) {
+                                    $('#showfile4').text(oFile.value);
+                                    document.getElementById("qrfileupload").value = oFile.value;
+                                }
+                </script>
+            </div>
+
+            <div class="form-group">
+                <div class="col-lg-12">
+                    <div class="col-lg-4">
+                        <span class="btn btn-default btn-file" id="choosefile5">
+                            Peer Review File <input type="file" name="file5" id="file5" runat="server" onchange="ShowFileNames5(this)" />
+                        </span>
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="col-lg-11">
+                            <label class="control-label" id="showfile5" name="showfile5"></label>
+                        </div>
+                        <div class="col-lg-1">
+                            <input class="form-control text-box single-line" value="" id="peerfileupload" name="peerfileupload" type="hidden" />
+                        </div>
+                    </div>
+                </div>
+                <script type="text/javascript">
+                                function ShowFileNames5(oFile) {
+                                    $('#showfile5').text(oFile.value);
+                                    document.getElementById("peerfileupload").value = oFile.value;
+                                }
+                </script>
+            </div>
+
+            <div class="form-group">
+                <div class="col-lg-12">
+                    <div class="col-lg-4">
+                        <span class="btn btn-default btn-file" id="choosefile6">
+                            Traceview File <input type="file" name="file6" id="file6" runat="server" onchange="ShowFileNames6(this)" />
+                        </span>
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="col-lg-11">
+                            <label class="control-label" id="showfile6" name="showfile6"></label>
+                        </div>
+                        <div class="col-lg-1">
+                            <input class="form-control text-box single-line" value="" id="traceviewfileupload" name="traceviewfileupload" type="hidden" />
+                        </div>
+                    </div>
+                </div>
+                <script type="text/javascript">
+                                function ShowFileNames6(oFile) {
+                                    $('#showfile6').text(oFile.value);
+                                    document.getElementById("traceviewfileupload").value = oFile.value;
+                                }
+                </script>
+            </div>
+
+            <div class="form-group">
+                <div class="col-lg-12">
+                    <div class="col-lg-4">
+                        <span class="btn btn-default btn-file" id="choosefile7">
+                            Spec comapresuite File <input type="file" name="file7" id="file7" runat="server" onchange="ShowFileNames7(this)" />
+                        </span>
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="col-lg-11">
+                            <label class="control-label" id="showfile7" name="showfile7"></label>
+                        </div>
+                        <div class="col-lg-1">
+                            <input class="form-control text-box single-line" value="" id="speccomfileupload" name="speccomfileupload" type="hidden" />
+                        </div>
+                    </div>
+                </div>
+                <script type="text/javascript">
+                                function ShowFileNames7(oFile) {
+                                    $('#showfile7').text(oFile.value);
+                                    document.getElementById("speccomfileupload").value = oFile.value;
                                 }
                 </script>
             </div>

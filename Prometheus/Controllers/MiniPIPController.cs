@@ -146,7 +146,7 @@ namespace Domino.Controllers
                 }
 
                 DominoVM cardinfo = DominoVM.RetrieveECOPendingInfo(ViewBag.CurrentCard.Cardkey);
-                if (string.IsNullOrEmpty(cardinfo.MiniPIPHold))
+                if (string.IsNullOrEmpty(cardinfo.Cardkey))
                 {
                     DominoVM.StoreECOPendingInfo(ViewBag.CurrentCard.Cardkey, DominoYESNO.NO);
                 }
@@ -158,7 +158,7 @@ namespace Domino.Controllers
                 ViewBag.CurrentCard.MiniPIPWeeklyUpdate = cardinfo.MiniPIPWeeklyUpdate;
 
                 
-                var pipholds = new string[] { DominoYESNO.YES,DominoYESNO.NO};
+                var pipholds = new string[] { DominoYESNO.NO,DominoYESNO.YES};
                 asilist = new List<string>();
                 asilist.AddRange(pipholds);
                 ViewBag.MiniPIPHoldList = CreateSelectList(asilist, cardinfo.MiniPIPHold);
@@ -228,11 +228,12 @@ namespace Domino.Controllers
             return ret;
         }
 
-        private void StoreAttachAndComment(string CardKey,string updater)
+        private void StoreAttachAndComment(string CardKey,string updater,DominoVM cardinfo=null)
         {
+            var urls = ReceiveRMAFiles();
+
             if (!string.IsNullOrEmpty(Request.Form["attachmentupload"]))
             {
-                var urls = ReceiveRMAFiles();
                 var internalreportfile = Request.Form["attachmentupload"];
                 var originalname = Path.GetFileNameWithoutExtension(internalreportfile)
                     .Replace(" ", "_").Replace("#", "")
@@ -253,6 +254,169 @@ namespace Domino.Controllers
                     DominoVM.StoreCardAttachment(CardKey, url);
                 }
             }
+
+            if (cardinfo != null)
+            {
+                if (!string.IsNullOrEmpty(Request.Form["qrfileupload"]))
+                {
+                    var internalreportfile = Request.Form["qrfileupload"];
+                    var originalname = Path.GetFileNameWithoutExtension(internalreportfile)
+                        .Replace(" ", "_").Replace("#", "")
+                        .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
+
+                    var url = "";
+                    foreach (var r in urls)
+                    {
+                        if (r.Contains(originalname))
+                        {
+                            url = r;
+                            break;
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(url))
+                    {
+                        cardinfo.ECOQRFile = url;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(Request.Form["peerfileupload"]))
+                {
+                    var internalreportfile = Request.Form["peerfileupload"];
+                    var originalname = Path.GetFileNameWithoutExtension(internalreportfile)
+                        .Replace(" ", "_").Replace("#", "")
+                        .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
+
+                    var url = "";
+                    foreach (var r in urls)
+                    {
+                        if (r.Contains(originalname))
+                        {
+                            url = r;
+                            break;
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(url))
+                    {
+                        cardinfo.EEPROMPeerReview = url;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(Request.Form["traceviewfileupload"]))
+                {
+                    var internalreportfile = Request.Form["traceviewfileupload"];
+                    var originalname = Path.GetFileNameWithoutExtension(internalreportfile)
+                        .Replace(" ", "_").Replace("#", "")
+                        .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
+
+                    var url = "";
+                    foreach (var r in urls)
+                    {
+                        if (r.Contains(originalname))
+                        {
+                            url = r;
+                            break;
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(url))
+                    {
+                        cardinfo.ECOTraceview = url;
+                    }
+                }
+                if (!string.IsNullOrEmpty(Request.Form["speccomfileupload"]))
+                {
+                    var internalreportfile = Request.Form["speccomfileupload"];
+                    var originalname = Path.GetFileNameWithoutExtension(internalreportfile)
+                        .Replace(" ", "_").Replace("#", "")
+                        .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
+
+                    var url = "";
+                    foreach (var r in urls)
+                    {
+                        if (r.Contains(originalname))
+                        {
+                            url = r;
+                            break;
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(url))
+                    {
+                        cardinfo.SpecCompresuite = url;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(Request.Form["codefileupload"]))
+                {
+                    var internalreportfile = Request.Form["codefileupload"];
+                    var originalname = Path.GetFileNameWithoutExtension(internalreportfile)
+                        .Replace(" ", "_").Replace("#", "")
+                        .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
+
+                    var url = "";
+                    foreach (var r in urls)
+                    {
+                        if (r.Contains(originalname))
+                        {
+                            url = r;
+                            break;
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(url))
+                    {
+                        cardinfo.AgileCodeFile = url;
+                    }
+                }
+                if (!string.IsNullOrEmpty(Request.Form["specfileupload"]))
+                {
+                    var internalreportfile = Request.Form["specfileupload"];
+                    var originalname = Path.GetFileNameWithoutExtension(internalreportfile)
+                        .Replace(" ", "_").Replace("#", "")
+                        .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
+
+                    var url = "";
+                    foreach (var r in urls)
+                    {
+                        if (r.Contains(originalname))
+                        {
+                            url = r;
+                            break;
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(url))
+                    {
+                        cardinfo.AgileSpecFile = url;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(Request.Form["testingfileupload"]))
+                {
+                    var internalreportfile = Request.Form["testingfileupload"];
+                    var originalname = Path.GetFileNameWithoutExtension(internalreportfile)
+                        .Replace(" ", "_").Replace("#", "")
+                        .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
+
+                    var url = "";
+                    foreach (var r in urls)
+                    {
+                        if (r.Contains(originalname))
+                        {
+                            url = r;
+                            break;
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(url))
+                    {
+                        cardinfo.AgileTestFile = url;
+                    }
+                }
+            }
+
 
             if (!string.IsNullOrEmpty(Request.Form["commenteditor"]))
             {
@@ -435,7 +599,7 @@ namespace Domino.Controllers
                         DominoVM.RefreshQAFAI(baseinfos[0], CardKey, this);
                     }//if card is not finished,we refresh qa folder to get files
                 }
-
+                
                 var vm = new List<List<DominoVM>>();
                 var cardlist = DominoVM.RetrieveECOCards(baseinfos[0]);
                 vm.Add(cardlist);
@@ -449,12 +613,82 @@ namespace Domino.Controllers
                     }
                 }
 
+                DominoVM cardinfo = DominoVM.RetrieveSignoffInfo(ViewBag.CurrentCard.Cardkey);
+                ViewBag.CurrentCard.QAEEPROMCheck = cardinfo.QAEEPROMCheck;
+                ViewBag.CurrentCard.QALabelCheck = cardinfo.QALabelCheck;
+                ViewBag.CurrentCard.PeerReviewEngineer = cardinfo.PeerReviewEngineer;
+                ViewBag.CurrentCard.PeerReview = cardinfo.PeerReview;
+                ViewBag.CurrentCard.ECOAttachmentCheck = cardinfo.ECOAttachmentCheck;
+                ViewBag.CurrentCard.ECOQRFile = cardinfo.ECOQRFile;
+                ViewBag.CurrentCard.EEPROMPeerReview = cardinfo.EEPROMPeerReview;
+                ViewBag.CurrentCard.ECOTraceview = cardinfo.ECOTraceview;
+                ViewBag.CurrentCard.SpecCompresuite = cardinfo.SpecCompresuite;
+                ViewBag.CurrentCard.ECOTRApprover = cardinfo.ECOTRApprover;
+                ViewBag.CurrentCard.ECOMDApprover = cardinfo.ECOMDApprover;
+                ViewBag.CurrentCard.MiniPVTCheck = cardinfo.MiniPVTCheck;
+                ViewBag.CurrentCard.AgileCodeFile = cardinfo.AgileCodeFile;
+                ViewBag.CurrentCard.AgileSpecFile = cardinfo.AgileSpecFile;
+                ViewBag.CurrentCard.AgileTestFile = cardinfo.AgileTestFile;
+                ViewBag.CurrentCard.FACategory = cardinfo.FACategory;
+                ViewBag.CurrentCard.RSMSendDate = cardinfo.RSMSendDate;
+                ViewBag.CurrentCard.RSMApproveDate = cardinfo.RSMApproveDate;
 
+                if (!string.IsNullOrEmpty(cardinfo.RSMSendDate))
+                {
+                    try
+                    {
+                        ViewBag.CurrentCard.RSMSendDate = DateTime.Parse(cardinfo.RSMSendDate).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex) { }
+                }
+
+                if (!string.IsNullOrEmpty(cardinfo.RSMApproveDate))
+                {
+                    try
+                    {
+                        ViewBag.CurrentCard.RSMApproveDate = DateTime.Parse(cardinfo.RSMApproveDate).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex) { }
+                }
+
+                var yesno = new string[] { DominoYESNO.NO, DominoYESNO.YES };
+
+                var asilist = new List<string>();
+                asilist.AddRange(yesno);
+                ViewBag.QAEEPROMCheckList = CreateSelectList(asilist, cardinfo.QAEEPROMCheck);
+              
+                asilist = new List<string>();
+                asilist.AddRange(yesno);
+                ViewBag.QALabelCheckList = CreateSelectList(asilist, cardinfo.QALabelCheck);
+
+                var alluser = UserViewModels.RetrieveAllUser();
+                asilist = new List<string>();
+                asilist.Add("NONE");
+                asilist.AddRange(alluser);
+                ViewBag.PeerReviewEngineerList = CreateSelectList(asilist, cardinfo.PeerReviewEngineer);
+
+                asilist = new List<string>();
+                asilist.AddRange(yesno);
+                ViewBag.PeerReviewList = CreateSelectList(asilist, cardinfo.PeerReview);
+
+                asilist = new List<string>();
+                asilist.AddRange(yesno);
+                ViewBag.ECOAttachmentCheckList = CreateSelectList(asilist, cardinfo.ECOAttachmentCheck);
+
+                asilist = new List<string>();
+                asilist.AddRange(yesno);
+                ViewBag.MiniPVTCheckList = CreateSelectList(asilist, cardinfo.MiniPVTCheck);
+
+                var facats = new string[] { DominoFACategory.EEPROMFA, DominoFACategory.LABELFA, DominoFACategory.LABELEEPROMFA };
+                asilist = new List<string>();
+                asilist.AddRange(facats);
+                ViewBag.FACategoryList = CreateSelectList(asilist, cardinfo.FACategory);
 
                 ViewBag.ECOKey = ECOKey;
                 ViewBag.CardKey = CardKey;
                 ViewBag.CardDetailPage = DominoCardType.ECOSignoff1;
 
+                GetNoticeInfo();
                 return View("CurrentECO", vm);
             }
 
@@ -469,15 +703,68 @@ namespace Domino.Controllers
             var ckdict = CookieUtility.UnpackCookie(this);
             var updater = ckdict["logonuser"].Split(new char[] { '|' })[0];
 
-
             var ECOKey = Request.Form["ECOKey"];
             var CardKey = Request.Form["CardKey"];
 
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
             if (baseinfos.Count > 0)
             {
+                
 
-                StoreAttachAndComment(CardKey, updater);
+                var cardinfo = DominoVM.RetrieveCard(CardKey);
+
+                cardinfo[0].QAEEPROMCheck = Request.Form["QAEEPROMCheckList"].ToString();
+                cardinfo[0].QALabelCheck = Request.Form["QALabelCheckList"].ToString();
+                cardinfo[0].PeerReviewEngineer = Request.Form["PeerReviewEngineerList"].ToString();
+                cardinfo[0].PeerReview = Request.Form["PeerReviewList"].ToString();
+                cardinfo[0].ECOAttachmentCheck = Request.Form["ECOAttachmentCheckList"].ToString();
+                cardinfo[0].MiniPVTCheck = Request.Form["MiniPVTCheckList"].ToString();
+                cardinfo[0].FACategory = Request.Form["FACategoryList"].ToString();
+
+                cardinfo[0].ECOTRApprover = Request.Form["ECOTRApprover"];
+                cardinfo[0].ECOMDApprover = Request.Form["ECOMDApprover"];
+
+                cardinfo[0].RSMSendDate = Request.Form["RSMSendDate"];
+                cardinfo[0].RSMApproveDate = Request.Form["RSMApproveDate"];
+
+                StoreAttachAndComment(CardKey, updater, cardinfo[0]);
+
+                cardinfo[0].UpdateSignoffInfo(CardKey);
+
+                var allchecked = true;
+                if (string.Compare(cardinfo[0].QAEEPROMCheck, DominoYESNO.NO) == 0)
+                {
+                    SetNoticeInfo("QA EEPROM is not checked");
+                    allchecked = false;
+                }
+                else if (string.Compare(cardinfo[0].QALabelCheck, DominoYESNO.NO) == 0)
+                {
+                    SetNoticeInfo("QA Label is not checked");
+                    allchecked = false;
+                }
+                else if (string.Compare(cardinfo[0].PeerReview, DominoYESNO.NO) == 0)
+                {
+                    SetNoticeInfo("Peer Review is not finish");
+                    allchecked = false;
+                }
+                else if (string.Compare(cardinfo[0].ECOAttachmentCheck, DominoYESNO.NO) == 0)
+                {
+                    SetNoticeInfo("ECO Attachement is not checked");
+                    allchecked = false;
+                }
+                else if (string.Compare(cardinfo[0].MiniPVTCheck, DominoYESNO.NO) == 0)
+                {
+                    SetNoticeInfo("Mini PVT is not checked");
+                    allchecked = false;
+                }
+
+                if (!allchecked)
+                {
+                    var dict1 = new RouteValueDictionary();
+                    dict1.Add("ECOKey", ECOKey);
+                    dict1.Add("CardKey", CardKey);
+                    return RedirectToAction(DominoCardType.ECOSignoff1, "MiniPIP", dict1);
+                }
 
                 DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
 
@@ -730,10 +1017,82 @@ namespace Domino.Controllers
                     }
                 }
 
+                DominoVM cardinfo = DominoVM.RetrieveSignoffInfo(ViewBag.CurrentCard.Cardkey);
+                ViewBag.CurrentCard.QAEEPROMCheck = cardinfo.QAEEPROMCheck;
+                ViewBag.CurrentCard.QALabelCheck = cardinfo.QALabelCheck;
+                ViewBag.CurrentCard.PeerReviewEngineer = cardinfo.PeerReviewEngineer;
+                ViewBag.CurrentCard.PeerReview = cardinfo.PeerReview;
+                ViewBag.CurrentCard.ECOAttachmentCheck = cardinfo.ECOAttachmentCheck;
+                ViewBag.CurrentCard.ECOQRFile = cardinfo.ECOQRFile;
+                ViewBag.CurrentCard.EEPROMPeerReview = cardinfo.EEPROMPeerReview;
+                ViewBag.CurrentCard.ECOTraceview = cardinfo.ECOTraceview;
+                ViewBag.CurrentCard.SpecCompresuite = cardinfo.SpecCompresuite;
+                ViewBag.CurrentCard.ECOTRApprover = cardinfo.ECOTRApprover;
+                ViewBag.CurrentCard.ECOMDApprover = cardinfo.ECOMDApprover;
+                ViewBag.CurrentCard.MiniPVTCheck = cardinfo.MiniPVTCheck;
+                ViewBag.CurrentCard.AgileCodeFile = cardinfo.AgileCodeFile;
+                ViewBag.CurrentCard.AgileSpecFile = cardinfo.AgileSpecFile;
+                ViewBag.CurrentCard.AgileTestFile = cardinfo.AgileTestFile;
+                ViewBag.CurrentCard.FACategory = cardinfo.FACategory;
+                ViewBag.CurrentCard.RSMSendDate = cardinfo.RSMSendDate;
+                ViewBag.CurrentCard.RSMApproveDate = cardinfo.RSMApproveDate;
+
+                if (!string.IsNullOrEmpty(cardinfo.RSMSendDate))
+                {
+                    try
+                    {
+                        ViewBag.CurrentCard.RSMSendDate = DateTime.Parse(cardinfo.RSMSendDate).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex) { }
+                }
+
+                if (!string.IsNullOrEmpty(cardinfo.RSMApproveDate))
+                {
+                    try
+                    {
+                        ViewBag.CurrentCard.RSMApproveDate = DateTime.Parse(cardinfo.RSMApproveDate).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex) { }
+                }
+
+                var yesno = new string[] { DominoYESNO.NO, DominoYESNO.YES };
+
+                var asilist = new List<string>();
+                asilist.AddRange(yesno);
+                ViewBag.QAEEPROMCheckList = CreateSelectList(asilist, cardinfo.QAEEPROMCheck);
+
+                asilist = new List<string>();
+                asilist.AddRange(yesno);
+                ViewBag.QALabelCheckList = CreateSelectList(asilist, cardinfo.QALabelCheck);
+
+                var alluser = UserViewModels.RetrieveAllUser();
+                asilist = new List<string>();
+                asilist.Add("NONE");
+                asilist.AddRange(alluser);
+                ViewBag.PeerReviewEngineerList = CreateSelectList(asilist, cardinfo.PeerReviewEngineer);
+
+                asilist = new List<string>();
+                asilist.AddRange(yesno);
+                ViewBag.PeerReviewList = CreateSelectList(asilist, cardinfo.PeerReview);
+
+                asilist = new List<string>();
+                asilist.AddRange(yesno);
+                ViewBag.ECOAttachmentCheckList = CreateSelectList(asilist, cardinfo.ECOAttachmentCheck);
+
+                asilist = new List<string>();
+                asilist.AddRange(yesno);
+                ViewBag.MiniPVTCheckList = CreateSelectList(asilist, cardinfo.MiniPVTCheck);
+
+                var facats = new string[] { DominoFACategory.EEPROMFA, DominoFACategory.LABELFA, DominoFACategory.LABELEEPROMFA };
+                asilist = new List<string>();
+                asilist.AddRange(facats);
+                ViewBag.FACategoryList = CreateSelectList(asilist, cardinfo.FACategory);
+
                 ViewBag.ECOKey = ECOKey;
                 ViewBag.CardKey = CardKey;
                 ViewBag.CardDetailPage = DominoCardType.ECOSignoff2;
 
+                GetNoticeInfo();
                 return View("CurrentECO", vm);
             }
 
@@ -755,7 +1114,60 @@ namespace Domino.Controllers
             if (baseinfos.Count > 0)
             {
 
-                StoreAttachAndComment(CardKey, updater);
+                var cardinfo = DominoVM.RetrieveCard(CardKey);
+
+                cardinfo[0].QAEEPROMCheck = Request.Form["QAEEPROMCheckList"].ToString();
+                cardinfo[0].QALabelCheck = Request.Form["QALabelCheckList"].ToString();
+                cardinfo[0].PeerReviewEngineer = Request.Form["PeerReviewEngineerList"].ToString();
+                cardinfo[0].PeerReview = Request.Form["PeerReviewList"].ToString();
+                cardinfo[0].ECOAttachmentCheck = Request.Form["ECOAttachmentCheckList"].ToString();
+                cardinfo[0].MiniPVTCheck = Request.Form["MiniPVTCheckList"].ToString();
+                cardinfo[0].FACategory = Request.Form["FACategoryList"].ToString();
+
+                cardinfo[0].ECOTRApprover = Request.Form["ECOTRApprover"];
+                cardinfo[0].ECOMDApprover = Request.Form["ECOMDApprover"];
+
+                cardinfo[0].RSMSendDate = Request.Form["RSMSendDate"];
+                cardinfo[0].RSMApproveDate = Request.Form["RSMApproveDate"];
+
+                StoreAttachAndComment(CardKey, updater, cardinfo[0]);
+
+                cardinfo[0].UpdateSignoffInfo(CardKey);
+
+                var allchecked = true;
+                if (string.Compare(cardinfo[0].QAEEPROMCheck, DominoYESNO.NO) == 0)
+                {
+                    SetNoticeInfo("QA EEPROM is not checked");
+                    allchecked = false;
+                }
+                else if (string.Compare(cardinfo[0].QALabelCheck, DominoYESNO.NO) == 0)
+                {
+                    SetNoticeInfo("QA Label is not checked");
+                    allchecked = false;
+                }
+                else if (string.Compare(cardinfo[0].PeerReview, DominoYESNO.NO) == 0)
+                {
+                    SetNoticeInfo("Peer Review is not finish");
+                    allchecked = false;
+                }
+                else if (string.Compare(cardinfo[0].ECOAttachmentCheck, DominoYESNO.NO) == 0)
+                {
+                    SetNoticeInfo("ECO Attachement is not checked");
+                    allchecked = false;
+                }
+                else if (string.Compare(cardinfo[0].MiniPVTCheck, DominoYESNO.NO) == 0)
+                {
+                    SetNoticeInfo("Mini PVT is not checked");
+                    allchecked = false;
+                }
+
+                if (!allchecked)
+                {
+                    var dict1 = new RouteValueDictionary();
+                    dict1.Add("ECOKey", ECOKey);
+                    dict1.Add("CardKey", CardKey);
+                    return RedirectToAction(DominoCardType.ECOSignoff2, "MiniPIP", dict1);
+                }
 
                 DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
 
