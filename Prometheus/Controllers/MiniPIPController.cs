@@ -57,8 +57,8 @@ namespace Domino.Controllers
 
         public ActionResult RefreshSys()
         {
-            DominoVM.SetForceECORefresh(this);
-            DominoVM.RefreshECOList(this);
+            DominoDataCollector.SetForceECORefresh(this);
+            DominoDataCollector.RefreshECOList(this);
             return RedirectToAction("ViewAll", "MiniPIP");
         }
 
@@ -151,7 +151,7 @@ namespace Domino.Controllers
                     DominoVM.StoreECOPendingInfo(ViewBag.CurrentCard.CardKey, DominoYESNO.NO);
                 }
 
-                DominoVM.UpdateECOWeeklyUpdate(this, baseinfos[0], CardKey);
+                DominoDataCollector.UpdateECOWeeklyUpdate(this, baseinfos[0], CardKey);
 
                 cardinfo = DominoVM.RetrieveECOPendingInfo(ViewBag.CurrentCard.CardKey);
                 ViewBag.CurrentCard.MiniPIPHold = cardinfo.MiniPIPHold;
@@ -596,7 +596,7 @@ namespace Domino.Controllers
                     if (string.Compare(currentcard[0].CardStatus, DominoCardStatus.done, true) != 0
                         && !string.IsNullOrEmpty(baseinfos[0].PNDesc))
                     {
-                        DominoVM.RefreshQAFAI(baseinfos[0], CardKey, this);
+                        DominoDataCollector.RefreshQAFAI(baseinfos[0], CardKey, this);
                     }//if card is not finished,we refresh qa folder to get files
                 }
                 
@@ -1102,7 +1102,7 @@ namespace Domino.Controllers
                     if (string.Compare(currentcard[0].CardStatus, DominoCardStatus.done, true) != 0
                         && !string.IsNullOrEmpty(baseinfos[0].PNDesc))
                     {
-                        DominoVM.RefreshQAFAI(baseinfos[0], CardKey, this);
+                        DominoDataCollector.RefreshQAFAI(baseinfos[0], CardKey, this);
                     }//if card is not finished,we refresh qa folder to get files
                 }
 
@@ -1426,6 +1426,8 @@ namespace Domino.Controllers
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
             if (baseinfos.Count > 0)
             {
+                DominoDataCollector.UpdateOrderInfoFromExcel(this, baseinfos[0], CardKey);
+
                 var vm = new List<List<DominoVM>>();
                 var cardlist = DominoVM.RetrieveECOCards(baseinfos[0]);
                 vm.Add(cardlist);
@@ -1439,10 +1441,14 @@ namespace Domino.Controllers
                     }
                 }
 
+                var orderinfo = DominoVM.RetrieveOrderInfo(CardKey);
+                ViewBag.CurrentCard.OrderTable = orderinfo;
+
                 ViewBag.ECOKey = ECOKey;
                 ViewBag.CardKey = CardKey;
                 ViewBag.CardDetailPage = DominoCardType.SampleOrdering;
 
+                GetNoticeInfo();
                 return View("CurrentECO", vm);
             }
 
@@ -1464,6 +1470,16 @@ namespace Domino.Controllers
             if (baseinfos.Count > 0)
             {
                 StoreAttachAndComment(CardKey, updater);
+
+                var orderinfo = DominoVM.RetrieveOrderInfo(CardKey);
+                if (orderinfo.Count == 0)
+                {
+                    SetNoticeInfo("No order information is found");
+                    var dict1 = new RouteValueDictionary();
+                    dict1.Add("ECOKey", ECOKey);
+                    dict1.Add("CardKey", CardKey);
+                    return RedirectToAction(DominoCardType.SampleOrdering, "MiniPIP", dict1);
+                }
 
                 DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
 

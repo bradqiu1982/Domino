@@ -214,6 +214,7 @@
     <Compile Include="Models\CookieUtility.cs" />
     <Compile Include="Models\DashBoardViewModels.cs" />
     <Compile Include="Models\DBUtility.cs" />
+    <Compile Include="Models\DominoDataCollector.cs" />
     <Compile Include="Models\DominoVM.cs" />
     <Compile Include="Models\EmailUtility.cs" />
     <Compile Include="Models\ExcelReader.cs" />

@@ -49,6 +49,21 @@ bool updateLinks)
             return ret;
         }
 
+        private static void logthdinfo(string info)
+        {
+            var filename = "e:\\excelexception-" + DateTime.Now.ToString("yyyy-MM-dd");
+            if (System.IO.File.Exists(filename))
+            {
+                var content = System.IO.File.ReadAllText(filename);
+                content = content + "\r\n" + DateTime.Now.ToString() + " : " + info;
+                System.IO.File.WriteAllText(filename, content);
+            }
+            else
+            {
+                System.IO.File.WriteAllText(filename, DateTime.Now.ToString() + " : " + info);
+            }
+        }
+
         public static List<List<string>> RetrieveDataFromExcel(string wholefn,string sheetname)
         {
             var data = new List<List<string>>();
@@ -58,13 +73,21 @@ bool updateLinks)
 
             try
             {
-                
                 excel = new Excel.Application();
                 excel.DisplayAlerts = false;
                 books = excel.Workbooks;
                 wkb = OpenBook(books, wholefn, true, false, false);
 
-                Excel.Worksheet sheet = wkb.Sheets[sheetname] as Excel.Worksheet;
+                Excel.Worksheet sheet = null;
+                if (string.IsNullOrEmpty(sheetname))
+                {
+                    sheet = wkb.Sheets[1] as Excel.Worksheet;
+                }
+                else
+                {
+                    sheet = wkb.Sheets[sheetname] as Excel.Worksheet;
+                }
+                
 
                 var excelRange = sheet.UsedRange;
                 object[,] valueArray = (object[,])excelRange.get_Value(
@@ -105,6 +128,8 @@ bool updateLinks)
             }
             catch (Exception ex)
             {
+                logthdinfo(DateTime.Now.ToString() + " Exception on " + wholefn + " :" + ex.Message + "\r\n\r\n");
+
                 data.Clear();
                 return data;
             }
