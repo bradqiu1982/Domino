@@ -15,7 +15,71 @@
                     </div>
                 </div>
                 <div class="row col-lg-6">
+                    <label class="control-label col-lg-2">ECO Complete</label>
+                    <div class="col-lg-10">
+                        @Html.DropDownList("ECOCompletedList", null, new { @id = "ECOCompletedList", @class = "form-control" })
+                    </div>
                 </div>
+            </div>
+
+            <div class="form-group">
+                <div class="row col-lg-6">
+                    <label class="control-label col-lg-2">ECO Submit Date</label>
+                    <div class="col-lg-10">
+                        <input class="form-control text-box single-line" id="ECOSubmitDate" name="ECOSubmitDate" type="text" value="@ViewBag.CurrentCard.ECOSubmitDate" />
+                    </div>
+                </div>
+
+                <div class="row col-lg-6">
+                    <label class="control-label col-lg-2">TR Approved Date</label>
+                    <div class="col-lg-10">
+                        <input class="form-control text-box single-line" id="ECOTRApprovedDate" name="ECOTRApprovedDate" type="text" value="@ViewBag.CurrentCard.ECOTRApprovedDate" />
+                    </div>
+                </div>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+                        $("#ECOSubmitDate").datepicker({
+                            changeMonth: true,
+                            changeYear: true,
+                            dateFormat: 'yy-mm-dd'
+                        });
+                        $("#ECOTRApprovedDate").datepicker({
+                            changeMonth: true,
+                            changeYear: true,
+                            dateFormat: 'yy-mm-dd'
+                        });
+                    });
+                </script>
+            </div>
+
+            <div class="form-group">
+                <div class="row col-lg-6">
+                    <label class="control-label col-lg-2">CCB Approved Date</label>
+                    <div class="col-lg-10">
+                        <input class="form-control text-box single-line" id="ECOCCBApprovedDate" name="ECOCCBApprovedDate" type="text" value="@ViewBag.CurrentCard.ECOCCBApprovedDate" />
+                    </div>
+                </div>
+
+                <div class="row col-lg-6">
+                    <label class="control-label col-lg-2">ECO Complete Date</label>
+                    <div class="col-lg-10">
+                        <input class="form-control text-box single-line" id="ECOCompleteDate" name="ECOCompleteDate" type="text" value="@ViewBag.CurrentCard.ECOCompleteDate" />
+                    </div>
+                </div>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+                        $("#ECOCCBApprovedDate").datepicker({
+                            changeMonth: true,
+                            changeYear: true,
+                            dateFormat: 'yy-mm-dd'
+                        });
+                        $("#ECOCompleteDate").datepicker({
+                            changeMonth: true,
+                            changeYear: true,
+                            dateFormat: 'yy-mm-dd'
+                        });
+                    });
+                </script>
             </div>
 
             <div class="form-group">

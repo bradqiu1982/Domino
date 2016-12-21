@@ -389,8 +389,8 @@ namespace Domino.Models
     public class DominoVM
     {
         public ECOBaseInfo EBaseInfo { set; get; }
-        public string ECOkey { set; get; }
-        public string Cardkey { set; get; }
+        public string ECOKey { set; get; }
+        public string CardKey { set; get; }
         public string CardNo { set; get; }
         public string CardContent { set; get; }
         public string CardStatus { set; get; }
@@ -474,6 +474,14 @@ namespace Domino.Models
             FACategory = string.Empty;
             RSMSendDate = string.Empty;
             RSMApproveDate = string.Empty;
+
+            CustomerApproveHoldDate = string.Empty;
+
+            ECOCompleted = string.Empty;
+            ECOSubmitDate = string.Empty;
+            ECOTRApprovedDate = string.Empty;
+            ECOCCBApprovedDate = string.Empty;
+            ECOCompleteDate = string.Empty;
         }
 
         public static void CleanDB()
@@ -503,7 +511,7 @@ namespace Domino.Models
             }
             else
             {
-                return cardexist[0].Cardkey;
+                return cardexist[0].CardKey;
             }
         }
 
@@ -519,16 +527,16 @@ namespace Domino.Models
             foreach (var line in dbret)
             {
                 var tempitem = new DominoVM();
-                tempitem.ECOkey = Convert.ToString(line[0]);
-                tempitem.Cardkey = Convert.ToString(line[1]);
+                tempitem.ECOKey = Convert.ToString(line[0]);
+                tempitem.CardKey = Convert.ToString(line[1]);
                 tempitem.CardType = Convert.ToString(line[2]);
                 tempitem.CardStatus = Convert.ToString(line[3]);
                 tempitem.CardNo = idx.ToString();
                 tempitem.CardContent = tempitem.ECOContentDict[tempitem.CardType];
                 tempitem.EBaseInfo = baseinfo;
 
-                tempitem.CommentList = RetrieveCardComments(tempitem.Cardkey);
-                tempitem.AttachList = RetrieveCardAttachment(tempitem.Cardkey);
+                tempitem.CommentList = RetrieveCardComments(tempitem.CardKey);
+                tempitem.AttachList = RetrieveCardAttachment(tempitem.CardKey);
 
                 ret.Add(tempitem);
 
@@ -550,16 +558,16 @@ namespace Domino.Models
             foreach (var line in dbret)
             {
                 var tempitem = new DominoVM();
-                tempitem.ECOkey = Convert.ToString(line[0]);
-                tempitem.Cardkey = Convert.ToString(line[1]);
+                tempitem.ECOKey = Convert.ToString(line[0]);
+                tempitem.CardKey = Convert.ToString(line[1]);
                 tempitem.CardType = Convert.ToString(line[2]);
                 tempitem.CardStatus = Convert.ToString(line[3]);
                 tempitem.CardNo = idx.ToString();
                 tempitem.CardContent = tempitem.ECOContentDict[tempitem.CardType];
                 tempitem.EBaseInfo = baseinfo;
 
-                tempitem.CommentList = RetrieveCardComments(tempitem.Cardkey);
-                tempitem.AttachList = RetrieveCardAttachment(tempitem.Cardkey);
+                tempitem.CommentList = RetrieveCardComments(tempitem.CardKey);
+                tempitem.AttachList = RetrieveCardAttachment(tempitem.CardKey);
 
                 ret.Add(tempitem);
 
@@ -581,16 +589,16 @@ namespace Domino.Models
             foreach (var line in dbret)
             {
                 var tempitem = new DominoVM();
-                tempitem.ECOkey = Convert.ToString(line[0]);
-                tempitem.Cardkey = Convert.ToString(line[1]);
+                tempitem.ECOKey = Convert.ToString(line[0]);
+                tempitem.CardKey = Convert.ToString(line[1]);
                 tempitem.CardType = Convert.ToString(line[2]);
                 tempitem.CardStatus = Convert.ToString(line[3]);
                 tempitem.CardNo = idx.ToString();
                 tempitem.CardContent = tempitem.ECOContentDict[tempitem.CardType];
                 //tempitem.EBaseInfo = baseinfo;
 
-                tempitem.CommentList = RetrieveCardComments(tempitem.Cardkey);
-                tempitem.AttachList = RetrieveCardAttachment(tempitem.Cardkey);
+                tempitem.CommentList = RetrieveCardComments(tempitem.CardKey);
+                tempitem.AttachList = RetrieveCardAttachment(tempitem.CardKey);
 
                 ret.Add(tempitem);
 
@@ -613,16 +621,16 @@ namespace Domino.Models
             foreach (var line in dbret)
             {
                 var tempitem = new DominoVM();
-                tempitem.ECOkey = Convert.ToString(line[0]);
-                tempitem.Cardkey = Convert.ToString(line[1]);
+                tempitem.ECOKey = Convert.ToString(line[0]);
+                tempitem.CardKey = Convert.ToString(line[1]);
                 tempitem.CardType = Convert.ToString(line[2]);
                 tempitem.CardStatus = Convert.ToString(line[3]);
                 tempitem.CardNo = idx.ToString();
                 tempitem.CardContent = tempitem.ECOContentDict[tempitem.CardType];
                 //tempitem.EBaseInfo = baseinfo;
 
-                tempitem.CommentList = RetrieveCardComments(tempitem.Cardkey);
-                tempitem.AttachList = RetrieveCardAttachment(tempitem.Cardkey);
+                tempitem.CommentList = RetrieveCardComments(tempitem.CardKey);
+                tempitem.AttachList = RetrieveCardAttachment(tempitem.CardKey);
 
                 ret.Add(tempitem);
 
@@ -768,7 +776,7 @@ namespace Domino.Models
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
             if (dbret.Count > 0)
             {
-                ret.Cardkey = Convert.ToString(dbret[0][0]);
+                ret.CardKey = Convert.ToString(dbret[0][0]);
                 ret.MiniPIPWeeklyUpdate = Convert.ToString(dbret[0][1]);
                 ret.MiniPIPHold = Convert.ToString(dbret[0][2]);
                 ret.WeeklyUpdateTime = Convert.ToString(dbret[0][3]);
@@ -807,7 +815,7 @@ namespace Domino.Models
         {
             var infoexist = RetrieveSignoffInfo(cardkey);
 
-            if (string.IsNullOrEmpty(infoexist.Cardkey))
+            if (string.IsNullOrEmpty(infoexist.CardKey))
             {
                 var csql = "insert into ECOCardContent(CardKey,APVal1) values('<CardKey>','<APVal1>')";
                 csql = csql.Replace("<CardKey>", cardkey).Replace("<APVal1>", string.Empty);
@@ -835,7 +843,7 @@ namespace Domino.Models
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
             if (dbret.Count > 0)
             {
-                ret.Cardkey = Convert.ToString(dbret[0][0]);
+                ret.CardKey = Convert.ToString(dbret[0][0]);
                 ret.QAEEPROMCheck = Convert.ToString(dbret[0][1]);
                 ret.QALabelCheck = Convert.ToString(dbret[0][2]);
                 ret.PeerReviewEngineer = Convert.ToString(dbret[0][3]);
@@ -858,6 +866,81 @@ namespace Domino.Models
             return ret;
         }
 
+        public string CustomerApproveHoldDate { set; get; }
+
+        public void UpdateCustomerApproveHoldInfo(string cardkey)
+        {
+
+            var infoexist = RetrieveCustomerApproveHoldInfo(cardkey);
+
+            if (string.IsNullOrEmpty(infoexist.CardKey))
+            {
+                var csql = "insert into ECOCardContent(CardKey,APVal1) values('<CardKey>','<APVal1>')";
+                csql = csql.Replace("<CardKey>", cardkey).Replace("<APVal1>", string.Empty);
+                DBUtility.ExeLocalSqlNoRes(csql);
+            }
+
+            var sql = "Update ECOCardContent Set APVal1 = '<APVal1>' where CardKey = '<CardKey>'";
+            sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal1>", CustomerApproveHoldDate);
+            DBUtility.ExeLocalSqlNoRes(sql);
+        }
+
+
+        public static DominoVM RetrieveCustomerApproveHoldInfo(string cardkey)
+        {
+            var ret = new DominoVM();
+            var sql = "select CardKey,APVal1 from ECOCardContent where CardKey = '<CardKey>'";
+            sql = sql.Replace("<CardKey>", cardkey);
+            var dbret = DBUtility.ExeLocalSqlWithRes(sql);
+            if (dbret.Count > 0)
+            {
+                ret.CardKey = Convert.ToString(dbret[0][0]);
+                ret.CustomerApproveHoldDate = Convert.ToString(dbret[0][1]);
+            }
+            return ret;
+        }
+
+
+        public string ECOCompleted { set; get; }
+        public string ECOSubmitDate { set; get; }
+        public string ECOTRApprovedDate { set; get; }
+        public string ECOCCBApprovedDate { set; get; }
+        public string ECOCompleteDate { set; get; }
+
+        public void UpdateECOCompleteInfo(string cardkey)
+        {
+            var infoexist = RetrieveECOCompleteInfo(cardkey);
+
+            if (string.IsNullOrEmpty(infoexist.CardKey))
+            {
+                var csql = "insert into ECOCardContent(CardKey,APVal1) values('<CardKey>','<APVal1>')";
+                csql = csql.Replace("<CardKey>", cardkey).Replace("<APVal1>", string.Empty);
+                DBUtility.ExeLocalSqlNoRes(csql);
+            }
+
+            var sql = "Update ECOCardContent Set APVal1 = '<APVal1>',APVal2 = '<APVal2>',APVal3 = '<APVal3>',APVal4 = '<APVal4>',APVal5 = '<APVal5>' where CardKey = '<CardKey>'";
+            sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal1>", ECOCompleted).Replace("<APVal2>", ECOSubmitDate)
+                .Replace("<APVal3>", ECOTRApprovedDate).Replace("<APVal4>", ECOCCBApprovedDate).Replace("<APVal5>", ECOCompleteDate);
+            DBUtility.ExeLocalSqlNoRes(sql);
+        }
+
+        public static DominoVM RetrieveECOCompleteInfo(string cardkey)
+        {
+            var ret = new DominoVM();
+            var sql = "select CardKey,APVal1,APVal2,APVal3,APVal4,APVal5 from ECOCardContent where CardKey = '<CardKey>'";
+            sql = sql.Replace("<CardKey>", cardkey);
+            var dbret = DBUtility.ExeLocalSqlWithRes(sql);
+            if (dbret.Count > 0)
+            {
+                ret.CardKey = Convert.ToString(dbret[0][0]);
+                ret.ECOCompleted = Convert.ToString(dbret[0][1]);
+                ret.ECOSubmitDate = Convert.ToString(dbret[0][2]);
+                ret.ECOTRApprovedDate = Convert.ToString(dbret[0][3]);
+                ret.ECOCCBApprovedDate = Convert.ToString(dbret[0][4]);
+                ret.ECOCompleteDate = Convert.ToString(dbret[0][5]);
+            }
+            return ret;
+        }
 
         private static Dictionary<string, string> GetSysConfig(Controller ctrl)
         {
@@ -865,6 +948,11 @@ namespace Domino.Models
             var ret = new Dictionary<string, string>();
             foreach (var line in lines)
             {
+                if (line.Contains("##"))
+                {
+                    continue;
+                }
+
                 if (line.Contains(":::"))
                 {
                     var kvpair = line.Split(new string[] { ":::" }, StringSplitOptions.RemoveEmptyEntries);
@@ -1022,10 +1110,10 @@ namespace Domino.Models
                                 if (!string.IsNullOrEmpty(item.ECONum)
                                 && string.Compare(pendingcard[0].CardStatus,DominoCardStatus.working) == 0)
                                 {
-                                    DominoVM.UpdateCardStatus(pendingcard[0].Cardkey, DominoCardType.ECOPending);
+                                    DominoVM.UpdateCardStatus(pendingcard[0].CardKey, DominoCardType.ECOPending);
                                 }
 
-                                var allattach = DominoVM.RetrieveCardExistedAttachment(pendingcard[0].Cardkey);
+                                var allattach = DominoVM.RetrieveCardExistedAttachment(pendingcard[0].CardKey);
 
                                 var MiniPIPDocFolder = syscfgdict["MINIPIPECOFOLDER"] + "\\" + baseinfo.Customer + "\\" + baseinfo.PNDesc;
                                 if (Directory.Exists(MiniPIPDocFolder))
@@ -1054,7 +1142,7 @@ namespace Domino.Models
                                             {
                                                 System.IO.File.Copy(minifile, desfile, true);
                                                 var url = "/userfiles/docs/" + urlfolder + "/" + fn;
-                                                DominoVM.StoreCardAttachment(pendingcard[0].Cardkey, url);
+                                                DominoVM.StoreCardAttachment(pendingcard[0].CardKey, url);
                                             }
                                             catch (Exception ex) { }
                                         }
@@ -1182,7 +1270,7 @@ namespace Domino.Models
                 if (currentcard.Count == 0)
                     return;
 
-                var allattach = DominoVM.RetrieveCardExistedAttachment(currentcard[0].Cardkey);
+                var allattach = DominoVM.RetrieveCardExistedAttachment(currentcard[0].CardKey);
 
                 var destfolderlist = new List<string>();
                 var srcfolders = Directory.EnumerateDirectories(srcrootfolder);
@@ -1265,7 +1353,7 @@ namespace Domino.Models
                 if (currentcard.Count == 0)
                     return;
 
-                var allattach = DominoVM.RetrieveCardExistedAttachment(currentcard[0].Cardkey);
+                var allattach = DominoVM.RetrieveCardExistedAttachment(currentcard[0].CardKey);
 
                 var firstleveldirs = new List<string>();
                 var ffold = Directory.EnumerateDirectories(srcrootfolder);
