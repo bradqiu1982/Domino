@@ -18,43 +18,46 @@
                 </div>
             </div>
             
-            <hr/>
+            
 
             @if (ViewBag.CurrentCard.OrderTable.Count > 0)
             {
+                <hr/>
+
                 <div class="form-group">
-                    <table id="orderdatatable" class="display" cellspacing="0">
-                        <thead>
-                            <tr>
-                                <th style="text-align:center;font-size:12px">Oder Type</th>
-                                <th style="text-align:center;font-size:12px">Oder Date</th>
-                                <th style="text-align:center;font-size:12px">SO Number</th>
-                                <th style="text-align:center;font-size:12px">Item</th>
-                                <th style="text-align:center;font-size:12px">Description</th>
-                                <th style="text-align:center;font-size:12px">Quantity</th>
-                                <th style="text-align:center;font-size:12px">Schedule Ship</th>
-                                <th style="text-align:center;font-size:12px">Planner Name</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            @foreach (var tempinfo in ViewBag.CurrentCard.OrderTable)
-                        {
+                    @*<table id="orderdatatable" class="display" cellspacing="0">*@
+                        <table id="orderdatatable" class="table table-bordered table-hover">
+                            <thead>
                                 <tr>
-                                    <td style="text-align:center;font-size:12px">@tempinfo.OrderType</td>
-                                    <td style="text-align:center;font-size:12px">@tempinfo.OrderDate</td>
-                                    <td style="text-align:center;font-size:12px">@tempinfo.SONum</td>
-                                    <td style="text-align:center;font-size:12px">@tempinfo.Item</td>
-                                    <td style="text-align:center;font-size:12px">@tempinfo.Description</td>
-                                    <td style="text-align:center;font-size:12px">@tempinfo.QTY</td>
-                                    <td style="text-align:center;font-size:12px">@tempinfo.SSD</td>
-                                    <td style="text-align:center;font-size:12px">@tempinfo.Planner</td>
+                                    <th style="text-align:center;font-size:12px">Oder Type</th>
+                                    <th style="text-align:center;font-size:12px">Oder Date</th>
+                                    <th style="text-align:center;font-size:12px">SO Number</th>
+                                    <th style="text-align:center;font-size:12px">Item</th>
+                                    <th style="text-align:center;font-size:12px">Description</th>
+                                    <th style="text-align:center;font-size:12px">Quantity</th>
+                                    <th style="text-align:center;font-size:12px">Schedule Ship</th>
+                                    <th style="text-align:center;font-size:12px">Planner Name</th>
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
+                            </thead>
 
-                    <script type="text/javascript">
+                            <tbody>
+                                @foreach (var tempinfo in ViewBag.CurrentCard.OrderTable)
+                        {
+                                    <tr>
+                                        <td style="text-align:center;font-size:12px">@tempinfo.OrderType</td>
+                                        <td style="text-align:center;font-size:12px">@tempinfo.OrderDate</td>
+                                        <td style="text-align:center;font-size:12px">@tempinfo.SONum</td>
+                                        <td style="text-align:center;font-size:12px">@tempinfo.Item</td>
+                                        <td style="text-align:center;font-size:12px">@tempinfo.Description</td>
+                                        <td style="text-align:center;font-size:12px">@tempinfo.QTY</td>
+                                        <td style="text-align:center;font-size:12px">@tempinfo.SSD</td>
+                                        <td style="text-align:center;font-size:12px">@tempinfo.Planner</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                    @*<script type="text/javascript">
                         $(document).ready(function () {
                             $('#orderdatatable').DataTable({
                                 'iDisplayLength': 50,
@@ -64,7 +67,7 @@
                             });
                         });
 
-                    </script>
+                    </script>*@
                 </div>
             }
 

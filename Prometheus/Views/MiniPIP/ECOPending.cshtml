@@ -56,16 +56,31 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <div class="row col-lg-6">
-                    <label class="control-label col-lg-2">MiniPIP Weekly Update</label>
-                    <div class="col-lg-10">
-                        <textarea class="form-control col-md-12" readonly="readonly" style="height:36px;min-width:800px;" >@(ViewBag.CurrentCard.MiniPIPWeeklyUpdate)</textarea>
-                        @*<input class="form-control text-box single-line" typeof="text" value="@ViewBag.CurrentCard.MiniPIPWeeklyUpdate" readonly="readonly" />*@
-                    </div>
-                </div>
-            </div>
+                @if (ViewBag.CurrentCard.PendingHistoryTable.Count > 0)
+                {
+                    <hr/>
 
+                    <div class="form-group">
+                        <table id="orderdatatable" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="text-align:center;font-size:12px">Update Time</th>
+                                    <th style="text-align:center;font-size:12px">Update Information</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                            @foreach (var tempinfo in ViewBag.CurrentCard.PendingHistoryTable)
+                            {
+                                    <tr>
+                                        <td style="text-align:center;font-size:12px">@tempinfo.UpdateTime</td>
+                                        <td style="text-align:center;font-size:12px">@tempinfo.History</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
                 <div class="form-group">
                     <div class="row col-lg-6">
                         <input class="form-control text-box single-line" value="@ViewBag.ECOKey" type="hidden" id="ECOKey" name="ECOKey" />

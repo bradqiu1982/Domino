@@ -38,16 +38,6 @@ namespace Domino.Models
             string datestring = DateTime.Now.ToString("yyyyMMdd");
             string imgdir = ctrl.Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
 
-            var vm = DominoVM.RetrieveECOPendingInfo(cardkey);
-            if (!string.IsNullOrEmpty(vm.WeeklyUpdateTime))
-            {
-                if ((DateTime.Now - DateTime.Parse(vm.WeeklyUpdateTime)).Hours < 48)
-                {
-                    return;
-                }
-            }
-
-
             var desfolder = syscfgdict["WEEKLYUPDATE"];
             var sheetname = syscfgdict["MINIPIPSHEETNAME"];
             try
@@ -57,6 +47,8 @@ namespace Domino.Models
                     Directory.CreateDirectory(imgdir);
                 }
 
+                var pendinghistory = new List<ECOPendingUpdate>();
+
                 if (Directory.Exists(desfolder))
                 {
                     var fds = Directory.EnumerateFiles(desfolder);
@@ -64,6 +56,13 @@ namespace Domino.Models
                     {
                         try
                         {
+                            var timestrs = Path.GetFileNameWithoutExtension(fd).Split(new string[] {" "},StringSplitOptions.RemoveEmptyEntries);
+                            var timestamp = timestrs[timestrs.Length - 1];
+                            if (timestamp.Length != 8)
+                            {
+                                continue;
+                            }
+
                             var fn = imgdir + Path.GetFileName(fd);
                             System.IO.File.Copy(fd, fn, true);
                             var data = ExcelReader.RetrieveDataFromExcel(fn, sheetname);
@@ -72,14 +71,18 @@ namespace Domino.Models
                                 if (string.Compare(line[2], baseinfo.PNDesc, true) == 0
                                     && string.Compare(DateTime.Parse(line[12]).ToString("yyyy-MM-dd"), DateTime.Parse(baseinfo.InitRevison).ToString("yyyy-MM-dd"), true) == 0)
                                 {
-                                    var update = line[85];
-                                    DominoVM.UpdateECOPendingInfo_UpdateInfo(cardkey, update);
-                                    return;
+                                    var tempinfo = new ECOPendingUpdate();
+                                    tempinfo.CardKey = cardkey;
+                                    tempinfo.History = line[85];
+                                    tempinfo.UpdateTime = timestamp.Substring(0,4)+"-"+timestamp.Substring(4,2)+"-"+timestamp.Substring(6,2)+" 07:30:00";
+                                    pendinghistory.Add(tempinfo);
                                 }//end if
                             }//end foreach
                         }
                         catch (Exception ex) { }
                     }//end foreach
+
+                    DominoVM.UpdateHistoryInfo(pendinghistory, cardkey);
                 }
             }
             catch (Exception ex) { }

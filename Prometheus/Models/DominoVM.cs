@@ -144,6 +144,13 @@ namespace Domino.Models
         public string LineID { set; get; }
     }
 
+    public class ECOPendingUpdate
+    {
+        public string CardKey { set; get; }
+        public string History { set; get; }
+        public string UpdateTime { set; get; }
+    }
+
     public class ECOBaseInfo
     {
         public string ECOKey { set; get; }
@@ -461,9 +468,8 @@ namespace Domino.Models
             ecocontentdict.Add(DominoCardType.ECOSignoff2,"ECO Signoff-2");
             ecocontentdict.Add(DominoCardType.CustomerApprovalHold,"Customer Approval Hold");
 
-            MiniPIPWeeklyUpdate = string.Empty;
+
             MiniPIPHold = string.Empty;
-            WeeklyUpdateTime = string.Empty;
 
             QAEEPROMCheck = string.Empty;
             QALabelCheck = string.Empty;
@@ -509,6 +515,8 @@ namespace Domino.Models
             sql = "delete from ECOCardComment";
             DBUtility.ExeLocalSqlNoRes(sql);
             sql = "delete from ECOCardAttachment";
+            DBUtility.ExeLocalSqlNoRes(sql);
+            sql = "delete from ECOPendingUpdate";
             DBUtility.ExeLocalSqlNoRes(sql);
         }
 
@@ -753,9 +761,10 @@ namespace Domino.Models
             DBUtility.ExeLocalSqlNoRes(csql);
         }
 
-        public string MiniPIPWeeklyUpdate { set; get; }
+
+
+
         public string MiniPIPHold { set; get; }
-        public string WeeklyUpdateTime { set; get; }
 
         public static void StoreECOPendingInfo(string cardkey,string hold)
         {
@@ -768,37 +777,80 @@ namespace Domino.Models
             DBUtility.ExeLocalSqlNoRes(sql);
         }
 
-        public static void UpdateECOPendingInfo_UpdateInfo(string cardkey, string weeklyupdate)
-        {
-            var sql = "Update ECOCardContent Set APVal1 = '<APVal1>',APVal3='<APVal3>'  where CardKey = '<CardKey>'";
-            sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal1>", weeklyupdate).Replace("<APVal3>", DateTime.Now.ToString());
-            DBUtility.ExeLocalSqlNoRes(sql);
-        }
-
-        public static void UpdateECOPendingInfo(string cardkey, string ecohold)
-        {
-            var sql = "Update ECOCardContent Set APVal2 = '<APVal2>'  where CardKey = '<CardKey>'";
-            sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal2>", ecohold);
-            DBUtility.ExeLocalSqlNoRes(sql);
-        }
-
         public static DominoVM RetrieveECOPendingInfo(string cardkey)
         {
             var ret = new DominoVM();
-            var sql = "select CardKey,APVal1,APVal2,APVal3 from ECOCardContent where CardKey = '<CardKey>'";
+            var sql = "select CardKey,APVal2 from ECOCardContent where CardKey = '<CardKey>'";
             sql = sql.Replace("<CardKey>", cardkey);
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
             if (dbret.Count > 0)
             {
                 ret.CardKey = Convert.ToString(dbret[0][0]);
-                ret.MiniPIPWeeklyUpdate = Convert.ToString(dbret[0][1]);
-                ret.MiniPIPHold = Convert.ToString(dbret[0][2]);
-                ret.WeeklyUpdateTime = Convert.ToString(dbret[0][3]);
+                ret.MiniPIPHold = Convert.ToString(dbret[0][1]);
             }
             return ret;
         }
 
+        private List<ECOPendingUpdate> pendinhistory = new List<ECOPendingUpdate>();
+        public List<ECOPendingUpdate> PendingHistoryTable
+        {
+            set
+            {
+                pendinhistory.Clear();
+                pendinhistory.AddRange(value);
+            }
+            get { return pendinhistory; }
+        }
 
+        public static void UpdateHistoryInfo(List<ECOPendingUpdate> historyinfos, string cardkey)
+        {
+            foreach (var info in historyinfos)
+            {
+                var dataexist = RetrieverHistoryInfo(cardkey, info.UpdateTime);
+                if (!string.IsNullOrEmpty(dataexist.CardKey))
+                {
+                    continue;
+                }
+
+                var csql = "insert into ECOPendingUpdate(CardKey,History,UpdateTime)  "
+                    + "  values('<CardKey>','<History>','<UpdateTime>')";
+                csql = csql.Replace("<CardKey>", cardkey).Replace("<History>", info.History).Replace("<UpdateTime>", info.UpdateTime);
+                DBUtility.ExeLocalSqlNoRes(csql);
+            }
+        }
+
+        public static List<ECOPendingUpdate> RetrievePendingHistoryInfo(string cardkey)
+        {
+            var ret = new List<ECOPendingUpdate>();
+
+            var sql = "select CardKey,History,UpdateTime from ECOPendingUpdate where CardKey = '<CardKey>' order by UpdateTime DESC";
+            sql = sql.Replace("<CardKey>", cardkey);
+            var dbret = DBUtility.ExeLocalSqlWithRes(sql);
+
+            foreach (var line in dbret)
+            {
+                var tempinfo = new ECOPendingUpdate();
+                tempinfo.CardKey = Convert.ToString(line[0]);
+                tempinfo.History = Convert.ToString(line[1]);
+                tempinfo.UpdateTime = Convert.ToString(line[2]);
+                 ret.Add(tempinfo);
+            }
+            return ret;
+        }
+
+        private static ECOPendingUpdate RetrieverHistoryInfo(string cardkey, string updatetime)
+        {
+            var ret = new ECOPendingUpdate();
+            var sql = "select CardKey from ECOPendingUpdate where CardKey = '<CardKey>' and UpdateTime = '<UpdateTime>'";
+            sql = sql.Replace("<CardKey>", cardkey).Replace("<UpdateTime>", updatetime);
+
+            var dbret = DBUtility.ExeLocalSqlWithRes(sql);
+            if (dbret.Count > 0)
+            {
+                ret.CardKey = Convert.ToString(dbret[0][0]);
+            }
+            return ret;
+        }
 
 
         public string QAEEPROMCheck { set; get; }

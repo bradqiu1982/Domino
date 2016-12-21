@@ -153,11 +153,12 @@ namespace Domino.Controllers
 
                 DominoDataCollector.UpdateECOWeeklyUpdate(this, baseinfos[0], CardKey);
 
-                cardinfo = DominoVM.RetrieveECOPendingInfo(ViewBag.CurrentCard.CardKey);
+                cardinfo = DominoVM.RetrieveECOPendingInfo(CardKey);
                 ViewBag.CurrentCard.MiniPIPHold = cardinfo.MiniPIPHold;
-                ViewBag.CurrentCard.MiniPIPWeeklyUpdate = cardinfo.MiniPIPWeeklyUpdate;
 
-                
+                var historys = DominoVM.RetrievePendingHistoryInfo(CardKey);
+                ViewBag.CurrentCard.PendingHistoryTable = historys;
+
                 var pipholds = new string[] { DominoYESNO.NO,DominoYESNO.YES};
                 asilist = new List<string>();
                 asilist.AddRange(pipholds);
@@ -511,7 +512,7 @@ namespace Domino.Controllers
                 baseinfos[0].UpdateECO();
 
                 var ecohold = Request.Form["MiniPIPHoldList"].ToString();
-                DominoVM.UpdateECOPendingInfo(CardKey, ecohold);
+                DominoVM.StoreECOPendingInfo(CardKey, ecohold);
                 
                 StoreAttachAndComment(CardKey, updater);
 
