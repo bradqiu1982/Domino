@@ -1504,7 +1504,7 @@ namespace Domino.Controllers
                 DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
 
                 var newcardkey = DominoVM.GetUniqKey();
-                var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.SampleBuilding, DominoCardStatus.pending);
+                var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.SampleBuilding, DominoCardStatus.working);
 
                 var dict = new RouteValueDictionary();
                 dict.Add("ECOKey", ECOKey);
@@ -1537,6 +1537,9 @@ namespace Domino.Controllers
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
             if (baseinfos.Count > 0)
             {
+                DominoDataCollector.UpdateJOInfoFromExcel(this, baseinfos[0], CardKey);
+                DominoDataCollector.UpdateEEPROM2NDFromExcel(this, baseinfos[0], CardKey);
+
                 var vm = new List<List<DominoVM>>();
                 var cardlist = DominoVM.RetrieveECOCards(baseinfos[0]);
                 vm.Add(cardlist);
@@ -1550,10 +1553,67 @@ namespace Domino.Controllers
                     }
                 }
 
+                ViewBag.CurrentCard.JoTable = DominoVM.RetrieveJOInfo(CardKey);
+                var cardinfo = DominoVM.RetrieveBLDInfo(CardKey);
+                ViewBag.CurrentCard.BdEEPROM2NDDate = cardinfo.BdEEPROM2NDDate;
+                ViewBag.CurrentCard.BdEEPROM2NDPE = cardinfo.BdEEPROM2NDPE;
+                ViewBag.CurrentCard.BdEEPROM2NDRESULT = cardinfo.BdEEPROM2NDRESULT;
+
+                ViewBag.CurrentCard.BdEgEEPROMCheckP = cardinfo.BdEgEEPROMCheckP;
+                ViewBag.CurrentCard.BdEgEEPROMCheckDT = cardinfo.BdEgEEPROMCheckDT;
+                ViewBag.CurrentCard.BdEgLabelCheckP = cardinfo.BdEgLabelCheckP;
+                ViewBag.CurrentCard.BdEgLabelCheckDT = cardinfo.BdEgLabelCheckDT;
+                ViewBag.CurrentCard.BdEgCosmeticCheckP = cardinfo.BdEgCosmeticCheckP;
+                ViewBag.CurrentCard.BdEgCosmeticCheckDT = cardinfo.BdEgCosmeticCheckDT;
+
+                if (!string.IsNullOrEmpty(cardinfo.BdEgEEPROMCheckDT))
+                {
+                    try
+                    {
+                        ViewBag.CurrentCard.BdEgEEPROMCheckDT = DateTime.Parse(cardinfo.BdEgEEPROMCheckDT).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex) { }
+                }
+                if (!string.IsNullOrEmpty(cardinfo.BdEgLabelCheckDT))
+                {
+                    try
+                    {
+                        ViewBag.CurrentCard.BdEgLabelCheckDT = DateTime.Parse(cardinfo.BdEgLabelCheckDT).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex) { }
+                }
+                if (!string.IsNullOrEmpty(cardinfo.BdEgCosmeticCheckDT))
+                {
+                    try
+                    {
+                        ViewBag.CurrentCard.BdEgCosmeticCheckDT = DateTime.Parse(cardinfo.BdEgCosmeticCheckDT).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex) { }
+                }
+
+                var alluser = UserViewModels.RetrieveAllUser();
+                var asilist = new List<string>();
+                asilist.Add("NONE");
+                asilist.AddRange(alluser);
+                ViewBag.BdEgEEPROMCheckPList = CreateSelectList(asilist, cardinfo.BdEgEEPROMCheckP);
+
+                alluser = UserViewModels.RetrieveAllUser();
+                asilist = new List<string>();
+                asilist.Add("NONE");
+                asilist.AddRange(alluser);
+                ViewBag.BdEgLabelCheckPList = CreateSelectList(asilist, cardinfo.BdEgLabelCheckP);
+
+                alluser = UserViewModels.RetrieveAllUser();
+                asilist = new List<string>();
+                asilist.Add("NONE");
+                asilist.AddRange(alluser);
+                ViewBag.BdEgCosmeticCheckPList = CreateSelectList(asilist, cardinfo.BdEgCosmeticCheckP);
+
                 ViewBag.ECOKey = ECOKey;
                 ViewBag.CardKey = CardKey;
                 ViewBag.CardDetailPage = DominoCardType.SampleBuilding;
 
+                GetNoticeInfo();
                 return View("CurrentECO", vm);
             }
 
@@ -1575,6 +1635,48 @@ namespace Domino.Controllers
             if (baseinfos.Count > 0)
             {
                 StoreAttachAndComment(CardKey, updater);
+
+                var cardinfo = new DominoVM();
+                cardinfo.BdEgEEPROMCheckP = Request.Form["BdEgEEPROMCheckPList"].ToString();
+                cardinfo.BdEgEEPROMCheckDT = Request.Form["BdEgEEPROMCheckDT"];
+                cardinfo.BdEgLabelCheckP = Request.Form["BdEgLabelCheckPList"].ToString();
+                cardinfo.BdEgLabelCheckDT = Request.Form["BdEgLabelCheckDT"];
+                cardinfo.BdEgCosmeticCheckP = Request.Form["BdEgCosmeticCheckPList"].ToString();
+                cardinfo.BdEgCosmeticCheckDT = Request.Form["BdEgCosmeticCheckDT"];
+                cardinfo.UpdateBDCheckInfo(CardKey);
+
+                var JoTable = DominoVM.RetrieveJOInfo(CardKey);
+                cardinfo = DominoVM.RetrieveBLDInfo(CardKey);
+
+                if (JoTable.Count == 0)
+                {
+                    SetNoticeInfo("No JO information is found");
+                    var dict1 = new RouteValueDictionary();
+                    dict1.Add("ECOKey", ECOKey);
+                    dict1.Add("CardKey", CardKey);
+                    return RedirectToAction(DominoCardType.SampleBuilding, "MiniPIP", dict1);
+                }
+                else if (string.IsNullOrEmpty(cardinfo.BdEEPROM2NDDate))
+                {
+                    SetNoticeInfo("No EEPROM second information is found");
+                    var dict1 = new RouteValueDictionary();
+                    dict1.Add("ECOKey", ECOKey);
+                    dict1.Add("CardKey", CardKey);
+                    return RedirectToAction(DominoCardType.SampleBuilding, "MiniPIP", dict1);
+                }
+                else if (string.IsNullOrEmpty(cardinfo.BdEgEEPROMCheckP)
+                    || string.IsNullOrEmpty(cardinfo.BdEgEEPROMCheckDT)
+                    || string.IsNullOrEmpty(cardinfo.BdEgLabelCheckP)
+                    || string.IsNullOrEmpty(cardinfo.BdEgLabelCheckDT)
+                    || string.IsNullOrEmpty(cardinfo.BdEgCosmeticCheckP)
+                    || string.IsNullOrEmpty(cardinfo.BdEgCosmeticCheckDT))
+                {
+                    SetNoticeInfo("All engineer check input data is needed");
+                    var dict1 = new RouteValueDictionary();
+                    dict1.Add("ECOKey", ECOKey);
+                    dict1.Add("CardKey", CardKey);
+                    return RedirectToAction(DominoCardType.SampleBuilding, "MiniPIP", dict1);
+                }
 
                 DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
 

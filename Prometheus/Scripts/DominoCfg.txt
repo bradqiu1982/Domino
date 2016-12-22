@@ -7,4 +7,6 @@ QAEEPROMCHECKLISTFILTER:::CHECKLISTEEPROM
 QALABELFILTER:::_FAI_
 WEEKLYUPDATE:::\\cn-file01\Public\Active NPI\Product_Engineering\PE_Weekly report\MiniPIP report\MINIPIP Progress\
 ORDERINFOPATH:::\\wux-fs\public\ERP_Report\WXI\Planning\Backlog Report
-
+JOORDERINFO:::\\wux-fs\PUBLIC\ERP_Report\WXI\Planning\WXI Finisar WIP Value Report.xls
+EEPROM2NDCHECK:::\\wux-fs\PUBLIC\Quality\31. Parallel TQM\3_FAI Check\FAI summary.xlsx
+EEPROM2NDCHECKSHEET:::EEPROM&FLI Data Resource

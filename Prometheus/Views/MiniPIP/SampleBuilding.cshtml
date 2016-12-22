@@ -20,6 +20,175 @@
 
             <div class="form-group">
                 <div class="row col-lg-6">
+                    <label class="control-label col-lg-2">EEPROM Check People</label>
+                    <div class="col-lg-10">
+                        @Html.DropDownList("BdEgEEPROMCheckPList", null, new { @id = "BdEgEEPROMCheckPList", @class = "form-control" })
+                    </div>
+                </div>
+
+                <div class="row col-lg-6">
+                    <label class="control-label col-lg-2">EEPROM Check Date</label>
+                    <div class="col-lg-10">
+                        <input class="form-control text-box single-line" id="BdEgEEPROMCheckDT" name="BdEgEEPROMCheckDT" type="text" value="@ViewBag.CurrentCard.BdEgEEPROMCheckDT" />
+                    </div>
+                </div>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+                        $("#BdEgEEPROMCheckDT").datepicker({
+                            changeMonth: true,
+                            changeYear: true,
+                            dateFormat: 'yy-mm-dd'
+                        });
+                    });
+                </script>
+            </div>
+
+            <div class="form-group">
+                <div class="row col-lg-6">
+                    <label class="control-label col-lg-2">Label Check People</label>
+                    <div class="col-lg-10">
+                        @Html.DropDownList("BdEgLabelCheckPList", null, new { @id = "BdEgLabelCheckPList", @class = "form-control" })
+                    </div>
+                </div>
+
+                <div class="row col-lg-6">
+                    <label class="control-label col-lg-2">Label Check Date</label>
+                    <div class="col-lg-10">
+                        <input class="form-control text-box single-line" id="BdEgLabelCheckDT" name="BdEgLabelCheckDT" type="text" value="@ViewBag.CurrentCard.BdEgLabelCheckDT" />
+                    </div>
+                </div>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+                        $("#BdEgLabelCheckDT").datepicker({
+                            changeMonth: true,
+                            changeYear: true,
+                            dateFormat: 'yy-mm-dd'
+                        });
+                    });
+                </script>
+            </div>
+
+            <div class="form-group">
+                <div class="row col-lg-6">
+                    <label class="control-label col-lg-2">Cosmetic Check People</label>
+                    <div class="col-lg-10">
+                        @Html.DropDownList("BdEgCosmeticCheckPList", null, new { @id = "BdEgCosmeticCheckPList", @class = "form-control" })
+                    </div>
+                </div>
+
+                <div class="row col-lg-6">
+                    <label class="control-label col-lg-2">Cosmetic Check Date</label>
+                    <div class="col-lg-10">
+                        <input class="form-control text-box single-line" id="BdEgCosmeticCheckDT" name="BdEgCosmeticCheckDT" type="text" value="@ViewBag.CurrentCard.BdEgCosmeticCheckDT" />
+                    </div>
+                </div>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+                        $("#BdEgCosmeticCheckDT").datepicker({
+                            changeMonth: true,
+                            changeYear: true,
+                            dateFormat: 'yy-mm-dd'
+                        });
+                    });
+                </script>
+            </div>
+
+            @if (ViewBag.CurrentCard.JoTable.Count > 0)
+            {
+                <hr />
+
+                <div class="form-group">
+                    @*<table id="jodatatable" class="display" cellspacing="0">*@
+                    <table id="jodatatable" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center;font-size:12px">WIP Job</th>
+                                <th style="text-align:center;font-size:12px">JO Status</th>
+                                <th style="text-align:center;font-size:12px">JO QTY</th>
+                                <th style="text-align:center;font-size:12px">Schedule Date</th>
+                                <th style="text-align:center;font-size:12px">Category</th>
+                                <th style="text-align:center;font-size:12px">Description</th>
+                                <th style="text-align:center;font-size:12px">Planner</th>
+                                <th style="text-align:center;font-size:12px">Creator</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var tempinfo in ViewBag.CurrentCard.JoTable)
+                        {
+                                <tr>
+                                    <td style="text-align:center;font-size:12px">@tempinfo.WipJob</td>
+                                    <td style="text-align:center;font-size:12px">@tempinfo.JobStatus</td>
+                                    <td style="text-align:center;font-size:12px">@tempinfo.JOQTY</td>
+                                    <td style="text-align:center;font-size:12px">@tempinfo.SSTD</td>
+                                    <td style="text-align:center;font-size:12px">@tempinfo.Category</td>
+                                    <td style="text-align:center;font-size:12px">@tempinfo.Description</td>
+                                    <td style="text-align:center;font-size:12px">@tempinfo.Planner</td>
+                                    <td style="text-align:center;font-size:12px">@tempinfo.Creator</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                    @*<script type="text/javascript">
+                    $(document).ready(function () {
+                        $('#orderdatatable').DataTable({
+                            'iDisplayLength': 50,
+                            'aLengthMenu': [[25, 50, 100, -1],
+                                            [25, 50, 100, "All"]],
+                            "aaSorting": []
+                        });
+                    });
+
+                </script>*@
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(ViewBag.CurrentCard.BdEEPROM2NDDate))
+            {
+                <hr />
+                <div class="form-group">
+                    <div class="col-lg-12">
+                        <label class="control-label">EEPROM Second Check</label>
+                    </div>
+                </div> 
+                <div class="form-group">
+                    @*<table id="eepromdatatable" class="display" cellspacing="0">*@
+                    <table id="eepromdatatable" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center;font-size:12px">Check Date</th>
+                                <th style="text-align:center;font-size:12px">Check People</th>
+                                <th style="text-align:center;font-size:12px">Check Result</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                                <tr>
+                                    <td style="text-align:center;font-size:12px">@ViewBag.CurrentCard.BdEEPROM2NDDate</td>
+                                    <td style="text-align:center;font-size:12px">@ViewBag.CurrentCard.BdEEPROM2NDPE</td>
+                                    <td style="text-align:center;font-size:12px">@ViewBag.CurrentCard.BdEEPROM2NDRESULT</td>
+                                </tr>
+                        </tbody>
+                    </table>
+
+                    @*<script type="text/javascript">
+                    $(document).ready(function () {
+                        $('#orderdatatable').DataTable({
+                            'iDisplayLength': 50,
+                            'aLengthMenu': [[25, 50, 100, -1],
+                                            [25, 50, 100, "All"]],
+                            "aaSorting": []
+                        });
+                    });
+
+                </script>*@
+                </div>
+            }
+
+            <div class="form-group">
+                <div class="row col-lg-6">
                     <input class="form-control text-box single-line" value="@ViewBag.ECOKey" type="hidden" id="ECOKey" name="ECOKey" />
                 </div>
                 <div class="row col-lg-6">

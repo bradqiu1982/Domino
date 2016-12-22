@@ -601,5 +601,159 @@ namespace Domino.Models
 
         }
 
+        public static void UpdateJOInfoFromExcel(Controller ctrl, ECOBaseInfo baseinfo, string cardkey)
+        {
+            var syscfgdict = GetSysConfig(ctrl);
+
+            var currentcard = DominoVM.RetrieveCard(cardkey);
+
+            string datestring = DateTime.Now.ToString("yyyyMMdd");
+            string imgdir = ctrl.Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
+            var desfile = syscfgdict["JOORDERINFO"];
+            var jolist = new List<ECOJOOrderInfo>();           
+
+            try
+            {
+                var backlogfiles = new List<string>();
+                if (!Directory.Exists(imgdir))
+                {
+                    Directory.CreateDirectory(imgdir);
+                }
+
+                if (System.IO.File.Exists(desfile))
+                {
+                    try
+                    {
+                        var fn = imgdir + Path.GetFileName(desfile);
+                        System.IO.File.Copy(desfile, fn, true);
+                        var data = ExcelReader.RetrieveDataFromExcel(fn, null);
+                        foreach (var line in data)
+                        {
+                            if (string.Compare(line[3], "903") == 0
+                                && line[1].Contains(baseinfo.PNDesc))
+                            {
+                                var tempinfo = new ECOJOOrderInfo();
+                                tempinfo.Description = line[1];
+                                tempinfo.Category = line[3];
+                                tempinfo.WipJob = line[11];
+                                tempinfo.JobStatus = line[14];
+                                tempinfo.SSTD = line[15];
+                                tempinfo.JOQTY = line[20];
+                                tempinfo.Planner = line[37];
+                                tempinfo.Creator = line[38];
+                                jolist.Add(tempinfo);
+                            }
+                        }
+                    }
+                    catch (Exception ex) { }
+
+
+                    if (jolist.Count > 0 && currentcard.Count > 0)
+                    {
+                        if (string.Compare(currentcard[0].CardStatus, DominoCardStatus.working) == 0)
+                        {
+                            DominoVM.UpdateCardStatus(cardkey, DominoCardStatus.pending);
+                        }
+                    }
+
+                    DominoVM.UpdateJOInfo(jolist, cardkey);
+                }
+            }
+            catch (Exception ex) { }
+
+        }
+
+
+        public static void UpdateEEPROM2NDFromExcel(Controller ctrl, ECOBaseInfo baseinfo, string cardkey)
+        {
+            var syscfgdict = GetSysConfig(ctrl);
+
+            var currentcard = DominoVM.RetrieveCard(cardkey);
+
+            string datestring = DateTime.Now.ToString("yyyyMMdd");
+            string imgdir = ctrl.Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
+            var desfile = syscfgdict["EEPROM2NDCHECK"];
+            var sheetname = syscfgdict["EEPROM2NDCHECKSHEET"];
+
+            var jolist = new List<DominoVM>();
+
+            try
+            {
+                var backlogfiles = new List<string>();
+                if (!Directory.Exists(imgdir))
+                {
+                    Directory.CreateDirectory(imgdir);
+                }
+
+                if (System.IO.File.Exists(desfile))
+                {
+                    try
+                    {
+                        var fn = imgdir + Path.GetFileName(desfile);
+                        System.IO.File.Copy(desfile, fn, true);
+
+                        var data = ExcelReader.RetrieveDataFromExcel(fn, sheetname);
+                        foreach (var line in data)
+                        {
+                            if (string.Compare(line[7],baseinfo.ECONum,true) == 0
+                                && string.Compare(line[4], "EEPROM", true) == 0
+                                && line[8].Contains(baseinfo.PNDesc))
+                            {
+                                var tempinfo = new DominoVM();
+                                tempinfo.BdEEPROM2NDDate = line[0] + "-" + line[1] + "-" + line[2];
+                                tempinfo.BdEEPROM2NDPE = line[5];
+
+                                if (!string.IsNullOrEmpty(line[9]))
+                                {
+                                    tempinfo.BdEEPROM2NDRESULT = line[9];
+                                }
+                                else
+                                {
+                                    if (!string.IsNullOrEmpty(line[12]))
+                                    {
+                                        try
+                                        {
+                                            var val = Convert.ToInt32(line[12]);
+                                            if (val > 0)
+                                            {
+                                                tempinfo.BdEEPROM2NDRESULT = "fail";
+                                            }
+                                            else
+                                            {
+                                                tempinfo.BdEEPROM2NDRESULT = "pass";
+                                            }
+                                        }
+                                        catch (Exception ex) { tempinfo.BdEEPROM2NDRESULT = "fail"; }
+                                    }
+                                    else
+                                    {
+                                        tempinfo.BdEEPROM2NDRESULT = "fail";
+                                    }
+                                }
+                                
+                                tempinfo.UpdateBDEEPROM2ND(cardkey);
+                                jolist.Add(tempinfo);
+                                break;
+                            }
+                        }
+                    }
+                    catch (Exception ex) { }
+
+
+                    if (jolist.Count > 0 && currentcard.Count > 0)
+                    {
+                        if (string.Compare(currentcard[0].CardStatus, DominoCardStatus.working) == 0)
+                        {
+                            DominoVM.UpdateCardStatus(cardkey, DominoCardStatus.pending);
+                        }
+                    }
+
+                }
+            }
+            catch (Exception ex) { }
+
+        }
+
+
     }
 }
