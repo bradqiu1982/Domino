@@ -15,14 +15,31 @@
                     </div>
                 </div>
                 <div class="row col-lg-6">
-                    <label class="control-label col-lg-2">Customer Approve Hold Date</label>
+                </div>
+
+            </div>
+
+            <div class="form-group">
+                <div class="row col-lg-6">
+                    <label class="control-label col-lg-2">Customer Hold Date</label>
                     <div class="col-lg-10">
-                        <input class="form-control text-box single-line" id="CustomerApproveHoldDate" name="CustomerApproveHoldDate" type="text" value="@ViewBag.CurrentCard.CustomerApproveHoldDate" />
+                        <input class="form-control text-box single-line" id="CustomerHoldDate" name="CustomerHoldDate" type="text" value="@ViewBag.CurrentCard.CustomerHoldDate" />
+                    </div>
+                </div>
+                <div class="row col-lg-6">
+                    <label class="control-label col-lg-2">Customer Approve Date</label>
+                    <div class="col-lg-10">
+                        <input class="form-control text-box single-line" id="CustomerApproveDate" name="CustomerApproveDate" type="text" value="@ViewBag.CurrentCard.CustomerApproveDate" />
                     </div>
                 </div>
                 <script type="text/javascript">
                     $(document).ready(function () {
-                        $("#CustomerApproveHoldDate").datepicker({
+                        $("#CustomerHoldDate").datepicker({
+                            changeMonth: true,
+                            changeYear: true,
+                            dateFormat: 'yy-mm-dd'
+                        });
+                        $("#CustomerApproveDate").datepicker({
                             changeMonth: true,
                             changeYear: true,
                             dateFormat: 'yy-mm-dd'

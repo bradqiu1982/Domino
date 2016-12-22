@@ -1321,16 +1321,26 @@ namespace Domino.Controllers
                 }
 
                 DominoVM cardinfo = DominoVM.RetrieveCustomerApproveHoldInfo(ViewBag.CurrentCard.CardKey);
-                ViewBag.CurrentCard.CustomerApproveHoldDate = cardinfo.CustomerApproveHoldDate;
-                if (!string.IsNullOrEmpty(cardinfo.CustomerApproveHoldDate))
+                ViewBag.CurrentCard.CustomerHoldDate = cardinfo.CustomerHoldDate;
+                ViewBag.CurrentCard.CustomerApproveDate = cardinfo.CustomerApproveDate;
+
+                if (!string.IsNullOrEmpty(cardinfo.CustomerHoldDate))
                 {
                     try
                     {
-                        ViewBag.CurrentCard.CustomerApproveHoldDate = DateTime.Parse(cardinfo.CustomerApproveHoldDate).ToString("yyyy-MM-dd");
+                        ViewBag.CurrentCard.CustomerHoldDate = DateTime.Parse(cardinfo.CustomerHoldDate).ToString("yyyy-MM-dd");
                     }
                     catch (Exception ex) { }
                 }
 
+                if (!string.IsNullOrEmpty(cardinfo.CustomerApproveDate))
+                {
+                    try
+                    {
+                        ViewBag.CurrentCard.CustomerApproveDate = DateTime.Parse(cardinfo.CustomerApproveDate).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex) { }
+                }
 
                 ViewBag.ECOKey = ECOKey;
                 ViewBag.CardKey = CardKey;
@@ -1361,12 +1371,21 @@ namespace Domino.Controllers
                 StoreAttachAndComment(CardKey, updater);
 
                 DominoVM cardinfo = DominoVM.RetrieveCustomerApproveHoldInfo(CardKey);
-                cardinfo.CustomerApproveHoldDate = Request.Form["CustomerApproveHoldDate"];
+                cardinfo.CustomerHoldDate = Request.Form["CustomerHoldDate"];
+                cardinfo.CustomerApproveDate = Request.Form["CustomerApproveDate"];
                 cardinfo.UpdateCustomerApproveHoldInfo(CardKey);
 
-                if (string.IsNullOrEmpty(cardinfo.CustomerApproveHoldDate))
+                if (string.IsNullOrEmpty(cardinfo.CustomerHoldDate))
                 {
-                    SetNoticeInfo("Customer Aprrove Hold Date should not be empty");
+                    SetNoticeInfo("Customer Hold Date should not be empty");
+                    var dict = new RouteValueDictionary();
+                    dict.Add("ECOKey", ECOKey);
+                    dict.Add("CardKey", CardKey);
+                    return RedirectToAction(DominoCardType.CustomerApprovalHold, "MiniPIP", dict);
+                }
+                if (string.IsNullOrEmpty(cardinfo.CustomerApproveDate))
+                {
+                    SetNoticeInfo("Customer Approve Date should not be empty");
                     var dict = new RouteValueDictionary();
                     dict.Add("ECOKey", ECOKey);
                     dict.Add("CardKey", CardKey);

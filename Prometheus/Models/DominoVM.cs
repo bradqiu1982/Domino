@@ -495,7 +495,8 @@ namespace Domino.Models
             RSMSendDate = string.Empty;
             RSMApproveDate = string.Empty;
 
-            CustomerApproveHoldDate = string.Empty;
+            CustomerHoldDate = string.Empty;
+            CustomerApproveDate = string.Empty;
 
             ECOCompleted = string.Empty;
             ECOSubmitDate = string.Empty;
@@ -932,7 +933,8 @@ namespace Domino.Models
             return ret;
         }
 
-        public string CustomerApproveHoldDate { set; get; }
+        public string CustomerHoldDate { set; get; }
+        public string CustomerApproveDate { set; get; }
 
         public void UpdateCustomerApproveHoldInfo(string cardkey)
         {
@@ -946,8 +948,8 @@ namespace Domino.Models
                 DBUtility.ExeLocalSqlNoRes(csql);
             }
 
-            var sql = "Update ECOCardContent Set APVal1 = '<APVal1>' where CardKey = '<CardKey>'";
-            sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal1>", CustomerApproveHoldDate);
+            var sql = "Update ECOCardContent Set APVal1 = '<APVal1>',APVal2 = '<APVal2>' where CardKey = '<CardKey>'";
+            sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal1>", CustomerHoldDate).Replace("<APVal2>", CustomerApproveDate);
             DBUtility.ExeLocalSqlNoRes(sql);
         }
 
@@ -955,13 +957,14 @@ namespace Domino.Models
         public static DominoVM RetrieveCustomerApproveHoldInfo(string cardkey)
         {
             var ret = new DominoVM();
-            var sql = "select CardKey,APVal1 from ECOCardContent where CardKey = '<CardKey>'";
+            var sql = "select CardKey,APVal1,APVal2 from ECOCardContent where CardKey = '<CardKey>'";
             sql = sql.Replace("<CardKey>", cardkey);
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
             if (dbret.Count > 0)
             {
                 ret.CardKey = Convert.ToString(dbret[0][0]);
-                ret.CustomerApproveHoldDate = Convert.ToString(dbret[0][1]);
+                ret.CustomerHoldDate = Convert.ToString(dbret[0][1]);
+                ret.CustomerApproveDate = Convert.ToString(dbret[0][2]);
             }
             return ret;
         }
