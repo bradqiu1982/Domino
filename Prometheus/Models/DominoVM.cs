@@ -67,6 +67,14 @@ namespace Domino.Models
         public static string LABELEEPROMFA = "LABEL/EEPROM FA";
     }
 
+    public class DominoLifeCycle
+    {
+        public static string FirstArticl = "First Article";
+        public static string Prototype = "Prototype";
+        public static string PreProduct = "Pre-Product";
+        public static string Pilot = "Pilot";
+        public static string Production = "Production";
+    }
 
     public class ECOCardComments
     {
@@ -164,6 +172,16 @@ namespace Domino.Models
         public string Creator { set; get; }
     }
 
+    public class ECOShipInfo
+    {
+        public string CardKey { set; get; }
+        public string ShipSONum { set; get; }
+        public string ShipLine { set; get; }
+        public string ShipOrderQTY { set; get; }
+        public string ShippedQTY { set; get; }
+        public string ShipDate { set; get; }
+    }
+
     public class ECOBaseInfo
     {
         public string ECOKey { set; get; }
@@ -235,6 +253,7 @@ namespace Domino.Models
             FirstArticleNeed = string.Empty;
             FlowInfo = string.Empty;
             PNImplement = string.Empty;
+
         }
 
         public static List<KeyValuePair<string, string>> RetrieveBaseInfo(ECOBaseInfo info)
@@ -526,6 +545,11 @@ namespace Domino.Models
             BdEgEEPROMCheckDT= string.Empty;
             BdEgLabelCheckDT= string.Empty;
             BdEgCosmeticCheckDT = string.Empty;
+
+            SampleCustomerApproveDate = string.Empty;
+
+            ECOPartLifeCycle = string.Empty;
+            GenericPartLifeCycle = string.Empty;
         }
 
         public static void CleanDB()
@@ -1280,5 +1304,158 @@ namespace Domino.Models
             return ret;
         }
 
+        private List<ECOShipInfo> shiptab = new List<ECOShipInfo>();
+
+        public List<ECOShipInfo> ShipTable
+        {
+            set
+            {
+                shiptab.Clear();
+                shiptab.AddRange(value);
+            }
+            get { return shiptab; }
+        }
+
+        public static void UpdateShipInfo(List<ECOShipInfo>shipinfos, string cardkey)
+        {
+            foreach (var shipinfo in shipinfos)
+            {
+                var dataexist = RetrieveShipInfo(cardkey,shipinfo.ShipSONum, shipinfo.ShipLine);
+                if (string.IsNullOrEmpty(dataexist.CardKey))
+                {
+                    var sql = "insert into ECOCardContent(CardKey,APVal1,APVal2,APVal3,APVal4,APVal5)  "
+                        + "  values('<CardKey>','<APVal1>','<APVal2>','<APVal3>','<APVal4>','<APVal5>')";
+                    sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal1>", shipinfo.ShipSONum).Replace("<APVal2>", shipinfo.ShipLine).Replace("<APVal3>", shipinfo.ShipOrderQTY)
+                        .Replace("<APVal4>", shipinfo.ShippedQTY).Replace("<APVal5>", shipinfo.ShipDate);
+                    DBUtility.ExeLocalSqlNoRes(sql);
+                }
+                else
+                {
+                    dataexist = RetrieveShipInfo(cardkey, shipinfo.ShipSONum, shipinfo.ShipLine, shipinfo.ShippedQTY);
+                    if (string.IsNullOrEmpty(dataexist.CardKey))
+                    {
+                        var sql = "Update ECOCardContent Set APVal1 = '<APVal1>',APVal2 = '<APVal2>',APVal3 = '<APVal3>',APVal4 = '<APVal4>',APVal5 = '<APVal5>' where CardKey = '<CardKey>' and APVal1 = '<APVal1>' and APVal2 = '<APVal2>'";
+                        sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal1>", shipinfo.ShipSONum).Replace("<APVal2>", shipinfo.ShipLine).Replace("<APVal3>", shipinfo.ShipOrderQTY)
+                        .Replace("<APVal4>", shipinfo.ShippedQTY).Replace("<APVal5>", shipinfo.ShipDate);
+                        DBUtility.ExeLocalSqlNoRes(sql);
+                    }
+               }
+            }
+        }
+
+        public static List<ECOShipInfo> RetrieveShipInfo(string cardkey)
+        {
+            var ret = new List<ECOShipInfo>();
+            var sql = "select CardKey,APVal1,APVal2,APVal3,APVal4,APVal5 from ECOCardContent where CardKey = '<CardKey>'";
+            sql = sql.Replace("<CardKey>", cardkey);
+            var dbret = DBUtility.ExeLocalSqlWithRes(sql);
+            foreach(var line in dbret)
+            {
+                var tempinfo = new ECOShipInfo();
+                tempinfo.CardKey = Convert.ToString(line[0]);
+                tempinfo.ShipSONum = Convert.ToString(line[1]);
+                tempinfo.ShipLine = Convert.ToString(line[2]);
+                tempinfo.ShipOrderQTY = Convert.ToString(line[3]);
+                tempinfo.ShippedQTY = Convert.ToString(line[4]);
+                tempinfo.ShipDate = Convert.ToString(line[5]);
+
+                ret.Add(tempinfo);
+            }
+            return ret;
+        }
+
+        private static ECOShipInfo RetrieveShipInfo(string cardkey, string sonum, string shipline)
+        {
+            var ret = new ECOShipInfo();
+            var sql = "select CardKey from ECOCardContent where CardKey = '<CardKey>' and APVal1 = '<APVal1>' and APVal2 = '<APVal2>'";
+            sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal1>", sonum).Replace("<APVal2>", shipline);
+            var dbret = DBUtility.ExeLocalSqlWithRes(sql);
+            if (dbret.Count > 0)
+            {
+                ret.CardKey = Convert.ToString(dbret[0][0]);
+            }
+            return ret;
+        }
+
+        private static ECOShipInfo RetrieveShipInfo(string cardkey,string sonum, string shipline,string shippedqty)
+        {
+            var ret = new ECOShipInfo();
+            var sql = "select CardKey from ECOCardContent where CardKey = '<CardKey>' and APVal1 = '<APVal1>' and APVal2 = '<APVal2>' and APVal4 = '<APVal4>'";
+            sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal1>", sonum).Replace("<APVal2>", shipline).Replace("<APVal4>", shippedqty);
+            var dbret = DBUtility.ExeLocalSqlWithRes(sql);
+            if (dbret.Count > 0)
+            {
+                ret.CardKey = Convert.ToString(dbret[0][0]);
+            }
+            return ret;
+        }
+
+
+        public string SampleCustomerApproveDate { set; get; }
+
+        public void UpdateSampleCustomerApproveInfo(string cardkey)
+        {
+
+            var infoexist = RetrieveSampleCustomerApproveInfo(cardkey);
+
+            if (string.IsNullOrEmpty(infoexist.CardKey))
+            {
+                var csql = "insert into ECOCardContent(CardKey,APVal1) values('<CardKey>','<APVal1>')";
+                csql = csql.Replace("<CardKey>", cardkey).Replace("<APVal1>", string.Empty);
+                DBUtility.ExeLocalSqlNoRes(csql);
+            }
+
+            var sql = "Update ECOCardContent Set APVal1 = '<APVal1>' where CardKey = '<CardKey>'";
+            sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal1>", SampleCustomerApproveDate);
+            DBUtility.ExeLocalSqlNoRes(sql);
+        }
+
+        public static DominoVM RetrieveSampleCustomerApproveInfo(string cardkey)
+        {
+            var ret = new DominoVM();
+            var sql = "select CardKey,APVal1 from ECOCardContent where CardKey = '<CardKey>'";
+            sql = sql.Replace("<CardKey>", cardkey);
+            var dbret = DBUtility.ExeLocalSqlWithRes(sql);
+            if (dbret.Count > 0)
+            {
+                ret.CardKey = Convert.ToString(dbret[0][0]);
+                ret.SampleCustomerApproveDate = Convert.ToString(dbret[0][1]);
+            }
+            return ret;
+        }
+
+        public string ECOPartLifeCycle { set; get; }
+        public string GenericPartLifeCycle { set; get; }
+
+        public void UpdateMinipipCompleteInfo(string cardkey)
+        {
+
+            var infoexist = RetrieveMinipipCompleteInfo(cardkey);
+            if (string.IsNullOrEmpty(infoexist.CardKey))
+            {
+                var csql = "insert into ECOCardContent(CardKey,APVal1) values('<CardKey>','<APVal1>')";
+                csql = csql.Replace("<CardKey>", cardkey).Replace("<APVal1>", string.Empty);
+                DBUtility.ExeLocalSqlNoRes(csql);
+            }
+
+            var sql = "Update ECOCardContent Set APVal1 = '<APVal1>',APVal2 = '<APVal2>' where CardKey = '<CardKey>'";
+            sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal1>", ECOPartLifeCycle).Replace("<APVal2>", GenericPartLifeCycle);
+            DBUtility.ExeLocalSqlNoRes(sql);
+        }
+
+        public static DominoVM RetrieveMinipipCompleteInfo(string cardkey)
+        {
+            var ret = new DominoVM();
+            var sql = "select CardKey,APVal1,APVal2 from ECOCardContent where CardKey = '<CardKey>'";
+            sql = sql.Replace("<CardKey>", cardkey);
+            var dbret = DBUtility.ExeLocalSqlWithRes(sql);
+            if (dbret.Count > 0)
+            {
+                ret.CardKey = Convert.ToString(dbret[0][0]);
+                ret.ECOPartLifeCycle = Convert.ToString(dbret[0][1]);
+                ret.GenericPartLifeCycle = Convert.ToString(dbret[0][2]);
+            }
+            return ret;
+        }
     }
 }

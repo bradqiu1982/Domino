@@ -755,5 +755,78 @@ namespace Domino.Models
         }
 
 
+        public static void UpdateShipInfoFromExcel(Controller ctrl, ECOBaseInfo baseinfo, string cardkey)
+        {
+            var syscfgdict = GetSysConfig(ctrl);
+
+            var ordercard = DominoVM.RetrieveSpecialCard(baseinfo, DominoCardType.SampleOrdering);
+            var orderinfos = DominoVM.RetrieveOrderInfo(ordercard[0].CardKey);
+            var sodict = new Dictionary<string, bool>();
+            foreach (var so in orderinfos)
+            {
+                if (!sodict.ContainsKey(so.SONum))
+                {
+                    sodict.Add(so.SONum, true);
+                }
+            }
+
+            var currentcard = DominoVM.RetrieveCard(cardkey);
+
+            string datestring = DateTime.Now.ToString("yyyyMMdd");
+            string imgdir = ctrl.Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
+            var desfile = syscfgdict["SHIPMENTINFOPATH"];
+            var sheetname = syscfgdict["SHIPMENTINFOSHEETNAME"];
+
+            var jolist = new List<ECOShipInfo>();
+
+            try
+            {
+                if (!Directory.Exists(imgdir))
+                {
+                    Directory.CreateDirectory(imgdir);
+                }
+
+                if (System.IO.File.Exists(desfile))
+                {
+                    try
+                    {
+                        var fn = imgdir + Path.GetFileName(desfile);
+                        System.IO.File.Copy(desfile, fn, true);
+
+                        var data = ExcelReader.RetrieveDataFromExcel(fn, sheetname);
+                        foreach (var line in data)
+                        {
+                            if (sodict.ContainsKey(line[8]))
+                            {
+                                var tempinfo = new ECOShipInfo();
+                                tempinfo.ShipSONum = line[8];
+                                tempinfo.ShipLine = line[9];
+                                tempinfo.ShipOrderQTY = line[13];
+                                tempinfo.ShippedQTY = line[14];
+                                tempinfo.ShipDate = line[19];
+                                jolist.Add(tempinfo);
+                            }
+                        }
+                    }
+                    catch (Exception ex) { }
+
+
+                    if (jolist.Count > 0 && currentcard.Count > 0)
+                    {
+                        if (string.Compare(currentcard[0].CardStatus, DominoCardStatus.working) == 0)
+                        {
+                            DominoVM.UpdateCardStatus(cardkey, DominoCardStatus.pending);
+                        }
+                    }
+
+                    DominoVM.UpdateShipInfo(jolist, cardkey);
+                }
+            }
+            catch (Exception ex) { }
+
+        }
+
+
+
     }
 }

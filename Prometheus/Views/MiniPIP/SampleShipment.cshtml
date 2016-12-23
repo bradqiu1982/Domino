@@ -18,6 +18,49 @@
                 </div>
             </div>
 
+            @if (ViewBag.CurrentCard.ShipTable.Count > 0)
+            {
+                <hr />
+
+                <div class="form-group">
+                    @*<table id="orderdatatable" class="display" cellspacing="0">*@
+                    <table id="shipdatatable" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center;font-size:12px">SO Number</th>
+                                <th style="text-align:center;font-size:12px">Ship Order QTY</th>
+                                <th style="text-align:center;font-size:12px">Shipped QTY</th>
+                                <th style="text-align:center;font-size:12px">Ship Date</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var tempinfo in ViewBag.CurrentCard.ShipTable)
+                        {
+                                <tr>
+                                    <td style="text-align:center;font-size:12px">@tempinfo.ShipSONum</td>
+                                    <td style="text-align:center;font-size:12px">@tempinfo.ShipOrderQTY</td>
+                                    <td style="text-align:center;font-size:12px">@tempinfo.ShippedQTY</td>
+                                    <td style="text-align:center;font-size:12px">@tempinfo.ShipDate</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                    @*<script type="text/javascript">
+                    $(document).ready(function () {
+                        $('#orderdatatable').DataTable({
+                            'iDisplayLength': 50,
+                            'aLengthMenu': [[25, 50, 100, -1],
+                                            [25, 50, 100, "All"]],
+                            "aaSorting": []
+                        });
+                    });
+
+                </script>*@
+                </div>
+            }
+
             <div class="form-group">
                 <div class="row col-lg-6">
                     <input class="form-control text-box single-line" value="@ViewBag.ECOKey" type="hidden" id="ECOKey" name="ECOKey" />

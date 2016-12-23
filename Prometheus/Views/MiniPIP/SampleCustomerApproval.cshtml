@@ -20,6 +20,26 @@
 
             <div class="form-group">
                 <div class="row col-lg-6">
+                    <label class="control-label col-lg-2">Customer Approve Date</label>
+                    <div class="col-lg-10">
+                        <input class="form-control text-box single-line" id="SampleCustomerApproveDate" name="SampleCustomerApproveDate" type="text" value="@ViewBag.CurrentCard.SampleCustomerApproveDate" />
+                    </div>
+                </div>
+                <div class="row col-lg-6"></div>
+
+                <script type="text/javascript">
+                    $(document).ready(function () {
+                        $("#SampleCustomerApproveDate").datepicker({
+                            changeMonth: true,
+                            changeYear: true,
+                            dateFormat: 'yy-mm-dd'
+                        });
+                    });
+                </script>
+            </div>
+
+            <div class="form-group">
+                <div class="row col-lg-6">
                     <input class="form-control text-box single-line" value="@ViewBag.ECOKey" type="hidden" id="ECOKey" name="ECOKey" />
                 </div>
                 <div class="row col-lg-6">

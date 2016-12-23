@@ -948,21 +948,14 @@ namespace Domino.Controllers
 
                 var newcardkey = DominoVM.GetUniqKey();
                 if (string.Compare(baseinfos[0].ECOType, DominoECOType.DVS) == 0
-                    || string.Compare(baseinfos[0].ECOType, DominoECOType.RVNS) == 0)
+                    || string.Compare(baseinfos[0].ECOType, DominoECOType.RVNS) == 0
+                    || string.Compare(baseinfos[0].ECOType, DominoECOType.DVNS) == 0)
                 {
                     var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.SampleOrdering, DominoCardStatus.working);
                     var dict = new RouteValueDictionary();
                     dict.Add("ECOKey", ECOKey);
                     dict.Add("CardKey", realcardkey);
                     return RedirectToAction(DominoCardType.SampleOrdering, "MiniPIP", dict);
-                }
-                else if (string.Compare(baseinfos[0].ECOType, DominoECOType.DVNS) == 0)
-                {
-                    var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.FACustomerApproval, DominoCardStatus.pending);
-                    var dict = new RouteValueDictionary();
-                    dict.Add("ECOKey", ECOKey);
-                    dict.Add("CardKey", realcardkey);
-                    return RedirectToAction(DominoCardType.FACustomerApproval, "MiniPIP", dict);
                 }
                 else if (string.Compare(baseinfos[0].ECOType, DominoECOType.RVS) == 0)
                 {
@@ -990,97 +983,97 @@ namespace Domino.Controllers
             }
         }
 
-        public ActionResult FACustomerApproval(string ECOKey, string CardKey)
-        {
-            var ckdict = CookieUtility.UnpackCookie(this);
-            if (!LoginSystem(ckdict, ECOKey, CardKey))
-            {
-                return RedirectToAction("LoginUser", "User");
-            }
-            if (string.IsNullOrEmpty(ECOKey))
-                ECOKey = ckdict["ECOKey"];
-            if (string.IsNullOrEmpty(CardKey))
-                CardKey = ckdict["CardKey"];
+        //public ActionResult FACustomerApproval(string ECOKey, string CardKey)
+        //{
+        //    var ckdict = CookieUtility.UnpackCookie(this);
+        //    if (!LoginSystem(ckdict, ECOKey, CardKey))
+        //    {
+        //        return RedirectToAction("LoginUser", "User");
+        //    }
+        //    if (string.IsNullOrEmpty(ECOKey))
+        //        ECOKey = ckdict["ECOKey"];
+        //    if (string.IsNullOrEmpty(CardKey))
+        //        CardKey = ckdict["CardKey"];
 
-            var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
-            if (baseinfos.Count > 0)
-            {
-                var vm = new List<List<DominoVM>>();
-                var cardlist = DominoVM.RetrieveECOCards(baseinfos[0]);
-                vm.Add(cardlist);
+        //    var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
+        //    if (baseinfos.Count > 0)
+        //    {
+        //        var vm = new List<List<DominoVM>>();
+        //        var cardlist = DominoVM.RetrieveECOCards(baseinfos[0]);
+        //        vm.Add(cardlist);
 
-                foreach (var card in cardlist)
-                {
-                    if (string.Compare(card.CardType, DominoCardType.FACustomerApproval) == 0)
-                    {
-                        ViewBag.CurrentCard = card;
-                        break;
-                    }
-                }
+        //        foreach (var card in cardlist)
+        //        {
+        //            if (string.Compare(card.CardType, DominoCardType.FACustomerApproval) == 0)
+        //            {
+        //                ViewBag.CurrentCard = card;
+        //                break;
+        //            }
+        //        }
 
-                ViewBag.ECOKey = ECOKey;
-                ViewBag.CardKey = CardKey;
-                ViewBag.CardDetailPage = DominoCardType.FACustomerApproval;
+        //        ViewBag.ECOKey = ECOKey;
+        //        ViewBag.CardKey = CardKey;
+        //        ViewBag.CardDetailPage = DominoCardType.FACustomerApproval;
 
-                return View("CurrentECO", vm);
-            }
+        //        return View("CurrentECO", vm);
+        //    }
 
-            return RedirectToAction("ViewAll", "MiniPIP");
-        }
+        //    return RedirectToAction("ViewAll", "MiniPIP");
+        //}
 
-        [HttpPost, ActionName("FACustomerApproval")]
-        [ValidateAntiForgeryToken]
-        public ActionResult FACustomerApprovalPost()
-        {
-            var ckdict = CookieUtility.UnpackCookie(this);
-            var updater = ckdict["logonuser"].Split(new char[] { '|' })[0];
+        //[HttpPost, ActionName("FACustomerApproval")]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult FACustomerApprovalPost()
+        //{
+        //    var ckdict = CookieUtility.UnpackCookie(this);
+        //    var updater = ckdict["logonuser"].Split(new char[] { '|' })[0];
 
-            var ECOKey = Request.Form["ECOKey"];
-            var CardKey = Request.Form["CardKey"];
+        //    var ECOKey = Request.Form["ECOKey"];
+        //    var CardKey = Request.Form["CardKey"];
 
-            var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
-            if (baseinfos.Count > 0)
-            {
+        //    var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
+        //    if (baseinfos.Count > 0)
+        //    {
 
-                StoreAttachAndComment(CardKey, updater);
+        //        StoreAttachAndComment(CardKey, updater);
 
-                DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
+        //        DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
 
-                var newcardkey = DominoVM.GetUniqKey();
-                if (string.Compare(baseinfos[0].ECOType, DominoECOType.DVNS) == 0)
-                {
-                    var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.SampleOrdering, DominoCardStatus.working);
-                    var dict = new RouteValueDictionary();
-                    dict.Add("ECOKey", ECOKey);
-                    dict.Add("CardKey", realcardkey);
-                    return RedirectToAction(DominoCardType.SampleOrdering, "MiniPIP", dict);
-                }
-                else if (string.Compare(baseinfos[0].ECOType, DominoECOType.RVNS) == 0)
-                {
-                    var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.ECOComplete, DominoCardStatus.pending);
-                    var dict = new RouteValueDictionary();
-                    dict.Add("ECOKey", ECOKey);
-                    dict.Add("CardKey", realcardkey);
-                    return RedirectToAction(DominoCardType.ECOComplete, "MiniPIP", dict);
-                }
-                else
-                {
-                    var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.SampleOrdering, DominoCardStatus.working);
-                    var dict = new RouteValueDictionary();
-                    dict.Add("ECOKey", ECOKey);
-                    dict.Add("CardKey", realcardkey);
-                    return RedirectToAction(DominoCardType.SampleOrdering, "MiniPIP", dict);
-                }
-            }
-            else
-            {
-                var dict = new RouteValueDictionary();
-                dict.Add("ECOKey", ECOKey);
-                dict.Add("CardKey", CardKey);
-                return RedirectToAction(DominoCardType.FACustomerApproval, "MiniPIP", dict);
-            }
+        //        var newcardkey = DominoVM.GetUniqKey();
+        //        if (string.Compare(baseinfos[0].ECOType, DominoECOType.DVNS) == 0)
+        //        {
+        //            var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.SampleOrdering, DominoCardStatus.working);
+        //            var dict = new RouteValueDictionary();
+        //            dict.Add("ECOKey", ECOKey);
+        //            dict.Add("CardKey", realcardkey);
+        //            return RedirectToAction(DominoCardType.SampleOrdering, "MiniPIP", dict);
+        //        }
+        //        else if (string.Compare(baseinfos[0].ECOType, DominoECOType.RVNS) == 0)
+        //        {
+        //            var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.ECOComplete, DominoCardStatus.pending);
+        //            var dict = new RouteValueDictionary();
+        //            dict.Add("ECOKey", ECOKey);
+        //            dict.Add("CardKey", realcardkey);
+        //            return RedirectToAction(DominoCardType.ECOComplete, "MiniPIP", dict);
+        //        }
+        //        else
+        //        {
+        //            var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.SampleOrdering, DominoCardStatus.working);
+        //            var dict = new RouteValueDictionary();
+        //            dict.Add("ECOKey", ECOKey);
+        //            dict.Add("CardKey", realcardkey);
+        //            return RedirectToAction(DominoCardType.SampleOrdering, "MiniPIP", dict);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        var dict = new RouteValueDictionary();
+        //        dict.Add("ECOKey", ECOKey);
+        //        dict.Add("CardKey", CardKey);
+        //        return RedirectToAction(DominoCardType.FACustomerApproval, "MiniPIP", dict);
+        //    }
 
-        }
+        //}
 
         public ActionResult ECOSignoff2(string ECOKey, string CardKey)
         {
@@ -1406,11 +1399,11 @@ namespace Domino.Controllers
                 }
                 else if (string.Compare(baseinfos[0].ECOType, DominoECOType.RVNS) == 0)
                 {
-                    var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.FACustomerApproval, DominoCardStatus.pending);
+                    var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.ECOComplete, DominoCardStatus.pending);
                     var dict = new RouteValueDictionary();
                     dict.Add("ECOKey", ECOKey);
                     dict.Add("CardKey", realcardkey);
-                    return RedirectToAction(DominoCardType.FACustomerApproval, "MiniPIP", dict);
+                    return RedirectToAction(DominoCardType.ECOComplete, "MiniPIP", dict);
                 }
                 else
                 {
@@ -1681,7 +1674,7 @@ namespace Domino.Controllers
                 DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
 
                 var newcardkey = DominoVM.GetUniqKey();
-                var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.SampleShipment, DominoCardStatus.pending);
+                var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.SampleShipment, DominoCardStatus.working);
 
                 var dict = new RouteValueDictionary();
                 dict.Add("ECOKey", ECOKey);
@@ -1713,6 +1706,8 @@ namespace Domino.Controllers
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
             if (baseinfos.Count > 0)
             {
+                DominoDataCollector.UpdateShipInfoFromExcel(this, baseinfos[0], CardKey);
+
                 var vm = new List<List<DominoVM>>();
                 var cardlist = DominoVM.RetrieveECOCards(baseinfos[0]);
                 vm.Add(cardlist);
@@ -1726,10 +1721,13 @@ namespace Domino.Controllers
                     }
                 }
 
+                ViewBag.CurrentCard.ShipTable = DominoVM.RetrieveShipInfo(CardKey);
+
                 ViewBag.ECOKey = ECOKey;
                 ViewBag.CardKey = CardKey;
                 ViewBag.CardDetailPage = DominoCardType.SampleShipment;
 
+                GetNoticeInfo();
                 return View("CurrentECO", vm);
             }
 
@@ -1751,6 +1749,16 @@ namespace Domino.Controllers
             if (baseinfos.Count > 0)
             {
                 StoreAttachAndComment(CardKey, updater);
+
+                var shipinfo = DominoVM.RetrieveShipInfo(CardKey);
+                if (shipinfo.Count == 0)
+                {
+                    SetNoticeInfo("No Shipment information is found");
+                    var dict1 = new RouteValueDictionary();
+                    dict1.Add("ECOKey", ECOKey);
+                    dict1.Add("CardKey", CardKey);
+                    return RedirectToAction(DominoCardType.SampleShipment, "MiniPIP", dict1);
+                }
 
                 DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
 
@@ -1799,10 +1807,14 @@ namespace Domino.Controllers
                     }
                 }
 
+                var cardinfo = DominoVM.RetrieveSampleCustomerApproveInfo(CardKey);
+                ViewBag.CurrentCard.SampleCustomerApproveDate = cardinfo.SampleCustomerApproveDate;
+
                 ViewBag.ECOKey = ECOKey;
                 ViewBag.CardKey = CardKey;
                 ViewBag.CardDetailPage = DominoCardType.SampleCustomerApproval;
 
+                GetNoticeInfo();
                 return View("CurrentECO", vm);
             }
 
@@ -1824,6 +1836,18 @@ namespace Domino.Controllers
             if (baseinfos.Count > 0)
             {
                 StoreAttachAndComment(CardKey, updater);
+                var tempinfo = new DominoVM();
+                tempinfo.SampleCustomerApproveDate = Request.Form["SampleCustomerApproveDate"];
+                tempinfo.UpdateSampleCustomerApproveInfo(CardKey);
+
+                if (string.IsNullOrEmpty(tempinfo.SampleCustomerApproveDate))
+                {
+                    SetNoticeInfo("Sample Customer Approve Date is not inputed");
+                    var dict1 = new RouteValueDictionary();
+                    dict1.Add("ECOKey", ECOKey);
+                    dict1.Add("CardKey", CardKey);
+                    return RedirectToAction(DominoCardType.SampleCustomerApproval, "MiniPIP", dict1);
+                }
 
                 DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
 
@@ -1884,16 +1908,30 @@ namespace Domino.Controllers
                     }
                 }
 
+                ViewBag.MCOIssued = baseinfos[0].MCOIssued;
+
+                var cardinfo = DominoVM.RetrieveMinipipCompleteInfo(CardKey);
+
+                var lifecycle = new string[] {"NONE", DominoLifeCycle.FirstArticl, DominoLifeCycle.Prototype,DominoLifeCycle.PreProduct, DominoLifeCycle.Pilot, DominoLifeCycle.Production};
+                var asilist = new List<string>();
+                asilist.AddRange(lifecycle);
+                ViewBag.ECOPartLifeCycleList = CreateSelectList(asilist,cardinfo.ECOPartLifeCycle);
+
+                asilist = new List<string>();
+                asilist.AddRange(lifecycle);
+                ViewBag.GenericPartLifeCycleList = CreateSelectList(asilist,cardinfo.GenericPartLifeCycle);
+
                 ViewBag.ECOKey = ECOKey;
                 ViewBag.CardKey = CardKey;
                 ViewBag.CardDetailPage = DominoCardType.MiniPIPComplete;
 
+                GetNoticeInfo();
                 return View("CurrentECO", vm);
             }
 
             return RedirectToAction("ViewAll", "MiniPIP");
-
         }
+
 
         [HttpPost, ActionName("MiniPIPComplete")]
         [ValidateAntiForgeryToken]
@@ -1909,10 +1947,51 @@ namespace Domino.Controllers
             if (baseinfos.Count > 0)
             {
                 StoreAttachAndComment(CardKey, updater);
-                if (!string.IsNullOrEmpty(baseinfos[0].MCOIssued))
+
+                var tempinfo = new DominoVM();
+                if (string.Compare(Request.Form["ECOPartLifeCycleList"],"NONE",true) != 0)
                 {
-                    DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
+                    tempinfo.ECOPartLifeCycle = Request.Form["ECOPartLifeCycleList"];
                 }
+                if (string.Compare(Request.Form["GenericPartLifeCycleList"], "NONE", true) != 0)
+                {
+                    tempinfo.GenericPartLifeCycle = Request.Form["GenericPartLifeCycleList"];
+                }
+                tempinfo.UpdateMinipipCompleteInfo(CardKey);
+
+                var allchecked = true;
+
+                if (string.IsNullOrEmpty(baseinfos[0].MCOIssued))
+                {
+                    allchecked = false;
+                    SetNoticeInfo("MCO number must be input on the ECO Pending card");
+                }
+                else if(string.IsNullOrEmpty(tempinfo.ECOPartLifeCycle))
+                {
+                    allchecked = false;
+                    SetNoticeInfo("ECO LifeCycle should not be empty");
+                }
+                else if (string.IsNullOrEmpty(tempinfo.GenericPartLifeCycle))
+                {
+                    allchecked = false;
+                    SetNoticeInfo("Generic LifeCycle should not be empty");
+                }
+                else if (string.Compare(tempinfo.ECOPartLifeCycle, tempinfo.GenericPartLifeCycle, true) != 0)
+                {
+                    allchecked = false;
+                    SetNoticeInfo("ECO LifeCycle is different from Generic LifeCycle");
+                }
+
+                if (!allchecked)
+                {
+                    var dict1 = new RouteValueDictionary();
+                    dict1.Add("ECOKey", ECOKey);
+                    dict1.Add("CardKey", CardKey);
+                    return RedirectToAction(DominoCardType.MiniPIPComplete, "MiniPIP", dict1);
+                }
+
+                DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
+
             }
 
             var dict = new RouteValueDictionary();
