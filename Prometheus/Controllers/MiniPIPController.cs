@@ -1043,6 +1043,11 @@ namespace Domino.Controllers
                     SetNoticeInfo("Mini PVT is not checked");
                     allchecked = false;
                 }
+                else if (string.IsNullOrEmpty(cardinfo.ECOCustomerHoldDate))
+                {
+                    SetNoticeInfo("ECO Customer Hold Date need to be inputed");
+                    allchecked = false;
+                }
 
                 if (!allchecked)
                 {
