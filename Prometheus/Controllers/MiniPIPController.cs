@@ -107,7 +107,7 @@ namespace Domino.Controllers
             }
         }
 
-        public ActionResult ECOPending(string ECOKey, string CardKey)
+        public ActionResult ECOPending(string ECOKey, string CardKey,string Refresh="No")
         {
             var ckdict = CookieUtility.UnpackCookie(this);
             if (!LoginSystem(ckdict, ECOKey, CardKey))
@@ -151,7 +151,10 @@ namespace Domino.Controllers
                     DominoVM.StoreECOPendingInfo(ViewBag.CurrentCard.CardKey, DominoYESNO.NO);
                 }
 
-                DominoDataCollector.UpdateECOWeeklyUpdate(this, baseinfos[0], CardKey);
+                if (DominoVM.CardCanbeUpdate(CardKey) || string.Compare(Refresh, "YES", true) == 0)
+                {
+                    DominoDataCollector.UpdateECOWeeklyUpdate(this, baseinfos[0], CardKey);
+                }
 
                 cardinfo = DominoVM.RetrieveECOPendingInfo(CardKey);
                 ViewBag.CurrentCard.MiniPIPHold = cardinfo.MiniPIPHold;
@@ -191,242 +194,9 @@ namespace Domino.Controllers
             return true;
         }
 
-        private List<string> ReceiveRMAFiles()
-        {
-            var ret = new List<string>();
-
-            try
-            {
-                foreach (string fl in Request.Files)
-                {
-                    if (fl != null && Request.Files[fl].ContentLength > 0)
-                    {
-                        string fn = Path.GetFileName(Request.Files[fl].FileName)
-                            .Replace(" ", "_").Replace("#", "")
-                            .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
-
-                        string datestring = DateTime.Now.ToString("yyyyMMdd");
-                        string imgdir = Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
-
-                        if (!Directory.Exists(imgdir))
-                        {
-                            Directory.CreateDirectory(imgdir);
-                        }
-
-                        fn = Path.GetFileNameWithoutExtension(fn) + "-" + DateTime.Now.ToString("yyyyMMddHHmmss") + Path.GetExtension(fn);
-                        Request.Files[fl].SaveAs(imgdir + fn);
-
-                        var url = "/userfiles/docs/" + datestring + "/" + fn;
-
-                        ret.Add(url);
-                    }
-                }
-
-            }
-            catch (Exception ex)
-            { return ret; }
-
-            return ret;
-        }
-
-        private void StoreAttachAndComment(string CardKey,string updater,DominoVM cardinfo=null)
-        {
-            var urls = ReceiveRMAFiles();
-
-            if (!string.IsNullOrEmpty(Request.Form["attachmentupload"]))
-            {
-                var internalreportfile = Request.Form["attachmentupload"];
-                var originalname = Path.GetFileNameWithoutExtension(internalreportfile)
-                    .Replace(" ", "_").Replace("#", "")
-                    .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
-
-                var url = "";
-                foreach (var r in urls)
-                {
-                    if (r.Contains(originalname))
-                    {
-                        url = r;
-                        break;
-                    }
-                }
-
-                if (!string.IsNullOrEmpty(url))
-                {
-                    DominoVM.StoreCardAttachment(CardKey, url);
-                }
-            }
-
-            if (cardinfo != null)
-            {
-                if (!string.IsNullOrEmpty(Request.Form["qrfileupload"]))
-                {
-                    var internalreportfile = Request.Form["qrfileupload"];
-                    var originalname = Path.GetFileNameWithoutExtension(internalreportfile)
-                        .Replace(" ", "_").Replace("#", "")
-                        .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
-
-                    var url = "";
-                    foreach (var r in urls)
-                    {
-                        if (r.Contains(originalname))
-                        {
-                            url = r;
-                            break;
-                        }
-                    }
-
-                    if (!string.IsNullOrEmpty(url))
-                    {
-                        cardinfo.ECOQRFile = url;
-                    }
-                }
-
-                if (!string.IsNullOrEmpty(Request.Form["peerfileupload"]))
-                {
-                    var internalreportfile = Request.Form["peerfileupload"];
-                    var originalname = Path.GetFileNameWithoutExtension(internalreportfile)
-                        .Replace(" ", "_").Replace("#", "")
-                        .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
-
-                    var url = "";
-                    foreach (var r in urls)
-                    {
-                        if (r.Contains(originalname))
-                        {
-                            url = r;
-                            break;
-                        }
-                    }
-
-                    if (!string.IsNullOrEmpty(url))
-                    {
-                        cardinfo.EEPROMPeerReview = url;
-                    }
-                }
-
-                if (!string.IsNullOrEmpty(Request.Form["traceviewfileupload"]))
-                {
-                    var internalreportfile = Request.Form["traceviewfileupload"];
-                    var originalname = Path.GetFileNameWithoutExtension(internalreportfile)
-                        .Replace(" ", "_").Replace("#", "")
-                        .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
-
-                    var url = "";
-                    foreach (var r in urls)
-                    {
-                        if (r.Contains(originalname))
-                        {
-                            url = r;
-                            break;
-                        }
-                    }
-
-                    if (!string.IsNullOrEmpty(url))
-                    {
-                        cardinfo.ECOTraceview = url;
-                    }
-                }
-                if (!string.IsNullOrEmpty(Request.Form["speccomfileupload"]))
-                {
-                    var internalreportfile = Request.Form["speccomfileupload"];
-                    var originalname = Path.GetFileNameWithoutExtension(internalreportfile)
-                        .Replace(" ", "_").Replace("#", "")
-                        .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
-
-                    var url = "";
-                    foreach (var r in urls)
-                    {
-                        if (r.Contains(originalname))
-                        {
-                            url = r;
-                            break;
-                        }
-                    }
-
-                    if (!string.IsNullOrEmpty(url))
-                    {
-                        cardinfo.SpecCompresuite = url;
-                    }
-                }
-
-                if (!string.IsNullOrEmpty(Request.Form["codefileupload"]))
-                {
-                    var internalreportfile = Request.Form["codefileupload"];
-                    var originalname = Path.GetFileNameWithoutExtension(internalreportfile)
-                        .Replace(" ", "_").Replace("#", "")
-                        .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
-
-                    var url = "";
-                    foreach (var r in urls)
-                    {
-                        if (r.Contains(originalname))
-                        {
-                            url = r;
-                            break;
-                        }
-                    }
-
-                    if (!string.IsNullOrEmpty(url))
-                    {
-                        cardinfo.AgileCodeFile = url;
-                    }
-                }
-                if (!string.IsNullOrEmpty(Request.Form["specfileupload"]))
-                {
-                    var internalreportfile = Request.Form["specfileupload"];
-                    var originalname = Path.GetFileNameWithoutExtension(internalreportfile)
-                        .Replace(" ", "_").Replace("#", "")
-                        .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
-
-                    var url = "";
-                    foreach (var r in urls)
-                    {
-                        if (r.Contains(originalname))
-                        {
-                            url = r;
-                            break;
-                        }
-                    }
-
-                    if (!string.IsNullOrEmpty(url))
-                    {
-                        cardinfo.AgileSpecFile = url;
-                    }
-                }
-
-                if (!string.IsNullOrEmpty(Request.Form["testingfileupload"]))
-                {
-                    var internalreportfile = Request.Form["testingfileupload"];
-                    var originalname = Path.GetFileNameWithoutExtension(internalreportfile)
-                        .Replace(" ", "_").Replace("#", "")
-                        .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
-
-                    var url = "";
-                    foreach (var r in urls)
-                    {
-                        if (r.Contains(originalname))
-                        {
-                            url = r;
-                            break;
-                        }
-                    }
-
-                    if (!string.IsNullOrEmpty(url))
-                    {
-                        cardinfo.AgileTestFile = url;
-                    }
-                }
-            }
 
 
-            if (!string.IsNullOrEmpty(Request.Form["commenteditor"]))
-            {
-                var rootcause = Server.HtmlDecode(Request.Form["commenteditor"]);
-                var dbstr = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(rootcause));
-                DominoVM.StoreCardComment(CardKey, dbstr, updater, DateTime.Now.ToString());
-            }
 
-        }
 
 
         public void SetNoticeInfo(string noticinfo)
@@ -502,12 +272,9 @@ namespace Domino.Controllers
                     baseinfos[0].ECOType = DominoECOType.RVNS;
                 }
 
-                if (!string.IsNullOrEmpty(Request.Form["MCOIssued"]))
-                {
-                    baseinfos[0].MCOIssued = Request.Form["MCOIssued"];
-                }
-
+                baseinfos[0].MCOIssued = Request.Form["MCOIssued"];
                 baseinfos[0].PNImplement = Request.Form["PNImplementList"].ToString();
+                baseinfos[0].FACustomerApproval = Request.Form["FACustomerApproval"];
 
                 baseinfos[0].UpdateECO();
 
@@ -576,7 +343,7 @@ namespace Domino.Controllers
             }
         }
 
-        public ActionResult ECOSignoff1(string ECOKey, string CardKey)
+        public ActionResult ECOSignoff1(string ECOKey, string CardKey, string Refresh = "No")
         {
             var ckdict = CookieUtility.UnpackCookie(this);
             if (!LoginSystem(ckdict, ECOKey, CardKey))
@@ -597,7 +364,10 @@ namespace Domino.Controllers
                     if (string.Compare(currentcard[0].CardStatus, DominoCardStatus.done, true) != 0
                         && !string.IsNullOrEmpty(baseinfos[0].PNDesc))
                     {
-                        DominoDataCollector.RefreshQAFAI(baseinfos[0], CardKey, this);
+                        if (DominoVM.CardCanbeUpdate(CardKey) || string.Compare(Refresh, "YES", true) == 0)
+                        {
+                            DominoDataCollector.RefreshQAFAI(baseinfos[0], CardKey, this);
+                        }
                     }//if card is not finished,we refresh qa folder to get files
                 }
                 
@@ -633,6 +403,7 @@ namespace Domino.Controllers
                 ViewBag.CurrentCard.FACategory = cardinfo.FACategory;
                 ViewBag.CurrentCard.RSMSendDate = cardinfo.RSMSendDate;
                 ViewBag.CurrentCard.RSMApproveDate = cardinfo.RSMApproveDate;
+                
 
                 if (!string.IsNullOrEmpty(cardinfo.RSMSendDate))
                 {
@@ -726,6 +497,7 @@ namespace Domino.Controllers
 
                 cardinfo.RSMSendDate = Request.Form["RSMSendDate"];
                 cardinfo.RSMApproveDate = Request.Form["RSMApproveDate"];
+                
 
                 StoreAttachAndComment(CardKey, updater, cardinfo);
 
@@ -786,7 +558,7 @@ namespace Domino.Controllers
 }
 
 
-        public ActionResult ECOComplete(string ECOKey, string CardKey)
+        public ActionResult ECOComplete(string ECOKey, string CardKey, string Refresh = "No")
         {
             var ckdict = CookieUtility.UnpackCookie(this);
             if (!LoginSystem(ckdict, ECOKey, CardKey))
@@ -1075,7 +847,7 @@ namespace Domino.Controllers
 
         //}
 
-        public ActionResult ECOSignoff2(string ECOKey, string CardKey)
+        public ActionResult ECOSignoff2(string ECOKey, string CardKey, string Refresh = "No")
         {
             var ckdict = CookieUtility.UnpackCookie(this);
             if (!LoginSystem(ckdict, ECOKey, CardKey))
@@ -1096,7 +868,10 @@ namespace Domino.Controllers
                     if (string.Compare(currentcard[0].CardStatus, DominoCardStatus.done, true) != 0
                         && !string.IsNullOrEmpty(baseinfos[0].PNDesc))
                     {
-                        DominoDataCollector.RefreshQAFAI(baseinfos[0], CardKey, this);
+                        if (DominoVM.CardCanbeUpdate(CardKey) || string.Compare(Refresh, "YES", true) == 0)
+                        {
+                            DominoDataCollector.RefreshQAFAI(baseinfos[0], CardKey, this);
+                        }
                     }//if card is not finished,we refresh qa folder to get files
                 }
 
@@ -1132,6 +907,7 @@ namespace Domino.Controllers
                 ViewBag.CurrentCard.FACategory = cardinfo.FACategory;
                 ViewBag.CurrentCard.RSMSendDate = cardinfo.RSMSendDate;
                 ViewBag.CurrentCard.RSMApproveDate = cardinfo.RSMApproveDate;
+                ViewBag.CurrentCard.ECOCustomerHoldDate = cardinfo.ECOCustomerHoldDate;
 
                 if (!string.IsNullOrEmpty(cardinfo.RSMSendDate))
                 {
@@ -1147,6 +923,15 @@ namespace Domino.Controllers
                     try
                     {
                         ViewBag.CurrentCard.RSMApproveDate = DateTime.Parse(cardinfo.RSMApproveDate).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex) { }
+                }
+
+                if (!string.IsNullOrEmpty(cardinfo.ECOCustomerHoldDate))
+                {
+                    try
+                    {
+                        ViewBag.CurrentCard.ECOCustomerHoldDate = DateTime.Parse(cardinfo.ECOCustomerHoldDate).ToString("yyyy-MM-dd");
                     }
                     catch (Exception ex) { }
                 }
@@ -1226,6 +1011,8 @@ namespace Domino.Controllers
                 cardinfo.RSMSendDate = Request.Form["RSMSendDate"];
                 cardinfo.RSMApproveDate = Request.Form["RSMApproveDate"];
 
+                cardinfo.ECOCustomerHoldDate = Request.Form["ECOCustomerHoldDate"];
+                
                 StoreAttachAndComment(CardKey, updater, cardinfo);
 
                 cardinfo.UpdateSignoffInfo(CardKey);
@@ -1285,7 +1072,7 @@ namespace Domino.Controllers
         }
 
 
-        public ActionResult CustomerApprovalHold(string ECOKey, string CardKey)
+        public ActionResult CustomerApprovalHold(string ECOKey, string CardKey, string Refresh = "No")
         {
             var ckdict = CookieUtility.UnpackCookie(this);
             if (!LoginSystem(ckdict, ECOKey, CardKey))
@@ -1314,23 +1101,13 @@ namespace Domino.Controllers
                 }
 
                 DominoVM cardinfo = DominoVM.RetrieveCustomerApproveHoldInfo(ViewBag.CurrentCard.CardKey);
-                ViewBag.CurrentCard.CustomerHoldDate = cardinfo.CustomerHoldDate;
-                ViewBag.CurrentCard.CustomerApproveDate = cardinfo.CustomerApproveDate;
+                ViewBag.CurrentCard.ECOCustomerApproveDate = cardinfo.ECOCustomerApproveDate;
 
-                if (!string.IsNullOrEmpty(cardinfo.CustomerHoldDate))
+                if (!string.IsNullOrEmpty(cardinfo.ECOCustomerApproveDate))
                 {
                     try
                     {
-                        ViewBag.CurrentCard.CustomerHoldDate = DateTime.Parse(cardinfo.CustomerHoldDate).ToString("yyyy-MM-dd");
-                    }
-                    catch (Exception ex) { }
-                }
-
-                if (!string.IsNullOrEmpty(cardinfo.CustomerApproveDate))
-                {
-                    try
-                    {
-                        ViewBag.CurrentCard.CustomerApproveDate = DateTime.Parse(cardinfo.CustomerApproveDate).ToString("yyyy-MM-dd");
+                        ViewBag.CurrentCard.ECOCustomerApproveDate = DateTime.Parse(cardinfo.ECOCustomerApproveDate).ToString("yyyy-MM-dd");
                     }
                     catch (Exception ex) { }
                 }
@@ -1364,21 +1141,12 @@ namespace Domino.Controllers
                 StoreAttachAndComment(CardKey, updater);
 
                 DominoVM cardinfo = DominoVM.RetrieveCustomerApproveHoldInfo(CardKey);
-                cardinfo.CustomerHoldDate = Request.Form["CustomerHoldDate"];
-                cardinfo.CustomerApproveDate = Request.Form["CustomerApproveDate"];
+                cardinfo.ECOCustomerApproveDate = Request.Form["ECOCustomerApproveDate"];
                 cardinfo.UpdateCustomerApproveHoldInfo(CardKey);
 
-                if (string.IsNullOrEmpty(cardinfo.CustomerHoldDate))
+                if (string.IsNullOrEmpty(cardinfo.ECOCustomerApproveDate) && string.IsNullOrEmpty(baseinfos[0].FACustomerApproval))
                 {
-                    SetNoticeInfo("Customer Hold Date should not be empty");
-                    var dict = new RouteValueDictionary();
-                    dict.Add("ECOKey", ECOKey);
-                    dict.Add("CardKey", CardKey);
-                    return RedirectToAction(DominoCardType.CustomerApprovalHold, "MiniPIP", dict);
-                }
-                if (string.IsNullOrEmpty(cardinfo.CustomerApproveDate))
-                {
-                    SetNoticeInfo("Customer Approve Date should not be empty");
+                    SetNoticeInfo("ECO Customer Approve Date or FA Approve Date, At least one of them is inputed");
                     var dict = new RouteValueDictionary();
                     dict.Add("ECOKey", ECOKey);
                     dict.Add("CardKey", CardKey);
@@ -1424,7 +1192,7 @@ namespace Domino.Controllers
         }
 
 
-        public ActionResult SampleOrdering(string ECOKey, string CardKey)
+        public ActionResult SampleOrdering(string ECOKey, string CardKey, string Refresh = "No")
         {
             var ckdict = CookieUtility.UnpackCookie(this);
             if (!LoginSystem(ckdict, ECOKey, CardKey))
@@ -1439,7 +1207,10 @@ namespace Domino.Controllers
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
             if (baseinfos.Count > 0)
             {
-                DominoDataCollector.UpdateOrderInfoFromExcel(this, baseinfos[0], CardKey);
+                if (DominoVM.CardCanbeUpdate(CardKey) || string.Compare(Refresh, "YES", true) == 0)
+                {
+                    DominoDataCollector.UpdateOrderInfoFromExcel(this, baseinfos[0], CardKey);
+                }
 
                 var vm = new List<List<DominoVM>>();
                 var cardlist = DominoVM.RetrieveECOCards(baseinfos[0]);
@@ -1515,7 +1286,7 @@ namespace Domino.Controllers
         }
 
 
-        public ActionResult SampleBuilding(string ECOKey, string CardKey)
+        public ActionResult SampleBuilding(string ECOKey, string CardKey, string Refresh = "No")
         {
             var ckdict = CookieUtility.UnpackCookie(this);
             if (!LoginSystem(ckdict, ECOKey, CardKey))
@@ -1530,8 +1301,11 @@ namespace Domino.Controllers
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
             if (baseinfos.Count > 0)
             {
-                DominoDataCollector.UpdateJOInfoFromExcel(this, baseinfos[0], CardKey);
-                DominoDataCollector.UpdateEEPROM2NDFromExcel(this, baseinfos[0], CardKey);
+                if (DominoVM.CardCanbeUpdate(CardKey) || string.Compare(Refresh, "YES", true) == 0)
+                {
+                    DominoDataCollector.UpdateJOInfoFromExcel(this, baseinfos[0], CardKey);
+                    DominoDataCollector.UpdateEEPROM2NDFromExcel(this, baseinfos[0], CardKey);
+                }
 
                 var vm = new List<List<DominoVM>>();
                 var cardlist = DominoVM.RetrieveECOCards(baseinfos[0]);
@@ -1691,7 +1465,7 @@ namespace Domino.Controllers
         }
 
 
-        public ActionResult SampleShipment(string ECOKey, string CardKey)
+        public ActionResult SampleShipment(string ECOKey, string CardKey, string Refresh = "No")
         {
             var ckdict = CookieUtility.UnpackCookie(this);
             if (!LoginSystem(ckdict, ECOKey, CardKey))
@@ -1706,7 +1480,10 @@ namespace Domino.Controllers
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
             if (baseinfos.Count > 0)
             {
-                DominoDataCollector.UpdateShipInfoFromExcel(this, baseinfos[0], CardKey);
+                if (DominoVM.CardCanbeUpdate(CardKey) || string.Compare(Refresh, "YES", true) == 0)
+                {
+                    DominoDataCollector.UpdateShipInfoFromExcel(this, baseinfos[0], CardKey);
+                }
 
                 var vm = new List<List<DominoVM>>();
                 var cardlist = DominoVM.RetrieveECOCards(baseinfos[0]);
@@ -1779,7 +1556,7 @@ namespace Domino.Controllers
             }
         }
 
-        public ActionResult SampleCustomerApproval(string ECOKey, string CardKey)
+        public ActionResult SampleCustomerApproval(string ECOKey, string CardKey, string Refresh = "No")
         {
             var ckdict = CookieUtility.UnpackCookie(this);
             if (!LoginSystem(ckdict, ECOKey, CardKey))
@@ -1880,7 +1657,7 @@ namespace Domino.Controllers
         }
 
 
-        public ActionResult MiniPIPComplete(string ECOKey, string CardKey)
+        public ActionResult MiniPIPComplete(string ECOKey, string CardKey, string Refresh = "No")
         {
             var ckdict = CookieUtility.UnpackCookie(this);
             if (!LoginSystem(ckdict, ECOKey, CardKey))
@@ -1909,6 +1686,7 @@ namespace Domino.Controllers
                 }
 
                 ViewBag.MCOIssued = baseinfos[0].MCOIssued;
+                ViewBag.FACustomerApproval = baseinfos[0].FACustomerApproval;
 
                 var cardinfo = DominoVM.RetrieveMinipipCompleteInfo(CardKey);
 
@@ -2009,6 +1787,254 @@ namespace Domino.Controllers
             dict.Add("ECOKey", vm[0].ECOKey);
             dict.Add("CardKey", vm[0].CardKey);
             return RedirectToAction(vm[0].CardType, "MiniPIP", dict);
+        }
+
+        public ActionResult RefreshCard(string CardKey)
+        {
+            var vm = DominoVM.RetrieveCard(CardKey);
+            var dict = new RouteValueDictionary();
+            dict.Add("ECOKey", vm[0].ECOKey);
+            dict.Add("CardKey", vm[0].CardKey);
+            dict.Add("Refresh", "YES");
+            return RedirectToAction(vm[0].CardType, "MiniPIP", dict);
+        }
+
+
+        private List<string> ReceiveRMAFiles()
+        {
+            var ret = new List<string>();
+
+            try
+            {
+                foreach (string fl in Request.Files)
+                {
+                    if (fl != null && Request.Files[fl].ContentLength > 0)
+                    {
+                        string fn = Path.GetFileName(Request.Files[fl].FileName)
+                            .Replace(" ", "_").Replace("#", "")
+                            .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
+
+                        string datestring = DateTime.Now.ToString("yyyyMMdd");
+                        string imgdir = Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
+
+                        if (!Directory.Exists(imgdir))
+                        {
+                            Directory.CreateDirectory(imgdir);
+                        }
+
+                        fn = Path.GetFileNameWithoutExtension(fn) + "-" + DateTime.Now.ToString("yyyyMMddHHmmss") + Path.GetExtension(fn);
+                        Request.Files[fl].SaveAs(imgdir + fn);
+
+                        var url = "/userfiles/docs/" + datestring + "/" + fn;
+
+                        ret.Add(url);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            { return ret; }
+
+            return ret;
+        }
+
+        private void StoreAttachAndComment(string CardKey, string updater, DominoVM cardinfo = null)
+        {
+            var urls = ReceiveRMAFiles();
+
+            if (!string.IsNullOrEmpty(Request.Form["attachmentupload"]))
+            {
+                var internalreportfile = Request.Form["attachmentupload"];
+                var originalname = Path.GetFileNameWithoutExtension(internalreportfile)
+                    .Replace(" ", "_").Replace("#", "")
+                    .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
+
+                var url = "";
+                foreach (var r in urls)
+                {
+                    if (r.Contains(originalname))
+                    {
+                        url = r;
+                        break;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(url))
+                {
+                    DominoVM.StoreCardAttachment(CardKey, url);
+                }
+            }
+
+            if (cardinfo != null)
+            {
+                if (!string.IsNullOrEmpty(Request.Form["qrfileupload"]))
+                {
+                    var internalreportfile = Request.Form["qrfileupload"];
+                    var originalname = Path.GetFileNameWithoutExtension(internalreportfile)
+                        .Replace(" ", "_").Replace("#", "")
+                        .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
+
+                    var url = "";
+                    foreach (var r in urls)
+                    {
+                        if (r.Contains(originalname))
+                        {
+                            url = r;
+                            break;
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(url))
+                    {
+                        cardinfo.ECOQRFile = url;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(Request.Form["peerfileupload"]))
+                {
+                    var internalreportfile = Request.Form["peerfileupload"];
+                    var originalname = Path.GetFileNameWithoutExtension(internalreportfile)
+                        .Replace(" ", "_").Replace("#", "")
+                        .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
+
+                    var url = "";
+                    foreach (var r in urls)
+                    {
+                        if (r.Contains(originalname))
+                        {
+                            url = r;
+                            break;
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(url))
+                    {
+                        cardinfo.EEPROMPeerReview = url;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(Request.Form["traceviewfileupload"]))
+                {
+                    var internalreportfile = Request.Form["traceviewfileupload"];
+                    var originalname = Path.GetFileNameWithoutExtension(internalreportfile)
+                        .Replace(" ", "_").Replace("#", "")
+                        .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
+
+                    var url = "";
+                    foreach (var r in urls)
+                    {
+                        if (r.Contains(originalname))
+                        {
+                            url = r;
+                            break;
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(url))
+                    {
+                        cardinfo.ECOTraceview = url;
+                    }
+                }
+                if (!string.IsNullOrEmpty(Request.Form["speccomfileupload"]))
+                {
+                    var internalreportfile = Request.Form["speccomfileupload"];
+                    var originalname = Path.GetFileNameWithoutExtension(internalreportfile)
+                        .Replace(" ", "_").Replace("#", "")
+                        .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
+
+                    var url = "";
+                    foreach (var r in urls)
+                    {
+                        if (r.Contains(originalname))
+                        {
+                            url = r;
+                            break;
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(url))
+                    {
+                        cardinfo.SpecCompresuite = url;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(Request.Form["codefileupload"]))
+                {
+                    var internalreportfile = Request.Form["codefileupload"];
+                    var originalname = Path.GetFileNameWithoutExtension(internalreportfile)
+                        .Replace(" ", "_").Replace("#", "")
+                        .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
+
+                    var url = "";
+                    foreach (var r in urls)
+                    {
+                        if (r.Contains(originalname))
+                        {
+                            url = r;
+                            break;
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(url))
+                    {
+                        cardinfo.AgileCodeFile = url;
+                    }
+                }
+                if (!string.IsNullOrEmpty(Request.Form["specfileupload"]))
+                {
+                    var internalreportfile = Request.Form["specfileupload"];
+                    var originalname = Path.GetFileNameWithoutExtension(internalreportfile)
+                        .Replace(" ", "_").Replace("#", "")
+                        .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
+
+                    var url = "";
+                    foreach (var r in urls)
+                    {
+                        if (r.Contains(originalname))
+                        {
+                            url = r;
+                            break;
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(url))
+                    {
+                        cardinfo.AgileSpecFile = url;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(Request.Form["testingfileupload"]))
+                {
+                    var internalreportfile = Request.Form["testingfileupload"];
+                    var originalname = Path.GetFileNameWithoutExtension(internalreportfile)
+                        .Replace(" ", "_").Replace("#", "")
+                        .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
+
+                    var url = "";
+                    foreach (var r in urls)
+                    {
+                        if (r.Contains(originalname))
+                        {
+                            url = r;
+                            break;
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(url))
+                    {
+                        cardinfo.AgileTestFile = url;
+                    }
+                }
+            }
+
+
+            if (!string.IsNullOrEmpty(Request.Form["commenteditor"]))
+            {
+                var rootcause = Server.HtmlDecode(Request.Form["commenteditor"]);
+                var dbstr = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(rootcause));
+                DominoVM.StoreCardComment(CardKey, dbstr, updater, DateTime.Now.ToString());
+            }
+
         }
 
     }

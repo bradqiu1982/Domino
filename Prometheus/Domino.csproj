@@ -812,7 +812,6 @@
     <Content Include="Views\MiniPIP\SampleShipment.cshtml" />
     <Content Include="Views\MiniPIP\SampleCustomerApproval.cshtml" />
     <Content Include="Views\MiniPIP\MiniPIPComplete.cshtml" />
-    <Content Include="Views\MiniPIP\FACustomerApproval.cshtml" />
     <Content Include="Views\MiniPIP\CustomerApprovalHold.cshtml" />
   </ItemGroup>
   <ItemGroup>

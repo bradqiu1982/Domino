@@ -27,7 +27,7 @@ namespace Domino.Models
         public static string SampleShipment = "SampleShipment";
         public static string SampleCustomerApproval = "SampleCustomerApproval";
         public static string MiniPIPComplete = "MiniPIPComplete";
-        public static string FACustomerApproval = "FACustomerApproval";
+        //public static string FACustomerApproval = "FACustomerApproval";
         public static string ECOSignoff2 = "ECOSignoff2";
         public static string CustomerApprovalHold = "CustomerApprovalHold";
     }
@@ -206,6 +206,7 @@ namespace Domino.Models
         public string QTRInit { set; get; }
         public string MCOIssued { set; get; }
         public string PNImplement { set; get; }
+        public string FACustomerApproval { set; get; }
 
         private Dictionary<string, string> namedict = new Dictionary<string, string>();
         public Dictionary<string, string> NameDict { get { return namedict; } }
@@ -253,7 +254,7 @@ namespace Domino.Models
             FirstArticleNeed = string.Empty;
             FlowInfo = string.Empty;
             PNImplement = string.Empty;
-
+            FACustomerApproval = string.Empty;
         }
 
         public static List<KeyValuePair<string, string>> RetrieveBaseInfo(ECOBaseInfo info)
@@ -305,16 +306,17 @@ namespace Domino.Models
             SetDefaultDateValue();
 
             var sql = "insert into ECOBaseInfo(ECOKey,ECONum,ECOType,PNDesc,Customer,Complex,RSM,PE,RiskBuild,InitRevison,FinalRevison"
-                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement)"
+                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement,FACustomerApproval)"
                 + " values('<ECOKey>','<ECONum>','<ECOType>','<PNDesc>','<Customer>','<Complex>','<RSM>','<PE>','<RiskBuild>','<InitRevison>','<FinalRevison>'"
-                + ",'<TLAAvailable>','<OpsEntry>','<TestModification>','<ECOSubmit>','<ECOReviewSignoff>','<ECOCCBSignoff>','<QTRInit>','<MCOIssued>','<FirstArticleNeed>','<FlowInfo>','<PNImplement>')";
+                + ",'<TLAAvailable>','<OpsEntry>','<TestModification>','<ECOSubmit>','<ECOReviewSignoff>','<ECOCCBSignoff>','<QTRInit>','<MCOIssued>','<FirstArticleNeed>','<FlowInfo>','<PNImplement>','<FACustomerApproval>')";
 
 
             sql = sql.Replace("<ECOKey>", ECOKey).Replace("<ECONum>", ECONum).Replace("<ECOType>", ECOType).Replace("<PNDesc>", PNDesc).Replace("<Customer>", Customer)
                 .Replace("<Complex>", Complex).Replace("<RSM>", RSM).Replace("<PE>", PE).Replace("<RiskBuild>", RiskBuild).Replace("<InitRevison>", InitRevison)
                 .Replace("<FinalRevison>", FinalRevison).Replace("<TLAAvailable>", TLAAvailable).Replace("<OpsEntry>", OpsEntry).Replace("<TestModification>", TestModification)
                 .Replace("<ECOSubmit>", ECOSubmit).Replace("<ECOReviewSignoff>", ECOReviewSignoff).Replace("<ECOCCBSignoff>", ECOCCBSignoff)
-                .Replace("<QTRInit>", QTRInit).Replace("<MCOIssued>", MCOIssued).Replace("<FirstArticleNeed>", FirstArticleNeed).Replace("<FlowInfo>", FlowInfo).Replace("<PNImplement>", PNImplement);
+                .Replace("<QTRInit>", QTRInit).Replace("<MCOIssued>", MCOIssued).Replace("<FirstArticleNeed>", FirstArticleNeed)
+                .Replace("<FlowInfo>", FlowInfo).Replace("<PNImplement>", PNImplement).Replace("<FACustomerApproval>", FACustomerApproval);
 
             DBUtility.ExeLocalSqlNoRes(sql);
         }
@@ -325,13 +327,15 @@ namespace Domino.Models
             SetDefaultDateValue();
 
             var sql = "update ECOBaseInfo set ECONum='<ECONum>',ECOType='<ECOType>',PNDesc='<PNDesc>',Customer='<Customer>',Complex='<Complex>',RSM='<RSM>',PE='<PE>',RiskBuild='<RiskBuild>',InitRevison='<InitRevison>',FinalRevison='<FinalRevison>'"
-                + ",TLAAvailable='<TLAAvailable>',OpsEntry='<OpsEntry>',TestModification='<TestModification>',ECOSubmit='<ECOSubmit>',ECOReviewSignoff='<ECOReviewSignoff>',ECOCCBSignoff='<ECOCCBSignoff>',QTRInit='<QTRInit>',MCOIssued='<MCOIssued>',FirstArticleNeed='<FirstArticleNeed>',FlowInfo='<FlowInfo>',PNImplement='<PNImplement>' where ECOKey='<ECOKey>'";
+                + ",TLAAvailable='<TLAAvailable>',OpsEntry='<OpsEntry>',TestModification='<TestModification>',ECOSubmit='<ECOSubmit>',ECOReviewSignoff='<ECOReviewSignoff>',ECOCCBSignoff='<ECOCCBSignoff>',QTRInit='<QTRInit>'"
+                + ",MCOIssued='<MCOIssued>',FirstArticleNeed='<FirstArticleNeed>',FlowInfo='<FlowInfo>',PNImplement='<PNImplement>',FACustomerApproval='<FACustomerApproval>' where ECOKey='<ECOKey>'";
             
             sql = sql.Replace("<ECOKey>", ECOKey).Replace("<ECONum>", ECONum).Replace("<ECOType>", ECOType).Replace("<PNDesc>", PNDesc).Replace("<Customer>", Customer)
                 .Replace("<Complex>", Complex).Replace("<RSM>", RSM).Replace("<PE>", PE).Replace("<RiskBuild>", RiskBuild).Replace("<InitRevison>", InitRevison)
                 .Replace("<FinalRevison>", FinalRevison).Replace("<TLAAvailable>", TLAAvailable).Replace("<OpsEntry>", OpsEntry).Replace("<TestModification>", TestModification)
                 .Replace("<ECOSubmit>", ECOSubmit).Replace("<ECOReviewSignoff>", ECOReviewSignoff).Replace("<ECOCCBSignoff>", ECOCCBSignoff).Replace("<QTRInit>", QTRInit)
-                .Replace("<MCOIssued>", MCOIssued).Replace("<FirstArticleNeed>", FirstArticleNeed).Replace("<FlowInfo>", FlowInfo).Replace("<PNImplement>", PNImplement);
+                .Replace("<MCOIssued>", MCOIssued).Replace("<FirstArticleNeed>", FirstArticleNeed)
+                .Replace("<FlowInfo>", FlowInfo).Replace("<PNImplement>", PNImplement).Replace("<FACustomerApproval>", FACustomerApproval);
 
             DBUtility.ExeLocalSqlNoRes(sql);
         }
@@ -357,7 +361,7 @@ namespace Domino.Models
         {
             var ret = new List<ECOBaseInfo>();
             var sql = "select ECOKey,ECONum,ECOType,PNDesc,Customer,Complex,RSM,PE,RiskBuild,InitRevison,FinalRevison"
-                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement from ECOBaseInfo";
+                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement,FACustomerApproval from ECOBaseInfo";
 
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
             foreach (var line in dbret)
@@ -387,6 +391,7 @@ namespace Domino.Models
                 tempitem.FirstArticleNeed = Convert.ToString(line[19]);
                 tempitem.FlowInfo = Convert.ToString(line[20]);
                 tempitem.PNImplement = Convert.ToString(line[21]);
+                tempitem.FACustomerApproval = Convert.ToString(line[22]);
 
                 ret.Add(tempitem);
             }
@@ -398,7 +403,7 @@ namespace Domino.Models
         {
             var ret = new List<ECOBaseInfo>();
             var sql = "select ECOKey,ECONum,ECOType,PNDesc,Customer,Complex,RSM,PE,RiskBuild,InitRevison,FinalRevison"
-                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement from ECOBaseInfo where ECOKey='<ECOKey>'";
+                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement,FACustomerApproval from ECOBaseInfo where ECOKey='<ECOKey>'";
             sql = sql.Replace("<ECOKey>", ECOKey);
 
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
@@ -429,6 +434,7 @@ namespace Domino.Models
                 tempitem.FirstArticleNeed = Convert.ToString(line[19]);
                 tempitem.FlowInfo = Convert.ToString(line[20]);
                 tempitem.PNImplement = Convert.ToString(line[21]);
+                tempitem.FACustomerApproval = Convert.ToString(line[22]);
 
                 ret.Add(tempitem);
             }
@@ -496,7 +502,7 @@ namespace Domino.Models
             ecocontentdict.Add(DominoCardType.SampleShipment,"Sample Shipment");
             ecocontentdict.Add(DominoCardType.SampleCustomerApproval,"Sample Customer Approval");
             ecocontentdict.Add(DominoCardType.MiniPIPComplete,"Mini PIP Complete");
-            ecocontentdict.Add(DominoCardType.FACustomerApproval,"FA Customer Approval");
+            //ecocontentdict.Add(DominoCardType.FACustomerApproval,"FA Customer Approval");
             ecocontentdict.Add(DominoCardType.ECOSignoff2,"ECO Signoff-2");
             ecocontentdict.Add(DominoCardType.CustomerApprovalHold,"Customer Approval Hold");
 
@@ -526,9 +532,10 @@ namespace Domino.Models
             FACategory = string.Empty;
             RSMSendDate = string.Empty;
             RSMApproveDate = string.Empty;
+            ECOCustomerHoldDate = string.Empty;
 
-            CustomerHoldDate = string.Empty;
-            CustomerApproveDate = string.Empty;
+
+            ECOCustomerApproveDate = string.Empty;
 
             ECOCompleted = string.Empty;
             ECOSubmitDate = string.Empty;
@@ -617,6 +624,45 @@ namespace Domino.Models
 
             return ret;
         }
+
+        public static bool CardCanbeUpdate(string CardKey)
+        {
+            var sql = "select APVal5 from ECOCard where CardKey = '<CardKey>'";
+            sql = sql.Replace("<CardKey>", CardKey);
+            var dbret = DBUtility.ExeLocalSqlWithRes(sql);
+            if (dbret.Count > 0)
+            {
+                try
+                {
+                    var lastupdatetime = DateTime.Parse(Convert.ToString(dbret[0][0]));
+                    if (DateTime.Now.AddHours(-24) > lastupdatetime)
+                    {
+                        sql = "update ECOCard set APVal5 = '<APVal5>' where CardKey = '<CardKey>'";
+                        sql = sql.Replace("<CardKey>", CardKey).Replace("<APVal5>", DateTime.Now.ToString());
+                        DBUtility.ExeLocalSqlNoRes(sql);
+
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    sql = "update ECOCard set APVal5 = '<APVal5>' where CardKey = '<CardKey>'";
+                    sql = sql.Replace("<CardKey>", CardKey).Replace("<APVal5>", DateTime.Now.ToString());
+                    DBUtility.ExeLocalSqlNoRes(sql);
+                    return true;
+                }
+                
+            }
+            else
+            {
+                return true;
+            }
+        }
+
 
         public static List<DominoVM> RetrieveSpecialCard(ECOBaseInfo baseinfo,string CardType)
         {
@@ -926,6 +972,7 @@ namespace Domino.Models
         public string FACategory { set; get; }
         public string RSMSendDate { set; get; }
         public string RSMApproveDate { set; get; }
+        public string ECOCustomerHoldDate { set; get; }
 
         public void UpdateSignoffInfo(string cardkey)
         {
@@ -940,13 +987,13 @@ namespace Domino.Models
 
             var sql = "Update ECOCardContent Set APVal1 = '<APVal1>',APVal2 = '<APVal2>',APVal3 = '<APVal3>',APVal4 = '<APVal4>',APVal5 = '<APVal5>',APVal6 = '<APVal6>'"
                 +",APVal7 = '<APVal7>',APVal8 = '<APVal8>',APVal9 = '<APVal9>',APVal10 = '<APVal10>',APVal11 = '<APVal11>',APVal12 = '<APVal12>',APVal13 = '<APVal13>'"
-                + ",APVal14 = '<APVal14>',APVal15 = '<APVal15>',APVal16 = '<APVal16>',APVal17 = '<APVal17>',APVal18 = '<APVal18>' where CardKey = '<CardKey>'";
+                + ",APVal14 = '<APVal14>',APVal15 = '<APVal15>',APVal16 = '<APVal16>',APVal17 = '<APVal17>',APVal18 = '<APVal18>',APVal19 = '<APVal19>'  where CardKey = '<CardKey>'";
 
             sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal1>", QAEEPROMCheck).Replace("<APVal2>", QALabelCheck).Replace("<APVal3>", PeerReviewEngineer)
                 .Replace("<APVal4>", PeerReview).Replace("<APVal5>", ECOAttachmentCheck).Replace("<APVal6>", ECOQRFile).Replace("<APVal7>", EEPROMPeerReview)
                 .Replace("<APVal8>", ECOTraceview).Replace("<APVal9>", SpecCompresuite).Replace("<APVal10>", ECOTRApprover).Replace("<APVal11>", ECOMDApprover)
                 .Replace("<APVal12>", MiniPVTCheck).Replace("<APVal13>", AgileCodeFile).Replace("<APVal14>", AgileSpecFile).Replace("<APVal15>", AgileTestFile)
-                .Replace("<APVal16>", FACategory).Replace("<APVal17>", RSMSendDate).Replace("<APVal18>", RSMApproveDate);
+                .Replace("<APVal16>", FACategory).Replace("<APVal17>", RSMSendDate).Replace("<APVal18>", RSMApproveDate).Replace("<APVal19>", ECOCustomerHoldDate);
 
             DBUtility.ExeLocalSqlNoRes(sql);
         }
@@ -954,7 +1001,7 @@ namespace Domino.Models
         public static DominoVM RetrieveSignoffInfo(string cardkey)
         {
             var ret = new DominoVM();
-            var sql = "select CardKey,APVal1,APVal2,APVal3,APVal4,APVal5,APVal6,APVal7,APVal8,APVal9,APVal10,APVal11,APVal12,APVal13,APVal14,APVal15,APVal16,APVal17,APVal18 from ECOCardContent where CardKey = '<CardKey>'";
+            var sql = "select CardKey,APVal1,APVal2,APVal3,APVal4,APVal5,APVal6,APVal7,APVal8,APVal9,APVal10,APVal11,APVal12,APVal13,APVal14,APVal15,APVal16,APVal17,APVal18,APVal19 from ECOCardContent where CardKey = '<CardKey>'";
             sql = sql.Replace("<CardKey>", cardkey);
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
             if (dbret.Count > 0)
@@ -978,12 +1025,13 @@ namespace Domino.Models
                 ret.FACategory = Convert.ToString(dbret[0][16]);
                 ret.RSMSendDate = Convert.ToString(dbret[0][17]);
                 ret.RSMApproveDate = Convert.ToString(dbret[0][18]);
+                ret.ECOCustomerHoldDate = Convert.ToString(dbret[0][19]);
             }
             return ret;
         }
 
-        public string CustomerHoldDate { set; get; }
-        public string CustomerApproveDate { set; get; }
+        
+        public string ECOCustomerApproveDate { set; get; }
 
         public void UpdateCustomerApproveHoldInfo(string cardkey)
         {
@@ -997,8 +1045,8 @@ namespace Domino.Models
                 DBUtility.ExeLocalSqlNoRes(csql);
             }
 
-            var sql = "Update ECOCardContent Set APVal1 = '<APVal1>',APVal2 = '<APVal2>' where CardKey = '<CardKey>'";
-            sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal1>", CustomerHoldDate).Replace("<APVal2>", CustomerApproveDate);
+            var sql = "Update ECOCardContent Set APVal1 = '<APVal1>' where CardKey = '<CardKey>'";
+            sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal1>", ECOCustomerApproveDate);
             DBUtility.ExeLocalSqlNoRes(sql);
         }
 
@@ -1006,14 +1054,13 @@ namespace Domino.Models
         public static DominoVM RetrieveCustomerApproveHoldInfo(string cardkey)
         {
             var ret = new DominoVM();
-            var sql = "select CardKey,APVal1,APVal2 from ECOCardContent where CardKey = '<CardKey>'";
+            var sql = "select CardKey,APVal1 from ECOCardContent where CardKey = '<CardKey>'";
             sql = sql.Replace("<CardKey>", cardkey);
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
             if (dbret.Count > 0)
             {
                 ret.CardKey = Convert.ToString(dbret[0][0]);
-                ret.CustomerHoldDate = Convert.ToString(dbret[0][1]);
-                ret.CustomerApproveDate = Convert.ToString(dbret[0][2]);
+                ret.ECOCustomerApproveDate = Convert.ToString(dbret[0][1]);
             }
             return ret;
         }

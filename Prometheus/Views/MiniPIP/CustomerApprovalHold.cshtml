@@ -21,25 +21,16 @@
 
             <div class="form-group">
                 <div class="row col-lg-6">
-                    <label class="control-label col-lg-2">Customer Hold Date</label>
+                    <label class="control-label col-lg-2">Sample Approve Date</label>
                     <div class="col-lg-10">
-                        <input class="form-control text-box single-line" id="CustomerHoldDate" name="CustomerHoldDate" type="text" value="@ViewBag.CurrentCard.CustomerHoldDate" />
+                        <input class="form-control text-box single-line" id="ECOCustomerApproveDate" name="ECOCustomerApproveDate" type="text" value="@ViewBag.CurrentCard.ECOCustomerApproveDate" />
                     </div>
                 </div>
                 <div class="row col-lg-6">
-                    <label class="control-label col-lg-2">Customer Approve Date</label>
-                    <div class="col-lg-10">
-                        <input class="form-control text-box single-line" id="CustomerApproveDate" name="CustomerApproveDate" type="text" value="@ViewBag.CurrentCard.CustomerApproveDate" />
-                    </div>
                 </div>
                 <script type="text/javascript">
                     $(document).ready(function () {
-                        $("#CustomerHoldDate").datepicker({
-                            changeMonth: true,
-                            changeYear: true,
-                            dateFormat: 'yy-mm-dd'
-                        });
-                        $("#CustomerApproveDate").datepicker({
+                        $("#ECOCustomerApproveDate").datepicker({
                             changeMonth: true,
                             changeYear: true,
                             dateFormat: 'yy-mm-dd'

@@ -12,7 +12,10 @@
     <div class="col-lg-2">
         <h2><a data-toggle="tooltip" title="Goto ViewAll" href="/Domino/MiniPIP/ViewAll"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></a></h2>
     </div>
-    <div class="col-lg-6">
+    <div class="col-lg-2">
+        <h2><button data-toggle="tooltip" title="Refresh Card" type="button" class="btn btn-default" onclick="RefreshCard()"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button></h2>
+    </div>
+    <div class="col-lg-4">
     </div>
     </div>
 <hr/>
@@ -139,6 +142,11 @@
                     if (confirm("Do you real want to delete this attachment?")) {
                         window.location.href = '/MiniPIP/DeleteCardAttachment?CardKey=' + document.getElementById("CardKey").value + '&FileName=' + oBT.value
                     }
+                }
+
+                function RefreshCard()
+                {
+                    window.location.href = '/MiniPIP/RefreshCard?CardKey=' + document.getElementById("CardKey").value
                 }
 </script>
 
