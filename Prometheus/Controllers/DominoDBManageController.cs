@@ -9,7 +9,7 @@ using System.Data;
 
 namespace Domino.Controllers
 {
-    public class DBManageController : Controller
+    public class DominoDBManageController : Controller
     {
         // GET: DbManage
         public ActionResult ExecuteSQLs()

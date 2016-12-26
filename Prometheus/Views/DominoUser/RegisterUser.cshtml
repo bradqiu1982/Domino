@@ -1,5 +1,5 @@
 ﻿
-@model Domino.Models.UserViewModels
+@model Domino.Models.DominoUserViewModels
 
 @{
     ViewBag.Title = "RegisterUser";
@@ -16,7 +16,7 @@
 
 <hr/>
 
-@using (Html.BeginForm("RegisterUser", "User", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+@using (Html.BeginForm("RegisterUser", "DominoUser", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
 {
     @Html.AntiForgeryToken()
 

@@ -20,11 +20,11 @@ namespace Domino
             );
 
             //WHEN REAL DEPLOY , THIS SHOULD BE COMMENTED
-            routes.MapRoute(
-                name: "Default",
-                url: "{controller}/{action}",
-                defaults: new { controller = "MiniPIP", action = "ViewAll" }
-            );
+            //routes.MapRoute(
+            //    name: "Default",
+            //    url: "{controller}/{action}",
+            //    defaults: new { controller = "MiniPIP", action = "ViewAll" }
+            //);
 
         }
     }

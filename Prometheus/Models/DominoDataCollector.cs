@@ -187,39 +187,57 @@ namespace Domino.Models
 
                                 var allattach = DominoVM.RetrieveCardExistedAttachment(pendingcard[0].CardKey);
 
-                                var MiniPIPDocFolder = syscfgdict["MINIPIPECOFOLDER"] + "\\" + baseinfo.Customer + "\\" + baseinfo.PNDesc;
-                                if (Directory.Exists(MiniPIPDocFolder))
+                                var customerfold = new List<string>();
+                                var allcustomerfolder = Directory.EnumerateDirectories(syscfgdict["MINIPIPECOFOLDER"]);
+                                foreach (var cf in allcustomerfolder)
                                 {
-                                    var minidocfiles = Directory.EnumerateFiles(MiniPIPDocFolder);
-                                    foreach (var minifile in minidocfiles)
+                                    var lastlevelfd = cf.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
+                                    var lastfd = lastlevelfd[lastlevelfd.Length - 1];
+                                    if (lastfd.ToUpper().Contains(baseinfo.Customer.ToUpper())
+                                        || baseinfo.Customer.ToUpper().Contains(lastfd.ToUpper()))
                                     {
-                                        var fn = System.IO.Path.GetFileName(minifile);
-                                        fn = fn.Replace(" ", "_").Replace("#", "")
-                                                .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
+                                        customerfold.Add(cf);
+                                    }
+                                }
 
-                                        bool attachexist = false;
-                                        foreach (var att in allattach)
-                                        {
-                                            if (att.Contains(fn))
-                                            {
-                                                attachexist = true;
-                                                break;
-                                            }
-                                        }//end foreach
+                                    foreach (var cf in customerfold)
+                                    { 
+                                        var MiniPIPDocFolder = cf + "\\" + baseinfo.PNDesc;
 
-                                        if (!attachexist)
+                                        if (Directory.Exists(MiniPIPDocFolder))
                                         {
-                                            var desfile = localdir + fn;
-                                            try
+                                            var minidocfiles = Directory.EnumerateFiles(MiniPIPDocFolder);
+                                            foreach (var minifile in minidocfiles)
                                             {
-                                                System.IO.File.Copy(minifile, desfile, true);
-                                                var url = "/userfiles/docs/" + urlfolder + "/" + fn;
-                                                DominoVM.StoreCardAttachment(pendingcard[0].CardKey, url);
-                                            }
-                                            catch (Exception ex) { }
-                                        }
-                                    }//end foreach
-                                }//try to get mini doc file
+                                                var fn = System.IO.Path.GetFileName(minifile);
+                                                fn = fn.Replace(" ", "_").Replace("#", "")
+                                                        .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
+
+                                                bool attachexist = false;
+                                                foreach (var att in allattach)
+                                                {
+                                                    if (att.Contains(fn))
+                                                    {
+                                                        attachexist = true;
+                                                        break;
+                                                    }
+                                                }//end foreach
+
+                                                if (!attachexist)
+                                                {
+                                                    var desfile = localdir + fn;
+                                                    try
+                                                    {
+                                                        System.IO.File.Copy(minifile, desfile, true);
+                                                        var url = "/userfiles/docs/" + urlfolder + "/" + fn;
+                                                        DominoVM.StoreCardAttachment(pendingcard[0].CardKey, url);
+                                                    }
+                                                    catch (Exception ex) { }
+                                                }
+                                            }//end foreach
+                                        }//try to get mini doc file
+                                }
+
                             }//end if
 
                             break;
@@ -242,27 +260,44 @@ namespace Domino.Models
                             DominoVM.CreateCard(baseinfo.ECOKey, CardKey, DominoCardType.ECOPending, DominoCardStatus.pending);
                         }
 
-                        var MiniPIPDocFolder = syscfgdict["MINIPIPECOFOLDER"] + "\\" + baseinfo.Customer + "\\" + baseinfo.PNDesc;
-                        if (Directory.Exists(MiniPIPDocFolder))
+                        var customerfold = new List<string>();
+                        var allcustomerfolder = Directory.EnumerateDirectories(syscfgdict["MINIPIPECOFOLDER"]);
+                        foreach (var cf in allcustomerfolder)
                         {
-                            var minidocfiles = Directory.EnumerateFiles(MiniPIPDocFolder);
-                            foreach (var minifile in minidocfiles)
+                            var lastlevelfd = cf.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
+                            var lastfd = lastlevelfd[lastlevelfd.Length - 1];
+                            if (lastfd.ToUpper().Contains(baseinfo.Customer.ToUpper())
+                                || baseinfo.Customer.ToUpper().Contains(lastfd.ToUpper()))
                             {
-                                var fn = System.IO.Path.GetFileName(minifile);
-                                fn = fn.Replace(" ", "_").Replace("#", "")
-                                        .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
-                                var desfile = localdir + fn;
+                                customerfold.Add(cf);
+                            }
+                        }
 
-                                try
+                        foreach (var cf in customerfold)
+                        {
+                            var MiniPIPDocFolder = cf + "\\" + baseinfo.PNDesc;
+                            if (Directory.Exists(MiniPIPDocFolder))
+                            {
+                                var minidocfiles = Directory.EnumerateFiles(MiniPIPDocFolder);
+                                foreach (var minifile in minidocfiles)
                                 {
-                                    System.IO.File.Copy(minifile, desfile, true);
-                                    var url = "/userfiles/docs/" + urlfolder + "/" + fn;
-                                    DominoVM.StoreCardAttachment(CardKey, url);
-                                }
-                                catch (Exception ex) { }
+                                    var fn = System.IO.Path.GetFileName(minifile);
+                                    fn = fn.Replace(" ", "_").Replace("#", "")
+                                            .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
+                                    var desfile = localdir + fn;
 
-                            }//end foreach
-                        }//try to get mini doc file
+                                    try
+                                    {
+                                        System.IO.File.Copy(minifile, desfile, true);
+                                        var url = "/userfiles/docs/" + urlfolder + "/" + fn;
+                                        DominoVM.StoreCardAttachment(CardKey, url);
+                                    }
+                                    catch (Exception ex) { }
+
+                                }//end foreach
+                            }//try to get mini doc file
+                        }
+
                     }
 
                 }

@@ -1,24 +1,18 @@
-﻿@model Domino.Models.UserViewModels
+﻿@model Domino.Models.DominoUserViewModels
 
 @{
-    ViewBag.Title = "LoginUser";
+    ViewBag.Title = "ResetUser";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Login</h2>
+<h2>Reset User</h2>
 
-@Html.Raw(string.IsNullOrEmpty(ViewBag.loginerror) ? "&nbsp;" : ViewBag.loginerror)
-@if (!string.IsNullOrEmpty(ViewBag.loginerror))
-{
-    ViewBag.loginerror = "";
-}
+<hr />
 
-<hr/>
-
-@using (Html.BeginForm("LoginUser", "User", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+@using (Html.BeginForm("ResetUser", "DominoUser", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
 {
     @Html.AntiForgeryToken()
-
+ 
     @Html.ValidationSummary("", new { @class = "text-danger" })
     <div class="form-group">
         @Html.LabelFor(model => model.Email, new { @class = "col-md-2 control-label" })
@@ -33,21 +27,14 @@
         </div>
     </div>
     <div class="form-group">
-        <div class="col-md-2">
-        </div>
+        @Html.LabelFor(model => model.ConfirmPassword, new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
-            <span class="badge alert-success">Default Password: abc@123</span>
+            @Html.PasswordFor(model => model.ConfirmPassword, new { @class = "form-control"})
         </div>
     </div>
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
-            <input type="submit" class="btn btn-default" id="Login" name="Login" value="Login" />
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" class="btn btn-default" id="ForgetPassword" name="ForgetPassword" value="Forget Password" />
+            <input type="submit" class="btn btn-default" value="Reset" />
         </div>
     </div>
 }
-

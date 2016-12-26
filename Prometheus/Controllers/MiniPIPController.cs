@@ -41,7 +41,7 @@ namespace Domino.Controllers
                 ck.Add("logonredirectctrl", "MiniPIP");
                 ck.Add("logonredirectact", "ViewAll");
                 CookieUtility.SetCookie(this, ck);
-                return RedirectToAction("LoginUser", "User");
+                return RedirectToAction("LoginUser", "DominoUser");
             }
 
             var baseinfos = ECOBaseInfo.RetrieveAllECOBaseInfo();
@@ -112,7 +112,7 @@ namespace Domino.Controllers
             var ckdict = CookieUtility.UnpackCookie(this);
             if (!LoginSystem(ckdict, ECOKey, CardKey))
             {
-                return RedirectToAction("LoginUser", "User");
+                return RedirectToAction("LoginUser", "DominoUser");
             }
             if (string.IsNullOrEmpty(ECOKey))
                 ECOKey = ckdict["ECOKey"];
@@ -348,7 +348,7 @@ namespace Domino.Controllers
             var ckdict = CookieUtility.UnpackCookie(this);
             if (!LoginSystem(ckdict, ECOKey, CardKey))
             {
-                return RedirectToAction("LoginUser", "User");
+                return RedirectToAction("LoginUser", "DominoUser");
             }
             if (string.IsNullOrEmpty(ECOKey))
                 ECOKey = ckdict["ECOKey"];
@@ -433,7 +433,7 @@ namespace Domino.Controllers
                 asilist.AddRange(yesno);
                 ViewBag.QALabelCheckList = CreateSelectList(asilist, cardinfo.QALabelCheck);
 
-                var alluser = UserViewModels.RetrieveAllUser();
+                var alluser = DominoUserViewModels.RetrieveAllUser();
                 asilist = new List<string>();
                 asilist.Add("NONE");
                 asilist.AddRange(alluser);
@@ -563,7 +563,7 @@ namespace Domino.Controllers
             var ckdict = CookieUtility.UnpackCookie(this);
             if (!LoginSystem(ckdict, ECOKey, CardKey))
             {
-                return RedirectToAction("LoginUser", "User");
+                return RedirectToAction("LoginUser", "DominoUser");
             }
             if (string.IsNullOrEmpty(ECOKey))
                 ECOKey = ckdict["ECOKey"];
@@ -760,7 +760,7 @@ namespace Domino.Controllers
         //    var ckdict = CookieUtility.UnpackCookie(this);
         //    if (!LoginSystem(ckdict, ECOKey, CardKey))
         //    {
-        //        return RedirectToAction("LoginUser", "User");
+        //        return RedirectToAction("LoginUser", "DominoUser");
         //    }
         //    if (string.IsNullOrEmpty(ECOKey))
         //        ECOKey = ckdict["ECOKey"];
@@ -852,7 +852,7 @@ namespace Domino.Controllers
             var ckdict = CookieUtility.UnpackCookie(this);
             if (!LoginSystem(ckdict, ECOKey, CardKey))
             {
-                return RedirectToAction("LoginUser", "User");
+                return RedirectToAction("LoginUser", "DominoUser");
             }
             if (string.IsNullOrEmpty(ECOKey))
                 ECOKey = ckdict["ECOKey"];
@@ -946,7 +946,7 @@ namespace Domino.Controllers
                 asilist.AddRange(yesno);
                 ViewBag.QALabelCheckList = CreateSelectList(asilist, cardinfo.QALabelCheck);
 
-                var alluser = UserViewModels.RetrieveAllUser();
+                var alluser = DominoUserViewModels.RetrieveAllUser();
                 asilist = new List<string>();
                 asilist.Add("NONE");
                 asilist.AddRange(alluser);
@@ -1082,7 +1082,7 @@ namespace Domino.Controllers
             var ckdict = CookieUtility.UnpackCookie(this);
             if (!LoginSystem(ckdict, ECOKey, CardKey))
             {
-                return RedirectToAction("LoginUser", "User");
+                return RedirectToAction("LoginUser", "DominoUser");
             }
             if (string.IsNullOrEmpty(ECOKey))
                 ECOKey = ckdict["ECOKey"];
@@ -1202,7 +1202,7 @@ namespace Domino.Controllers
             var ckdict = CookieUtility.UnpackCookie(this);
             if (!LoginSystem(ckdict, ECOKey, CardKey))
             {
-                return RedirectToAction("LoginUser", "User");
+                return RedirectToAction("LoginUser", "DominoUser");
             }
             if (string.IsNullOrEmpty(ECOKey))
                 ECOKey = ckdict["ECOKey"];
@@ -1296,7 +1296,7 @@ namespace Domino.Controllers
             var ckdict = CookieUtility.UnpackCookie(this);
             if (!LoginSystem(ckdict, ECOKey, CardKey))
             {
-                return RedirectToAction("LoginUser", "User");
+                return RedirectToAction("LoginUser", "DominoUser");
             }
             if (string.IsNullOrEmpty(ECOKey))
                 ECOKey = ckdict["ECOKey"];
@@ -1363,19 +1363,19 @@ namespace Domino.Controllers
                     catch (Exception ex) { }
                 }
 
-                var alluser = UserViewModels.RetrieveAllUser();
+                var alluser = DominoUserViewModels.RetrieveAllUser();
                 var asilist = new List<string>();
                 asilist.Add("NONE");
                 asilist.AddRange(alluser);
                 ViewBag.BdEgEEPROMCheckPList = CreateSelectList(asilist, cardinfo.BdEgEEPROMCheckP);
 
-                alluser = UserViewModels.RetrieveAllUser();
+                alluser = DominoUserViewModels.RetrieveAllUser();
                 asilist = new List<string>();
                 asilist.Add("NONE");
                 asilist.AddRange(alluser);
                 ViewBag.BdEgLabelCheckPList = CreateSelectList(asilist, cardinfo.BdEgLabelCheckP);
 
-                alluser = UserViewModels.RetrieveAllUser();
+                alluser = DominoUserViewModels.RetrieveAllUser();
                 asilist = new List<string>();
                 asilist.Add("NONE");
                 asilist.AddRange(alluser);
@@ -1475,7 +1475,7 @@ namespace Domino.Controllers
             var ckdict = CookieUtility.UnpackCookie(this);
             if (!LoginSystem(ckdict, ECOKey, CardKey))
             {
-                return RedirectToAction("LoginUser", "User");
+                return RedirectToAction("LoginUser", "DominoUser");
             }
             if (string.IsNullOrEmpty(ECOKey))
                 ECOKey = ckdict["ECOKey"];
@@ -1566,7 +1566,7 @@ namespace Domino.Controllers
             var ckdict = CookieUtility.UnpackCookie(this);
             if (!LoginSystem(ckdict, ECOKey, CardKey))
             {
-                return RedirectToAction("LoginUser", "User");
+                return RedirectToAction("LoginUser", "DominoUser");
             }
             if (string.IsNullOrEmpty(ECOKey))
                 ECOKey = ckdict["ECOKey"];
@@ -1667,7 +1667,7 @@ namespace Domino.Controllers
             var ckdict = CookieUtility.UnpackCookie(this);
             if (!LoginSystem(ckdict, ECOKey, CardKey))
             {
-                return RedirectToAction("LoginUser", "User");
+                return RedirectToAction("LoginUser", "DominoUser");
             }
             if (string.IsNullOrEmpty(ECOKey))
                 ECOKey = ckdict["ECOKey"];

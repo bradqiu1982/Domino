@@ -6,7 +6,7 @@ using System.Web;
 
 namespace Domino.Models
 {
-    public class UserViewModels
+    public class DominoUserViewModels
     {
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
@@ -51,14 +51,14 @@ namespace Domino.Models
             DBUtility.ExeLocalSqlNoRes(sql);
         }
 
-        public static UserViewModels RetrieveUser(string username)
+        public static DominoUserViewModels RetrieveUser(string username)
         {
             var sql = "select PassWD,Validated,Priority,UpdateDate from UserTable where UserName = '<UserName>'";
             sql = sql.Replace("<UserName>", username.ToUpper());
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
             if (dbret.Count > 0)
             {
-                var ret = new UserViewModels();
+                var ret = new DominoUserViewModels();
                 ret.Email = username.ToUpper();
                 ret.Password = Convert.ToString(dbret[0][0]);
                 ret.Validated = Convert.ToInt32(dbret[0][1]);

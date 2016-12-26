@@ -9,6 +9,12 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <_PublishTargetUrl>e:/domino</_PublishTargetUrl>
   </PropertyGroup>
   <ItemGroup>
+    <File Include="App_Data/Domino.mdf">
+      <publishTime>12/26/2016 13:13:29</publishTime>
+    </File>
+    <File Include="App_Data/Domino_log.ldf">
+      <publishTime>12/26/2016 13:13:29</publishTime>
+    </File>
     <File Include="App_Data/Prometheus.mdf">
       <publishTime>12/08/2016 09:38:20</publishTime>
     </File>
@@ -18,11 +24,17 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="bin/Antlr3.Runtime.dll">
       <publishTime>02/22/2013 08:43:40</publishTime>
     </File>
+    <File Include="bin/App_global.asax.compiled">
+      <publishTime>12/26/2016 13:31:59</publishTime>
+    </File>
+    <File Include="bin/App_global.asax.dll">
+      <publishTime>12/26/2016 13:31:59</publishTime>
+    </File>
     <File Include="bin/Content/Finisar.PNG">
       <publishTime>07/29/2016 10:33:51</publishTime>
     </File>
     <File Include="bin/Domino.dll">
-      <publishTime>12/08/2016 19:38:14</publishTime>
+      <publishTime>12/26/2016 13:31:20</publishTime>
     </File>
     <File Include="bin/EntityFramework.dll">
       <publishTime>03/02/2015 09:32:26</publishTime>
@@ -1084,10 +1096,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/12/2016 16:30:16</publishTime>
     </File>
     <File Include="Content/bootstrap.css">
-      <publishTime>07/04/2016 09:41:26</publishTime>
+      <publishTime>12/18/2016 17:33:05</publishTime>
     </File>
     <File Include="Content/bootstrap.min.css">
-      <publishTime>07/04/2016 09:41:26</publishTime>
+      <publishTime>12/18/2016 17:33:12</publishTime>
     </File>
     <File Include="Content/bootstrap/alerts.less">
       <publishTime>07/04/2016 17:41:34</publishTime>
@@ -1174,7 +1186,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/04/2016 17:41:33</publishTime>
     </File>
     <File Include="Content/bootstrap/mixins/grid-framework.less">
-      <publishTime>07/04/2016 17:41:33</publishTime>
+      <publishTime>12/18/2016 17:33:21</publishTime>
     </File>
     <File Include="Content/bootstrap/mixins/grid.less">
       <publishTime>07/04/2016 17:41:33</publishTime>
@@ -1301,6 +1313,9 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     </File>
     <File Include="Content/bootstrap/wells.less">
       <publishTime>07/04/2016 17:41:33</publishTime>
+    </File>
+    <File Include="Content/domino.css">
+      <publishTime>12/09/2016 15:19:56</publishTime>
     </File>
     <File Include="Content/Finisar.PNG">
       <publishTime>07/29/2016 10:33:51</publishTime>
@@ -1447,10 +1462,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/04/2016 09:41:26</publishTime>
     </File>
     <File Include="Global.asax">
-      <publishTime>07/04/2016 09:41:23</publishTime>
+      <publishTime>12/09/2016 07:59:37</publishTime>
     </File>
     <File Include="packages.config">
       <publishTime>11/22/2016 18:13:27</publishTime>
+    </File>
+    <File Include="PrecompiledApp.config">
+      <publishTime>12/26/2016 13:31:24</publishTime>
     </File>
     <File Include="Scripts/AreaChart.xml">
       <publishTime>09/20/2016 10:57:13</publishTime>
@@ -1469,6 +1487,9 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     </File>
     <File Include="Scripts/ColumnChart.xml">
       <publishTime>08/17/2016 16:30:39</publishTime>
+    </File>
+    <File Include="Scripts/DominoCfg.txt">
+      <publishTime>12/23/2016 08:44:12</publishTime>
     </File>
     <File Include="Scripts/exporting.js">
       <publishTime>08/17/2016 09:17:26</publishTime>
@@ -1561,7 +1582,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>12/02/2016 13:56:18</publishTime>
     </File>
     <File Include="userfiles/Upload.ashx">
-      <publishTime>10/20/2016 08:15:59</publishTime>
+      <publishTime>12/09/2016 07:59:40</publishTime>
     </File>
     <File Include="Views/BurnIn/BurnInMainPage.cshtml">
       <publishTime>10/21/2016 10:24:23</publishTime>
@@ -1623,6 +1644,36 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Views/DbManage/MoveDataBase.cshtml">
       <publishTime>11/18/2016 11:17:03</publishTime>
     </File>
+    <File Include="Views/DominoDBManage/ExecuteSQLs.cshtml">
+      <publishTime>12/18/2016 17:34:21</publishTime>
+    </File>
+    <File Include="Views/DominoDBManage/MoveDataBase.cshtml">
+      <publishTime>11/18/2016 11:17:03</publishTime>
+    </File>
+    <File Include="Views/DominoUser/LoginUser.cshtml">
+      <publishTime>12/26/2016 11:28:45</publishTime>
+    </File>
+    <File Include="Views/DominoUser/RegisterUser.cshtml">
+      <publishTime>12/26/2016 11:28:45</publishTime>
+    </File>
+    <File Include="Views/DominoUser/ResetNoticeA.cshtml">
+      <publishTime>07/27/2016 08:44:45</publishTime>
+    </File>
+    <File Include="Views/DominoUser/ResetNoticeB.cshtml">
+      <publishTime>07/27/2016 10:29:22</publishTime>
+    </File>
+    <File Include="Views/DominoUser/ResetUser.cshtml">
+      <publishTime>12/26/2016 11:28:44</publishTime>
+    </File>
+    <File Include="Views/DominoUser/UserCenter.cshtml">
+      <publishTime>12/09/2016 07:59:56</publishTime>
+    </File>
+    <File Include="Views/DominoUser/ValidateNoticeA.cshtml">
+      <publishTime>08/04/2016 15:19:20</publishTime>
+    </File>
+    <File Include="Views/DominoUser/ValidateNoticeB.cshtml">
+      <publishTime>07/26/2016 19:52:11</publishTime>
+    </File>
     <File Include="Views/Issue/CreateIssue.cshtml">
       <publishTime>11/04/2016 10:46:56</publishTime>
     </File>
@@ -1665,11 +1716,47 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Views/Issue/UpdateRMA.cshtml">
       <publishTime>12/06/2016 14:10:23</publishTime>
     </File>
+    <File Include="Views/MiniPIP/CurrentECO.cshtml">
+      <publishTime>12/26/2016 10:39:39</publishTime>
+    </File>
+    <File Include="Views/MiniPIP/CustomerApprovalHold.cshtml">
+      <publishTime>12/26/2016 09:03:23</publishTime>
+    </File>
+    <File Include="Views/MiniPIP/ECOComplete.cshtml">
+      <publishTime>12/21/2016 11:30:45</publishTime>
+    </File>
+    <File Include="Views/MiniPIP/ECOPending.cshtml">
+      <publishTime>12/23/2016 14:54:14</publishTime>
+    </File>
+    <File Include="Views/MiniPIP/ECOSignoff1.cshtml">
+      <publishTime>12/20/2016 16:08:13</publishTime>
+    </File>
+    <File Include="Views/MiniPIP/ECOSignoff2.cshtml">
+      <publishTime>12/26/2016 09:17:03</publishTime>
+    </File>
+    <File Include="Views/MiniPIP/MiniPIPComplete.cshtml">
+      <publishTime>12/23/2016 15:30:21</publishTime>
+    </File>
+    <File Include="Views/MiniPIP/SampleBuilding.cshtml">
+      <publishTime>12/22/2016 18:48:50</publishTime>
+    </File>
+    <File Include="Views/MiniPIP/SampleCustomerApproval.cshtml">
+      <publishTime>12/23/2016 10:54:08</publishTime>
+    </File>
+    <File Include="Views/MiniPIP/SampleOrdering.cshtml">
+      <publishTime>12/21/2016 19:29:51</publishTime>
+    </File>
+    <File Include="Views/MiniPIP/SampleShipment.cshtml">
+      <publishTime>12/23/2016 10:05:56</publishTime>
+    </File>
+    <File Include="Views/MiniPIP/ViewAll.cshtml">
+      <publishTime>12/21/2016 09:27:41</publishTime>
+    </File>
     <File Include="Views/PJReport/IBook.cshtml">
-      <publishTime>09/19/2016 17:51:06</publishTime>
+      <publishTime>12/09/2016 07:59:41</publishTime>
     </File>
     <File Include="Views/PJReport/ViewReport.cshtml">
-      <publishTime>09/20/2016 14:09:29</publishTime>
+      <publishTime>12/18/2016 17:34:36</publishTime>
     </File>
     <File Include="Views/Project/CreateProject.cshtml">
       <publishTime>11/23/2016 15:04:01</publishTime>
@@ -1753,10 +1840,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/04/2016 09:41:41</publishTime>
     </File>
     <File Include="Views/Shared/_Layout.cshtml">
-      <publishTime>12/05/2016 14:11:18</publishTime>
+      <publishTime>12/26/2016 11:21:27</publishTime>
     </File>
     <File Include="Views/Shared/_LoginPartial.cshtml">
-      <publishTime>11/07/2016 15:03:59</publishTime>
+      <publishTime>12/26/2016 11:26:38</publishTime>
     </File>
     <File Include="Views/User/AddShareTag.cshtml">
       <publishTime>12/05/2016 17:23:08</publishTime>
@@ -1795,13 +1882,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/26/2016 19:52:11</publishTime>
     </File>
     <File Include="Views/Web.config">
-      <publishTime>11/22/2016 17:01:47</publishTime>
+      <publishTime>12/09/2016 07:59:43</publishTime>
     </File>
     <File Include="Views/_ViewStart.cshtml">
       <publishTime>07/04/2016 09:41:23</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>12/08/2016 19:38:17</publishTime>
+      <publishTime>12/09/2016 07:59:43</publishTime>
     </File>
   </ItemGroup>
 </Project>

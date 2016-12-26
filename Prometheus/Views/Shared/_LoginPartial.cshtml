@@ -15,16 +15,16 @@
 </ul>
 
     <ul class="nav navbar-nav navbar-right">
-        @*<li>@Html.ActionLink("Register", "RegisterUser", "User")</li>*@
+       
         @{
             var ckdict = CookieUtility.UnpackCookie(Request);
             if (ckdict.ContainsKey("logonuser") && !string.IsNullOrEmpty(ckdict["logonuser"]))
             {
-                <li>@Html.ActionLink("Log out", "LoginOutUser", "User")</li>
+                <li>@Html.ActionLink("Log out", "LoginOutUser", "DominoUser")</li>
             }
             else
             {
-                <li>@Html.ActionLink("Log in", "LoginUser", "User")</li>
+                <li>@Html.ActionLink("Log in", "LoginUser", "DominoUser")</li>
             }
 
         }
