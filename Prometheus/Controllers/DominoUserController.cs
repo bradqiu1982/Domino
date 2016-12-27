@@ -297,31 +297,6 @@ namespace Domino.Controllers
             return RedirectToAction("ViewAll", "MiniPIP");
         }
 
-        private List<SelectListItem> CreateSelectList(List<string> valist, string defVal)
-        {
-            bool selected = false;
-            var pslist = new List<SelectListItem>();
-            foreach (var p in valist)
-            {
-                var pitem = new SelectListItem();
-                pitem.Text = p;
-                pitem.Value = p;
-                if (!string.IsNullOrEmpty(defVal) && string.Compare(defVal, p, true) == 0)
-                {
-                    pitem.Selected = true;
-                    selected = true;
-                }
-                pslist.Add(pitem);
-            }
-
-            if (!selected && pslist.Count > 0)
-            {
-                pslist[0].Selected = true;
-            }
-
-            return pslist;
-        }
-
         public ActionResult UserCenter()
         {
             return View();

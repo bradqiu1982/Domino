@@ -55,10 +55,90 @@ namespace Domino.Controllers
             return View(vm);
         }
 
+        private void logmaininfo(string info)
+        {
+            var dominofolder = "d:\\HeartBeat4Domino";
+            if (!Directory.Exists(dominofolder))
+            {
+                Directory.CreateDirectory(dominofolder);
+            }
+
+            var filename = dominofolder + "\\weblog" + DateTime.Now.ToString("yyyy-MM-dd");
+
+            if (System.IO.File.Exists(filename))
+            {
+                var content = System.IO.File.ReadAllText(filename);
+                content = content + info;
+                System.IO.File.WriteAllText(filename, content);
+            }
+            else
+            {
+                System.IO.File.WriteAllText(filename, info);
+            }
+        }
+
         public ActionResult RefreshSys()
         {
             DominoDataCollector.SetForceECORefresh(this);
             DominoDataCollector.RefreshECOList(this);
+
+            logmaininfo(DateTime.Now.ToString() + "    ECO base info is refreshed!\r\n");
+
+            var cardtypes = new string[] { DominoCardType.ECOPending,DominoCardType.ECOSignoff1
+                                            , DominoCardType.ECOSignoff2, DominoCardType.SampleOrdering
+                                            ,DominoCardType.SampleBuilding,DominoCardType.SampleShipment };
+            var cardtypelist = new List<string>();
+            cardtypelist.AddRange(cardtypes);
+
+            var baseinfos = ECOBaseInfo.RetrieveAllECOBaseInfo();
+
+            foreach (var cardtype in cardtypelist)
+            {
+                var cardlist = new List<DominoVM>();
+                foreach (var bs in baseinfos)
+                {
+                    var ret = DominoVM.RetrieveHoldingCard(bs, cardtype);
+                    if (!string.IsNullOrEmpty(ret.CardKey))
+                    {
+                        cardlist.Add(ret);
+                    }
+                }
+
+                foreach (var card in cardlist)
+                {
+                    if (string.Compare(cardtype, DominoCardType.ECOPending) == 0)
+                    {
+                        DominoDataCollector.UpdateECOWeeklyUpdate(this, card.EBaseInfo, card.CardKey);
+                    }
+                    else if (string.Compare(cardtype, DominoCardType.ECOSignoff1) == 0)
+                    {
+                        DominoDataCollector.RefreshQAFAI(card.EBaseInfo, card.CardKey, this);
+                    }
+                    else if (string.Compare(cardtype, DominoCardType.ECOSignoff2) == 0)
+                    {
+                        DominoDataCollector.RefreshQAFAI(card.EBaseInfo, card.CardKey, this);
+                    }
+                    else if (string.Compare(cardtype, DominoCardType.SampleOrdering) == 0)
+                    {
+                        DominoDataCollector.UpdateOrderInfoFromExcel(this, card.EBaseInfo, card.CardKey);
+                    }
+                    else if (string.Compare(cardtype, DominoCardType.SampleBuilding) == 0)
+                    {
+                        DominoDataCollector.UpdateJOInfoFromExcel(this, card.EBaseInfo, card.CardKey);
+                        DominoDataCollector.UpdateEEPROM2NDFromExcel(this, card.EBaseInfo, card.CardKey);
+                    }
+                    else if (string.Compare(cardtype, DominoCardType.SampleShipment) == 0)
+                    {
+                        DominoDataCollector.UpdateShipInfoFromExcel(this, card.EBaseInfo, card.CardKey);
+                    }
+                }//end foreach
+
+                if (cardlist.Count > 0)
+                {
+                    logmaininfo(DateTime.Now.ToString() + "    "+ cardtype +" info is refreshed!\r\n");
+                }
+            }//end foreach
+
             return RedirectToAction("ViewAll", "MiniPIP");
         }
 

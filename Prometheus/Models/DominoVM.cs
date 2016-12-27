@@ -506,6 +506,9 @@ namespace Domino.Models
             ecocontentdict.Add(DominoCardType.ECOSignoff2,"ECO Signoff-2");
             ecocontentdict.Add(DominoCardType.CustomerApprovalHold,"Customer Approval Hold");
 
+            ECOKey = string.Empty;
+            CardKey = string.Empty;
+            CardType = string.Empty;
 
             MiniPIPHold = string.Empty;
 
@@ -690,6 +693,25 @@ namespace Domino.Models
                 ret.Add(tempitem);
 
                 idx = idx + 1;
+            }
+
+            return ret;
+        }
+
+        public static DominoVM RetrieveHoldingCard(ECOBaseInfo baseinfo, string CardType)
+        {
+            var ret = new DominoVM();
+            var sql = "select ECOKey,CardKey,CardType from ECOCard where ECOKey = '<ECOKey>' and CardType = '<CardType>' and (CardStatus = '<CardStatus1>' or  CardStatus = '<CardStatus2>')  and DeleteMark <> 'true' order by CardCreateTime ASC";
+            sql = sql.Replace("<ECOKey>", baseinfo.ECOKey).Replace("<CardType>", CardType).Replace("<CardStatus1>", DominoCardStatus.pending).Replace("<CardStatus2>", DominoCardStatus.working);
+
+            var dbret = DBUtility.ExeLocalSqlWithRes(sql);
+
+            if (dbret.Count > 0)
+            {
+                ret.ECOKey = Convert.ToString(dbret[0][0]);
+                ret.CardKey = Convert.ToString(dbret[0][1]);
+                ret.CardType = Convert.ToString(dbret[0][2]);
+                ret.EBaseInfo = baseinfo;
             }
 
             return ret;

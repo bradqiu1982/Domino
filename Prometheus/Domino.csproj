@@ -663,8 +663,8 @@
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\DominoCfg.txt" />
     <Content Include="Scripts\exporting.js" />
-    <Content Include="Scripts\HeartBeat.exe" />
-    <Content Include="Scripts\heartbeat.txt" />
+    <Content Include="Scripts\HeartBeat4Domino.exe" />
+    <Content Include="Scripts\heartbeat4domino.txt" />
     <Content Include="Scripts\highcharts.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -708,8 +708,6 @@
     <Content Include="Views\DominoUser\ResetNoticeA.cshtml" />
     <Content Include="Views\DominoUser\ResetUser.cshtml" />
     <Content Include="Views\DominoDBManage\ExecuteSQLs.cshtml" />
-    <Content Include="Views\PJReport\IBook.cshtml" />
-    <Content Include="Views\PJReport\ViewReport.cshtml" />
     <Content Include="Scripts\project_list.xlsx" />
     <Content Include="Scripts\project_pn_desc_list.xlsx" />
     <Content Include="Views\DominoDBManage\MoveDataBase.cshtml" />
