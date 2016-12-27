@@ -266,7 +266,7 @@ namespace Domino.Models
             MiniPIPStatus = string.Empty;
         }
 
-        public static List<KeyValuePair<string, string>> RetrieveBaseInfo(ECOBaseInfo info)
+        public static List<KeyValuePair<string, string>> RetrieveBaseInfoKV(ECOBaseInfo info)
         {
             var ret = new List<KeyValuePair<string, string>>();
             PropertyInfo[] properties = typeof(ECOBaseInfo).GetProperties();

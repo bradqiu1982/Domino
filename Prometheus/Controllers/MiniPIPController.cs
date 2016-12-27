@@ -1900,6 +1900,16 @@ namespace Domino.Controllers
             return RedirectToAction(vm[0].CardType, "MiniPIP", dict);
         }
 
+        public ActionResult DeleteMiniPIP(string ECOKey)
+        {
+            var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
+            if (baseinfos.Count > 0)
+            {
+                baseinfos[0].MiniPIPStatus = DominoMiniPIPStatus.delete;
+                baseinfos[0].UpdateECO();
+            }
+            return RedirectToAction("ViewAll", "MiniPIP");
+        }
 
         private List<string> ReceiveRMAFiles()
         {
