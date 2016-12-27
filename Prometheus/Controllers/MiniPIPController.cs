@@ -109,27 +109,33 @@ namespace Domino.Controllers
                     if (string.Compare(cardtype, DominoCardType.ECOPending) == 0)
                     {
                         DominoDataCollector.UpdateECOWeeklyUpdate(this, card.EBaseInfo, card.CardKey);
+                        DominoVM.CardCanbeUpdate(card.CardKey);
                     }
                     else if (string.Compare(cardtype, DominoCardType.ECOSignoff1) == 0)
                     {
                         DominoDataCollector.RefreshQAFAI(card.EBaseInfo, card.CardKey, this);
+                        DominoVM.CardCanbeUpdate(card.CardKey);
                     }
                     else if (string.Compare(cardtype, DominoCardType.ECOSignoff2) == 0)
                     {
                         DominoDataCollector.RefreshQAFAI(card.EBaseInfo, card.CardKey, this);
+                        DominoVM.CardCanbeUpdate(card.CardKey);
                     }
                     else if (string.Compare(cardtype, DominoCardType.SampleOrdering) == 0)
                     {
                         DominoDataCollector.UpdateOrderInfoFromExcel(this, card.EBaseInfo, card.CardKey);
+                        DominoVM.CardCanbeUpdate(card.CardKey);
                     }
                     else if (string.Compare(cardtype, DominoCardType.SampleBuilding) == 0)
                     {
                         DominoDataCollector.UpdateJOInfoFromExcel(this, card.EBaseInfo, card.CardKey);
                         DominoDataCollector.UpdateEEPROM2NDFromExcel(this, card.EBaseInfo, card.CardKey);
+                        DominoVM.CardCanbeUpdate(card.CardKey);
                     }
                     else if (string.Compare(cardtype, DominoCardType.SampleShipment) == 0)
                     {
                         DominoDataCollector.UpdateShipInfoFromExcel(this, card.EBaseInfo, card.CardKey);
+                        DominoVM.CardCanbeUpdate(card.CardKey);
                     }
                 }//end foreach
 
