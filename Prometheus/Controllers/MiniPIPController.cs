@@ -355,10 +355,17 @@ namespace Domino.Controllers
                 baseinfos[0].MCOIssued = Request.Form["MCOIssued"];
                 baseinfos[0].PNImplement = Request.Form["PNImplementList"].ToString();
                 baseinfos[0].FACustomerApproval = Request.Form["FACustomerApproval"];
+                var ecohold = Request.Form["MiniPIPHoldList"].ToString();
+                if (string.Compare(ecohold, DominoYESNO.YES) == 0)
+                {
+                    baseinfos[0].MiniPIPStatus = DominoMiniPIPStatus.hold;
+                }
+                else
+                {
+                    baseinfos[0].MiniPIPStatus = DominoMiniPIPStatus.working;
+                }
 
                 baseinfos[0].UpdateECO();
-
-                var ecohold = Request.Form["MiniPIPHoldList"].ToString();
                 DominoVM.StoreECOPendingInfo(CardKey, ecohold);
                 
                 StoreAttachAndComment(CardKey, updater);
