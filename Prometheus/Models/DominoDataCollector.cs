@@ -105,7 +105,7 @@ namespace Domino.Models
         private static void updateecolist(List<List<string>> data, Controller ctrl, string localdir, string urlfolder)
         {
             var syscfgdict = GetSysConfig(ctrl);
-            var baseinfos = ECOBaseInfo.RetrieveAllECOBaseInfo();
+            var baseinfos = ECOBaseInfo.RetrieveAllExistECOBaseInfo();
 
             foreach (var line in data)
             {
@@ -157,6 +157,11 @@ namespace Domino.Models
                             && string.Compare(DateTime.Parse(item.InitRevison).ToString("yyyy-MM-dd"), DateTime.Parse(baseinfo.InitRevison).ToString("yyyy-MM-dd"), true) == 0)
                         {
                             ecoexist = true;
+
+                            if (string.Compare(item.MiniPIPStatus, DominoMiniPIPStatus.working) != 0)
+                            {
+                                break;
+                            }
 
                             item.Customer = baseinfo.Customer;
                             item.Complex = baseinfo.Complex;

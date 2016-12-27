@@ -44,7 +44,7 @@ namespace Domino.Controllers
                 return RedirectToAction("LoginUser", "DominoUser");
             }
 
-            var baseinfos = ECOBaseInfo.RetrieveAllECOBaseInfo();
+            var baseinfos = ECOBaseInfo.RetrieveAllWorkingECOBaseInfo();
             var vm = new List<List<DominoVM>>();
             foreach (var item in baseinfos)
             {
@@ -90,7 +90,7 @@ namespace Domino.Controllers
             var cardtypelist = new List<string>();
             cardtypelist.AddRange(cardtypes);
 
-            var baseinfos = ECOBaseInfo.RetrieveAllECOBaseInfo();
+            var baseinfos = ECOBaseInfo.RetrieveAllWorkingECOBaseInfo();
 
             foreach (var cardtype in cardtypelist)
             {
@@ -1829,7 +1829,7 @@ namespace Domino.Controllers
                     allchecked = false;
                     SetNoticeInfo("MCO number must be input on the ECO Pending card");
                 }
-                else if(string.IsNullOrEmpty(tempinfo.ECOPartLifeCycle))
+                else if (string.IsNullOrEmpty(tempinfo.ECOPartLifeCycle))
                 {
                     allchecked = false;
                     SetNoticeInfo("ECO LifeCycle should not be empty");
@@ -1844,6 +1844,13 @@ namespace Domino.Controllers
                     allchecked = false;
                     SetNoticeInfo("ECO LifeCycle is different from Generic LifeCycle");
                 }
+                else if ((string.Compare(baseinfos[0].ECOType, DominoECOType.DVNS) == 0
+                   || string.Compare(baseinfos[0].ECOType, DominoECOType.RVNS) == 0)
+                   && string.IsNullOrEmpty(baseinfos[0].FACustomerApproval))
+                {
+                    allchecked = false;
+                    SetNoticeInfo("FA Customer Approval must be inputed in ECOPending card");
+                }
 
                 if (!allchecked)
                 {
@@ -1855,6 +1862,8 @@ namespace Domino.Controllers
 
                 DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
 
+                baseinfos[0].MiniPIPStatus = DominoMiniPIPStatus.done;
+                baseinfos[0].UpdateECO();
             }
 
             var dict = new RouteValueDictionary();
