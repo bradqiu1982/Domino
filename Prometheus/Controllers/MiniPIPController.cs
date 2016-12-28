@@ -389,7 +389,7 @@ namespace Domino.Controllers
 
                 baseinfos[0].MCOIssued = Request.Form["MCOIssued"];
                 baseinfos[0].PNImplement = Request.Form["PNImplementList"].ToString();
-                baseinfos[0].FACustomerApproval = Request.Form["FACustomerApproval"];
+                //baseinfos[0].FACustomerApproval = Request.Form["FACustomerApproval"];
                 var ecohold = Request.Form["MiniPIPHoldList"].ToString();
                 if (string.Compare(ecohold, DominoYESNO.YES) == 0)
                 {
@@ -617,8 +617,13 @@ namespace Domino.Controllers
 
                 cardinfo.RSMSendDate = Request.Form["RSMSendDate"];
                 cardinfo.RSMApproveDate = Request.Form["RSMApproveDate"];
-                
 
+                if (!string.IsNullOrEmpty(cardinfo.RSMApproveDate))
+                {
+                    baseinfos[0].FACustomerApproval = cardinfo.RSMApproveDate;
+                    baseinfos[0].UpdateECO();
+                }
+                
                 StoreAttachAndComment(CardKey, updater, cardinfo);
 
                 cardinfo.UpdateSignoffInfo(CardKey);
@@ -875,97 +880,6 @@ namespace Domino.Controllers
             }
         }
 
-        //public ActionResult FACustomerApproval(string ECOKey, string CardKey)
-        //{
-        //    var ckdict = CookieUtility.UnpackCookie(this);
-        //    if (!LoginSystem(ckdict, ECOKey, CardKey))
-        //    {
-        //        return RedirectToAction("LoginUser", "DominoUser");
-        //    }
-        //    if (string.IsNullOrEmpty(ECOKey))
-        //        ECOKey = ckdict["ECOKey"];
-        //    if (string.IsNullOrEmpty(CardKey))
-        //        CardKey = ckdict["CardKey"];
-
-        //    var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
-        //    if (baseinfos.Count > 0)
-        //    {
-        //        var vm = new List<List<DominoVM>>();
-        //        var cardlist = DominoVM.RetrieveECOCards(baseinfos[0]);
-        //        vm.Add(cardlist);
-
-        //        foreach (var card in cardlist)
-        //        {
-        //            if (string.Compare(card.CardType, DominoCardType.FACustomerApproval) == 0)
-        //            {
-        //                ViewBag.CurrentCard = card;
-        //                break;
-        //            }
-        //        }
-
-        //        ViewBag.ECOKey = ECOKey;
-        //        ViewBag.CardKey = CardKey;
-        //        ViewBag.CardDetailPage = DominoCardType.FACustomerApproval;
-
-        //        return View("CurrentECO", vm);
-        //    }
-
-        //    return RedirectToAction("ViewAll", "MiniPIP");
-        //}
-
-        //[HttpPost, ActionName("FACustomerApproval")]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult FACustomerApprovalPost()
-        //{
-        //    var ckdict = CookieUtility.UnpackCookie(this);
-        //    var updater = ckdict["logonuser"].Split(new char[] { '|' })[0];
-
-        //    var ECOKey = Request.Form["ECOKey"];
-        //    var CardKey = Request.Form["CardKey"];
-
-        //    var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
-        //    if (baseinfos.Count > 0)
-        //    {
-
-        //        StoreAttachAndComment(CardKey, updater);
-
-        //        DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
-
-        //        var newcardkey = DominoVM.GetUniqKey();
-        //        if (string.Compare(baseinfos[0].ECOType, DominoECOType.DVNS) == 0)
-        //        {
-        //            var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.SampleOrdering, DominoCardStatus.working);
-        //            var dict = new RouteValueDictionary();
-        //            dict.Add("ECOKey", ECOKey);
-        //            dict.Add("CardKey", realcardkey);
-        //            return RedirectToAction(DominoCardType.SampleOrdering, "MiniPIP", dict);
-        //        }
-        //        else if (string.Compare(baseinfos[0].ECOType, DominoECOType.RVNS) == 0)
-        //        {
-        //            var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.ECOComplete, DominoCardStatus.pending);
-        //            var dict = new RouteValueDictionary();
-        //            dict.Add("ECOKey", ECOKey);
-        //            dict.Add("CardKey", realcardkey);
-        //            return RedirectToAction(DominoCardType.ECOComplete, "MiniPIP", dict);
-        //        }
-        //        else
-        //        {
-        //            var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.SampleOrdering, DominoCardStatus.working);
-        //            var dict = new RouteValueDictionary();
-        //            dict.Add("ECOKey", ECOKey);
-        //            dict.Add("CardKey", realcardkey);
-        //            return RedirectToAction(DominoCardType.SampleOrdering, "MiniPIP", dict);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        var dict = new RouteValueDictionary();
-        //        dict.Add("ECOKey", ECOKey);
-        //        dict.Add("CardKey", CardKey);
-        //        return RedirectToAction(DominoCardType.FACustomerApproval, "MiniPIP", dict);
-        //    }
-
-        //}
 
         public ActionResult ECOSignoff2(string ECOKey, string CardKey, string Refresh = "No")
         {
@@ -1128,6 +1042,12 @@ namespace Domino.Controllers
                 cardinfo.RSMSendDate = Request.Form["RSMSendDate"];
                 cardinfo.RSMApproveDate = Request.Form["RSMApproveDate"];
 
+                if (!string.IsNullOrEmpty(cardinfo.RSMApproveDate))
+                {
+                    baseinfos[0].FACustomerApproval = cardinfo.RSMApproveDate;
+                    baseinfos[0].UpdateECO();
+                }
+
                 cardinfo.ECOCustomerHoldDate = Request.Form["ECOCustomerHoldDate"];
                 
                 StoreAttachAndComment(CardKey, updater, cardinfo);
@@ -1268,7 +1188,7 @@ namespace Domino.Controllers
 
                 if (string.IsNullOrEmpty(cardinfo.ECOCustomerApproveDate) && string.IsNullOrEmpty(baseinfos[0].FACustomerApproval))
                 {
-                    SetNoticeInfo("ECO Customer Approve Date or FA Approve Date, At least one of them is inputed");
+                    SetNoticeInfo("ECO Customer Approve Date or FAI Approve Date, At least one of them is inputed");
                     var dict = new RouteValueDictionary();
                     dict.Add("ECOKey", ECOKey);
                     dict.Add("CardKey", CardKey);
