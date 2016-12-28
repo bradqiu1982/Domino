@@ -23,11 +23,11 @@
 }
 
 .panel-default > .panel-heading-working {
-    background: #A0CFEC; color: #fff;
+    background: #ff8000; color: #fff;
 }
 
 .panel-default > .panel-body-working {
-    background: #79BAEC; color: #fff;
+    background: #ff6a00; color: #fff;
 }
 
 .panel-default > .panel-heading-pending {
