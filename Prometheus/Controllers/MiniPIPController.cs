@@ -490,7 +490,10 @@ namespace Domino.Controllers
                         }
                     }//if card is not finished,we refresh qa folder to get files
 
-                
+
+                bool eepromattachexist = false;
+                bool labelattachexist = false;
+
                 var vm = new List<List<DominoVM>>();
                 var cardlist = DominoVM.RetrieveECOCards(baseinfos[0]);
                 vm.Add(cardlist);
@@ -500,6 +503,17 @@ namespace Domino.Controllers
                     if (string.Compare(card.CardType, DominoCardType.ECOSignoff1) == 0)
                     {
                         ViewBag.CurrentCard = card;
+                        foreach (var attach in card.AttachList)
+                        {
+                            if (attach.ToUpper().Contains("EEPROM"))
+                            {
+                                eepromattachexist = true;
+                            }
+                            if (attach.ToUpper().Contains("_FAI_"))
+                            {
+                                labelattachexist = true;
+                            }
+                        }
                         break;
                     }
                 }
@@ -546,12 +560,31 @@ namespace Domino.Controllers
                 var yesno = new string[] { DominoYESNO.NO, DominoYESNO.YES };
 
                 var asilist = new List<string>();
+                asilist.Add("N/A");
                 asilist.AddRange(yesno);
-                ViewBag.QAEEPROMCheckList = CreateSelectList(asilist, cardinfo.QAEEPROMCheck);
+
+                if (string.IsNullOrEmpty(cardinfo.QAEEPROMCheck) && eepromattachexist)
+                {
+                    ViewBag.QAEEPROMCheckList = CreateSelectList(asilist,DominoYESNO.YES);
+                }
+                else
+                {
+                    ViewBag.QAEEPROMCheckList = CreateSelectList(asilist, cardinfo.QAEEPROMCheck);
+                }
+                
               
                 asilist = new List<string>();
+                asilist.Add("N/A");
                 asilist.AddRange(yesno);
-                ViewBag.QALabelCheckList = CreateSelectList(asilist, cardinfo.QALabelCheck);
+
+                if (string.IsNullOrEmpty(cardinfo.QALabelCheck) && labelattachexist)
+                {
+                    ViewBag.QALabelCheckList = CreateSelectList(asilist, DominoYESNO.YES);
+                }
+                else
+                {
+                    ViewBag.QALabelCheckList = CreateSelectList(asilist, cardinfo.QALabelCheck);
+                }
 
                 var alluser = DominoUserViewModels.RetrieveAllUser();
                 asilist = new List<string>();
@@ -910,11 +943,25 @@ namespace Domino.Controllers
                 var cardlist = DominoVM.RetrieveECOCards(baseinfos[0]);
                 vm.Add(cardlist);
 
+                bool eepromattachexist = false;
+                bool labelattachexist = false;
+
                 foreach (var card in cardlist)
                 {
                     if (string.Compare(card.CardType, DominoCardType.ECOSignoff2) == 0)
                     {
                         ViewBag.CurrentCard = card;
+                        foreach (var attach in card.AttachList)
+                        {
+                            if (attach.ToUpper().Contains("EEPROM"))
+                            {
+                                eepromattachexist = true;
+                            }
+                            if (attach.ToUpper().Contains("_FAI_"))
+                            {
+                                labelattachexist = true;
+                            }
+                        }
                         break;
                     }
                 }
@@ -970,12 +1017,30 @@ namespace Domino.Controllers
                 var yesno = new string[] { DominoYESNO.NO, DominoYESNO.YES };
 
                 var asilist = new List<string>();
+                asilist.Add("N/A");
                 asilist.AddRange(yesno);
-                ViewBag.QAEEPROMCheckList = CreateSelectList(asilist, cardinfo.QAEEPROMCheck);
+
+                if (string.IsNullOrEmpty(cardinfo.QAEEPROMCheck) && eepromattachexist)
+                {
+                    ViewBag.QAEEPROMCheckList = CreateSelectList(asilist, DominoYESNO.YES);
+                }
+                else
+                {
+                    ViewBag.QAEEPROMCheckList = CreateSelectList(asilist, cardinfo.QAEEPROMCheck);
+                }
 
                 asilist = new List<string>();
+                asilist.Add("N/A");
                 asilist.AddRange(yesno);
-                ViewBag.QALabelCheckList = CreateSelectList(asilist, cardinfo.QALabelCheck);
+
+                if (string.IsNullOrEmpty(cardinfo.QALabelCheck) && labelattachexist)
+                {
+                    ViewBag.QALabelCheckList = CreateSelectList(asilist, DominoYESNO.YES);
+                }
+                else
+                {
+                    ViewBag.QALabelCheckList = CreateSelectList(asilist, cardinfo.QALabelCheck);
+                }
 
                 var alluser = DominoUserViewModels.RetrieveAllUser();
                 asilist = new List<string>();
