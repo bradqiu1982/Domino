@@ -218,13 +218,18 @@ namespace Domino.Models
 
         private Dictionary<string, string> namedict = new Dictionary<string, string>();
         public Dictionary<string, string> NameDict { get { return namedict; } }
+
+        private Dictionary<string, string> namedict4viewall = new Dictionary<string, string>();
+        public Dictionary<string, string> NameDict4ViewAll { get { return namedict4viewall; } }
+
+
         public ECOBaseInfo()
         {
             namedict.Clear();
             namedict.Add("ECONum", "ECO Number");
             namedict.Add("PNDesc", "Product Requested");
             namedict.Add("Customer", "Customer");
-            namedict.Add("Complex", "Complex");
+            namedict.Add("Complex", "Type");
             namedict.Add("RSM", "RSM");
             namedict.Add("PE", "PE");
             namedict.Add("RiskBuild", "Risk Build");
@@ -240,6 +245,12 @@ namespace Domino.Models
             namedict.Add("MCOIssued", "MCO Issued");
             namedict.Add("ECOType", "MiniPIP Flow");
             namedict.Add("FirstArticleNeed", "Order Info");
+
+
+            namedict4viewall.Add("ECONum", "ECO Number");
+            namedict4viewall.Add("ECOType", "MiniPIP Flow");
+            namedict4viewall.Add("PNDesc", "Product Requested");
+            namedict4viewall.Add("PE", "PE");
 
             ECONum = string.Empty;
             PNDesc = string.Empty;
@@ -282,6 +293,30 @@ namespace Domino.Models
                         && string.Compare(val,"N/A",true) != 0)
                     {
                         ret.Add(new KeyValuePair<string,string>(info.NameDict[property.Name], val));
+                    }
+                }//end if
+
+            }//end foreach
+
+            return ret;
+        }
+
+        public static List<KeyValuePair<string, string>> RetrieveBaseInfoKV4ViewAll(ECOBaseInfo info)
+        {
+            var ret = new List<KeyValuePair<string, string>>();
+            PropertyInfo[] properties = typeof(ECOBaseInfo).GetProperties();
+            foreach (PropertyInfo property in properties)
+            {
+                if (info.NameDict4ViewAll.ContainsKey(property.Name))
+                {
+                    var val = string.Empty;
+                    try { val = Convert.ToString(property.GetValue(info)); }
+                    catch (Exception ex) { val = string.Empty; }
+
+                    if (!string.IsNullOrEmpty(val)
+                        && string.Compare(val, "N/A", true) != 0)
+                    {
+                        ret.Add(new KeyValuePair<string, string>(info.NameDict[property.Name], val));
                     }
                 }//end if
 
@@ -751,7 +786,7 @@ namespace Domino.Models
             return ret;
         }
 
-        public static DominoVM RetrieveHoldingCard(ECOBaseInfo baseinfo, string CardType)
+        public static DominoVM RetrieveWorkingCard(ECOBaseInfo baseinfo, string CardType)
         {
             var ret = new DominoVM();
             var sql = "select ECOKey,CardKey,CardType from ECOCard where ECOKey = '<ECOKey>' and CardType = '<CardType>' and (CardStatus = '<CardStatus1>' or  CardStatus = '<CardStatus2>')  and DeleteMark <> 'true' order by CardCreateTime ASC";

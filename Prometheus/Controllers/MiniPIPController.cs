@@ -49,6 +49,15 @@ namespace Domino.Controllers
             foreach (var item in baseinfos)
             {
                 var templist = DominoVM.RetrieveECOCards(item);
+
+                if (string.Compare(item.MiniPIPStatus, DominoMiniPIPStatus.hold) == 0)
+                {
+                    foreach (var card in templist)
+                    {
+                        card.CardStatus = DominoCardStatus.info;
+                    }
+                }
+
                 vm.Add(templist);
             }
 
@@ -97,7 +106,12 @@ namespace Domino.Controllers
                 var cardlist = new List<DominoVM>();
                 foreach (var bs in baseinfos)
                 {
-                    var ret = DominoVM.RetrieveHoldingCard(bs, cardtype);
+                    if (string.Compare(bs.MiniPIPStatus,DominoMiniPIPStatus.hold) == 0)
+                    {
+                        continue;
+                    }//for hold card,we will not update info
+
+                    var ret = DominoVM.RetrieveWorkingCard(bs, cardtype);
                     if (!string.IsNullOrEmpty(ret.CardKey))
                     {
                         cardlist.Add(ret);
@@ -224,6 +238,11 @@ namespace Domino.Controllers
 
                 foreach (var card in cardlist)
                 {
+                    if (string.Compare(baseinfos[0].MiniPIPStatus, DominoMiniPIPStatus.hold) == 0)
+                    {
+                        card.CardStatus = DominoCardStatus.info;
+                    }
+
                     if (string.Compare(card.CardType, DominoCardType.ECOPending) == 0)
                     {
                         ViewBag.CurrentCard = card;
@@ -257,6 +276,11 @@ namespace Domino.Controllers
                 asilist = new List<string>();
                 asilist.AddRange(pipholds);
                 ViewBag.MiniPIPHoldList = CreateSelectList(asilist, cardinfo.MiniPIPHold);
+
+                if (string.IsNullOrEmpty(baseinfos[0].ECONum))
+                {
+                    ViewBag.PendingDays = (DateTime.Now - DateTime.Parse(baseinfos[0].InitRevison)).Days.ToString();
+                }
 
                 ViewBag.ECOKey = ECOKey;
                 ViewBag.CardKey = CardKey;

@@ -15,7 +15,13 @@
                     </div>
                 </div>
                 <div class="row col-lg-6">
-                    
+                    @if (ViewBag.PendingDays != null)
+                    {
+                        <label class="control-label col-lg-2">ECO Pending Days</label>
+                        <div class="col-lg-10">
+                            <input class="form-control text-box single-line" typeof="text" value="@ViewBag.PendingDays" readonly="readonly" />
+                        </div>
+                    }
                 </div>
             </div>
 
