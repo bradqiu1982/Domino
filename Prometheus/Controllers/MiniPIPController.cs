@@ -237,9 +237,14 @@ namespace Domino.Controllers
                     DominoVM.StoreECOPendingInfo(ViewBag.CurrentCard.CardKey, DominoYESNO.NO);
                 }
 
-                if (DominoVM.CardCanbeUpdate(CardKey) || string.Compare(Refresh, "YES", true) == 0)
+                var currentcard = DominoVM.RetrieveSpecialCard(baseinfos[0], DominoCardType.ECOPending);
+                if (string.Compare(currentcard[0].CardStatus, DominoCardStatus.done, true) != 0
+                    || string.Compare(Refresh, "YES", true) == 0)
                 {
-                    DominoDataCollector.UpdateECOWeeklyUpdate(this, baseinfos[0], CardKey);
+                    if (DominoVM.CardCanbeUpdate(CardKey) || string.Compare(Refresh, "YES", true) == 0)
+                    {
+                        DominoDataCollector.UpdateECOWeeklyUpdate(this, baseinfos[0], CardKey);
+                    }
                 }
 
                 cardinfo = DominoVM.RetrieveECOPendingInfo(CardKey);
@@ -451,18 +456,16 @@ namespace Domino.Controllers
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
             if (baseinfos.Count > 0)
             {
-                var currentcard = DominoVM.RetrieveSpecialCard(baseinfos[0], DominoCardType.ECOSignoff1);
-                if (currentcard.Count > 0)
-                {
+                    var currentcard = DominoVM.RetrieveSpecialCard(baseinfos[0], DominoCardType.ECOSignoff1);
                     if (string.Compare(currentcard[0].CardStatus, DominoCardStatus.done, true) != 0
-                        && !string.IsNullOrEmpty(baseinfos[0].PNDesc))
+                        || string.Compare(Refresh, "YES", true) == 0)
                     {
                         if (DominoVM.CardCanbeUpdate(CardKey) || string.Compare(Refresh, "YES", true) == 0)
                         {
                             DominoDataCollector.RefreshQAFAI(baseinfos[0], CardKey, this);
                         }
                     }//if card is not finished,we refresh qa folder to get files
-                }
+
                 
                 var vm = new List<List<DominoVM>>();
                 var cardlist = DominoVM.RetrieveECOCards(baseinfos[0]);
@@ -956,18 +959,15 @@ namespace Domino.Controllers
             if (baseinfos.Count > 0)
             {
                 var currentcard = DominoVM.RetrieveSpecialCard(baseinfos[0], DominoCardType.ECOSignoff2);
-                if (currentcard.Count > 0)
+                if (string.Compare(currentcard[0].CardStatus, DominoCardStatus.done, true) != 0
+                    || string.Compare(Refresh, "YES", true) == 0)
                 {
-                    if (string.Compare(currentcard[0].CardStatus, DominoCardStatus.done, true) != 0
-                        && !string.IsNullOrEmpty(baseinfos[0].PNDesc))
+                    if (DominoVM.CardCanbeUpdate(CardKey) || string.Compare(Refresh, "YES", true) == 0)
                     {
-                        if (DominoVM.CardCanbeUpdate(CardKey) || string.Compare(Refresh, "YES", true) == 0)
-                        {
-                            DominoDataCollector.RefreshQAFAI(baseinfos[0], CardKey, this);
-                        }
-                    }//if card is not finished,we refresh qa folder to get files
-                }
-
+                        DominoDataCollector.RefreshQAFAI(baseinfos[0], CardKey, this);
+                    }
+                }//if card is not finished,we refresh qa folder to get files
+            
                 var vm = new List<List<DominoVM>>();
                 var cardlist = DominoVM.RetrieveECOCards(baseinfos[0]);
                 vm.Add(cardlist);
@@ -1305,9 +1305,14 @@ namespace Domino.Controllers
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
             if (baseinfos.Count > 0)
             {
-                if (DominoVM.CardCanbeUpdate(CardKey) || string.Compare(Refresh, "YES", true) == 0)
+                var currentcard = DominoVM.RetrieveSpecialCard(baseinfos[0], DominoCardType.SampleOrdering);
+                if (string.Compare(currentcard[0].CardStatus, DominoCardStatus.done, true) != 0
+                    || string.Compare(Refresh, "YES", true) == 0)
                 {
-                    DominoDataCollector.UpdateOrderInfoFromExcel(this, baseinfos[0], CardKey);
+                    if (DominoVM.CardCanbeUpdate(CardKey) || string.Compare(Refresh, "YES", true) == 0)
+                    {
+                        DominoDataCollector.UpdateOrderInfoFromExcel(this, baseinfos[0], CardKey);
+                    }
                 }
 
                 var vm = new List<List<DominoVM>>();
@@ -1399,10 +1404,15 @@ namespace Domino.Controllers
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
             if (baseinfos.Count > 0)
             {
-                if (DominoVM.CardCanbeUpdate(CardKey) || string.Compare(Refresh, "YES", true) == 0)
+                var currentcard = DominoVM.RetrieveSpecialCard(baseinfos[0], DominoCardType.SampleBuilding);
+                if (string.Compare(currentcard[0].CardStatus, DominoCardStatus.done, true) != 0
+                    || string.Compare(Refresh, "YES", true) == 0)
                 {
-                    DominoDataCollector.UpdateJOInfoFromExcel(this, baseinfos[0], CardKey);
-                    DominoDataCollector.UpdateEEPROM2NDFromExcel(this, baseinfos[0], CardKey);
+                    if (DominoVM.CardCanbeUpdate(CardKey) || string.Compare(Refresh, "YES", true) == 0)
+                    {
+                        DominoDataCollector.UpdateJOInfoFromExcel(this, baseinfos[0], CardKey);
+                        DominoDataCollector.UpdateEEPROM2NDFromExcel(this, baseinfos[0], CardKey);
+                    }
                 }
 
                 var vm = new List<List<DominoVM>>();
@@ -1578,9 +1588,14 @@ namespace Domino.Controllers
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
             if (baseinfos.Count > 0)
             {
-                if (DominoVM.CardCanbeUpdate(CardKey) || string.Compare(Refresh, "YES", true) == 0)
+                var currentcard = DominoVM.RetrieveSpecialCard(baseinfos[0], DominoCardType.SampleShipment);
+                if (string.Compare(currentcard[0].CardStatus, DominoCardStatus.done, true) != 0
+                    || string.Compare(Refresh, "YES", true) == 0)
                 {
-                    DominoDataCollector.UpdateShipInfoFromExcel(this, baseinfos[0], CardKey);
+                    if (DominoVM.CardCanbeUpdate(CardKey) || string.Compare(Refresh, "YES", true) == 0)
+                    {
+                        DominoDataCollector.UpdateShipInfoFromExcel(this, baseinfos[0], CardKey);
+                    }
                 }
 
                 var vm = new List<List<DominoVM>>();
