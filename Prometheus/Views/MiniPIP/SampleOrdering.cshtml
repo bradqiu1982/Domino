@@ -37,6 +37,7 @@
                                     <th style="text-align:center;font-size:12px">Quantity</th>
                                     <th style="text-align:center;font-size:12px">Schedule Ship</th>
                                     <th style="text-align:center;font-size:12px">Planner Name</th>
+                                    <th style="text-align:center;font-size:12px">Remove</th>
                                 </tr>
                             </thead>
 
@@ -52,6 +53,9 @@
                                         <td style="text-align:center;font-size:12px">@tempinfo.QTY</td>
                                         <td style="text-align:center;font-size:12px">@tempinfo.SSD</td>
                                         <td style="text-align:center;font-size:12px">@tempinfo.Planner</td>
+                                        <td style="text-align:center;font-size:12px">
+                                            <button class="btn btn-default" type="button" value="CardKey=@(tempinfo.CardKey)&LineID=@(tempinfo.LineID)" onclick="deleteorderinfo(this)"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button>
+                                        </td>
                                     </tr>
                                 }
                             </tbody>
@@ -68,6 +72,13 @@
                         });
 
                     </script>*@
+                    <script type="text/javascript">
+                        function deleteorderinfo(oBT) {
+                                if (confirm("Warning: Do you really want to delete this order information ?")) {
+                                    window.location.href = "/Domino/MiniPIP/DeleteOrderInfo?" + oBT.value;
+                                }
+                            }
+                    </script>
                 </div>
             }
 

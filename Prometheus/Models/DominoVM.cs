@@ -1251,7 +1251,7 @@ namespace Domino.Models
         {
             var ret = new List<MiniPIPOrdeInfo>();
             
-            var sql = "select CardKey,APVal1,APVal2,APVal3,APVal4,APVal5,APVal6,APVal7,APVal8,APVal9 from ECOCardContent where CardKey = '<CardKey>'";
+            var sql = "select CardKey,APVal1,APVal2,APVal3,APVal4,APVal5,APVal6,APVal7,APVal8,APVal9 from ECOCardContent where CardKey = '<CardKey>' and APVal10 <> 'delete'";
             sql = sql.Replace("<CardKey>", cardkey);
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
 
@@ -1271,6 +1271,13 @@ namespace Domino.Models
                 ret.Add(tempinfo);
             }
             return ret;
+        }
+
+        public static void DeleteOrderInfo(string CardKey, string LineID)
+        {
+            var sql = "Update ECOCardContent Set APVal10 = 'delete' where CardKey = '<CardKey>' and APVal9 = '<APVal9>'";
+            sql = sql.Replace("<CardKey>", CardKey).Replace("<APVal9>", LineID);
+            DBUtility.ExeLocalSqlNoRes(sql);
         }
 
         private static MiniPIPOrdeInfo RetrieverOrderInfo(string cardkey, string lineid)

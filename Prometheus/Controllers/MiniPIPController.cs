@@ -597,10 +597,13 @@ namespace Domino.Controllers
                 ViewBag.PeerReviewList = CreateSelectList(asilist, cardinfo.PeerReview);
 
                 asilist = new List<string>();
+                asilist.Add("N/A");
                 asilist.AddRange(yesno);
                 ViewBag.ECOAttachmentCheckList = CreateSelectList(asilist, cardinfo.ECOAttachmentCheck);
 
+
                 asilist = new List<string>();
+                asilist.Add("N/A");
                 asilist.AddRange(yesno);
                 ViewBag.MiniPVTCheckList = CreateSelectList(asilist, cardinfo.MiniPVTCheck);
 
@@ -746,35 +749,9 @@ namespace Domino.Controllers
 
                 DominoVM cardinfo = DominoVM.RetrieveECOCompleteInfo(ViewBag.CurrentCard.CardKey);
                 ViewBag.CurrentCard.ECOCompleted = cardinfo.ECOCompleted;
-                ViewBag.CurrentCard.ECOSubmitDate = cardinfo.ECOSubmitDate;
-                ViewBag.CurrentCard.ECOTRApprovedDate = cardinfo.ECOTRApprovedDate;
-                ViewBag.CurrentCard.ECOCCBApprovedDate = cardinfo.ECOCCBApprovedDate;
                 ViewBag.CurrentCard.ECOCompleteDate = cardinfo.ECOCompleteDate;
 
-                if (!string.IsNullOrEmpty(cardinfo.ECOSubmitDate))
-                {
-                    try
-                    {
-                        ViewBag.CurrentCard.ECOSubmitDate = DateTime.Parse(cardinfo.ECOSubmitDate).ToString("yyyy-MM-dd");
-                    }
-                    catch (Exception ex) { }
-                }
-                if (!string.IsNullOrEmpty(cardinfo.ECOTRApprovedDate))
-                {
-                    try
-                    {
-                        ViewBag.CurrentCard.ECOTRApprovedDate = DateTime.Parse(cardinfo.ECOTRApprovedDate).ToString("yyyy-MM-dd");
-                    }
-                    catch (Exception ex) { }
-                }
-                if (!string.IsNullOrEmpty(cardinfo.ECOCCBApprovedDate))
-                {
-                    try
-                    {
-                        ViewBag.CurrentCard.ECOCCBApprovedDate = DateTime.Parse(cardinfo.ECOCCBApprovedDate).ToString("yyyy-MM-dd");
-                    }
-                    catch (Exception ex) { }
-                }
+
                 if (!string.IsNullOrEmpty(cardinfo.ECOCompleteDate))
                 {
                     try
@@ -831,9 +808,6 @@ namespace Domino.Controllers
             {
                 DominoVM cardinfo = DominoVM.RetrieveECOCompleteInfo(CardKey);
                 cardinfo.ECOCompleted = Request.Form["ECOCompletedList"].ToString();
-                cardinfo.ECOSubmitDate = ConvertToDate(Request.Form["ECOSubmitDate"]);
-                cardinfo.ECOTRApprovedDate = ConvertToDate(Request.Form["ECOTRApprovedDate"]);
-                cardinfo.ECOCCBApprovedDate = ConvertToDate(Request.Form["ECOCCBApprovedDate"]);
                 cardinfo.ECOCompleteDate = ConvertToDate(Request.Form["ECOCompleteDate"]);
                 cardinfo.UpdateECOCompleteInfo(CardKey);
 
@@ -841,21 +815,6 @@ namespace Domino.Controllers
                 if (string.Compare(cardinfo.ECOCompleted, DominoYESNO.NO) == 0)
                 {
                     SetNoticeInfo("ECO should be completed");
-                    allchecked = false;
-                }
-                else if (string.IsNullOrEmpty(cardinfo.ECOSubmitDate))
-                {
-                    SetNoticeInfo("ECO Submit Date is needed");
-                    allchecked = false;
-                }
-                else if (string.IsNullOrEmpty(cardinfo.ECOTRApprovedDate))
-                {
-                    SetNoticeInfo("ECO TR Approved Date is needed");
-                    allchecked = false;
-                }
-                else if (string.IsNullOrEmpty(cardinfo.ECOCCBApprovedDate))
-                {
-                    SetNoticeInfo("ECO CCB Approved Date is needed");
                     allchecked = false;
                 }
                 else if (string.IsNullOrEmpty(cardinfo.ECOCompleteDate))
@@ -1053,10 +1012,13 @@ namespace Domino.Controllers
                 ViewBag.PeerReviewList = CreateSelectList(asilist, cardinfo.PeerReview);
 
                 asilist = new List<string>();
+                asilist.Add("N/A");
                 asilist.AddRange(yesno);
                 ViewBag.ECOAttachmentCheckList = CreateSelectList(asilist, cardinfo.ECOAttachmentCheck);
 
+
                 asilist = new List<string>();
+                asilist.Add("N/A");
                 asilist.AddRange(yesno);
                 ViewBag.MiniPVTCheckList = CreateSelectList(asilist, cardinfo.MiniPVTCheck);
 
@@ -1939,6 +1901,17 @@ namespace Domino.Controllers
                 baseinfos[0].UpdateECO();
             }
             return RedirectToAction("ViewAll", "MiniPIP");
+        }
+
+        public ActionResult DeleteOrderInfo(string CardKey,string LineID)
+        {
+            DominoVM.DeleteOrderInfo(CardKey, LineID);
+
+            var vm = DominoVM.RetrieveCard(CardKey);
+            var dict = new RouteValueDictionary();
+            dict.Add("ECOKey", vm[0].ECOKey);
+            dict.Add("CardKey", vm[0].CardKey);
+            return RedirectToAction(vm[0].CardType, "MiniPIP", dict);
         }
 
         private List<string> ReceiveRMAFiles()
