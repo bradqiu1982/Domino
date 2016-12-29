@@ -78,10 +78,11 @@ namespace Domino.Models
     {
         public static string FirstArticl = "First Article";
         public static string Prototype = "Prototype";
-        public static string PreProduct = "Pre-Product";
+        public static string PreProduct = "Pre-Production";
         public static string Pilot = "Pilot";
         public static string Production = "Production";
     }
+
 
     public class ECOCardComments
     {
@@ -177,6 +178,64 @@ namespace Domino.Models
         public string JOQTY { set; get; }
         public string Planner { set; get; }
         public string Creator { set; get; }
+    }
+
+    public class DOMINOJOCHECKTYPE
+    {
+        public static string ENGTYPE = "ENGTYPE";
+        public static string QATYPE = "QATYPE";
+    }
+
+    public class DOMINOJOSTORESTATUS
+    {
+        public static string WIP = "WIP";
+        public static string STORED = "STORED";
+    }
+
+    public class ECOJOCheck
+    {
+        public ECOJOCheck()
+        {
+            CardKey = string.Empty;
+            JO = string.Empty;
+            EEPROM = string.Empty;
+            EEPROMDT = string.Empty;
+            Label = string.Empty;
+            LabelDT = string.Empty;
+            TestData = string.Empty;
+            TestDateDT = string.Empty;
+            Costemic = string.Empty;
+            CostemicDT = string.Empty;
+            Status = string.Empty;
+            CheckType = string.Empty;
+        }
+
+        public string CardKey { set; get; }
+        public string JO { set; get; }
+        public string EEPROM { set; get; }
+        public string EEPROMDT { set; get; }
+        public string Label { set; get; }
+        public string LabelDT { set; get; }
+        public string TestData { set; get; }
+        public string TestDateDT { set; get; }
+        public string Costemic { set; get; }
+        public string CostemicDT { set; get; }
+        public string Status { set; get; }
+        public string CheckType { set; get; }
+    }
+
+    public class ECOJOMainStore
+    {
+        public ECOJOMainStore()
+        {
+            CardKey = string.Empty;
+            JO = string.Empty;
+            StoreStaus = string.Empty;
+        }
+
+        public string CardKey { set; get; }
+        public string JO { set; get; }
+        public string StoreStaus { set; get; }
     }
 
     public class ECOShipInfo
@@ -633,16 +692,6 @@ namespace Domino.Models
             ECOTRApprovedDate = string.Empty;
             ECOCCBApprovedDate = string.Empty;
             ECOCompleteDate = string.Empty;
-
-            BdEEPROM2NDDate= string.Empty;
-            BdEEPROM2NDPE= string.Empty;
-            BdEEPROM2NDRESULT= string.Empty;
-            BdEgEEPROMCheckP= string.Empty;
-            BdEgLabelCheckP= string.Empty;
-            BdEgCosmeticCheckP= string.Empty;
-            BdEgEEPROMCheckDT= string.Empty;
-            BdEgLabelCheckDT= string.Empty;
-            BdEgCosmeticCheckDT = string.Empty;
 
             SampleCustomerApproveDate = string.Empty;
 
@@ -1309,15 +1358,15 @@ namespace Domino.Models
         {
             foreach (var ordinfo in ordinfos)
             {
-                var dataexist = RetrieverJOInfo(cardkey, ordinfo.WipJob);
+                var dataexist = RetrieveJOInfo(cardkey, ordinfo.WipJob);
 
                 if (!string.IsNullOrEmpty(dataexist.CardKey))
                 {
                     continue;
                 }
 
-                var csql = "insert into ECOJOOrderInfo(CardKey,APVal1,APVal2,APVal3,APVal4,APVal5,APVal6,APVal7,APVal8,APVal9)  "
-                    + "  values('<CardKey>','<APVal1>','<APVal2>','<APVal3>','<APVal4>','<APVal5>','<APVal6>','<APVal7>','<APVal8>','<APVal9>')";
+                var csql = "insert into ECOJOOrderInfo(CardKey,APVal1,APVal2,APVal3,APVal4,APVal5,APVal6,APVal7,APVal8)  "
+                    + "  values('<CardKey>','<APVal1>','<APVal2>','<APVal3>','<APVal4>','<APVal5>','<APVal6>','<APVal7>','<APVal8>')";
                 csql = csql.Replace("<CardKey>", cardkey).Replace("<APVal1>", ordinfo.Description).Replace("<APVal2>", ordinfo.Category).Replace("<APVal3>", ordinfo.WipJob)
                     .Replace("<APVal4>", ordinfo.JobStatus).Replace("<APVal5>", ordinfo.SSTD).Replace("<APVal6>", ordinfo.JOQTY)
                     .Replace("<APVal7>", ordinfo.Planner).Replace("<APVal8>", ordinfo.Creator);
@@ -1329,7 +1378,7 @@ namespace Domino.Models
         {
             var ret = new List<ECOJOOrderInfo>();
 
-            var sql = "select CardKey,APVal1,APVal2,APVal3,APVal4,APVal5,APVal6,APVal7,APVal8 from ECOJOOrderInfo where CardKey = '<CardKey>'";
+            var sql = "select CardKey,APVal1,APVal2,APVal3,APVal4,APVal5,APVal6,APVal7,APVal8 from ECOJOOrderInfo where CardKey = '<CardKey>' and APVal10 <> 'delete'";
             sql = sql.Replace("<CardKey>", cardkey);
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
 
@@ -1351,7 +1400,15 @@ namespace Domino.Models
             return ret;
         }
 
-        private static ECOJOOrderInfo RetrieverJOInfo(string cardkey, string wipjob)
+        public static void DeletJOInfo(string CardKey, string wipjob)
+        {
+            var sql = "Update ECOJOOrderInfo Set APVal10 = 'delete' where CardKey = '<CardKey>' and APVal3 = '<APVal3>'";
+            sql = sql.Replace("<CardKey>", CardKey).Replace("<APVal3>", wipjob);
+            DBUtility.ExeLocalSqlNoRes(sql);
+        }
+
+
+        private static ECOJOOrderInfo RetrieveJOInfo(string cardkey, string wipjob)
         {
             var ret = new ECOJOOrderInfo();
             var sql = "select CardKey from ECOJOOrderInfo where CardKey = '<CardKey>' and APVal3 = '<APVal3>'";
@@ -1365,89 +1422,94 @@ namespace Domino.Models
             return ret;
         }
 
-        public string BdEEPROM2NDDate { set; get; }
-        public string BdEEPROM2NDPE { set; get; }
-        public string BdEEPROM2NDRESULT { set; get; }
-
-        public string BdEgEEPROMCheckP { set; get; }
-        public string BdEgLabelCheckP { set; get; }
-        public string BdEgCosmeticCheckP { set; get; }
-
-        public string BdEgEEPROMCheckDT { set; get; }
-        public string BdEgLabelCheckDT { set; get; }
-        public string BdEgCosmeticCheckDT { set; get; }
-
-        public void UpdateBDEEPROM2ND(string cardkey)
+        private List<ECOJOCheck> jo1sttab = new List<ECOJOCheck>();
+        public List<ECOJOCheck> Jo1stCheckTable
         {
-            var recordexit = RetrieveBDRecord(cardkey);
-            if (string.IsNullOrEmpty(recordexit.CardKey))
+            set
             {
-                var sql = "insert into ECOCardContent(CardKey,APVal1,APVal2,APVal3)  "
-                    + "  values('<CardKey>','<APVal1>','<APVal2>','<APVal3>')";
-                sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal1>", BdEEPROM2NDDate).Replace("<APVal2>", BdEEPROM2NDPE).Replace("<APVal3>", BdEEPROM2NDRESULT);
-                DBUtility.ExeLocalSqlNoRes(sql);
+                jo1sttab.Clear();
+                jo1sttab.AddRange(value);
             }
-            else
+            get { return jo1sttab; }
+        }
+
+        private List<ECOJOCheck> jo2ndtab = new List<ECOJOCheck>();
+        public List<ECOJOCheck> Jo2ndCheckTable
+        {
+            set
             {
-                var epexist = RetrieveEEPROM2ND(cardkey, BdEEPROM2NDRESULT);
-                if (string.IsNullOrEmpty(epexist.BdEEPROM2NDDate))
+                jo2ndtab.Clear();
+                jo2ndtab.AddRange(value);
+            }
+            get { return jo2ndtab; }
+        }
+
+        public static void UpdateJOCheckInfo(List<ECOJOCheck> ordinfos, string cardkey)
+        {
+            foreach (var ordinfo in ordinfos)
+            {
+                var dataexist = RetrieveJOCheck(cardkey, ordinfo.JO,ordinfo.CheckType,ordinfo.Status);
+
+                if (!string.IsNullOrEmpty(dataexist.CardKey))
                 {
-                    var sql = "Update ECOCardContent Set APVal1 = '<APVal1>',APVal2 = '<APVal2>',APVal3 = '<APVal3>'  where CardKey = '<CardKey>'";
-                    sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal1>", BdEEPROM2NDDate).Replace("<APVal2>", BdEEPROM2NDPE)
-                        .Replace("<APVal3>", BdEEPROM2NDRESULT);
-                    DBUtility.ExeLocalSqlNoRes(sql);
+                    continue;
                 }
+
+                var sql = "delete from ECOJOCheckInfo where CardKey = '<CardKey>' and APVal1 = '<APVal1>' and APVal16 = '<APVal16>'";
+                sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal1>", ordinfo.JO).Replace("<APVal16>", ordinfo.CheckType);
+                DBUtility.ExeLocalSqlNoRes(sql);
+
+                var csql = "insert into ECOJOCheckInfo(CardKey,APVal1,APVal2,APVal3,APVal4,APVal5,APVal6,APVal7,APVal8,APVal9,APVal10,APVal16)  "
+                    + "  values('<CardKey>','<APVal1>','<APVal2>','<APVal3>','<APVal4>','<APVal5>','<APVal6>','<APVal7>','<APVal8>','<APVal9>','<APVal10>','<APVal16>')";
+                csql = csql.Replace("<CardKey>", cardkey).Replace("<APVal1>", ordinfo.JO).Replace("<APVal2>", ordinfo.EEPROM).Replace("<APVal3>", ordinfo.EEPROMDT)
+                    .Replace("<APVal4>", ordinfo.Label).Replace("<APVal5>", ordinfo.LabelDT).Replace("<APVal6>", ordinfo.TestData)
+                    .Replace("<APVal7>", ordinfo.TestDateDT).Replace("<APVal8>", ordinfo.Costemic).Replace("<APVal9>", ordinfo.CostemicDT)
+                    .Replace("<APVal10>", ordinfo.Status).Replace("<APVal16>", ordinfo.CheckType);
+                DBUtility.ExeLocalSqlNoRes(csql);
             }
         }
 
-        public void UpdateBDCheckInfo(string cardkey)
+        public static List<ECOJOCheck> RetrieveJOCheck(string cardkey,string type)
         {
-            var recordexit = RetrieveBDRecord(cardkey);
-            if (string.IsNullOrEmpty(recordexit.CardKey))
-            {
-                var sql = "insert into ECOCardContent(CardKey,APVal11,APVal12,APVal13,APVal14,APVal15,APVal16)  "
-                    + "  values('<CardKey>','<APVal11>','<APVal12>','<APVal13>','<APVal14>','<APVal15>','<APVal16>')";
-                sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal11>", BdEgEEPROMCheckP).Replace("<APVal12>", BdEgLabelCheckP).Replace("<APVal13>", BdEgCosmeticCheckP)
-                    .Replace("<APVal14>", BdEgEEPROMCheckDT).Replace("<APVal15>", BdEgLabelCheckDT).Replace("<APVal16>", BdEgCosmeticCheckDT);
-                DBUtility.ExeLocalSqlNoRes(sql);
-            }
-            else
-            {
-                var sql = "Update ECOCardContent Set APVal11 = '<APVal11>',APVal12 = '<APVal12>',APVal13 = '<APVal13>',APVal14 = '<APVal14>',APVal15 = '<APVal15>',APVal16 = '<APVal16>' where CardKey = '<CardKey>'";
-                sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal11>", BdEgEEPROMCheckP).Replace("<APVal12>", BdEgLabelCheckP)
-                    .Replace("<APVal13>", BdEgCosmeticCheckP).Replace("<APVal14>", BdEgEEPROMCheckDT).Replace("<APVal15>", BdEgLabelCheckDT).Replace("<APVal16>", BdEgCosmeticCheckDT);
-                DBUtility.ExeLocalSqlNoRes(sql);
-            }
-        }
+            var ret = new List<ECOJOCheck>();
 
-        public static DominoVM RetrieveBLDInfo(string cardkey)
-        {
-            var ret = new DominoVM();
-            var sql = "select CardKey,APVal1,APVal2,APVal3,APVal11,APVal12,APVal13,APVal14,APVal15,APVal16 from ECOCardContent where CardKey = '<CardKey>'";
-            sql = sql.Replace("<CardKey>", cardkey);
+            var sql = "select CardKey,APVal1,APVal2,APVal3,APVal4,APVal5,APVal6,APVal7,APVal8,APVal9,APVal10,APVal16 from ECOJOCheckInfo where CardKey = '<CardKey>'  and APVal16 = '<APVal16>' and APVal11 <> 'delete'";
+            sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal16>", type);
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
-            if (dbret.Count > 0)
-            {
-                ret.CardKey = Convert.ToString(dbret[0][0]);
-                ret.BdEEPROM2NDDate = Convert.ToString(dbret[0][1]);
-                ret.BdEEPROM2NDPE = Convert.ToString(dbret[0][2]);
-                ret.BdEEPROM2NDRESULT = Convert.ToString(dbret[0][3]);
 
-                ret.BdEgEEPROMCheckP = Convert.ToString(dbret[0][4]);
-                ret.BdEgLabelCheckP = Convert.ToString(dbret[0][5]);
-                ret.BdEgCosmeticCheckP = Convert.ToString(dbret[0][6]);
-                ret.BdEgEEPROMCheckDT = Convert.ToString(dbret[0][7]);
-                ret.BdEgLabelCheckDT = Convert.ToString(dbret[0][8]);
-                ret.BdEgCosmeticCheckDT = Convert.ToString(dbret[0][9]);
+            foreach (var line in dbret)
+            {
+                var tempinfo = new ECOJOCheck();
+                tempinfo.CardKey = Convert.ToString(line[0]);
+                tempinfo.JO = Convert.ToString(line[1]);
+                tempinfo.EEPROM = Convert.ToString(line[2]);
+                tempinfo.EEPROMDT = Convert.ToString(line[3]);
+                tempinfo.Label = Convert.ToString(line[4]);
+                tempinfo.LabelDT = Convert.ToString(line[5]);
+                tempinfo.TestData = Convert.ToString(line[6]);
+                tempinfo.TestDateDT = Convert.ToString(line[7]);
+                tempinfo.Costemic = Convert.ToString(line[8]);
+                tempinfo.CostemicDT = Convert.ToString(line[9]);
+                tempinfo.Status = Convert.ToString(line[10]);
+                tempinfo.CheckType = Convert.ToString(line[11]);
+
+                ret.Add(tempinfo);
             }
             return ret;
         }
 
-        private static DominoVM RetrieveBDRecord(string cardkey)
+        public static void DeletJOCheckInfo(string CardKey, string jo,string type)
         {
-            var ret = new DominoVM();
-            var sql = "select CardKey from ECOCardContent where CardKey = '<CardKey>'";
-            sql = sql.Replace("<CardKey>", cardkey);
+            var sql = "Update ECOJOCheckInfo Set APVal11 = 'delete' where CardKey = '<CardKey>' and APVal1 = '<APVal1>' and APVal16 = '<APVal16>'";
+            sql = sql.Replace("<CardKey>", CardKey).Replace("<APVal1>", jo).Replace("<APVal16>", type);
+            DBUtility.ExeLocalSqlNoRes(sql);
+        }
+
+        private static ECOJOCheck RetrieveJOCheck(string cardkey, string jo, string type,string status)
+        {
+            var ret = new ECOJOCheck();
+            var sql = "select CardKey from ECOJOCheckInfo where CardKey = '<CardKey>' and APVal1 = '<APVal1>' and APVal10 = '<APVal10>' and APVal16 = '<APVal16>'";
+            sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal1>", jo).Replace("<APVal10>", status).Replace("<APVal16>", type);
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
             if (dbret.Count > 0)
             {
@@ -1455,15 +1517,70 @@ namespace Domino.Models
             }
             return ret;
         }
-        private static DominoVM RetrieveEEPROM2ND(string cardkey,string result)
+
+        private List<ECOJOMainStore> jostorestatus = new List<ECOJOMainStore>();
+
+        public List<ECOJOMainStore> JOStoreStautsTable
         {
-            var ret = new DominoVM();
-            var sql = "select APVal1 from ECOCardContent where CardKey = '<CardKey>' and APVal3 = '<APVal3>'";
-            sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal3>", result);
+            set
+            {
+                jostorestatus.Clear();
+                jostorestatus.AddRange(value);
+            }
+            get { return jostorestatus; }
+        }
+
+        public static void UpdateJOMainStore(string CardKey, string JO, string mainstorestatus)
+        {
+            var dataexist = RetrieveJOMainStore(CardKey, JO, mainstorestatus);
+            if (!string.IsNullOrEmpty(dataexist.CardKey))
+            {
+                return;
+            }
+
+            var sql = "delete from ECOCardContent where CardKey = '<CardKey>' and APVal1 = '<APVal1>'";
+            sql = sql.Replace("<CardKey>", CardKey).Replace("<APVal1>", JO);
+            DBUtility.ExeLocalSqlNoRes(sql);
+
+            sql = "insert into ECOCardContent(CardKey,APVal1,APVal2)  "
+                        + "  values('<CardKey>','<APVal1>','<APVal2>')";
+            sql = sql.Replace("<CardKey>", CardKey).Replace("<APVal1>", JO).Replace("<APVal2>", mainstorestatus);
+            DBUtility.ExeLocalSqlNoRes(sql);
+        }
+
+        public static void DeletJOStore(string CardKey, string jo)
+        {
+            var sql = "Update ECOCardContent Set APVal3 = 'delete' where CardKey = '<CardKey>' and APVal1 = '<APVal1>'";
+            sql = sql.Replace("<CardKey>", CardKey).Replace("<APVal1>", jo);
+            DBUtility.ExeLocalSqlNoRes(sql);
+        }
+
+        public static List<ECOJOMainStore> RetrieveJOMainStore(string cardkey)
+        {
+            var ret = new List<ECOJOMainStore>();
+            var sql = "select CardKey,APVal1,APVal2 from ECOCardContent where CardKey = '<CardKey>' and APVal3 <> 'delete'";
+            sql = sql.Replace("<CardKey>", cardkey);
+            var dbret = DBUtility.ExeLocalSqlWithRes(sql);
+            foreach (var line in dbret)
+            {
+                var tempinfo = new ECOJOMainStore();
+                tempinfo.CardKey = Convert.ToString(line[0]);
+                tempinfo.JO = Convert.ToString(line[1]);
+                tempinfo.StoreStaus = Convert.ToString(line[2]);
+                ret.Add(tempinfo);
+            }
+            return ret;
+        }
+
+        private static ECOJOMainStore RetrieveJOMainStore(string cardkey, string jo, string status)
+        {
+            var ret = new ECOJOMainStore();
+            var sql = "select CardKey,APVal1,APVal2 from ECOCardContent where CardKey = '<CardKey>' and APVal1 = '<APVal1>' and (APVal2 = '<APVal2>' or APVal3 = 'delete')";
+            sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal1>", jo).Replace("<APVal2>", status);
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
             if (dbret.Count > 0)
             {
-                ret.BdEEPROM2NDDate = Convert.ToString(dbret[0][0]);
+                ret.CardKey = Convert.ToString(dbret[0][0]);
             }
             return ret;
         }

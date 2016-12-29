@@ -8,6 +8,11 @@ QALABELFILTER:::_FAI_
 WEEKLYUPDATE:::\\cn-file01\Public\Active NPI\Product_Engineering\PE_Weekly report\MiniPIP report\MINIPIP Progress\
 ORDERINFOPATH:::\\wux-fs\public\ERP_Report\WXI\Planning\Backlog Report
 JOORDERINFO:::\\wux-fs\PUBLIC\ERP_Report\WXI\Planning\WXI Finisar WIP Value Report.xls
+##JO1STCHECKINFO:::\\cn-file01\Public\Active NPI\Product_Engineering\PE_Weekly report\MiniPIP report\FA JO checklist_Engineering.xlsx
+##JO2NDCHECKINFO:::\\wux-file01\Public\Quality\31. Parallel TQM\3_FAI Check
+JO1STCHECKINFO:::\\wux-fs\public\Project\CFP\OQC\FA JO checklist_Engineering.xlsx
+JO2NDCHECKINFO:::\\wux-fs\public\Project\CFP\OQC
+JO2MAINSTORE:::\\wux-fs\PUBLIC\ERP_Report\WXI\Planning\WXI Finisar WIP Value Report.xls
 EEPROM2NDCHECK:::\\wux-fs\PUBLIC\Quality\31. Parallel TQM\3_FAI Check\FAI summary.xlsx
 EEPROM2NDCHECKSHEET:::EEPROM&FLI Data Resource
 SHIPMENTINFOPATH:::\\wux-fs\PUBLIC\ERP_Report\WXI\Planning\Finisar - OTSv2 for WXI.csv

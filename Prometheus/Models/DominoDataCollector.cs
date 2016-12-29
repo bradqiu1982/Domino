@@ -551,6 +551,17 @@ namespace Domino.Models
             RefreshQALabelFAI(baseinfo, CardKey, ctrl);
         }
 
+        private static bool IsDigitsOnly(string str)
+        {
+            foreach (char c in str)
+            {
+                if (c < '0' || c > '9')
+                    return false;
+            }
+
+            return true;
+        }
+
         public static void UpdateOrderInfoFromExcel(Controller ctrl, ECOBaseInfo baseinfo, string cardkey)
         {
             var syscfgdict = GetSysConfig(ctrl);
@@ -599,7 +610,28 @@ namespace Domino.Models
                     var ordinfos = new List<MiniPIPOrdeInfo>();
                     foreach (var line in alldata)
                     {
-                        if (line[19].ToUpper().Contains(baseinfo.PNDesc))
+                        var remotedrypn = baseinfo.PNDesc.Replace("xx-", "-");
+                        var localdrypn = string.Empty;
+
+                        if (line[19].Contains("-"))
+                        {
+                            var lastidx = line[19].LastIndexOf("-")-2;
+                            var digitalsegment = line[19].Substring(lastidx, 2);
+                            if (IsDigitsOnly(digitalsegment))
+                            {
+                                localdrypn = line[19].Replace(digitalsegment + "-", "-");
+                            }
+                            else
+                            {
+                                localdrypn = line[19];
+                            }
+                        }
+                        else
+                        {
+                            localdrypn = line[19];
+                        }
+
+                        if (localdrypn.ToUpper().Contains(remotedrypn.ToUpper()))
                         {
                             if (lineiddict.ContainsKey(line[38]))
                             {
@@ -703,97 +735,251 @@ namespace Domino.Models
 
         }
 
-
-        public static void UpdateEEPROM2NDFromExcel(Controller ctrl, ECOBaseInfo baseinfo, string cardkey)
+        public static void Update1STJOCheckFromExcel(Controller ctrl, ECOBaseInfo baseinfo, string cardkey)
         {
-            var syscfgdict = GetSysConfig(ctrl);
-
-            var currentcard = DominoVM.RetrieveCard(cardkey);
-
-            string datestring = DateTime.Now.ToString("yyyyMMdd");
-            string imgdir = ctrl.Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
-            var desfile = syscfgdict["EEPROM2NDCHECK"];
-            var sheetname = syscfgdict["EEPROM2NDCHECKSHEET"];
-
-            var jolist = new List<DominoVM>();
-
-            try
+            var JoTable = DominoVM.RetrieveJOInfo(cardkey);
+            if (JoTable.Count > 0)
             {
-                var backlogfiles = new List<string>();
-                if (!Directory.Exists(imgdir))
+                var jodict = new Dictionary<string, bool>();
+                foreach (var jo in JoTable)
                 {
-                    Directory.CreateDirectory(imgdir);
+                    if (!jodict.ContainsKey(jo.WipJob))
+                    {
+                        jodict.Add(jo.WipJob, true);
+                    }
                 }
 
-                if (System.IO.File.Exists(desfile))
+                var syscfgdict = GetSysConfig(ctrl);
+                var currentcard = DominoVM.RetrieveCard(cardkey);
+
+                string datestring = DateTime.Now.ToString("yyyyMMdd");
+                string imgdir = ctrl.Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
+                var desfile = syscfgdict["JO1STCHECKINFO"];
+
+                var jochecklist = new List<ECOJOCheck>();
+
+                try
                 {
-                    try
+                    if (!Directory.Exists(imgdir))
                     {
-                        var fn = imgdir + Path.GetFileName(desfile);
-                        System.IO.File.Copy(desfile, fn, true);
+                        Directory.CreateDirectory(imgdir);
+                    }
 
-                        var data = ExcelReader.RetrieveDataFromExcel(fn, sheetname);
-                        foreach (var line in data)
+                    if (System.IO.File.Exists(desfile))
+                    {
+                        try
                         {
-                            if (string.Compare(line[7],baseinfo.ECONum,true) == 0
-                                && string.Compare(line[4], "EEPROM", true) == 0
-                                && line[8].Contains(baseinfo.PNDesc))
-                            {
-                                var tempinfo = new DominoVM();
-                                tempinfo.BdEEPROM2NDDate = line[0] + "-" + line[1] + "-" + line[2];
-                                tempinfo.BdEEPROM2NDPE = line[5];
+                            var fn = imgdir + Path.GetFileName(desfile);
+                            System.IO.File.Copy(desfile, fn, true);
 
-                                if (!string.IsNullOrEmpty(line[9]))
+                            var data = ExcelReader.RetrieveDataFromExcel(fn, null);
+                            foreach (var line in data)
+                            {
+                                if (jodict.ContainsKey(line[1]))
                                 {
-                                    tempinfo.BdEEPROM2NDRESULT = line[9];
+                                    var tempinfo = new ECOJOCheck();
+                                    tempinfo.CardKey = cardkey;
+                                    tempinfo.CheckType = DOMINOJOCHECKTYPE.ENGTYPE;
+                                    tempinfo.JO = line[1];
+                                    tempinfo.EEPROM = line[4];
+                                    tempinfo.EEPROMDT = line[6];
+                                    tempinfo.Label = line[7];
+                                    tempinfo.LabelDT = line[8];
+                                    tempinfo.TestData = line[9];
+                                    tempinfo.TestDateDT = line[10];
+                                    tempinfo.Costemic = line[11];
+                                    tempinfo.CostemicDT = line[12];
+                                    tempinfo.Status = line[13];
+                                    jochecklist.Add(tempinfo);
                                 }
-                                else
-                                {
-                                    if (!string.IsNullOrEmpty(line[12]))
-                                    {
-                                        try
-                                        {
-                                            var val = Convert.ToInt32(line[12]);
-                                            if (val > 0)
-                                            {
-                                                tempinfo.BdEEPROM2NDRESULT = "fail";
-                                            }
-                                            else
-                                            {
-                                                tempinfo.BdEEPROM2NDRESULT = "pass";
-                                            }
-                                        }
-                                        catch (Exception ex) { tempinfo.BdEEPROM2NDRESULT = "fail"; }
-                                    }
-                                    else
-                                    {
-                                        tempinfo.BdEEPROM2NDRESULT = "fail";
-                                    }
-                                }
-                                
-                                tempinfo.UpdateBDEEPROM2ND(cardkey);
-                                jolist.Add(tempinfo);
-                                break;
+                            }
+                        }
+                        catch (Exception ex) { }
+
+                        if (jochecklist.Count > 0)
+                        {
+                            DominoVM.UpdateJOCheckInfo(jochecklist, cardkey);
+                        }
+
+                        if (jochecklist.Count > 0 && currentcard.Count > 0)
+                        {
+                            if (string.Compare(currentcard[0].CardStatus, DominoCardStatus.working) == 0)
+                            {
+                                DominoVM.UpdateCardStatus(cardkey, DominoCardStatus.pending);
+                            }
+                        }
+
+                        if (jochecklist.Count == 0 && currentcard.Count > 0)
+                        {
+                            if (string.Compare(currentcard[0].CardStatus, DominoCardStatus.pending) == 0)
+                            {
+                                DominoVM.UpdateCardStatus(cardkey, DominoCardStatus.working);
                             }
                         }
                     }
-                    catch (Exception ex) { }
+                }
+                catch (Exception ex) { }
+            }
+        }
 
-
-                    if (jolist.Count > 0 && currentcard.Count > 0)
+        public static void Update2NDJOCheckFromExcel(Controller ctrl, ECOBaseInfo baseinfo, string cardkey)
+        {
+            var JoTable = DominoVM.RetrieveJOInfo(cardkey);
+            if (JoTable.Count > 0)
+            {
+                var jodict = new Dictionary<string, bool>();
+                foreach (var jo in JoTable)
+                {
+                    if (!jodict.ContainsKey(jo.WipJob))
                     {
-                        if (string.Compare(currentcard[0].CardStatus, DominoCardStatus.working) == 0)
+                        jodict.Add(jo.WipJob, true);
+                    }
+                }
+
+                var syscfgdict = GetSysConfig(ctrl);
+                var currentcard = DominoVM.RetrieveCard(cardkey);
+
+                string datestring = DateTime.Now.ToString("yyyyMMdd");
+                string imgdir = ctrl.Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
+                var desfolder = syscfgdict["JO2NDCHECKINFO"];
+
+                var jochecklist = new List<ECOJOCheck>();
+
+                try
+                {
+                    if (!Directory.Exists(imgdir))
+                    {
+                        Directory.CreateDirectory(imgdir);
+                    }
+
+                    var fs = Directory.EnumerateFiles(desfolder);
+                    var desfile = string.Empty;
+                    foreach (var f in fs)
+                    {
+                        if (Path.GetFileName(f).Contains("FAI OQC"))
                         {
-                            DominoVM.UpdateCardStatus(cardkey, DominoCardStatus.pending);
+                            desfile = f;
+                            break;
                         }
                     }
 
+                    if (System.IO.File.Exists(desfile))
+                    {
+                        try
+                        {
+                            var fn = imgdir + "QA_FAI_OCQ"+Path.GetExtension(desfile);
+                            System.IO.File.Copy(desfile, fn, true);
+
+                            var data = ExcelReader.RetrieveDataFromExcel(fn, null);
+                            foreach (var line in data)
+                            {
+                                if (jodict.ContainsKey(line[9]))
+                                {
+                                    var tempinfo = new ECOJOCheck();
+                                    tempinfo.CardKey = cardkey;
+                                    tempinfo.CheckType = DOMINOJOCHECKTYPE.QATYPE;
+                                    tempinfo.JO = line[9];
+                                    tempinfo.EEPROM = line[5];
+                                    tempinfo.EEPROMDT = line[0] + "-" + line[1] + "-" + line[2];
+                                    jochecklist.Add(tempinfo);
+                                }
+                            }
+                        }
+                        catch (Exception ex) { }
+
+                        if (jochecklist.Count > 0)
+                        {
+                            DominoVM.UpdateJOCheckInfo(jochecklist, cardkey);
+                        }
+
+                        if (jochecklist.Count > 0 && currentcard.Count > 0)
+                        {
+                            if (string.Compare(currentcard[0].CardStatus, DominoCardStatus.working) == 0)
+                            {
+                                DominoVM.UpdateCardStatus(cardkey, DominoCardStatus.pending);
+                            }
+                        }
+
+                        if (jochecklist.Count == 0 && currentcard.Count > 0)
+                        {
+                            if (string.Compare(currentcard[0].CardStatus, DominoCardStatus.pending) == 0)
+                            {
+                                DominoVM.UpdateCardStatus(cardkey, DominoCardStatus.working);
+                            }
+                        }
+                    }
                 }
+                catch (Exception ex) { }
             }
-            catch (Exception ex) { }
 
         }
 
+        public static void UpdateJOMainStoreFromExcel(Controller ctrl, ECOBaseInfo baseinfo, string cardkey)
+        {
+            var JoTable = DominoVM.RetrieveJOInfo(cardkey);
+            if (JoTable.Count > 0)
+            {
+                var jodict = new Dictionary<string, bool>();
+                foreach (var jo in JoTable)
+                {
+                    if (!jodict.ContainsKey(jo.WipJob))
+                    {
+                        jodict.Add(jo.WipJob, false);
+                    }
+                }
+
+                var syscfgdict = GetSysConfig(ctrl);
+                var currentcard = DominoVM.RetrieveCard(cardkey);
+
+                string datestring = DateTime.Now.ToString("yyyyMMdd");
+                string imgdir = ctrl.Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
+                var desfile = syscfgdict["JO2MAINSTORE"];
+
+                try
+                {
+                    if (!Directory.Exists(imgdir))
+                    {
+                        Directory.CreateDirectory(imgdir);
+                    }
+
+                    if (System.IO.File.Exists(desfile))
+                    {
+                        try
+                        {
+                            var fn = imgdir + Path.GetFileName(desfile);
+                            System.IO.File.Copy(desfile, fn, true);
+
+                            var data = ExcelReader.RetrieveDataFromExcel(fn, null);
+                            foreach (var line in data)
+                            {
+                                if (jodict.ContainsKey(line[11]))
+                                {
+                                    if (!line[14].ToUpper().Contains("COMPLETE"))
+                                    {
+                                        jodict[line[11]] = true;
+                                    }
+                                }
+                            }
+
+
+                            foreach (var kv in jodict)
+                            {
+                                if (kv.Value)
+                                {
+                                    DominoVM.UpdateJOMainStore(cardkey, kv.Key, DOMINOJOSTORESTATUS.WIP);
+                                }
+                                else
+                                {
+                                    DominoVM.UpdateJOMainStore(cardkey, kv.Key, DOMINOJOSTORESTATUS.STORED);
+                                }
+                            }//end foreach
+                        }
+                        catch (Exception ex) { }
+                    }
+                }
+                catch (Exception ex) { }
+            }
+        }
 
         public static void UpdateShipInfoFromExcel(Controller ctrl, ECOBaseInfo baseinfo, string cardkey)
         {

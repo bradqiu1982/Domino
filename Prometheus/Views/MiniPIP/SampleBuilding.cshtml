@@ -18,91 +18,20 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <div class="row col-lg-6">
-                    <label class="control-label col-lg-2">EEPROM Check People</label>
-                    <div class="col-lg-10">
-                        @Html.DropDownList("BdEgEEPROMCheckPList", null, new { @id = "BdEgEEPROMCheckPList", @class = "form-control" })
-                    </div>
-                </div>
-
-                <div class="row col-lg-6">
-                    <label class="control-label col-lg-2">EEPROM Check Date</label>
-                    <div class="col-lg-10">
-                        <input class="form-control text-box single-line" id="BdEgEEPROMCheckDT" name="BdEgEEPROMCheckDT" type="text" value="@ViewBag.CurrentCard.BdEgEEPROMCheckDT" />
-                    </div>
-                </div>
-                <script type="text/javascript">
-                    $(document).ready(function () {
-                        $("#BdEgEEPROMCheckDT").datepicker({
-                            changeMonth: true,
-                            changeYear: true,
-                            dateFormat: 'yy-mm-dd'
-                        });
-                    });
-                </script>
-            </div>
-
-            <div class="form-group">
-                <div class="row col-lg-6">
-                    <label class="control-label col-lg-2">Label Check People</label>
-                    <div class="col-lg-10">
-                        @Html.DropDownList("BdEgLabelCheckPList", null, new { @id = "BdEgLabelCheckPList", @class = "form-control" })
-                    </div>
-                </div>
-
-                <div class="row col-lg-6">
-                    <label class="control-label col-lg-2">Label Check Date</label>
-                    <div class="col-lg-10">
-                        <input class="form-control text-box single-line" id="BdEgLabelCheckDT" name="BdEgLabelCheckDT" type="text" value="@ViewBag.CurrentCard.BdEgLabelCheckDT" />
-                    </div>
-                </div>
-                <script type="text/javascript">
-                    $(document).ready(function () {
-                        $("#BdEgLabelCheckDT").datepicker({
-                            changeMonth: true,
-                            changeYear: true,
-                            dateFormat: 'yy-mm-dd'
-                        });
-                    });
-                </script>
-            </div>
-
-            <div class="form-group">
-                <div class="row col-lg-6">
-                    <label class="control-label col-lg-2">Cosmetic Check People</label>
-                    <div class="col-lg-10">
-                        @Html.DropDownList("BdEgCosmeticCheckPList", null, new { @id = "BdEgCosmeticCheckPList", @class = "form-control" })
-                    </div>
-                </div>
-
-                <div class="row col-lg-6">
-                    <label class="control-label col-lg-2">Cosmetic Check Date</label>
-                    <div class="col-lg-10">
-                        <input class="form-control text-box single-line" id="BdEgCosmeticCheckDT" name="BdEgCosmeticCheckDT" type="text" value="@ViewBag.CurrentCard.BdEgCosmeticCheckDT" />
-                    </div>
-                </div>
-                <script type="text/javascript">
-                    $(document).ready(function () {
-                        $("#BdEgCosmeticCheckDT").datepicker({
-                            changeMonth: true,
-                            changeYear: true,
-                            dateFormat: 'yy-mm-dd'
-                        });
-                    });
-                </script>
-            </div>
-
             @if (ViewBag.CurrentCard.JoTable.Count > 0)
             {
                 <hr />
-
+                <div class="form-group">
+                    <div class="col-lg-12">
+                        <label class="control-label">WIP Job</label>
+                    </div>
+                </div>
                 <div class="form-group">
                     @*<table id="jodatatable" class="display" cellspacing="0">*@
                     <table id="jodatatable" class="table table-bordered table-hover">
                         <thead>
                             <tr>
-                                <th style="text-align:center;font-size:12px">WIP Job</th>
+                                <th style="text-align:center;font-size:12px">Job Order</th>
                                 <th style="text-align:center;font-size:12px">JO Status</th>
                                 <th style="text-align:center;font-size:12px">JO QTY</th>
                                 <th style="text-align:center;font-size:12px">Schedule Date</th>
@@ -110,6 +39,7 @@
                                 <th style="text-align:center;font-size:12px">Description</th>
                                 <th style="text-align:center;font-size:12px">Planner</th>
                                 <th style="text-align:center;font-size:12px">Creator</th>
+                                <th style="text-align:center;font-size:12px">Remove</th>
                             </tr>
                         </thead>
 
@@ -125,6 +55,7 @@
                                     <td style="text-align:center;font-size:12px">@tempinfo.Description</td>
                                     <td style="text-align:center;font-size:12px">@tempinfo.Planner</td>
                                     <td style="text-align:center;font-size:12px">@tempinfo.Creator</td>
+                                    <td><button class="btn btn-default" type="button" value="CardKey=@(tempinfo.CardKey)&WipJob=@(tempinfo.WipJob)" onclick="deletejoinfo(this)"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button></td>
                                 </tr>
                             }
                         </tbody>
@@ -141,35 +72,61 @@
                     });
 
                 </script>*@
+
+                    <script type="text/javascript">
+                        function deletejoinfo(oBT) {
+                                if (confirm("Warning: Do you really want to delete this JO information ?")) {
+                                    window.location.href = "/Domino/MiniPIP/DeleteJOInfo?" + oBT.value;
+                                }
+                            }
+                    </script>
                 </div>
             }
 
-            @if (!string.IsNullOrEmpty(ViewBag.CurrentCard.BdEEPROM2NDDate))
+            @if (ViewBag.CurrentCard.Jo1stCheckTable.Count > 0)
             {
                 <hr />
                 <div class="form-group">
                     <div class="col-lg-12">
-                        <label class="control-label">EEPROM Second Check</label>
+                        <label class="control-label">Engineering Check</label>
                     </div>
-                </div> 
+                </div>
                 <div class="form-group">
                     @*<table id="eepromdatatable" class="display" cellspacing="0">*@
-                    <table id="eepromdatatable" class="table table-bordered table-hover">
+                    <table id="engineerdatatable" class="table table-bordered table-hover">
                         <thead>
                             <tr>
-                                <th style="text-align:center;font-size:12px">Check Date</th>
-                                <th style="text-align:center;font-size:12px">Check People</th>
+                                <th style="text-align:center;font-size:12px">Job Order</th>
+                                <th style="text-align:center;font-size:12px">EEPROM</th>
+                                <th style="text-align:center;font-size:12px">EEPROM Date</th>
+                                <th style="text-align:center;font-size:12px">Label</th>
+                                <th style="text-align:center;font-size:12px">Label Date</th>
+                                <th style="text-align:center;font-size:12px">Test Data</th>
+                                <th style="text-align:center;font-size:12px">Test Data Date</th>
+                                <th style="text-align:center;font-size:12px">Costemic</th>
+                                <th style="text-align:center;font-size:12px">Costemic Date</th>
                                 <th style="text-align:center;font-size:12px">Check Result</th>
+                                <th style="text-align:center;font-size:12px">Remove</th>
                             </tr>
                         </thead>
 
                         <tbody>
-
+                            @foreach (var tempinfo in ViewBag.CurrentCard.Jo1stCheckTable)
+                            {
                                 <tr>
-                                    <td style="text-align:center;font-size:12px">@ViewBag.CurrentCard.BdEEPROM2NDDate</td>
-                                    <td style="text-align:center;font-size:12px">@ViewBag.CurrentCard.BdEEPROM2NDPE</td>
-                                    <td style="text-align:center;font-size:12px">@ViewBag.CurrentCard.BdEEPROM2NDRESULT</td>
+                                    <td style="text-align:center;font-size:12px">@tempinfo.JO</td>
+                                    <td style="text-align:center;font-size:12px">@tempinfo.EEPROM</td>
+                                    <td style="text-align:center;font-size:12px">@tempinfo.EEPROMDT</td>
+                                    <td style="text-align:center;font-size:12px">@tempinfo.Label</td>
+                                    <td style="text-align:center;font-size:12px">@tempinfo.LabelDT</td>
+                                    <td style="text-align:center;font-size:12px">@tempinfo.TestData</td>
+                                    <td style="text-align:center;font-size:12px">@tempinfo.TestDateDT</td>
+                                    <td style="text-align:center;font-size:12px">@tempinfo.Costemic</td>
+                                    <td style="text-align:center;font-size:12px">@tempinfo.CostemicDT</td>
+                                    <td style="text-align:center;font-size:12px">@tempinfo.Status</td>
+                                    <td><button class="btn btn-default" type="button" value="CardKey=@(tempinfo.CardKey)&WipJob=@(tempinfo.JO)" onclick="deleteegcheck(this)"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button></td>
                                 </tr>
+                            }
                         </tbody>
                     </table>
 
@@ -184,6 +141,109 @@
                     });
 
                 </script>*@
+
+                    <script type="text/javascript">
+                        function deleteegcheck(oBT) {
+                                if (confirm("Warning: Do you really want to delete this check information ?")) {
+                                    window.location.href = "/Domino/MiniPIP/DeleteJOEGCheck?" + oBT.value;
+                                }
+                            }
+                    </script>
+                </div>
+            }
+
+            @if (ViewBag.CurrentCard.Jo2ndCheckTable.Count > 0)
+            {
+                <hr />
+                <div class="form-group">
+                    <div class="col-lg-12">
+                        <label class="control-label">QA 2nd EEPROM Check</label>
+                    </div>
+                </div> 
+                <div class="form-group">
+                    @*<table id="eepromdatatable" class="display" cellspacing="0">*@
+                    <table id="eepromdatatable" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center;font-size:12px">Job Order</th>
+                                <th style="text-align:center;font-size:12px">Check Date</th>
+                                <th style="text-align:center;font-size:12px">Check People</th>
+                                <th style="text-align:center;font-size:12px">Remove</th>
+                             </tr>
+                        </thead>
+
+                        <tbody>
+                        @foreach (var tempinfo in ViewBag.CurrentCard.Jo2ndCheckTable)
+                        {
+                                <tr>
+                                    <td style="text-align:center;font-size:12px">@tempinfo.JO</td>
+                                    <td style="text-align:center;font-size:12px">@tempinfo.EEPROM</td>
+                                    <td style="text-align:center;font-size:12px">@tempinfo.EEPROMDT</td>
+                                    <td><button class="btn btn-default" type="button" value="CardKey=@(tempinfo.CardKey)&WipJob=@(tempinfo.JO)" onclick="deleteqacheck(this)"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button></td>
+                                </tr>
+                        }
+                        </tbody>
+                    </table>
+
+                    @*<script type="text/javascript">
+                    $(document).ready(function () {
+                        $('#orderdatatable').DataTable({
+                            'iDisplayLength': 50,
+                            'aLengthMenu': [[25, 50, 100, -1],
+                                            [25, 50, 100, "All"]],
+                            "aaSorting": []
+                        });
+                    });
+
+                </script>*@
+
+                    <script type="text/javascript">
+                        function deleteqacheck(oBT) {
+                                if (confirm("Warning: Do you really want to delete this check information ?")) {
+                                    window.location.href = "/Domino/MiniPIP/DeleteJOQACheck?" + oBT.value;
+                                }
+                            }
+                    </script>
+                </div>
+            }
+
+            @if (ViewBag.CurrentCard.JOStoreStautsTable.Count > 0)
+            {
+                <hr />
+                <div class="form-group">
+                    <div class="col-lg-12">
+                        <label class="control-label">JO MainStore Information</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    
+                    <table id="jomainstoretable" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center;font-size:12px">Job Order</th>
+                                <th style="text-align:center;font-size:12px">Status</th>
+                                <th style="text-align:center;font-size:12px">Remove</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var tempinfo in ViewBag.CurrentCard.JOStoreStautsTable)
+                            {
+                                <tr>
+                                    <td style="text-align:center;font-size:12px">@tempinfo.JO</td>
+                                    <td style="text-align:center;font-size:12px">@tempinfo.StoreStaus</td>
+                                    <td><button class="btn btn-default" type="button" value="CardKey=@(tempinfo.CardKey)&WipJob=@(tempinfo.JO)" onclick="deletejostore(this)"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <script type="text/javascript">
+                        function deletejostore(oBT) {
+                                if (confirm("Warning: Do you really want to delete this store information ?")) {
+                                    window.location.href = "/Domino/MiniPIP/DeleteJOStore?" + oBT.value;
+                                }
+                            }
+                    </script>
                 </div>
             }
 
