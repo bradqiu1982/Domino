@@ -54,6 +54,28 @@
                         </li>
                     </ul>
 
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Report<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    @Html.ActionLink("WorkLoad", "WorkLoad", "DominoReport")
+                                </li>
+                                <li>
+                                    @Html.ActionLink("Cycle Time", "CycleTime", "DominoReport")
+                                </li>
+                                <li>
+                                    @Html.ActionLink("Type", "Type", "DominoReport")
+                                </li>
+                                <li>
+                                    @Html.ActionLink("FA Building Time", "FABuilding", "DominoReport")
+                                </li>
+                                <li>
+                                    @Html.ActionLink("QA FA Check", "QAFACheck", "DominoReport")
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
                     
                     <ul class="nav navbar-nav">
                         <li class="dropdown">

@@ -6,6 +6,12 @@ using System.Web;
 
 namespace Domino.Models
 {
+    public class UserDepart
+    {
+        public string UserName { set; get; }
+        public string Depart { set; get; }
+    }
+
     public class DominoUserViewModels
     {
         [Required]
@@ -76,13 +82,6 @@ namespace Domino.Models
             DBUtility.ExeLocalSqlNoRes(sql);
         }
 
-        public static void ValidateUserWithDate(string username, DateTime date)
-        {
-            var sql = "update UserTable set Validated = 1 where UserName = '<UserName>' and UpdateDate = '<UpdateDate>'";
-            sql = sql.Replace("<UpdateDate>", date.ToString()).Replace("<UserName>", username.ToUpper());
-            DBUtility.ExeLocalSqlNoRes(sql);
-        }
-
         public static void UpdateUserTime(string username,DateTime date)
         {
             var sql = "update UserTable set UpdateDate = '<UpdateDate>' where UserName = '<UserName>'";
@@ -99,7 +98,7 @@ namespace Domino.Models
 
         public static List<string> RetrieveAllUser()
         {
-            var sql = "select UserName from UserTable";
+            var sql = "select APVal1 from UserMatrix";
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
             var ret = new List<string>();
 
@@ -112,26 +111,9 @@ namespace Domino.Models
             return ret;
         }
 
-        public static void AddICare(string me,string other)
+        public static List<string> RetrieveAllDepartment()
         {
-            RemoveICare(me, other);
-            var sql = "insert into UserNet(ME,OTHER) values('<ME>','<OTHER>')";
-            sql = sql.Replace("<ME>", me.ToUpper()).Replace("<OTHER>", other.ToUpper());
-            DBUtility.ExeLocalSqlNoRes(sql);
-        }
-
-        public static void RemoveICare(string me, string other)
-        {
-            var sql = "delete from UserNet where ME='<ME>' and OTHER='<OTHER>'";
-            sql = sql.Replace("<ME>", me.ToUpper()).Replace("<OTHER>", other.ToUpper());
-            DBUtility.ExeLocalSqlNoRes(sql);
-        }
-
-        public static List<string> RetrieveICare(string me)
-        {
-            var sql = "select OTHER from UserNet where  ME='<ME>'";
-            sql = sql.Replace("<ME>", me);
-
+            var sql = "select distinct APVal2 from UserMatrix order by APVal2";
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
             var ret = new List<string>();
 
@@ -141,6 +123,33 @@ namespace Domino.Models
             }
 
             ret.Sort();
+            return ret;
+        }
+
+        public static void StoreUserMatrix(string username, string depart)
+        {
+            var sql = "delete from UserMatrix where APVal1='<APVal1>'";
+            sql = sql.Replace("<APVal1>", username);
+            DBUtility.ExeLocalSqlNoRes(sql);
+
+            sql = "insert into UserMatrix(APVal1,APVal2) values('<APVal1>','<APVal2>')";
+            sql = sql.Replace("<APVal1>", username).Replace("<APVal2>", depart);
+            DBUtility.ExeLocalSqlNoRes(sql);
+        }
+
+        public static List<UserDepart> RetrieveAllUserDepart()
+        {
+            var sql = "select APVal1,APVal2 from UserMatrix";
+            var dbret = DBUtility.ExeLocalSqlWithRes(sql);
+            var ret = new List<UserDepart>();
+
+            foreach (var line in dbret)
+            {
+                var tempinfo = new UserDepart();
+                tempinfo.UserName = Convert.ToString(line[0]);
+                tempinfo.Depart = Convert.ToString(line[1]);
+                ret.Add(tempinfo);
+            }
             return ret;
         }
 

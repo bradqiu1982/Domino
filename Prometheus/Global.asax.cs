@@ -21,18 +21,18 @@ namespace Domino
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-            //try
-            //{
-            //    using (Process myprocess = new Process())
-            //    {
-            //        myprocess.StartInfo.FileName = Path.Combine(System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath, @"Scripts\HeartBeat4Domino.exe").Replace("\\", "/");
-            //        //System.Windows.MessageBox.Show(myprocess.StartInfo.FileName);
-            //        //myprocess.StartInfo.CreateNoWindow = true;
-            //        myprocess.Start();
-            //    }
-            //}
-            //catch (Exception ex)
-            //{ }
+            try
+            {
+                using (Process myprocess = new Process())
+                {
+                    myprocess.StartInfo.FileName = Path.Combine(System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath, @"Scripts\HeartBeat4Domino.exe").Replace("\\", "/");
+                    //System.Windows.MessageBox.Show(myprocess.StartInfo.FileName);
+                    //myprocess.StartInfo.CreateNoWindow = true;
+                    myprocess.Start();
+                }
+            }
+            catch (Exception ex)
+            { }
         }
     }
 }

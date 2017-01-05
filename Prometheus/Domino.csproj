@@ -195,6 +195,8 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\DominoDBManageController.cs" />
+    <Compile Include="Controllers\DominoReportController.cs" />
+    <Compile Include="Controllers\ExtenalDataController.cs" />
     <Compile Include="Controllers\MiniPIPController.cs" />
     <Compile Include="Controllers\ShareDataController.cs" />
     <Compile Include="Controllers\DominoUserController.cs" />
@@ -204,6 +206,7 @@
     <Compile Include="Models\CookieUtility.cs" />
     <Compile Include="Models\DBUtility.cs" />
     <Compile Include="Models\DominoDataCollector.cs" />
+    <Compile Include="Models\DominoRPVM.cs" />
     <Compile Include="Models\DominoVM.cs" />
     <Compile Include="Models\EmailUtility.cs" />
     <Compile Include="Models\ExcelReader.cs" />
@@ -662,6 +665,7 @@
     </None>
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\DominoCfg.txt" />
+    <Content Include="Scripts\DominoWorkLoad.xml" />
     <Content Include="Scripts\exporting.js" />
     <Content Include="Scripts\HeartBeat4Domino.exe" />
     <Content Include="Scripts\heartbeat4domino.txt" />
@@ -725,6 +729,9 @@
     <Content Include="Views\MiniPIP\SampleCustomerApproval.cshtml" />
     <Content Include="Views\MiniPIP\MiniPIPComplete.cshtml" />
     <Content Include="Views\MiniPIP\CustomerApprovalHold.cshtml" />
+    <Content Include="Views\ExtenalData\CommitUserMatrix.cshtml" />
+    <Content Include="Views\ExtenalData\ConfirmUserMatrix.cshtml" />
+    <Content Include="Views\DominoReport\WorkLoad.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="userfiles\docs\" />

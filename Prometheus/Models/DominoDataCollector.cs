@@ -125,8 +125,8 @@ namespace Domino.Models
                     { initialmini = string.Empty; }
 
                     if (string.IsNullOrEmpty(initialmini)
-                        || DateTime.Parse(initialmini) > DateTime.Parse("2016-9-15 10:00:00")
-                        || DateTime.Parse(initialmini) < DateTime.Parse("2016-9-7 10:00:00"))
+                        || DateTime.Parse(initialmini) > DateTime.Parse("2016-9-30 10:00:00")
+                        || DateTime.Parse(initialmini) < DateTime.Parse("2016-9-1 10:00:00"))
                     {
                         continue;
                     }

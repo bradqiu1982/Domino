@@ -10,10 +10,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
   </PropertyGroup>
   <ItemGroup>
     <File Include="App_Data/Domino.mdf">
-      <publishTime>12/27/2016 07:43:32</publishTime>
+      <publishTime>12/29/2016 18:36:25</publishTime>
     </File>
     <File Include="App_Data/Domino_log.ldf">
-      <publishTime>12/27/2016 07:43:33</publishTime>
+      <publishTime>12/29/2016 18:36:25</publishTime>
     </File>
     <File Include="App_Data/Prometheus.mdf">
       <publishTime>12/08/2016 09:38:20</publishTime>
@@ -25,16 +25,16 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>02/22/2013 08:43:40</publishTime>
     </File>
     <File Include="bin/App_global.asax.compiled">
-      <publishTime>12/27/2016 08:06:02</publishTime>
+      <publishTime>12/29/2016 18:36:54</publishTime>
     </File>
     <File Include="bin/App_global.asax.dll">
-      <publishTime>12/27/2016 08:06:02</publishTime>
+      <publishTime>12/29/2016 18:36:54</publishTime>
     </File>
     <File Include="bin/Content/Finisar.PNG">
       <publishTime>07/29/2016 10:33:51</publishTime>
     </File>
     <File Include="bin/Domino.dll">
-      <publishTime>12/27/2016 08:05:37</publishTime>
+      <publishTime>12/29/2016 18:36:21</publishTime>
     </File>
     <File Include="bin/EntityFramework.dll">
       <publishTime>03/02/2015 09:32:26</publishTime>
@@ -1315,7 +1315,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/04/2016 17:41:33</publishTime>
     </File>
     <File Include="Content/domino.css">
-      <publishTime>12/09/2016 15:19:56</publishTime>
+      <publishTime>12/28/2016 12:55:22</publishTime>
     </File>
     <File Include="Content/Finisar.PNG">
       <publishTime>07/29/2016 10:33:51</publishTime>
@@ -1468,7 +1468,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>11/22/2016 18:13:27</publishTime>
     </File>
     <File Include="PrecompiledApp.config">
-      <publishTime>12/27/2016 08:05:41</publishTime>
+      <publishTime>12/29/2016 18:36:26</publishTime>
     </File>
     <File Include="Scripts/AreaChart.xml">
       <publishTime>09/20/2016 10:57:13</publishTime>
@@ -1489,7 +1489,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/17/2016 16:30:39</publishTime>
     </File>
     <File Include="Scripts/DominoCfg.txt">
-      <publishTime>12/23/2016 08:44:12</publishTime>
+      <publishTime>12/29/2016 15:03:36</publishTime>
     </File>
     <File Include="Scripts/exporting.js">
       <publishTime>08/17/2016 09:17:26</publishTime>
@@ -1499,6 +1499,12 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     </File>
     <File Include="Scripts/heartbeat.txt">
       <publishTime>10/19/2016 09:34:47</publishTime>
+    </File>
+    <File Include="Scripts/HeartBeat4Domino.exe">
+      <publishTime>12/29/2016 18:22:21</publishTime>
+    </File>
+    <File Include="Scripts/heartbeat4domino.txt">
+      <publishTime>12/29/2016 18:24:09</publishTime>
     </File>
     <File Include="Scripts/highcharts.js">
       <publishTime>08/18/2016 10:19:34</publishTime>
@@ -1717,40 +1723,40 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>12/06/2016 14:10:23</publishTime>
     </File>
     <File Include="Views/MiniPIP/CurrentECO.cshtml">
-      <publishTime>12/27/2016 08:05:13</publishTime>
+      <publishTime>12/27/2016 15:28:03</publishTime>
     </File>
     <File Include="Views/MiniPIP/CustomerApprovalHold.cshtml">
-      <publishTime>12/26/2016 09:03:23</publishTime>
+      <publishTime>12/28/2016 15:53:52</publishTime>
     </File>
     <File Include="Views/MiniPIP/ECOComplete.cshtml">
-      <publishTime>12/21/2016 11:30:45</publishTime>
+      <publishTime>12/28/2016 17:53:55</publishTime>
     </File>
     <File Include="Views/MiniPIP/ECOPending.cshtml">
-      <publishTime>12/23/2016 14:54:14</publishTime>
+      <publishTime>12/28/2016 15:26:31</publishTime>
     </File>
     <File Include="Views/MiniPIP/ECOSignoff1.cshtml">
-      <publishTime>12/20/2016 16:08:13</publishTime>
+      <publishTime>12/28/2016 15:38:11</publishTime>
     </File>
     <File Include="Views/MiniPIP/ECOSignoff2.cshtml">
-      <publishTime>12/26/2016 09:17:03</publishTime>
+      <publishTime>12/28/2016 15:52:02</publishTime>
     </File>
     <File Include="Views/MiniPIP/MiniPIPComplete.cshtml">
       <publishTime>12/23/2016 15:30:21</publishTime>
     </File>
     <File Include="Views/MiniPIP/SampleBuilding.cshtml">
-      <publishTime>12/22/2016 18:48:50</publishTime>
+      <publishTime>12/29/2016 16:34:10</publishTime>
     </File>
     <File Include="Views/MiniPIP/SampleCustomerApproval.cshtml">
       <publishTime>12/23/2016 10:54:08</publishTime>
     </File>
     <File Include="Views/MiniPIP/SampleOrdering.cshtml">
-      <publishTime>12/21/2016 19:29:51</publishTime>
+      <publishTime>12/28/2016 18:12:53</publishTime>
     </File>
     <File Include="Views/MiniPIP/SampleShipment.cshtml">
       <publishTime>12/23/2016 10:05:56</publishTime>
     </File>
     <File Include="Views/MiniPIP/ViewAll.cshtml">
-      <publishTime>12/21/2016 09:27:41</publishTime>
+      <publishTime>12/28/2016 14:31:48</publishTime>
     </File>
     <File Include="Views/PJReport/IBook.cshtml">
       <publishTime>12/09/2016 07:59:41</publishTime>
@@ -1843,7 +1849,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>12/26/2016 11:21:27</publishTime>
     </File>
     <File Include="Views/Shared/_LoginPartial.cshtml">
-      <publishTime>12/26/2016 11:26:38</publishTime>
+      <publishTime>12/29/2016 15:07:23</publishTime>
     </File>
     <File Include="Views/User/AddShareTag.cshtml">
       <publishTime>12/05/2016 17:23:08</publishTime>
