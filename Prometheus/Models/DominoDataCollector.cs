@@ -873,16 +873,21 @@ namespace Domino.Models
                             var data = ExcelReader.RetrieveDataFromExcel(fn, null);
                             foreach (var line in data)
                             {
-                                if (jodict.ContainsKey(line[9]))
+                                var jos = line[9].Split(new string[] { "\r", "\n"," ","," }, StringSplitOptions.RemoveEmptyEntries);
+                                foreach (var j in jos)
                                 {
-                                    var tempinfo = new ECOJOCheck();
-                                    tempinfo.CardKey = cardkey;
-                                    tempinfo.CheckType = DOMINOJOCHECKTYPE.QATYPE;
-                                    tempinfo.JO = line[9];
-                                    tempinfo.EEPROM = line[5];
-                                    tempinfo.EEPROMDT = line[0] + "-" + line[1] + "-" + line[2];
-                                    jochecklist.Add(tempinfo);
+                                    if (jodict.ContainsKey(j.Trim()))
+                                    {
+                                        var tempinfo = new ECOJOCheck();
+                                        tempinfo.CardKey = cardkey;
+                                        tempinfo.CheckType = DOMINOJOCHECKTYPE.QATYPE;
+                                        tempinfo.JO = j.Trim();
+                                        tempinfo.EEPROM = line[5];
+                                        tempinfo.EEPROMDT = line[0] + "-" + line[1] + "-" + line[2];
+                                        jochecklist.Add(tempinfo);
+                                    }
                                 }
+
                             }
                         }
                         catch (Exception ex) { }
