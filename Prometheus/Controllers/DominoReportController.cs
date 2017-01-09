@@ -117,7 +117,7 @@ namespace Domino.Controllers
 
             var tempscript = System.IO.File.ReadAllText(Server.MapPath("~/Scripts/DominoWorkLoad.xml"));
             ViewBag.workloadchart = tempscript.Replace("#ElementID#", "workloadchart")
-                .Replace("#Title#", "Department WorkLoad")
+                .Replace("#Title#", "Department WorkLoad "+startdate.ToString("yyyy/MM/dd")+"-"+enddate.ToString("yyyy/MM/dd"))
                 .Replace("#ChartxAxisValues#", ChartxAxisValues)
                 .Replace("#AmountMAX#", AmountMAX.ToString())
                 .Replace("#CompleteAmount#", CompleteAmount)
@@ -129,5 +129,166 @@ namespace Domino.Controllers
             return View();
         }
 
+
+        public ActionResult CycleTime()
+        {
+            return View();
+        }
+
+        [HttpPost, ActionName("CycleTime")]
+        [ValidateAntiForgeryToken]
+        public ActionResult CycleTimePose()
+        {
+            if (string.IsNullOrEmpty(Request.Form["StartDate"])
+                || string.IsNullOrEmpty(Request.Form["EndDate"])
+                || (DateTime.Parse(Request.Form["StartDate"]) > DateTime.Parse(Request.Form["EndDate"])))
+            {
+                return View();
+            }
+
+            var startdate = DateTime.Parse(Request.Form["StartDate"]);
+            var enddate = DateTime.Parse(Request.Form["EndDate"]);
+            var cycletimedict = DominoRPVM.RetrieveDepartCycleTimeData(startdate, enddate);
+            if (cycletimedict.Count == 0)
+            {
+                return View();
+            }
+
+            var ChartxAxisValues = string.Empty;
+            double DayMAX = 0;
+            int AmountMAX = 0;
+            double DayMIN = 0;
+
+            var CCBSignoffAging = string.Empty;
+            var TechReviewAging = string.Empty;
+            var EngineeringAging = string.Empty;
+            var ChangeDelayAging = string.Empty;
+            var ApprovalAging = string.Empty;
+            var TotalMiniPIPs = string.Empty;
+
+            var departs = DominoUserViewModels.RetrieveAllDepartment();
+            foreach (var dpt in departs)
+            {
+                if (cycletimedict.ContainsKey(dpt))
+                {
+                    ChartxAxisValues = ChartxAxisValues + "'" + dpt + "',";
+                    AmountMAX = cycletimedict[dpt].TotalMiniPIPs + AmountMAX;
+
+                    if (cycletimedict[dpt].CCBSignoffAgingAVG == 0)
+                    {
+                        CCBSignoffAging = CCBSignoffAging + "null,";
+                    }
+                    else
+                    {
+                        CCBSignoffAging = CCBSignoffAging + cycletimedict[dpt].CCBSignoffAgingAVG.ToString("0.0") + ",";
+                        DayMAX = DayMAX + cycletimedict[dpt].CCBSignoffAgingAVG;
+
+                        if (cycletimedict[dpt].CCBSignoffAgingAVG < 0)
+                            DayMIN = DayMIN + cycletimedict[dpt].CCBSignoffAgingAVG;
+                    }
+
+                    if (cycletimedict[dpt].TechReviewAgingAVG == 0)
+                    {
+                        TechReviewAging = TechReviewAging + "null,";
+                    }
+                    else
+                    {
+                        TechReviewAging = TechReviewAging + cycletimedict[dpt].TechReviewAgingAVG.ToString("0.0") + ",";
+                        DayMAX = DayMAX + cycletimedict[dpt].TechReviewAgingAVG;
+
+                        if (cycletimedict[dpt].TechReviewAgingAVG < 0)
+                            DayMIN = DayMIN + cycletimedict[dpt].TechReviewAgingAVG;
+                    }
+
+                    if (cycletimedict[dpt].EngineeringAgingAVG == 0)
+                    {
+                        EngineeringAging = EngineeringAging + "null,";
+                    }
+                    else
+                    {
+                        EngineeringAging = EngineeringAging + cycletimedict[dpt].EngineeringAgingAVG.ToString("0.0") + ",";
+                        DayMAX = DayMAX + cycletimedict[dpt].EngineeringAgingAVG;
+
+                        if (cycletimedict[dpt].EngineeringAgingAVG < 0)
+                            DayMIN = DayMIN + cycletimedict[dpt].EngineeringAgingAVG;
+                    }
+
+                    if (cycletimedict[dpt].ChangeDelayAgingAVG == 0)
+                    {
+                        ChangeDelayAging = ChangeDelayAging + "null,";
+                    }
+                    else
+                    {
+                        ChangeDelayAging = ChangeDelayAging + cycletimedict[dpt].ChangeDelayAgingAVG.ToString("0.0") + ",";
+                        DayMAX = DayMAX + cycletimedict[dpt].ChangeDelayAgingAVG;
+
+                        if (cycletimedict[dpt].ChangeDelayAgingAVG < 0)
+                            DayMIN = DayMIN + cycletimedict[dpt].ChangeDelayAgingAVG;
+                    }
+
+                    if (cycletimedict[dpt].MiniPIPApprovalAgingAVG == 0)
+                    {
+                        ApprovalAging = ApprovalAging + "null,";
+                    }
+                    else
+                    {
+                        ApprovalAging = ApprovalAging + cycletimedict[dpt].MiniPIPApprovalAgingAVG.ToString("0.0") + ",";
+                        DayMAX = DayMAX + cycletimedict[dpt].MiniPIPApprovalAgingAVG;
+
+                        if (cycletimedict[dpt].MiniPIPApprovalAgingAVG < 0)
+                            DayMIN = DayMIN + cycletimedict[dpt].MiniPIPApprovalAgingAVG;
+                    }
+
+                    TotalMiniPIPs = TotalMiniPIPs + cycletimedict[dpt].TotalMiniPIPs.ToString() + ",";
+                }
+            }
+
+            ChartxAxisValues = ChartxAxisValues.Substring(0, ChartxAxisValues.Length - 1);
+            CCBSignoffAging = CCBSignoffAging.Substring(0, CCBSignoffAging.Length - 1);
+            TechReviewAging = TechReviewAging.Substring(0, TechReviewAging.Length - 1);
+            EngineeringAging = EngineeringAging.Substring(0, EngineeringAging.Length - 1);
+            ChangeDelayAging = ChangeDelayAging.Substring(0, ChangeDelayAging.Length - 1);
+            ApprovalAging = ApprovalAging.Substring(0, ApprovalAging.Length - 1);
+            TotalMiniPIPs = TotalMiniPIPs.Substring(0, TotalMiniPIPs.Length - 1);
+
+            var tempscript = System.IO.File.ReadAllText(Server.MapPath("~/Scripts/DominoCycleTime.xml"));
+            ViewBag.cycletimechart = tempscript.Replace("#ElementID#", "cycletimechart")
+                .Replace("#Title#", "Department CycleTime " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd"))
+                .Replace("#ChartxAxisValues#", ChartxAxisValues)
+                .Replace("#AmountMAX#", AmountMAX.ToString())
+                .Replace("#DayMIN#", DayMIN.ToString())
+                .Replace("#DayMAX#", DayMAX.ToString())
+                .Replace("#CCBSignoffAging#", CCBSignoffAging)
+                .Replace("#TechReviewAging#", TechReviewAging)
+                .Replace("#EngineeringAging#", EngineeringAging)
+                .Replace("#ChangeDelayAging#", ChangeDelayAging)
+                .Replace("#ApprovalAging#", ApprovalAging)
+                .Replace("#TotalMiniPIPs#", TotalMiniPIPs);
+
+            return View();
+        }
+
+
+        public ActionResult Complex()
+        {
+            return View();
+        }
+
+        [HttpPost, ActionName("Complex")]
+        [ValidateAntiForgeryToken]
+        public ActionResult ComplexPose()
+        {
+            if (string.IsNullOrEmpty(Request.Form["StartDate"])
+                || string.IsNullOrEmpty(Request.Form["EndDate"])
+                || (DateTime.Parse(Request.Form["StartDate"]) > DateTime.Parse(Request.Form["EndDate"])))
+            {
+                return View();
+            }
+
+            return View();
+        }
+
+
     }
+
 }

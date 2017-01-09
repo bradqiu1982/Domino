@@ -594,6 +594,45 @@ namespace Domino.Models
             return ret;
         }
 
+        private static string ConvertDate(string date)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(date))
+                {
+                    return string.Empty;
+                }
+                if (string.Compare(DateTime.Parse(date).ToString("yyyy-MM-dd"), "1982-05-06") == 0)
+                {
+                    return string.Empty;
+                }
+                else
+                {
+                    return DateTime.Parse(date).ToString("yyyy-MM-dd") + " 07:30:00";
+                }
+            }
+            catch (Exception ex) { return string.Empty; }
+        }
+
+        public static List<ECOBaseInfo>  RetrieveCompletedECOBaseInfo()
+        {
+            var alleco = ECOBaseInfo.RetrieveAllNotDeleteECOBaseInfo();
+            var ecodone = new List<ECOBaseInfo>();
+                foreach (var eco in alleco)
+                {
+                    var completecard = DominoVM.RetrieveSpecialCard(eco, DominoCardType.ECOComplete);
+                    if (completecard.Count > 0)
+                    {
+                        var cardinfo = DominoVM.RetrieveECOCompleteInfo(completecard[0].CardKey);
+                        if (!string.IsNullOrEmpty(cardinfo.ECOCompleteDate)
+                            && !string.IsNullOrEmpty(ConvertDate(cardinfo.ECOCompleteDate)))
+                        {
+                            ecodone.Add(eco);
+                        }
+                    }
+                }
+            return ecodone;
+        }
 
         public static List<ECOBaseInfo> RetrieveECOBaseInfo(string ECOKey)
         {

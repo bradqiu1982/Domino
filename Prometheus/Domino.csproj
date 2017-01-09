@@ -665,6 +665,8 @@
     </None>
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\DominoCfg.txt" />
+    <Content Include="Scripts\DominoComplex.xml" />
+    <Content Include="Scripts\DominoCycleTime.xml" />
     <Content Include="Scripts\DominoWorkLoad.xml" />
     <Content Include="Scripts\exporting.js" />
     <Content Include="Scripts\HeartBeat4Domino.exe" />
@@ -732,6 +734,8 @@
     <Content Include="Views\ExtenalData\CommitUserMatrix.cshtml" />
     <Content Include="Views\ExtenalData\ConfirmUserMatrix.cshtml" />
     <Content Include="Views\DominoReport\WorkLoad.cshtml" />
+    <Content Include="Views\DominoReport\CycleTime.cshtml" />
+    <Content Include="Views\DominoReport\Complex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="userfiles\docs\" />

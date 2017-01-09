@@ -1,0 +1,62 @@
+﻿<script type="text/javascript">
+  
+$(function () {
+
+    $('##ElementID#').highcharts({
+        title: {
+            text: '#Title#'
+        },
+        xAxis: {
+            categories: [#ChartxAxisValues#]
+        },
+        yAxis: [{
+            title: {
+                text: 'AMount'
+            },
+            stackLabels: {
+                enabled: true,
+                style: {
+                    fontWeight: 'bold',
+                    color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                }
+            },
+            min: 0,
+            max: #AMountMAX#
+        }],
+        plotOptions: {
+            column: {
+                stacking: 'normal',
+                dataLabels: {
+                    enabled: true,
+                    color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'black'
+                }
+            }
+        },
+        series: [{
+            type: 'column',
+            name: 'EXPEDITE',
+            data: [#EXPEDITE#],
+            yAxis:0,
+            color:'#bab8b8'
+        },
+        {
+            type: 'column',
+            name: 'MEDIUM',
+            data: [#MEDIUM#],
+            yAxis:0,
+            color:'#90ed7d'
+        },
+        {
+            type: 'column',
+            name: 'SMALL',
+            data: [#SMALL#],
+            yAxis:0,
+            color:'#7cb5ec'
+        }]
+    });
+});
+
+</script>
+
+
+

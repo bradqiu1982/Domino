@@ -1,0 +1,106 @@
+﻿<script type="text/javascript">
+  
+$(function () {
+
+    $('##ElementID#').highcharts({
+        title: {
+            text: '#Title#'
+        },
+        chart:
+        {
+          alignTicks: false
+        },
+        xAxis: {
+            categories: [#ChartxAxisValues#]
+        },
+        yAxis: [{
+            title: {
+                text: 'Day'
+            },
+            stackLabels: {
+                enabled: true,
+                style: {
+                    fontWeight: 'bold',
+                    color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                }
+            },
+            min: #DayMIN#,
+            max: #DayMAX#
+        }, {
+            title: {
+                text: 'Amount'
+            },
+            min: 0,
+            max: #AmountMAX#,
+            gridLineWidth: 0,
+            tickPixelInterval: 36,
+            opposite: true
+        }],
+        plotOptions: {
+            column: {
+                stacking: 'normal',
+                dataLabels: {
+                    enabled: true,
+                    color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'black'
+                }
+            },
+            line:
+            {
+              dataLabels:
+              {
+                enabled:true
+              }
+            }
+        },
+        series: [{
+            type: 'column',
+            name: 'CCB Signoff Aging',
+            data: [#CCBSignoffAging#],
+            yAxis:0,
+            color:'#00868b'
+        },
+        {
+            type: 'column',
+            name: 'Tech Review Aging',
+            data: [#TechReviewAging#],
+            yAxis:0,
+            color:'#540054'
+        },
+        {
+            type: 'column',
+            name: 'Engineering Aging',
+            data: [#EngineeringAging#],
+            yAxis:0,
+            color:'#4e8c23'
+        },
+        {
+            type: 'column',
+            name: 'Change Delay Aging',
+            data: [#ChangeDelayAging#],
+            yAxis:0,
+            color:'#ff7f50'
+        },
+        {
+            type: 'column',
+            name: 'Approval Aging',
+            data: [#ApprovalAging#],
+            yAxis:0,
+            color:'#468499'
+        },
+        {
+            type: 'line',
+            name: 'Total MiniPIPs',
+            data: [#TotalMiniPIPs#],
+            marker: {
+                lineWidth: 2,
+                fillColor: 'orange'
+            },
+            yAxis:1
+        }]
+    });
+});
+
+</script>
+
+
+
