@@ -268,10 +268,36 @@ namespace Domino.Models
             M = 0;
             S = 0;
         }
+
         public string ECOKey { set; get; }
         public string PE { set; get; }
         public string Depart { set; get; }
         public string Customer { set; get; }
+
+        public DateTime InitReceiveDate { set; get; }
+        public DateTime ECOCompleteDate { set; get; }
+
+
+        public void SetComplexType(string c)
+        {
+            if (string.IsNullOrEmpty(c))
+                return;
+
+            if (string.Compare(c.Substring(0, 1).ToUpper(), "E") == 0)
+            {
+                E = 1;
+            }
+
+            if (string.Compare(c.Substring(0, 1).ToUpper(), "M") == 0)
+            {
+                M = 1;
+            }
+
+            if (string.Compare(c.Substring(0, 1).ToUpper(), "S") == 0)
+            {
+                S = 1;
+            }
+        }
 
         public int E { set; get; }
         public int M { set; get; }
@@ -708,7 +734,6 @@ namespace Domino.Models
             }
 
             var ret = new Dictionary<string, CycleTimeDataField>();
-            var retavg = new Dictionary<string, int>();
 
             var departs = DominoUserViewModels.RetrieveAllDepartment();
             foreach (var dpt in departs)
@@ -808,6 +833,116 @@ namespace Domino.Models
                 }
             }
         }
+
+        private static List<ComplexData> RetrieveAllComplexData(DateTime startDate, DateTime endDate)
+        {
+            var allcomplex = new List<ComplexData>();
+
+            var alleco = ECOBaseInfo.RetrieveAllNotDeleteECOBaseInfo();
+            foreach (var eco in alleco)
+            {
+                if (string.Compare(DateTime.Parse(eco.InitRevison).ToString("yyyy-MM-dd"), "1982-05-06") == 0)
+                {
+
+                }
+                else
+                {
+                    var complexdata = new ComplexData();
+                    complexdata.ECOKey = eco.ECOKey;
+                    complexdata.Customer = eco.Customer;
+                    if (!eco.PE.Contains("@"))
+                    {
+                        complexdata.PE = (eco.PE.Trim().Replace(" ", ".") + "@finisar.com").ToUpper();
+                    }
+                    else
+                    {
+                        complexdata.PE = eco.PE;
+                    }
+
+                    complexdata.InitReceiveDate = DateTime.Parse(DateTime.Parse(eco.InitRevison).ToString("yyyy-MM-dd") + " 07:30:00");
+
+
+                    var completecard = DominoVM.RetrieveSpecialCard(eco, DominoCardType.ECOComplete);
+                    if (completecard.Count > 0)
+                    {
+                        var cardinfo = DominoVM.RetrieveECOCompleteInfo(completecard[0].CardKey);
+                        if (string.IsNullOrEmpty(cardinfo.ECOCompleteDate))
+                        {
+                            complexdata.ECOCompleteDate = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd") + " 07:30:00").AddDays(60);
+                        }
+                        else
+                        {
+                            complexdata.ECOCompleteDate = DateTime.Parse(DateTime.Parse(cardinfo.ECOCompleteDate).ToString("yyyy-MM-dd") + " 07:30:00");
+                        }
+                    }
+                    else
+                    {
+                        complexdata.ECOCompleteDate = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd") + " 07:30:00").AddDays(60);
+                    }
+
+                    if (startDate <= complexdata.InitReceiveDate && complexdata.InitReceiveDate <= endDate)
+                    {
+                        complexdata.SetComplexType(eco.Complex);
+                        allcomplex.Add(complexdata);
+                    }
+                    else if (startDate >= complexdata.InitReceiveDate && startDate <= complexdata.ECOCompleteDate)
+                    {
+                        complexdata.SetComplexType(eco.Complex);
+                        allcomplex.Add(complexdata);
+                    }
+
+                }//end else
+            }//end foreach
+
+            return allcomplex;
+        }
+
+        public static Dictionary<string, ComplexData> RetrieveDepartComplexData(DateTime startDate, DateTime endDate)
+        {
+            var allcomplexdata = RetrieveAllComplexData(startDate, endDate);
+
+            var udlist = DominoUserViewModels.RetrieveAllUserDepart();
+            var uddict = new Dictionary<string, string>();
+            foreach (var ud in udlist)
+            {
+                uddict.Add(ud.UserName, ud.Depart);
+            }
+
+            var departcomplex = new List<ComplexData>();
+            foreach (var wkl in allcomplexdata)
+            {
+                if (uddict.ContainsKey(wkl.PE))
+                {
+                    wkl.Depart = uddict[wkl.PE];
+                    departcomplex.Add(wkl);
+                }
+            }
+
+            var ret = new Dictionary<string, ComplexData>();
+
+            var departs = DominoUserViewModels.RetrieveAllDepartment();
+            foreach (var dpt in departs)
+            {
+                foreach (var wkl in departcomplex)
+                {
+                    if (string.Compare(dpt, wkl.Depart) == 0)
+                    {
+                        if (ret.ContainsKey(dpt))
+                        {
+                            ret[dpt].AppendComplexData(wkl);
+                        }
+                        else
+                        {
+                            ret.Add(dpt, new ComplexData());
+                            ret[dpt].AppendComplexData(wkl);
+                        }
+                    }//end if
+                }//foreach
+            }//foreach
+
+            return ret;
+        }
+
 
     }
 }

@@ -148,6 +148,7 @@ namespace Domino.Controllers
 
             var startdate = DateTime.Parse(Request.Form["StartDate"]);
             var enddate = DateTime.Parse(Request.Form["EndDate"]);
+
             var cycletimedict = DominoRPVM.RetrieveDepartCycleTimeData(startdate, enddate);
             if (cycletimedict.Count == 0)
             {
@@ -284,6 +285,75 @@ namespace Domino.Controllers
             {
                 return View();
             }
+
+            var startdate = DateTime.Parse(Request.Form["StartDate"]);
+            var enddate = DateTime.Parse(Request.Form["EndDate"]);
+            var complexdict = DominoRPVM.RetrieveDepartComplexData(startdate, enddate);
+            if (complexdict.Count == 0)
+            {
+                return View();
+            }
+
+            var ChartxAxisValues = string.Empty;
+            int AmountMAX = 0;
+
+            var EXPEDITE = string.Empty;
+            var MEDIUM = string.Empty;
+            var SMALL = string.Empty;
+
+            var departs = DominoUserViewModels.RetrieveAllDepartment();
+            foreach (var dpt in departs)
+            {
+                if (complexdict.ContainsKey(dpt))
+                {
+                    ChartxAxisValues = ChartxAxisValues + "'" + dpt + "',";
+
+                    if (complexdict[dpt].E == 0)
+                    {
+                        EXPEDITE = EXPEDITE + "null,";
+                    }
+                    else
+                    {
+                        EXPEDITE = EXPEDITE + complexdict[dpt].E.ToString() + ",";
+                        AmountMAX = AmountMAX + complexdict[dpt].E;
+                    }
+
+                    if (complexdict[dpt].M == 0)
+                    {
+                        MEDIUM = MEDIUM + "null,";
+                    }
+                    else
+                    {
+                        MEDIUM = MEDIUM + complexdict[dpt].M.ToString() + ",";
+                        AmountMAX = AmountMAX + complexdict[dpt].M;
+                    }
+
+                    if (complexdict[dpt].S == 0)
+                    {
+                        SMALL = SMALL + "null,";
+                    }
+                    else
+                    {
+                        SMALL = SMALL + complexdict[dpt].S.ToString() + ",";
+                        AmountMAX = AmountMAX + complexdict[dpt].S;
+                    }
+                }
+            }
+
+            ChartxAxisValues = ChartxAxisValues.Substring(0, ChartxAxisValues.Length - 1);
+            EXPEDITE = EXPEDITE.Substring(0, EXPEDITE.Length - 1);
+            MEDIUM = MEDIUM.Substring(0, MEDIUM.Length - 1);
+            SMALL = SMALL.Substring(0, SMALL.Length - 1);
+
+            var tempscript = System.IO.File.ReadAllText(Server.MapPath("~/Scripts/DominoComplex.xml"));
+            ViewBag.complexchart = tempscript.Replace("#ElementID#", "complexchart")
+                .Replace("#Title#", "Department Type " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd"))
+                .Replace("#ChartxAxisValues#", ChartxAxisValues)
+                .Replace("#AmountMAX#", AmountMAX.ToString())
+                .Replace("#EXPEDITE#", EXPEDITE)
+                .Replace("#MEDIUM#", MEDIUM)
+                .Replace("#SMALL#", SMALL);
+
 
             return View();
         }
