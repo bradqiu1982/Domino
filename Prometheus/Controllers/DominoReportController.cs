@@ -9,8 +9,39 @@ namespace Domino.Controllers
 {
     public class DominoReportController : Controller
     {
+
+        private List<SelectListItem> CreateSelectList(List<string> valist, string defVal)
+        {
+            bool selected = false;
+            var pslist = new List<SelectListItem>();
+            foreach (var p in valist)
+            {
+                var pitem = new SelectListItem();
+                pitem.Text = p;
+                pitem.Value = p;
+                if (!string.IsNullOrEmpty(defVal) && string.Compare(defVal, p, true) == 0)
+                {
+                    pitem.Selected = true;
+                    selected = true;
+                }
+                pslist.Add(pitem);
+            }
+
+            if (!selected && pslist.Count > 0)
+            {
+                pslist[0].Selected = true;
+            }
+
+            return pslist;
+        }
+
         public ActionResult WorkLoad()
         {
+            var charts = new string[]{ "Department","PE","Monthly","Quarter","Customer" };
+            var chartlist = new List<string>();
+            chartlist.AddRange(charts);
+            ViewBag.charttypelist = CreateSelectList(chartlist, "");
+
             return View();
         }
 
@@ -18,6 +49,11 @@ namespace Domino.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult WorkLoadPose()
         {
+            var charts = new string[] { "Department", "PE", "Monthly", "Quarter", "Customer" };
+            var chartlist = new List<string>();
+            chartlist.AddRange(charts);
+            ViewBag.charttypelist = CreateSelectList(chartlist, "");
+
             if (string.IsNullOrEmpty(Request.Form["StartDate"])
                 || string.IsNullOrEmpty(Request.Form["EndDate"])
                 || (DateTime.Parse(Request.Form["StartDate"]) > DateTime.Parse(Request.Form["EndDate"])))
@@ -132,6 +168,11 @@ namespace Domino.Controllers
 
         public ActionResult CycleTime()
         {
+            var charts = new string[] { "Department", "PE", "Monthly", "Quarter", "Customer" };
+            var chartlist = new List<string>();
+            chartlist.AddRange(charts);
+            ViewBag.charttypelist = CreateSelectList(chartlist, "");
+
             return View();
         }
 
@@ -139,6 +180,11 @@ namespace Domino.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult CycleTimePose()
         {
+            var charts = new string[] { "Department", "PE", "Monthly", "Quarter", "Customer" };
+            var chartlist = new List<string>();
+            chartlist.AddRange(charts);
+            ViewBag.charttypelist = CreateSelectList(chartlist, "");
+
             if (string.IsNullOrEmpty(Request.Form["StartDate"])
                 || string.IsNullOrEmpty(Request.Form["EndDate"])
                 || (DateTime.Parse(Request.Form["StartDate"]) > DateTime.Parse(Request.Form["EndDate"])))
@@ -272,6 +318,11 @@ namespace Domino.Controllers
 
         public ActionResult FABuilding()
         {
+            var charts = new string[] { "Department", "PE", "Monthly", "Quarter", "Customer" };
+            var chartlist = new List<string>();
+            chartlist.AddRange(charts);
+            ViewBag.charttypelist = CreateSelectList(chartlist, "");
+
             return View();
         }
 
@@ -279,6 +330,11 @@ namespace Domino.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult FABuildingPose()
         {
+            var charts = new string[] { "Department", "PE", "Monthly", "Quarter", "Customer" };
+            var chartlist = new List<string>();
+            chartlist.AddRange(charts);
+            ViewBag.charttypelist = CreateSelectList(chartlist, "");
+
             if (string.IsNullOrEmpty(Request.Form["StartDate"])
                 || string.IsNullOrEmpty(Request.Form["EndDate"])
                 || (DateTime.Parse(Request.Form["StartDate"]) > DateTime.Parse(Request.Form["EndDate"])))
@@ -354,6 +410,11 @@ namespace Domino.Controllers
 
         public ActionResult Complex()
         {
+            var charts = new string[] { "Department", "PE", "Monthly", "Quarter", "Customer" };
+            var chartlist = new List<string>();
+            chartlist.AddRange(charts);
+            ViewBag.charttypelist = CreateSelectList(chartlist, "");
+
             return View();
         }
 
@@ -361,6 +422,11 @@ namespace Domino.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult ComplexPose()
         {
+            var charts = new string[] { "Department", "PE", "Monthly", "Quarter", "Customer" };
+            var chartlist = new List<string>();
+            chartlist.AddRange(charts);
+            ViewBag.charttypelist = CreateSelectList(chartlist, "");
+
             if (string.IsNullOrEmpty(Request.Form["StartDate"])
                 || string.IsNullOrEmpty(Request.Form["EndDate"])
                 || (DateTime.Parse(Request.Form["StartDate"]) > DateTime.Parse(Request.Form["EndDate"])))
@@ -443,6 +509,11 @@ namespace Domino.Controllers
 
         public ActionResult QAFACheck()
         {
+            var charts = new string[] { "Department", "PE", "Monthly", "Quarter", "Customer" };
+            var chartlist = new List<string>();
+            chartlist.AddRange(charts);
+            ViewBag.charttypelist = CreateSelectList(chartlist, "");
+
             return View();
         }
 
@@ -450,6 +521,11 @@ namespace Domino.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult QAFACheckPose()
         {
+            var charts = new string[] { "Department", "PE", "Monthly", "Quarter", "Customer" };
+            var chartlist = new List<string>();
+            chartlist.AddRange(charts);
+            ViewBag.charttypelist = CreateSelectList(chartlist, "");
+
             if (string.IsNullOrEmpty(Request.Form["StartDate"])
                 || string.IsNullOrEmpty(Request.Form["EndDate"])
                 || (DateTime.Parse(Request.Form["StartDate"]) > DateTime.Parse(Request.Form["EndDate"])))
