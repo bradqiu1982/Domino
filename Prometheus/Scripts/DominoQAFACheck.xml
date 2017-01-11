@@ -1,0 +1,86 @@
+﻿<script type="text/javascript">
+  
+$(function () {
+
+    $('##ElementID#').highcharts({
+        title: {
+            text: '#Title#'
+        },
+        chart:
+        {
+          alignTicks: false
+        },
+        xAxis: {
+            categories: [#ChartxAxisValues#]
+        },
+        yAxis: [{
+            title: {
+                text: 'Amount'
+            },
+            stackLabels: {
+                enabled: true,
+                style: {
+                    fontWeight: 'bold',
+                    color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                }
+            },
+            min: 0,
+            max: #AmountMAX#
+        }, {
+            title: {
+                text: 'Percent'
+            },
+            min: 0,
+            max: 100,
+            gridLineWidth: 0,
+            tickPixelInterval: 36,
+            opposite: true
+        }],
+        plotOptions: {
+            column: {
+                stacking: 'normal',
+                dataLabels: {
+                    enabled: true,
+                    color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white'
+                }
+            },
+            line:
+            {
+              dataLabels:
+              {
+                enabled:true,
+                format: '{y} %'
+              }
+            }
+        },
+        series: [{
+            type: 'column',
+            name: 'Pass QTY',
+            data: [#PassQTY#],
+            yAxis:0,
+            color:'#90ed7d'
+        },
+        {
+            type: 'column',
+            name: 'Fail QTY',
+            data: [#FailQTY#],
+            yAxis:0,
+            color:'#f45b5b'
+        },
+        {
+            type: 'line',
+            name: 'Fail Rate',
+            data: [#FailRate#],
+            marker: {
+                lineWidth: 2,
+                fillColor: 'orange'
+            },
+            yAxis:1
+        }]
+    });
+});
+
+</script>
+
+
+

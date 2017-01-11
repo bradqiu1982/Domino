@@ -667,6 +667,7 @@
     <Content Include="Scripts\DominoCfg.txt" />
     <Content Include="Scripts\DominoComplex.xml" />
     <Content Include="Scripts\DominoCycleTime.xml" />
+    <Content Include="Scripts\DominoFABuilding.xml" />
     <Content Include="Scripts\DominoWorkLoad.xml" />
     <Content Include="Scripts\exporting.js" />
     <Content Include="Scripts\HeartBeat4Domino.exe" />
@@ -690,6 +691,7 @@
     <Content Include="Scripts\moment.min.js" />
     <Content Include="Scripts\ParetoChart.xml" />
     <Content Include="Scripts\PieChart.xml" />
+    <Content Include="Scripts\DominoQAFACheck.xml" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\SuperYield.xml" />
@@ -736,6 +738,8 @@
     <Content Include="Views\DominoReport\WorkLoad.cshtml" />
     <Content Include="Views\DominoReport\CycleTime.cshtml" />
     <Content Include="Views\DominoReport\Complex.cshtml" />
+    <Content Include="Views\DominoReport\QAFACheck.cshtml" />
+    <Content Include="Views\DominoReport\FABuilding.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="userfiles\docs\" />

@@ -71,14 +71,14 @@ $(function () {
             name: 'Engineering Aging',
             data: [#EngineeringAging#],
             yAxis:0,
-            color:'#4e8c23'
+            color:'#90ed7d'
         },
         {
             type: 'column',
             name: 'Change Delay Aging',
             data: [#ChangeDelayAging#],
             yAxis:0,
-            color:'#ff7f50'
+            color:'#f45b5b'
         },
         {
             type: 'column',

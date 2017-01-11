@@ -610,52 +610,60 @@ namespace Domino.Models
                     var ordinfos = new List<MiniPIPOrdeInfo>();
                     foreach (var line in alldata)
                     {
-                        var remotedrypn = baseinfo.PNDesc.Replace("xx-", "-");
-                        var localdrypn = string.Empty;
+                        var baseinfopn = string.Empty;
+                        var excelpn = string.Empty;
 
-                        if (line[19].Contains("-"))
+                        var expns = line[19].Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+                        foreach(var expn in expns)
                         {
-                            var lastidx = line[19].LastIndexOf("-")-2;
-                            var digitalsegment = line[19].Substring(lastidx, 2);
-                            if (IsDigitsOnly(digitalsegment))
+                            if (baseinfo.PNDesc.Contains("xx"))
                             {
-                                localdrypn = line[19].Replace(digitalsegment + "-", "-");
+                                var lastidx = baseinfo.PNDesc.LastIndexOf("xx");
+                                baseinfopn = baseinfo.PNDesc.Remove(lastidx, 2);
+
+                                if (expn.Length > (lastidx + 2))
+                                {
+                                   excelpn = expn.Remove(lastidx, 2);
+                                }
+                                else
+                                {
+                                    excelpn = expn;
+                                }
                             }
                             else
                             {
-                                localdrypn = line[19];
+                                 baseinfopn= baseinfo.PNDesc;
+                                 excelpn = expn;
                             }
-                        }
-                        else
-                        {
-                            localdrypn = line[19];
-                        }
 
-                        if (localdrypn.ToUpper().Contains(remotedrypn.ToUpper()))
-                        {
-                            if (lineiddict.ContainsKey(line[38]))
+
+                            if (expn.ToUpper().Contains(baseinfopn.ToUpper()))
                             {
-                                continue;
-                            }
-                            else
-                            {
-                                lineiddict.Add(line[38], true);
-                            }
+                                if (lineiddict.ContainsKey(line[38]))
+                                {
+                                    break;
+                                }
+                                else
+                                {
+                                    lineiddict.Add(line[38], true);
+                                }
 
-                            var tempinfo = new MiniPIPOrdeInfo();
-                            tempinfo.CardKey = cardkey;
-                            tempinfo.OrderType = line[0];
-                            tempinfo.OrderDate = line[1];
-                            tempinfo.SONum = line[15];
-                            tempinfo.Item = line[17];
-                            tempinfo.Description = line[19];
-                            tempinfo.QTY = line[21];
-                            tempinfo.SSD = line[25];
-                            tempinfo.Planner = line[27];
-                            tempinfo.LineID = line[38];
+                                var tempinfo = new MiniPIPOrdeInfo();
+                                tempinfo.CardKey = cardkey;
+                                tempinfo.OrderType = line[0];
+                                tempinfo.OrderDate = line[1];
+                                tempinfo.SONum = line[15];
+                                tempinfo.Item = line[17];
+                                tempinfo.Description = line[19];
+                                tempinfo.QTY = line[21];
+                                tempinfo.SSD = line[25];
+                                tempinfo.Planner = line[27];
+                                tempinfo.LineID = line[38];
 
-                            ordinfos.Add(tempinfo);
-                        }//end if
+                                ordinfos.Add(tempinfo);
+                                break;
+                            }//end if
+                        }//end foreach
                     }//end foreach
 
                     if (ordinfos.Count > 0 && currentcard.Count > 0)
@@ -701,19 +709,47 @@ namespace Domino.Models
                         var data = ExcelReader.RetrieveDataFromExcel(fn, null);
                         foreach (var line in data)
                         {
-                            if (string.Compare(line[3], "903") == 0
-                                && line[1].Contains(baseinfo.PNDesc))
+                            var baseinfopn = string.Empty;
+                            var excelpn = string.Empty;
+
+                            var expns = line[1].Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+                            foreach (var expn in expns)
                             {
-                                var tempinfo = new ECOJOOrderInfo();
-                                tempinfo.Description = line[1];
-                                tempinfo.Category = line[3];
-                                tempinfo.WipJob = line[11];
-                                tempinfo.JobStatus = line[14];
-                                tempinfo.SSTD = line[15];
-                                tempinfo.JOQTY = line[20];
-                                tempinfo.Planner = line[37];
-                                tempinfo.Creator = line[38];
-                                jolist.Add(tempinfo);
+                                if (baseinfo.PNDesc.Contains("xx"))
+                                {
+                                    var lastidx = baseinfo.PNDesc.LastIndexOf("xx");
+                                    baseinfopn = baseinfo.PNDesc.Remove(lastidx, 2);
+
+                                    if (expn.Length > (lastidx + 2))
+                                    {
+                                        excelpn = expn.Remove(lastidx, 2);
+                                    }
+                                    else
+                                    {
+                                        excelpn = expn;
+                                    }
+                                }
+                                else
+                                {
+                                    baseinfopn = baseinfo.PNDesc;
+                                    excelpn = expn;
+                                }
+
+                                if (string.Compare(line[3], "903") == 0
+                                && expn.ToUpper().Contains(baseinfopn.ToUpper()))
+                                {
+                                    var tempinfo = new ECOJOOrderInfo();
+                                    tempinfo.Description = line[1];
+                                    tempinfo.Category = line[3];
+                                    tempinfo.WipJob = line[11];
+                                    tempinfo.JobStatus = line[14];
+                                    tempinfo.SSTD = line[15];
+                                    tempinfo.JOQTY = line[20];
+                                    tempinfo.Planner = line[37];
+                                    tempinfo.Creator = line[38];
+                                    jolist.Add(tempinfo);
+                                    break;
+                                }
                             }
                         }
                     }
@@ -1055,6 +1091,95 @@ namespace Domino.Models
             }
             catch (Exception ex) { }
 
+        }
+
+        public static List<QACheckData> RetrieveAllQACheckInfo(Controller ctrl)
+        {
+            var ret = new List<QACheckData>();
+
+            var syscfgdict = GetSysConfig(ctrl);
+            var srcfile = syscfgdict["QAFACHECKCHART"];
+            var sheetname = syscfgdict["QAFACHECKCHARTSHEET"];
+            string datestring = DateTime.Now.ToString("yyyyMMdd");
+            string imgdir = ctrl.Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
+
+            try
+            {
+                if (!Directory.Exists(imgdir))
+                {
+                    Directory.CreateDirectory(imgdir);
+                }
+
+                if (System.IO.File.Exists(srcfile))
+                {
+                    try
+                    {
+                        var fn = imgdir + Path.GetFileNameWithoutExtension(srcfile) + DateTime.Now.ToString("yyyyMMddhhmmss")+ Path.GetExtension(srcfile);
+                        System.IO.File.Copy(srcfile, fn, true);
+                        var data = ExcelReader.RetrieveDataFromExcel(fn, sheetname);
+                        foreach (var line in data)
+                        {
+                            try
+                            {
+                                var tempinfo = new QACheckData();
+                                tempinfo.QADate = DateTime.Parse(line[0] + "-" + line[1] + "-" + line[2] + " 07:30:00");
+                                if (line[5].Contains("@"))
+                                {
+                                    tempinfo.PE = line[5].ToUpper();
+                                }
+                                else
+                                {
+                                    tempinfo.PE = (line[5].Replace(" ", ".") + "@finisar.com").ToUpper();
+                                }
+
+                                if (line[4].ToUpper().Contains("EEPROM") && line[4].ToUpper().Contains("FLI"))
+                                {
+                                    if (!string.IsNullOrEmpty(line[11]))
+                                    {
+                                        tempinfo.EEPROMPASS = Convert.ToInt32(line[11]);
+                                        tempinfo.FLIPASS = Convert.ToInt32(line[11]);
+                                    }
+                                    if (!string.IsNullOrEmpty(line[12]))
+                                    {
+                                        tempinfo.EEPROMFAIL = Convert.ToInt32(line[12]);
+                                        tempinfo.FLIFAIL = Convert.ToInt32(line[12]);
+                                    }
+                                    
+                                }
+                                else if (line[4].ToUpper().Contains("EEPROM"))
+                                {
+                                    if (!string.IsNullOrEmpty(line[11]))
+                                    {
+                                        tempinfo.EEPROMPASS = Convert.ToInt32(line[11]);
+                                    }
+                                    if (!string.IsNullOrEmpty(line[12]))
+                                    {
+                                        tempinfo.EEPROMFAIL = Convert.ToInt32(line[12]);
+                                    }
+                                }
+                                else if (line[4].ToUpper().Contains("FLI"))
+                                {
+                                    if (!string.IsNullOrEmpty(line[11]))
+                                    {
+                                        tempinfo.FLIPASS = Convert.ToInt32(line[11]);
+                                    }
+                                    if (!string.IsNullOrEmpty(line[12]))
+                                    {
+                                        tempinfo.FLIFAIL = Convert.ToInt32(line[12]);
+                                    }
+                                }
+                                ret.Add(tempinfo);
+                            }
+                            catch (Exception ex) { }
+                        }//end foreach
+                    }
+                    catch (Exception ex) { }
+
+                }
+            }
+            catch (Exception ex) { }
+
+            return ret;
         }
 
     }

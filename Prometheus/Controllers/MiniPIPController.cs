@@ -392,10 +392,20 @@ namespace Domino.Controllers
                 if (string.Compare(ecohold, DominoYESNO.YES) == 0)
                 {
                     baseinfos[0].MiniPIPStatus = DominoMiniPIPStatus.hold;
+                    if (DateTime.Parse(baseinfos[0].ECOHoldStartDate).ToString("yyyy-MM-dd").Contains("1982-05-06")
+                        && DateTime.Parse(baseinfos[0].ECOHoldEndDate).ToString("yyyy-MM-dd").Contains("1982-05-06"))
+                    {
+                        baseinfos[0].ECOHoldStartDate = DateTime.Now.ToString("yyyy-MM-dd") + " 07:30:00";
+                    }
                 }
                 else
                 {
                     baseinfos[0].MiniPIPStatus = DominoMiniPIPStatus.working;
+                    if (!DateTime.Parse(baseinfos[0].ECOHoldStartDate).ToString("yyyy-MM-dd").Contains("1982-05-06")
+                        && DateTime.Parse(baseinfos[0].ECOHoldEndDate).ToString("yyyy-MM-dd").Contains("1982-05-06"))
+                    {
+                        baseinfos[0].ECOHoldEndDate = DateTime.Now.ToString("yyyy-MM-dd") + " 07:30:00";
+                    }
                 }
 
                 baseinfos[0].UpdateECO();

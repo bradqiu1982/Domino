@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 
 namespace Domino.Models
 {
@@ -107,7 +108,7 @@ namespace Domino.Models
         private int EngineeringAgingTM { set; get; }
         private int TechReviewAgingTM { set; get; }
         private int CCBSignoffAgingTM { set; get; }
-        private int SampleShipAgingTM { set; get; }
+        public int SampleShipAgingTM { set; get; }
 
         public double MiniPIPApprovalAgingAVG
         {
@@ -311,26 +312,68 @@ namespace Domino.Models
         }
     }
 
+    public class QACheckData
+    {
+        public QACheckData()
+        {
+            EEPROMPASS = 0;
+            EEPROMFAIL = 0;
+            FLIPASS = 0;
+            FLIFAIL = 0;
+    }
+
+        public DateTime QADate { set; get; }
+        public string PE { set; get; }
+        public string Depart { set; get; }
+
+        public int EEPROMPASS { set; get; }
+        public int EEPROMFAIL { set; get; }
+        public int FLIPASS { set; get;}
+        public int FLIFAIL { set; get; }
+
+        public void AppendQAData(QACheckData qa)
+        {
+            EEPROMPASS = EEPROMPASS+qa.EEPROMPASS;
+            EEPROMFAIL = EEPROMFAIL+qa.EEPROMFAIL;
+            FLIPASS = FLIPASS+qa.FLIPASS;
+            FLIFAIL = FLIFAIL+qa.FLIFAIL;
+        }
+    }
+
+
     public class DominoRPVM
     {
         private static string WorkLoadStatus(DateTime startdate, DateTime enddate, WorkLoadData workloaddata)
         {
             if (workloaddata.InitReceiveDate >= startdate && workloaddata.InitReceiveDate <= enddate)
             {
-                if (enddate >= workloaddata.InitReceiveDate && enddate < workloaddata.HoldStartDate)
+                if (workloaddata.HoldStartDate  > workloaddata.InitReceiveDate 
+                    && workloaddata.HoldEndDate < workloaddata.ECOSubmitDate
+                    && workloaddata.HoldEndDate > workloaddata.HoldStartDate)
                 {
-                    return DominoCardType.ECOPending;
+                    if (enddate >= workloaddata.InitReceiveDate && enddate < workloaddata.HoldStartDate)
+                    {
+                        return DominoCardType.ECOPending;
+                    }
+
+                    if (enddate >= workloaddata.HoldStartDate && enddate < workloaddata.HoldEndDate)
+                    {
+                        return DominoCardType.Hold;
+                    }
+
+                    if (enddate >= workloaddata.HoldEndDate && enddate < workloaddata.ECOSubmitDate)
+                    {
+                        return DominoCardType.ECOPending;
+                    }
+                }
+                else
+                {
+                    if (enddate >= workloaddata.InitReceiveDate && enddate < workloaddata.ECOSubmitDate)
+                    {
+                        return DominoCardType.ECOPending;
+                    }
                 }
 
-                if (enddate >= workloaddata.HoldStartDate && enddate < workloaddata.HoldEndDate)
-                {
-                    return DominoCardType.Hold;
-                }
-
-                if (enddate >= workloaddata.HoldEndDate && enddate < workloaddata.ECOSubmitDate)
-                {
-                    return DominoCardType.ECOPending;
-                }
 
                 if (enddate >= workloaddata.ECOSubmitDate && enddate < workloaddata.ECOCompleteDate)
                 {
@@ -349,19 +392,32 @@ namespace Domino.Models
             {
                 if (startdate > workloaddata.InitReceiveDate && startdate <= workloaddata.ECOCompleteDate)
                 {
-                    if (enddate >= workloaddata.InitReceiveDate && enddate < workloaddata.HoldStartDate)
-                    {
-                        return DominoCardType.ECOPending;
-                    }
 
-                    if (enddate >= workloaddata.HoldStartDate && enddate < workloaddata.HoldEndDate)
+                    if (workloaddata.HoldStartDate > workloaddata.InitReceiveDate
+                    && workloaddata.HoldEndDate < workloaddata.ECOSubmitDate
+                    && workloaddata.HoldEndDate > workloaddata.HoldStartDate)
                     {
-                        return DominoCardType.Hold;
-                    }
+                        if (enddate >= workloaddata.InitReceiveDate && enddate < workloaddata.HoldStartDate)
+                        {
+                            return DominoCardType.ECOPending;
+                        }
 
-                    if (enddate >= workloaddata.HoldEndDate && enddate < workloaddata.ECOSubmitDate)
+                        if (enddate >= workloaddata.HoldStartDate && enddate < workloaddata.HoldEndDate)
+                        {
+                            return DominoCardType.Hold;
+                        }
+
+                        if (enddate >= workloaddata.HoldEndDate && enddate < workloaddata.ECOSubmitDate)
+                        {
+                            return DominoCardType.ECOPending;
+                        }
+                    }
+                    else
                     {
-                        return DominoCardType.ECOPending;
+                        if (enddate >= workloaddata.InitReceiveDate && enddate < workloaddata.ECOSubmitDate)
+                        {
+                            return DominoCardType.ECOPending;
+                        }
                     }
 
                     if (enddate >= workloaddata.ECOSubmitDate && enddate < workloaddata.ECOCompleteDate)
@@ -432,6 +488,9 @@ namespace Domino.Models
                     {
                         tempworkload.ECOCompleteDate = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd") + " 07:30:00").AddDays(60);
                     }
+
+                    //tempworkload.HoldStartDate = DateTime.Parse(eco.ECOHoldStartDate);
+                    //tempworkload.HoldEndDate = DateTime.Parse(eco.ECOHoldEndDate);
 
                     tempworkload.HoldStartDate = tempworkload.InitReceiveDate.AddDays(3);
                     tempworkload.HoldEndDate = tempworkload.ECOSubmitDate.AddDays(-3);
@@ -942,6 +1001,61 @@ namespace Domino.Models
 
             return ret;
         }
+
+
+        public static Dictionary<string, QACheckData> RetrieveDepartQACheckData(Controller ctrl,DateTime StartDate,DateTime EndDate)
+        {
+            var alllist = DominoDataCollector.RetrieveAllQACheckInfo(ctrl);
+            var datelist = new List<QACheckData>();
+            foreach (var qacheck in alllist)
+            {
+                if (qacheck.QADate >= StartDate && qacheck.QADate <= EndDate)
+                {
+                    datelist.Add(qacheck);
+                }
+            }
+
+            var udlist = DominoUserViewModels.RetrieveAllUserDepart();
+            var uddict = new Dictionary<string, string>();
+            foreach (var ud in udlist)
+            {
+                uddict.Add(ud.UserName, ud.Depart);
+            }
+
+            var departqa = new List<QACheckData>();
+            foreach (var wkl in datelist)
+            {
+                if (uddict.ContainsKey(wkl.PE))
+                {
+                    wkl.Depart = uddict[wkl.PE];
+                    departqa.Add(wkl);
+                }
+            }
+
+            var ret = new Dictionary<string, QACheckData>();
+            var departs = DominoUserViewModels.RetrieveAllDepartment();
+            foreach (var dpt in departs)
+            {
+                foreach (var wkl in departqa)
+                {
+                    if (string.Compare(dpt, wkl.Depart) == 0)
+                    {
+                        if (ret.ContainsKey(dpt))
+                        {
+                            ret[dpt].AppendQAData(wkl);
+                        }
+                        else
+                        {
+                            ret.Add(dpt, new QACheckData());
+                            ret[dpt].AppendQAData(wkl);
+                        }
+                    }//end if
+                }//foreach
+            }//foreach
+            return ret;
+        }
+
+
 
 
     }

@@ -1,0 +1,78 @@
+﻿<script type="text/javascript">
+  
+$(function () {
+
+    $('##ElementID#').highcharts({
+        title: {
+            text: '#Title#'
+        },
+        chart:
+        {
+          alignTicks: false
+        },
+        xAxis: {
+            categories: [#ChartxAxisValues#]
+        },
+        yAxis: [{
+            title: {
+                text: 'Day'
+            },
+            stackLabels: {
+                enabled: true,
+                style: {
+                    fontWeight: 'bold',
+                    color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                }
+            },
+            min: #DayMIN#,
+            max: #DayMAX#
+        }, {
+            title: {
+                text: 'Amount'
+            },
+            min: 0,
+            max: #AmountMAX#,
+            gridLineWidth: 0,
+            tickPixelInterval: 36,
+            opposite: true
+        }],
+        plotOptions: {
+            column: {
+                stacking: 'normal',
+                dataLabels: {
+                    enabled: true,
+                    color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'black'
+                }
+            },
+            line:
+            {
+              dataLabels:
+              {
+                enabled:true
+              }
+            }
+        },
+        series: [{
+            type: 'column',
+            name: 'FA Building',
+            data: [#SampleShipAging#],
+            yAxis:0,
+            color:'#90ed7d'
+        },
+        {
+            type: 'line',
+            name: 'Total MiniPIPs',
+            data: [#TotalMiniPIPs#],
+            marker: {
+                lineWidth: 2,
+                fillColor: 'orange'
+            },
+            yAxis:1
+        }]
+    });
+});
+
+</script>
+
+
+
