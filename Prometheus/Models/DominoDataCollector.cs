@@ -735,7 +735,7 @@ namespace Domino.Models
                                     excelpn = expn;
                                 }
 
-                                if (string.Compare(line[3], "903") == 0
+                                if ((string.Compare(line[3], "903") == 0 || string.Compare(line[3], "919") == 0)
                                 && expn.ToUpper().Contains(baseinfopn.ToUpper()))
                                 {
                                     var tempinfo = new ECOJOOrderInfo();
