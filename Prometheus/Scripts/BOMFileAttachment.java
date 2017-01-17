@@ -1,38 +1,13 @@
 package mytest;
 
-import java.io.BufferedOutputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.Console;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
-import java.nio.file.attribute.FileAttribute;
+import java.io.*;
+import java.net.*;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.ResourceBundle;
-
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
-
-import com.agile.api.IAgileSession;
-import com.agile.api.APIException;
-import com.agile.api.AgileSessionFactory;
-import com.agile.api.ChangeConstants;
-import com.agile.api.IAgileObject;
-import com.agile.api.IAttachmentFile;
-import com.agile.api.IChange;
-import com.agile.api.IItem;
-import com.agile.api.IRow;
-import com.agile.api.ITable;
-import com.agile.api.ItemConstants;
+import com.agile.api.*;
 
 class MyLog
 {
@@ -68,6 +43,56 @@ public class BOMFileAttachment {
 	public static final MyLog goLogger =new MyLog();//Logger.getLogger("C:\\Agile\\mylog.txt");//Logger.getLogger(BOMFileAttachment.class);
 	public IAgileSession ses=null;
     
+	private static boolean CreateDir(String dirstr)
+	{
+		File dir = new File(dirstr);
+		if(!dir.exists())
+		{
+			try
+			{
+				dir.mkdirs();
+				return true;
+			}
+			catch(Exception ex)
+			{
+				goLogger.error("\n fail to create directory : "+ dirstr);
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	private static void NoticDomino(String econum)
+	{
+		try
+		{
+			goLogger.info( "try to query: "+"http://localhost:8080/Domino/MiniPIP/AgileDownload?ECONUM="+econum);
+			
+			URL url = new URL("http://localhost:8080/Domino/MiniPIP/AgileDownload?ECONUM="+econum);
+	        URLConnection URLconnection = url.openConnection();  
+	        HttpURLConnection httpConnection = (HttpURLConnection)URLconnection;  
+	        int responseCode = httpConnection.getResponseCode();
+	        if (responseCode == HttpURLConnection.HTTP_OK) {  
+	        	goLogger.info("Query HTTP server successfully");
+	        	
+	        	InputStream urlStream = httpConnection.getInputStream();  
+	            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlStream));  
+	            String sCurrentLine = "";  
+	            while ((sCurrentLine = bufferedReader.readLine()) != null) {  
+	            	goLogger.info( sCurrentLine);
+	            }  
+	        }
+	        else
+	        {
+	        	goLogger.error("Fail to access url:"+"http://localhost:8080/Domino/MiniPIP/AgileDownload?ECONUM="+econum);
+	        }
+		}catch(Exception ex)
+		{
+			goLogger.error("Fail to query url:"+ex.getMessage());			
+		}				
+	}
+	
    // main method.. 
 	public static void main(String[] args) throws Exception
 	{
@@ -76,19 +101,10 @@ public class BOMFileAttachment {
 		{
 			goLogger.info("\njava main...param 1 is "+args[0]);
 			
-			File dir = new File("d:\\Agile\\"+args[0]);
-			if(!dir.exists())
-			{
-				try
-				{
-					dir.mkdir();
-				}
-				catch(Exception ex)
-				{
-					goLogger.error("\njava main... exit for fail to create directory");
-				}
-			}
-			
+			boolean ret = CreateDir("d:\\Agile\\"+args[0]);
+			if(!ret)
+				return;
+
 			BOMFileAttachment gfa=new BOMFileAttachment();
 			//int flag = gfa.getAgileFilesByName(args[0],args[1],args[2],"mkbomctx","agiledll");
 			//int flag = gfa.getAgileFilesByName("E150570","Checklist","d:\\Agile\\Temp\\","mkbomctx","agiledll");
@@ -96,17 +112,23 @@ public class BOMFileAttachment {
 			//int flag = gfa.getAgileFilesByName("38200039","Cfg_Avanex_Modulator_MPL.xml","d:\\Agile\\Temp\\","mkbomctx","agiledll");
 			int flag = gfa.getAgileFilesByName(args[0],"d:\\Agile\\"+args[0]+"\\","mkbomctx","agiledll");
 			goLogger.info("getFileAttachment() returned "+flag);
+			if(flag == -1)
+			{
+				return;
+			}
 		}
 		else
 		{
 			goLogger.error("\njava main... exit for arg problem");
+			return;
 		}
+		
+		NoticDomino(args[0]);
 	}
 	
 	// Getting Agile Session
 	 public void getAgileSession(String user,String password) 
 	 {
-		//String url=rb.getObject("agile.url").toString();
 		String url="http://sny-agile9app-p64:7001/Agile";
 		String uname=user;
 		String upwd=password;
