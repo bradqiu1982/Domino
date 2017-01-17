@@ -15,6 +15,21 @@
                     </div>
                 </div>
                 <div class="row col-lg-6">
+                    <div class="row col-lg-3">
+
+                    </div>
+                    <div class="row col-lg-6">
+                        <button class="form-control" type="button" value="@ViewBag.CardKey" onclick="AgileFileDownload(this)">Agile File DownLoad</button>
+                    </div>
+                    <div class="row col-lg-3">
+
+                    </div>
+                    <script type="text/javascript">
+                        function AgileFileDownload(oBT)
+                        {
+                            window.location.href = '/Domino/MiniPIP/AgileFileDownload?CardKey=' + oBT.value;
+                        }
+                    </script>
                 </div>
             </div>
 
@@ -61,13 +76,27 @@
 
             <div class="form-group">
                 <div class="row col-lg-12">
-                    <label class="control-label col-lg-1 text-left">ECO QR File</label>
+                    <div class="col-lg-2 text-left">
+                        <label class="control-label text-left">ECO QR File</label>
+                    </div>
+
                     @if (!string.IsNullOrEmpty(ViewBag.CurrentCard.ECOQRFile))
                     {
-                        var fns = ViewBag.CurrentCard.ECOQRFile.Split(new char[] { '/' });
-                        var fn = fns[fns.Length - 1];
-                        <div class="col-lg-11 text-left">
-                            <a href="@ViewBag.CurrentCard.ECOQRFile" target="_blank">@fn</a>
+                        var fns = ViewBag.CurrentCard.ECOQRFile.Split(new string[] { ":::" }, StringSplitOptions.RemoveEmptyEntries);
+                        <div class="col-lg-10 text-left">
+                            <table>
+                                <tbody>
+                                    @foreach (var fn in fns)
+                                    {
+                                        var realname = fn.Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
+                                        <tr>
+                                            <td>
+                                                <a href="@fn" target="_blank">@(realname[realname.Length - 1])</a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
                         </div>
                     }
                     else
@@ -78,13 +107,26 @@
             </div>
             <div class="form-group">
                 <div class="row col-lg-12">
-                    <label class="control-label col-lg-1 text-left">EEPROM Peer Review</label>
+                    <div class="col-lg-2 text-left">
+                        <label class="control-label text-left">EEPROM Peer Review</label>
+                    </div>
                     @if (!string.IsNullOrEmpty(ViewBag.CurrentCard.EEPROMPeerReview))
                     {
-                        var fns = ViewBag.CurrentCard.EEPROMPeerReview.Split(new char[] { '/' });
-                        var fn = fns[fns.Length - 1];
-                        <div class="col-lg-11 text-left">
-                            <a href="@ViewBag.CurrentCard.EEPROMPeerReview" target="_blank">@fn</a>
+                        var fns = ViewBag.CurrentCard.EEPROMPeerReview.Split(new string[] { ":::" }, StringSplitOptions.RemoveEmptyEntries);
+                        <div class="col-lg-10 text-left">
+                            <table>
+                                <tbody>
+                                    @foreach (var fn in fns)
+                                    {
+                                        var realname = fn.Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
+                                        <tr>
+                                            <td>
+                                                <a href="@fn" target="_blank">@(realname[realname.Length - 1])</a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
                         </div>
                     }
                     else
@@ -95,13 +137,26 @@
             </div>
             <div class="form-group">
                 <div class="row col-lg-12">
-                    <label class="control-label col-lg-1 text-left">ECO Traceview</label>
+                    <div class="col-lg-2 text-left">
+                        <label class="control-label text-left">ECO Traceview</label>
+                    </div>
                     @if (!string.IsNullOrEmpty(ViewBag.CurrentCard.ECOTraceview))
                     {
-                        var fns = ViewBag.CurrentCard.ECOTraceview.Split(new char[] { '/' });
-                        var fn = fns[fns.Length - 1];
-                        <div class="col-lg-11 text-left">
-                            <a href="@ViewBag.CurrentCard.ECOTraceview" target="_blank">@fn</a>
+                        var fns = ViewBag.CurrentCard.ECOTraceview.Split(new string[] { ":::" }, StringSplitOptions.RemoveEmptyEntries);
+                        <div class="col-lg-10 text-left">
+                            <table>
+                                <tbody>
+                                    @foreach (var fn in fns)
+                                    {
+                                        var realname = fn.Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
+                                        <tr>
+                                            <td>
+                                                <a href="@fn" target="_blank">@(realname[realname.Length - 1])</a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
                         </div>
                     }
                     else
@@ -112,13 +167,26 @@
             </div>
             <div class="form-group">
                 <div class="row col-lg-12">
-                    <label class="control-label col-lg-1 text-left">Spec Compresuite</label>
+                    <div class="col-lg-2 text-left">
+                        <label class="control-label text-left">Spec Compresuite</label>
+                    </div>
                     @if (!string.IsNullOrEmpty(ViewBag.CurrentCard.SpecCompresuite))
                     {
-                        var fns = ViewBag.CurrentCard.SpecCompresuite.Split(new char[] { '/' });
-                        var fn = fns[fns.Length - 1];
-                        <div class="col-lg-11 text-left">
-                            <a href="@ViewBag.CurrentCard.SpecCompresuite" target="_blank">@fn</a>
+                        var fns = ViewBag.CurrentCard.SpecCompresuite.Split(new string[] { ":::" }, StringSplitOptions.RemoveEmptyEntries);
+                        <div class="col-lg-10 text-left">
+                            <table>
+                                <tbody>
+                                    @foreach (var fn in fns)
+                                    {
+                                        var realname = fn.Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
+                                        <tr>
+                                            <td>
+                                                <a href="@fn" target="_blank">@(realname[realname.Length - 1])</a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
                         </div>
                     }
                     else
