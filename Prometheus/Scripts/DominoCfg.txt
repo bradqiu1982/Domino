@@ -1,19 +1,40 @@
-﻿MINIPIPECOFOLDER:::\\Sny-netapp-01\share_ipoh\Department\Product Engineering\Mini-PIP's
+﻿##MINIPIPECOFOLDER:::\\Sny-netapp-01\share_ipoh\Department\Product Engineering\Mini-PIP's
+##MINIPIPECOFILENAME:::Mini-PIP_log_current.xlsm
+##MINIPIPSHEETNAME:::Mini-PIP
+##MINIPIPCUSTOMERFOLDER:::\\Sny-netapp-01\share_ipoh\Department\Product Engineering\Mini-PIP's
+##QAEEPROMFAI:::\\wux-fs\PUBLIC\Quality\31. Parallel TQM\3_FAI Check\FAI-EEPROM
+##QALABELFAI:::\\wux-fs\PUBLIC\Quality\31. Parallel TQM\3_FAI Check\FLI
+##QAEEPROMCHECKLISTFILTER:::CHECKLISTEEPROM
+##QALABELFILTER:::_FAI_
+##WEEKLYUPDATE:::\\cn-file01\Public\Active NPI\Product_Engineering\PE_Weekly report\MiniPIP report\MINIPIP Progress\
+##ORDERINFOPATH:::\\wux-fs\public\ERP_Report\WXI\Planning\Backlog Report
+##JOORDERINFO:::\\wux-fs\PUBLIC\ERP_Report\WXI\Planning\WXI Finisar WIP Value Report.xls
+####JO1STCHECKINFO:::\\cn-file01\Public\Active NPI\Product_Engineering\PE_Weekly report\MiniPIP report\FA JO checklist_Engineering.xlsx
+####JO2NDCHECKINFO:::\\wux-file01\Public\Quality\31. Parallel TQM\3_FAI Check
+##JO2MAINSTORE:::\\wux-fs\PUBLIC\ERP_Report\WXI\Planning\WXI Finisar WIP Value Report.xls
+##SHIPMENTINFOPATH:::\\wux-fs\PUBLIC\ERP_Report\WXI\Planning\Finisar - OTSv2 for WXI.csv
+##SHIPMENTINFOSHEETNAME:::Finisar - OTSv2 for WXI
+##QAFACHECKCHART:::\\wux-fs\PUBLIC\Quality\31. Parallel TQM\3_FAI Check\FAI summary.xlsx
+##QAFACHECKCHARTSHEET:::EEPROM&FLI Data Resource
+##JO1STCHECKINFO:::\\wux-fs\public\Project\CFP\OQC\FA JO checklist_Engineering.xlsx
+##JO2NDCHECKINFO:::\\wux-fs\public\Project\CFP\OQC
+
+MINIPIPECOFOLDER:::\\wux-fs\public\Project\CFP\OQC
 MINIPIPECOFILENAME:::Mini-PIP_log_current.xlsm
 MINIPIPSHEETNAME:::Mini-PIP
+MINIPIPCUSTOMERFOLDER:::\\Sny-netapp-01\share_ipoh\Department\Product Engineering\Mini-PIP's
 QAEEPROMFAI:::\\wux-fs\PUBLIC\Quality\31. Parallel TQM\3_FAI Check\FAI-EEPROM
 QALABELFAI:::\\wux-fs\PUBLIC\Quality\31. Parallel TQM\3_FAI Check\FLI
 QAEEPROMCHECKLISTFILTER:::CHECKLISTEEPROM
 QALABELFILTER:::_FAI_
 WEEKLYUPDATE:::\\cn-file01\Public\Active NPI\Product_Engineering\PE_Weekly report\MiniPIP report\MINIPIP Progress\
-ORDERINFOPATH:::\\wux-fs\public\ERP_Report\WXI\Planning\Backlog Report
-JOORDERINFO:::\\wux-fs\PUBLIC\ERP_Report\WXI\Planning\WXI Finisar WIP Value Report.xls
+ORDERINFOPATH:::\\wux-fs\public\Project\CFP\OQC
+JOORDERINFO:::\\wux-fs\public\Project\CFP\OQC\WXI Finisar WIP Value Report.xls
 ##JO1STCHECKINFO:::\\cn-file01\Public\Active NPI\Product_Engineering\PE_Weekly report\MiniPIP report\FA JO checklist_Engineering.xlsx
 ##JO2NDCHECKINFO:::\\wux-file01\Public\Quality\31. Parallel TQM\3_FAI Check
 JO2MAINSTORE:::\\wux-fs\PUBLIC\ERP_Report\WXI\Planning\WXI Finisar WIP Value Report.xls
-SHIPMENTINFOPATH:::\\wux-fs\PUBLIC\ERP_Report\WXI\Planning\Finisar - OTSv2 for WXI.csv
-SHIPMENTINFOSHEETNAME:::Finisar - OTSv2 for WXI
-QAFACHECKCHART:::\\wux-fs\PUBLIC\Quality\31. Parallel TQM\3_FAI Check\FAI summary.xlsx
+SHIPMENTINFOPATH:::\\wux-fs\public\Project\CFP\OQC
+QAFACHECKCHART:::\\wux-fs\public\Project\CFP\OQC\FAI summary.xlsx
 QAFACHECKCHARTSHEET:::EEPROM&FLI Data Resource
 JO1STCHECKINFO:::\\wux-fs\public\Project\CFP\OQC\FA JO checklist_Engineering.xlsx
 JO2NDCHECKINFO:::\\wux-fs\public\Project\CFP\OQC

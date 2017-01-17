@@ -7,7 +7,7 @@ using Domino.Models;
 using System.Reflection;
 using System.Web.Routing;
 using System.IO;
-
+using System.Diagnostics;
 
 namespace Domino.Controllers
 {
@@ -1956,6 +1956,114 @@ namespace Domino.Controllers
             return RedirectToAction(vm[0].CardType, "MiniPIP", dict);
 
         }
+
+        public ActionResult AgileFileDownload(string CardKey)
+        {
+            var vm = DominoVM.RetrieveCard(CardKey);
+
+            var baseinfo = ECOBaseInfo.RetrieveECOBaseInfo(vm[0].ECOKey);
+            if (baseinfo.Count > 0)
+            {
+                using (Process myprocess = new Process())
+                {
+                    myprocess.StartInfo.FileName = Path.Combine(System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath, @"Scripts\agiledownloadwraper\AgileDownload.exe").Replace("\\", "/");
+                    myprocess.StartInfo.Arguments = baseinfo[0].ECONum;
+                    myprocess.StartInfo.CreateNoWindow = true;
+                    myprocess.Start();
+                }
+            }
+
+            var dict = new RouteValueDictionary();
+            dict.Add("ECOKey", vm[0].ECOKey);
+            dict.Add("CardKey", vm[0].CardKey);
+            return RedirectToAction(vm[0].CardType, "MiniPIP", dict);
+        }
+
+        private void StoreAgileAttch(string ECONUM,List<DominoVM> vm)
+        {
+            var dir = "D:\\Agile\\" + ECONUM;
+            if (Directory.Exists(dir))
+            {
+                string datestring = DateTime.Now.ToString("yyyyMMdd");
+                string imgdir = Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
+                if (!Directory.Exists(imgdir))
+                {
+                    Directory.CreateDirectory(imgdir);
+                }
+
+
+                var cardinfo = DominoVM.RetrieveSignoffInfo(vm[0].CardKey);
+
+                var files = Directory.EnumerateFiles(dir);
+                foreach (var fl in files)
+                {
+                    var fn = Path.GetFileName(fl);
+                    var desfn = imgdir + fn;
+                    var url = "/userfiles/docs/" + datestring + "/" + fn;
+
+                    if (fl.ToUpper().Contains("QR_")
+                        || fl.ToUpper().Contains("QUALIFICATION"))
+                    {
+                                
+                        if (!cardinfo.ECOQRFile.Contains(fn))
+                        {
+                            System.IO.File.Copy(fl, desfn, true);
+                            cardinfo.ECOQRFile = cardinfo.ECOQRFile + url + ":::";
+                        }
+                    }
+                    else if (fl.ToUpper().Contains("PEER")
+                        && fl.ToUpper().Contains("REVIEW"))
+                    {
+                        if (!cardinfo.EEPROMPeerReview.Contains(fn))
+                        {
+                            System.IO.File.Copy(fl, desfn, true);
+                            cardinfo.EEPROMPeerReview = cardinfo.EEPROMPeerReview + url + ":::";
+                        }
+                    }
+                    else if (fl.ToUpper().Contains("TRACEVIEW"))
+                    {
+                        if (!cardinfo.ECOTraceview.Contains(fn))
+                        {
+                            System.IO.File.Copy(fl, desfn, true);
+                            cardinfo.ECOTraceview = cardinfo.ECOTraceview + url + ":::";
+                        }
+                    }
+                    else if (fl.ToUpper().Contains("COMPARE"))
+                    {
+                        if (!cardinfo.SpecCompresuite.Contains(fn))
+                        {
+                            System.IO.File.Copy(fl, desfn, true);
+                            cardinfo.SpecCompresuite = cardinfo.SpecCompresuite + url + ":::";
+                        }
+                    }
+                }
+
+                cardinfo.UpdateSignoffInfo(vm[0].CardKey);
+            }
+        }
+
+        public ActionResult AgileDownload(string ECONUM)
+        {
+            var ecoinfo = ECOBaseInfo.RetrieveECOBaseInfoWithECONum(ECONUM);
+            if (ecoinfo.Count > 0)
+            {
+                var vm = DominoVM.RetrieveSpecialCard(ecoinfo[0], DominoCardType.ECOSignoff1);
+                if (vm.Count > 0)
+                {
+                    StoreAgileAttch(ECONUM,vm);
+                }
+                else
+                {
+                    vm = DominoVM.RetrieveSpecialCard(ecoinfo[0], DominoCardType.ECOSignoff2);
+                    if (vm.Count > 0)
+                    {
+                        StoreAgileAttch(ECONUM, vm);
+                    }
+                }
+            }
+            return View();
+        }
+
 
         private List<string> ReceiveRMAFiles()
         {

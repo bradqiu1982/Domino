@@ -124,12 +124,12 @@ namespace Domino.Models
                     catch (Exception ex)
                     { initialmini = string.Empty; }
 
-                    if (string.IsNullOrEmpty(initialmini)
-                        || DateTime.Parse(initialmini) > DateTime.Parse("2016-9-30 10:00:00")
-                        || DateTime.Parse(initialmini) < DateTime.Parse("2016-9-1 10:00:00"))
-                    {
-                        continue;
-                    }
+                    //if (string.IsNullOrEmpty(initialmini)
+                    //    || DateTime.Parse(initialmini) > DateTime.Parse("2016-9-30 10:00:00")
+                    //    || DateTime.Parse(initialmini) < DateTime.Parse("2016-9-1 10:00:00"))
+                    //{
+                    //    continue;
+                    //}
 
                     var baseinfo = new ECOBaseInfo();
                     baseinfo.PNDesc = line[2];
@@ -193,7 +193,7 @@ namespace Domino.Models
                                 var allattach = DominoVM.RetrieveCardExistedAttachment(pendingcard[0].CardKey);
 
                                 var customerfold = new List<string>();
-                                var allcustomerfolder = Directory.EnumerateDirectories(syscfgdict["MINIPIPECOFOLDER"]);
+                                var allcustomerfolder = Directory.EnumerateDirectories(syscfgdict["MINIPIPCUSTOMERFOLDER"]);
                                 foreach (var cf in allcustomerfolder)
                                 {
                                     var lastlevelfd = cf.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
@@ -266,7 +266,7 @@ namespace Domino.Models
                         }
 
                         var customerfold = new List<string>();
-                        var allcustomerfolder = Directory.EnumerateDirectories(syscfgdict["MINIPIPECOFOLDER"]);
+                        var allcustomerfolder = Directory.EnumerateDirectories(syscfgdict["MINIPIPCUSTOMERFOLDER"]);
                         foreach (var cf in allcustomerfolder)
                         {
                             var lastlevelfd = cf.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
@@ -637,7 +637,7 @@ namespace Domino.Models
                             }
 
 
-                            if (expn.ToUpper().Contains(baseinfopn.ToUpper()))
+                            if (excelpn.ToUpper().Contains(baseinfopn.ToUpper()))
                             {
                                 if (lineiddict.ContainsKey(line[38]))
                                 {
@@ -736,7 +736,7 @@ namespace Domino.Models
                                 }
 
                                 if ((string.Compare(line[3], "903") == 0 || string.Compare(line[3], "919") == 0)
-                                && expn.ToUpper().Contains(baseinfopn.ToUpper()))
+                                && excelpn.ToUpper().Contains(baseinfopn.ToUpper()))
                                 {
                                     var tempinfo = new ECOJOOrderInfo();
                                     tempinfo.Description = line[1];
@@ -1041,8 +1041,11 @@ namespace Domino.Models
 
             string datestring = DateTime.Now.ToString("yyyyMMdd");
             string imgdir = ctrl.Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
-            var desfile = syscfgdict["SHIPMENTINFOPATH"];
-            var sheetname = syscfgdict["SHIPMENTINFOSHEETNAME"];
+
+            //var desfile = syscfgdict["SHIPMENTINFOPATH"];
+            //var sheetname = syscfgdict["SHIPMENTINFOSHEETNAME"];
+
+            var desfolder = syscfgdict["SHIPMENTINFOPATH"];
 
             var jolist = new List<ECOShipInfo>();
 
@@ -1053,8 +1056,21 @@ namespace Domino.Models
                     Directory.CreateDirectory(imgdir);
                 }
 
+                var fs = Directory.EnumerateFiles(desfolder);
+                var desfile = string.Empty;
+                foreach (var f in fs)
+                {
+                    if (Path.GetFileName(f).Contains("Finisar - OTS"))
+                    {
+                        desfile = f;
+                        break;
+                    }
+                }
+                
+
                 if (System.IO.File.Exists(desfile))
                 {
+                    var sheetname = Path.GetFileNameWithoutExtension(desfile);
                     try
                     {
                         var fn = imgdir + Path.GetFileName(desfile);

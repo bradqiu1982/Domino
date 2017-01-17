@@ -703,6 +703,53 @@ namespace Domino.Models
         }
 
 
+        public static List<ECOBaseInfo> RetrieveECOBaseInfoWithECONum(string ECONum)
+        {
+            var ret = new List<ECOBaseInfo>();
+            var sql = "select ECOKey,ECONum,ECOType,PNDesc,Customer,Complex,RSM,PE,RiskBuild,InitRevison,FinalRevison"
+                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement,FACustomerApproval,MiniPIPStatus,ECOHoldStartDate,ECOHoldEndDate from ECOBaseInfo where ECONum='<ECONum>'";
+            sql = sql.Replace("<ECONum>", ECONum);
+
+            var dbret = DBUtility.ExeLocalSqlWithRes(sql);
+            foreach (var line in dbret)
+            {
+                var tempitem = new ECOBaseInfo();
+                tempitem.ECOKey = Convert.ToString(line[0]);
+                tempitem.ECONum = Convert.ToString(line[1]);
+                tempitem.ECOType = Convert.ToString(line[2]);
+                tempitem.PNDesc = Convert.ToString(line[3]);
+                tempitem.Customer = Convert.ToString(line[4]);
+                tempitem.Complex = Convert.ToString(line[5]);
+                tempitem.RSM = Convert.ToString(line[6]);
+                tempitem.PE = Convert.ToString(line[7]);
+                tempitem.RiskBuild = Convert.ToString(line[8]);
+
+                tempitem.InitRevison = ConvertToDate(line[9]);
+                tempitem.FinalRevison = ConvertToDate(line[10]);
+                tempitem.TLAAvailable = ConvertToDate(line[11]);
+                tempitem.OpsEntry = ConvertToDate(line[12]);
+                tempitem.TestModification = ConvertToDate(line[13]);
+                tempitem.ECOSubmit = ConvertToDate(line[14]);
+                tempitem.ECOReviewSignoff = ConvertToDate(line[15]);
+                tempitem.ECOCCBSignoff = ConvertToDate(line[16]);
+
+                tempitem.QTRInit = Convert.ToString(line[17]);
+                tempitem.MCOIssued = Convert.ToString(line[18]);
+                tempitem.FirstArticleNeed = Convert.ToString(line[19]);
+                tempitem.FlowInfo = Convert.ToString(line[20]);
+                tempitem.PNImplement = Convert.ToString(line[21]);
+                tempitem.FACustomerApproval = Convert.ToString(line[22]);
+                tempitem.MiniPIPStatus = Convert.ToString(line[23]);
+
+                tempitem.ECOHoldStartDate = Convert.ToString(line[24]);
+                tempitem.ECOHoldEndDate = Convert.ToString(line[25]);
+
+                ret.Add(tempitem);
+            }
+
+            return ret;
+        }
+
     }
 
     public class DominoVM

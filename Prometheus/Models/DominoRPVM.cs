@@ -39,7 +39,7 @@ namespace Domino.Models
             OpsEntry=string.Empty;
             TestModification=string.Empty;
             ECOSubmit=string.Empty;
-            ECOReviewSignoff=string.Empty;
+            ECOTRSignoff=string.Empty;
             ECOCCBSignoff=string.Empty;
             ECOCompleteDate=string.Empty;
             SampleShipDate=string.Empty;
@@ -58,7 +58,7 @@ namespace Domino.Models
         public string OpsEntry { set; get; }
         public string TestModification { set; get; }
         public string ECOSubmit { set; get; }
-        public string ECOReviewSignoff { set; get; }
+        public string ECOTRSignoff { set; get; }
         public string ECOCCBSignoff { set; get; }
         public string ECOCompleteDate { set; get; }
         public string SampleShipDate { set; get; }
@@ -614,7 +614,7 @@ namespace Domino.Models
                         if (!string.IsNullOrEmpty(tempcycle.ECOCompleteDate))
                         {
                             var completedate = DateTime.Parse(tempcycle.ECOCompleteDate);
-                            if (completedate > startdate && completedate < enddate)
+                            if (completedate >= startdate && completedate <= enddate)
                             {
                                 tempcycle.Month = completedate.Month.ToString();
                                 tempcycle.Quarter = QuartStr(completedate.Month, DateTime.Parse(tempcycle.ECOCompleteDate));
@@ -649,7 +649,7 @@ namespace Domino.Models
                     tempcycle.OpsEntry = ConvertDate(eco.OpsEntry);
                     tempcycle.TestModification = ConvertDate(eco.TestModification);
                     tempcycle.ECOSubmit = ConvertDate(eco.ECOSubmit);
-                    tempcycle.ECOReviewSignoff = ConvertDate(eco.ECOReviewSignoff);
+                    tempcycle.ECOTRSignoff = ConvertDate(eco.ECOReviewSignoff);
                     tempcycle.ECOCCBSignoff = ConvertDate(eco.ECOCCBSignoff);
 
                     var shipcare = DominoVM.RetrieveSpecialCard(eco, DominoCardType.SampleShipment);
@@ -736,13 +736,13 @@ namespace Domino.Models
                         cycle.EngineeringAging = CountWorkDays(MaxDate(datelist), DateTime.Parse(cycle.ECOSubmit)) - 1;
                     }
 
-                    if (string.IsNullOrEmpty(cycle.ECOReviewSignoff))
+                    if (string.IsNullOrEmpty(cycle.ECOTRSignoff))
                     {
                         cycle.TechReviewAging = DOMINOCYCLETIMEVAL.DInvalidVAL;
                     }
                     else
                     {
-                        cycle.TechReviewAging = CountWorkDays(DateTime.Parse(cycle.ECOSubmit), DateTime.Parse(cycle.ECOReviewSignoff)) - 1;
+                        cycle.TechReviewAging = CountWorkDays(DateTime.Parse(cycle.ECOSubmit), DateTime.Parse(cycle.ECOTRSignoff)) - 1;
                     }
 
                     if (string.IsNullOrEmpty(cycle.ECOCCBSignoff))
@@ -751,7 +751,7 @@ namespace Domino.Models
                     }
                     else
                     {
-                        cycle.CCBSignoffAging = CountWorkDays(DateTime.Parse(cycle.ECOReviewSignoff), DateTime.Parse(cycle.ECOCCBSignoff)) - 1;
+                        cycle.CCBSignoffAging = CountWorkDays(DateTime.Parse(cycle.ECOTRSignoff), DateTime.Parse(cycle.ECOCCBSignoff)) - 1;
                     }
 
                     if (string.IsNullOrEmpty(cycle.SampleShipDate))
