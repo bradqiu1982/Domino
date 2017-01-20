@@ -38,3 +38,6 @@ QAFACHECKCHART:::\\wux-fs\public\Project\CFP\OQC\FAI summary.xlsx
 QAFACHECKCHARTSHEET:::EEPROM&FLI Data Resource
 JO1STCHECKINFO:::\\wux-fs\public\Project\CFP\OQC\FA JO checklist_Engineering.xlsx
 JO2NDCHECKINFO:::\\wux-fs\public\Project\CFP\OQC
+AGILEURL:::http://sny-agile9app-p64:7001/Agile
+LOCALSITEPORT:::8080
+SAVELOCATION:::d:\Agile

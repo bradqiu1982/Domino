@@ -939,7 +939,8 @@
     <Content Include="Views\DominoReport\Complex.cshtml" />
     <Content Include="Views\DominoReport\QAFACheck.cshtml" />
     <Content Include="Views\DominoReport\FABuilding.cshtml" />
-    <Content Include="Views\MiniPIP\AgileDownload.cshtml" />
+    <Content Include="Views\MiniPIP\AgileWorkFlow.cshtml" />
+    <Content Include="Views\MiniPIP\AgileAttach.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Scripts\agiledownloadwraper\jre\lib\applet\" />

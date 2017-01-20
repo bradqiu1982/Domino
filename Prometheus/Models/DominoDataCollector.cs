@@ -5,9 +5,18 @@ using System.Web;
 using System.IO;
 using System.Web.Mvc;
 using System.Text;
+using System.Diagnostics;
 
 namespace Domino.Models
 {
+
+    public class DOMINOAGILEDOWNLOADTYPE
+    {
+        public static string ATTACH = "ATTACH";
+        public static string ATTACHNAME = "ATTACHNAME";
+        public static string WORKFLOW = "WORKFLOW";
+    }
+
     public class DominoDataCollector
     {
 
@@ -29,6 +38,30 @@ namespace Domino.Models
                 }
             }
             return ret;
+        }
+
+        public static void DownloadAgile(List<string> ecolist, Controller ctrl,string downloadtype)
+        {
+            var syscfgdict = GetSysConfig(ctrl);
+            var AGILEURL = syscfgdict["AGILEURL"];
+            var LOCALSITEPORT = syscfgdict["LOCALSITEPORT"];
+            var SAVELOCATION = syscfgdict["SAVELOCATION"];
+
+            var ecostr = string.Empty;
+            foreach (var eco in ecolist)
+            {
+                ecostr = ecostr + " " + eco+" ";
+            }
+
+            var args = downloadtype+" " + AGILEURL + " " + LOCALSITEPORT + " " + SAVELOCATION + " " + ecostr;
+
+            using (Process myprocess = new Process())
+            {
+                myprocess.StartInfo.FileName = Path.Combine(System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath, @"Scripts\agiledownloadwraper\AgileDownload.exe").Replace("\\", "/");
+                myprocess.StartInfo.Arguments = args;
+                myprocess.StartInfo.CreateNoWindow = true;
+                myprocess.Start();
+            }
         }
 
         public static void UpdateECOWeeklyUpdate(Controller ctrl, ECOBaseInfo baseinfo, string cardkey)

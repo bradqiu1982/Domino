@@ -127,7 +127,7 @@ public class BOMFileAttachment {
 				{
 					BOMFileAttachment gfa=new BOMFileAttachment();
 					gfa.getAgileFilesByName(sess,ecolist,AgileDir,localfiledict,false);
-					NoticDominoAttach(LocalSitePort,ecolist);
+					NoticDominoAttach(LocalSitePort,ecolist,"AgileAttach");
 				}
 				//gfa.getAgileFilesByName("E150570");
 				//gfa.getAgileFilesByName("WI-MFG-318");
@@ -140,7 +140,7 @@ public class BOMFileAttachment {
 				{
 					BOMFileAttachment gfa=new BOMFileAttachment();
 					gfa.getAgileFilesByName(sess,ecolist,AgileDir,localfiledict,true);
-					NoticDominoAttach(LocalSitePort,ecolist);
+					NoticDominoAttach(LocalSitePort,ecolist,"AgileAttach");
 				}
 			}
 			else if(Mode.equalsIgnoreCase("WORKFLOW"))
@@ -150,6 +150,7 @@ public class BOMFileAttachment {
 				{
 					BOMFileAttachment gfa=new BOMFileAttachment();
 					gfa.getAgileWorkFlow(sess,ecolist,AgileDir);
+					NoticDominoAttach(LocalSitePort,ecolist,"AgileWorkFlow");
 				}
 			}
 		}
@@ -284,16 +285,16 @@ public class BOMFileAttachment {
 		return true;
 	}
 		
-	private static void NoticDominoAttach(String LocalSitePort,List<String> ecolist)
+	private static void NoticDominoAttach(String LocalSitePort,List<String> ecolist,String action)
 	{
 		for(int idx = 0;idx < ecolist.size();idx++)
 		{
 			String econum = ecolist.get(idx);
 			try
 			{
-				goLogger.info( "try to query: "+"http://localhost:"+LocalSitePort+"/Domino/MiniPIP/AgileDownload?ECONUM="+econum);
+				goLogger.info( "try to query: "+"http://localhost:"+LocalSitePort+"/Domino/MiniPIP/"+action+"?ECONUM="+econum);
 				
-				URL url = new URL("http://localhost:"+LocalSitePort+"/Domino/MiniPIP/AgileDownload?ECONUM="+econum);
+				URL url = new URL("http://localhost:"+LocalSitePort+"/Domino/MiniPIP/"+action+"?ECONUM="+econum);
 		        URLConnection URLconnection = url.openConnection();  
 		        HttpURLConnection httpConnection = (HttpURLConnection)URLconnection;  
 		        int responseCode = httpConnection.getResponseCode();
@@ -309,7 +310,7 @@ public class BOMFileAttachment {
 		        }
 		        else
 		        {
-		        	goLogger.error("Fail to access url:"+"http://localhost:"+LocalSitePort+"/Domino/MiniPIP/AgileDownload?ECONUM="+econum);
+		        	goLogger.error("Fail to access url:"+"http://localhost:"+LocalSitePort+"/Domino/MiniPIP/"+action+"?ECONUM="+econum);
 		        }
 			}catch(Exception ex)
 			{
