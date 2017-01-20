@@ -126,12 +126,22 @@ public class BOMFileAttachment {
 				if(sess != null)
 				{
 					BOMFileAttachment gfa=new BOMFileAttachment();
-					gfa.getAgileFilesByName(sess,ecolist,AgileDir,localfiledict);
+					gfa.getAgileFilesByName(sess,ecolist,AgileDir,localfiledict,false);
 					NoticDominoAttach(LocalSitePort,ecolist);
 				}
 				//gfa.getAgileFilesByName("E150570");
 				//gfa.getAgileFilesByName("WI-MFG-318");
 				//gfa.getAgileFilesByName("38200039");
+			}
+			if(Mode.equalsIgnoreCase("ATTACHNAME"))
+			{
+				IAgileSession sess =  getAgileSession(AgileURL,"mkbomctx","agiledll");
+				if(sess != null)
+				{
+					BOMFileAttachment gfa=new BOMFileAttachment();
+					gfa.getAgileFilesByName(sess,ecolist,AgileDir,localfiledict,true);
+					NoticDominoAttach(LocalSitePort,ecolist);
+				}
 			}
 			else if(Mode.equalsIgnoreCase("WORKFLOW"))
 			{
@@ -145,22 +155,22 @@ public class BOMFileAttachment {
 		}
 		else
 		{
-			goLogger.error("\n Usage: ATTACH/WORKFLOW AgileURL LocalSitePort AgileDir ECONUM1 ECONUM2 ECONUM3 .....");
+			goLogger.error("\n Usage: ATTACH/WORKFLOW/ATTACHNAME AgileURL LocalSitePort AgileDir ECONUM1 ECONUM2 ECONUM3 .....");
 			return;
 		}
 		
 	}
 	
-	public void getAgileFilesByName(IAgileSession sess,List<String> ecolist,String AgileDir,HashMap<String,HashMap<String,String>> localfiledict) {
+	public void getAgileFilesByName(IAgileSession sess,List<String> ecolist,String AgileDir,HashMap<String,HashMap<String,String>> localfiledict,boolean justname) {
 
 		boolean success = true;
 		for(int idx = 0;idx < ecolist.size();idx++)
 		{
 			String savedlocation = AgileDir+"\\"+ecolist.get(idx)+"\\";
-        	success = getFilesWithECO(sess,ecolist.get(idx),savedlocation,localfiledict);
+        	success = getFilesWithECO(sess,ecolist.get(idx),savedlocation,localfiledict,justname);
         	if(success==true)
             	continue;
-        	getFilesWithUniqueKey(sess,ecolist.get(idx),savedlocation,localfiledict);
+        	getFilesWithUniqueKey(sess,ecolist.get(idx),savedlocation,localfiledict,justname);
 		}
 	}
 	
@@ -308,7 +318,7 @@ public class BOMFileAttachment {
 		}
 	}
 	
-	 private boolean scanAttachement(ITable atttable,String savedlocation,String econum,HashMap<String,HashMap<String,String>> localfiledict)
+	 private boolean scanAttachement(ITable atttable,String savedlocation,String econum,HashMap<String,HashMap<String,String>> localfiledict,boolean justname)
 	 {
 		 try
 		 {
@@ -318,19 +328,36 @@ public class BOMFileAttachment {
 					IRow row=(IRow) ite.next();
 					String attname=row.getValue(ItemConstants.ATT_ATTACHMENTS_FILENAME).toString();
 					goLogger.debug("Got attachment... with name "+attname);
-					if(!AttachExist(localfiledict,econum,attname))
-					{
-					   
-					   try{
-						   InputStream is=((IAttachmentFile)row).getFile();
-						   goLogger.info("start download file "+attname);
-						   createFile(is,attname,savedlocation);
-					   }
-					   catch(Throwable a){
-							goLogger.error("Please check if the file server up and running and the specified file downloadable.");
-							ret = false;
-					   }						
-					}
+//					if(!AttachExist(localfiledict,econum,attname))
+//					{
+					 if(justname)
+					 {
+						 File f=new File(savedlocation+attname);
+							DataOutputStream out=null;
+							try {
+									out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(savedlocation+attname)));
+									out.writeBytes("Hello World");
+									out.close();
+							}catch (FileNotFoundException e) {
+								goLogger.error("Exception in getting output stream  file.."+e.getMessage());
+							}catch (IOException e) {
+								goLogger.error("Exception in writing to file.."+e.getMessage());
+							}
+					 }
+					 else
+					 {
+						   try{
+							   InputStream is=((IAttachmentFile)row).getFile();
+							   goLogger.info("start download file "+attname);
+							   createFile(is,attname,savedlocation);
+						   }
+						   catch(Throwable a){
+								goLogger.error("Please check if the file server up and running and the specified file downloadable.");
+								ret = false;
+						   }						 
+					 }
+						
+//					}
 				 }
 			 return ret;			 
 		 }
@@ -341,7 +368,7 @@ public class BOMFileAttachment {
 		 }
 	 }
 	
-	private boolean getFilesWithUniqueKey(IAgileSession ses,String Bomnumber,String savedlocation,HashMap<String,HashMap<String,String>> localfiledict)
+	private boolean getFilesWithUniqueKey(IAgileSession ses,String Bomnumber,String savedlocation,HashMap<String,HashMap<String,String>> localfiledict,boolean justname)
 	{
     	try 
     	{
@@ -350,7 +377,7 @@ public class BOMFileAttachment {
 	    	{
 	    		goLogger.debug("Seraching Attachment...with unique key "+Bomnumber);
 				ITable atttable=item.getTable(ItemConstants.TABLE_ATTACHMENTS);//**
-				boolean success = scanAttachement(atttable, savedlocation,Bomnumber,localfiledict);
+				boolean success = scanAttachement(atttable, savedlocation,Bomnumber,localfiledict,justname);
 				if(!success)
 				{
 					goLogger.debug("There is no file with  in the BOM "+Bomnumber);
@@ -371,7 +398,7 @@ public class BOMFileAttachment {
 		return false;
 	}
 	
-	private boolean getFilesWithECO(IAgileSession ses,String Bomnumber,String savedlocation,HashMap<String,HashMap<String,String>> localfiledict) 
+	private boolean getFilesWithECO(IAgileSession ses,String Bomnumber,String savedlocation,HashMap<String,HashMap<String,String>> localfiledict,boolean justname) 
 	{
     	try 
     	{
@@ -392,7 +419,7 @@ public class BOMFileAttachment {
 				}
 				else
 				{
-					boolean ret = scanAttachement(atttable, savedlocation,Bomnumber,localfiledict);
+					boolean ret = scanAttachement(atttable, savedlocation,Bomnumber,localfiledict,justname);
 					return ret;
 				}
 			}

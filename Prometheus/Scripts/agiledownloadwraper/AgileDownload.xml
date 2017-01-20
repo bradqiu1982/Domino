@@ -3,7 +3,7 @@
   <dontWrapJar>false</dontWrapJar>
   <headerType>console</headerType>
   <jar>C:\Users\brad.qiu\Desktop\agilefile\AgileDownload.jar</jar>
-  <outfile>C:\Users\brad.qiu\Desktop\agilefile\agiledownloadwraper\AgileDownload.exe</outfile>
+  <outfile>C:\Users\brad.qiu\Desktop\agilefile\superagiledownload\AgileDownload.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
   <chdir>.</chdir>
