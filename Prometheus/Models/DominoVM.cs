@@ -1087,7 +1087,7 @@ namespace Domino.Models
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
             if (dbret.Count > 0)
             {
-                sql = "update ECOCard set DeleteMark = 'true' where ECOKey = '<ECOKey>' and CardCreateTime > '<CardCreateTime>'";
+                sql = "update ECOCard set DeleteMark = 'true' where ECOKey = '<ECOKey>' and CardCreateTime >= '<CardCreateTime>'";
                 sql = sql.Replace("<ECOKey>", ECOKey).Replace("<CardCreateTime>", Convert.ToString(dbret[0][0]));
                 DBUtility.ExeLocalSqlNoRes(sql);
             }

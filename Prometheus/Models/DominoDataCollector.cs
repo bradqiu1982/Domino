@@ -389,6 +389,92 @@ namespace Domino.Models
             catch (Exception ex) { }
         }
 
+        public static void RefreshECOPendingAttachInfo(Controller ctrl, string ECOKey)
+        {
+
+            var syscfgdict = GetSysConfig(ctrl);
+            string datestring = DateTime.Now.ToString("yyyyMMdd");
+            string imgdir = ctrl.Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
+            var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
+
+            foreach (var item in baseinfos)
+            {
+                    if (string.Compare(item.MiniPIPStatus, DominoMiniPIPStatus.working) != 0)
+                    {
+                        break;
+                    }
+
+                    var pendingcard = DominoVM.RetrieveSpecialCard(item, DominoCardType.ECOPending);
+
+                    if (pendingcard.Count > 0)
+                    {
+                        if (!string.IsNullOrEmpty(item.ECONum)
+                        && string.Compare(pendingcard[0].CardStatus, DominoCardStatus.working) == 0)
+                        {
+                            DominoVM.UpdateCardStatus(pendingcard[0].CardKey, DominoCardType.ECOPending);
+                        }
+
+                        var allattach = DominoVM.RetrieveCardExistedAttachment(pendingcard[0].CardKey);
+
+                        var customerfold = new List<string>();
+                        var allcustomerfolder = Directory.EnumerateDirectories(syscfgdict["MINIPIPCUSTOMERFOLDER"]);
+                        foreach (var cf in allcustomerfolder)
+                        {
+                            var lastlevelfd = cf.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
+                            var lastfd = lastlevelfd[lastlevelfd.Length - 1];
+                            if (lastfd.ToUpper().Contains(item.Customer.ToUpper())
+                                || item.Customer.ToUpper().Contains(lastfd.ToUpper()))
+                            {
+                                customerfold.Add(cf);
+                            }
+                        }
+
+                        foreach (var cf in customerfold)
+                        {
+                            var MiniPIPDocFolder = cf + "\\" + item.PNDesc;
+
+                            if (Directory.Exists(MiniPIPDocFolder))
+                            {
+                                var minidocfiles = Directory.EnumerateFiles(MiniPIPDocFolder);
+                                foreach (var minifile in minidocfiles)
+                                {
+                                    var fn = System.IO.Path.GetFileName(minifile);
+                                    fn = fn.Replace(" ", "_").Replace("#", "")
+                                            .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
+
+                                    bool attachexist = false;
+                                    foreach (var att in allattach)
+                                    {
+                                        if (att.Contains(fn))
+                                        {
+                                            attachexist = true;
+                                            break;
+                                        }
+                                    }//end foreach
+
+                                    if (!attachexist)
+                                    {
+                                        var desfile = imgdir + fn;
+                                        try
+                                        {
+                                            System.IO.File.Copy(minifile, desfile, true);
+                                            var url = "/userfiles/docs/" + datestring + "/" + fn;
+                                            DominoVM.StoreCardAttachment(pendingcard[0].CardKey, url);
+                                        }
+                                        catch (Exception ex) { }
+                                    }
+                                }//end foreach
+                            }//try to get mini doc file
+                        }
+
+                    }//end if
+
+                break;
+            }//end foreach
+
+        }
+
+
         private static string RMSpectialCh(string str)
         {
             StringBuilder sb = new StringBuilder();

@@ -140,13 +140,20 @@
 
                 function DeleteCardAttachment(oBT) {
                     if (confirm("Do you real want to delete this attachment?")) {
-                        window.location.href = '/Domino/MiniPIP/DeleteCardAttachment?CardKey=' + document.getElementById("CardKey").value + '&FileName=' + oBT.value
+                        window.location.href = '/Domino/MiniPIP/DeleteCardAttachment?CardKey=' + document.getElementById("CardKey").value + '&FileName=' + oBT.value;
                     }
                 }
 
                 function RefreshCard()
                 {
-                    window.location.href = '/Domino/MiniPIP/RefreshCard?CardKey=' + document.getElementById("CardKey").value
+                    window.location.href = '/Domino/MiniPIP/RefreshCard?CardKey=' + document.getElementById("CardKey").value;
+                }
+
+                function RollBack2ThisCard()
+                {
+                    if (confirm("Do you real want to roll whole MiniPIP to step: " + document.getElementById("modalname").value + " ?")) {
+                        window.location.href = '/Domino/MiniPIP/RollBack2ThisCard?CardKey=' + document.getElementById("CardKey").value + '&ECOKey=' + document.getElementById("ECOKey").value;
+                    }
                 }
 </script>
 
