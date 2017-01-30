@@ -574,6 +574,44 @@ namespace Domino.Models
             return ret;
         }
 
+        public static Dictionary<string, WorkLoadField> RetrievePEWorkLoadData(DateTime startdate, DateTime enddate)
+        {
+            var pewkloads = RetrieveWorkLoadData(startdate, enddate);
+
+            var pedict = new Dictionary<string, bool>();
+            foreach (var w in pewkloads)
+            {
+                if (!pedict.ContainsKey(w.PE))
+                {
+                    pedict.Add(w.PE, true);
+                }
+            }
+
+            var ret = new Dictionary<string, WorkLoadField>();
+
+            var pes = pedict.Keys.ToList();
+            foreach (var pe in pes)
+            {
+                foreach (var wkl in pewkloads)
+                {
+                    if (string.Compare(pe, wkl.PE) == 0)
+                    {
+                        if (ret.ContainsKey(pe))
+                        {
+                            ret[pe].SetStatus(wkl.Status);
+                        }
+                        else
+                        {
+                            ret.Add(pe, new WorkLoadField());
+                            ret[pe].SetStatus(wkl.Status);
+                        }
+                    }//end if
+                }//foreach
+            }//foreach
+
+            return ret;
+        }
+
         private static string ConvertDate(string date)
         {
             try
@@ -816,6 +854,45 @@ namespace Domino.Models
 
             return ret;
         }
+
+        public static Dictionary<string, CycleTimeDataField> RetrievPECycleTimeData(DateTime startdate, DateTime enddate)
+        {
+            var cycletimes = CalculateCycleTimePoints(startdate, enddate);
+
+            var pedict = new Dictionary<string, bool>();
+            foreach (var w in cycletimes)
+            {
+                if (!pedict.ContainsKey(w.PE))
+                {
+                    pedict.Add(w.PE, true);
+                }
+            }
+
+            var ret = new Dictionary<string, CycleTimeDataField>();
+
+            var pes = pedict.Keys.ToList();
+            foreach (var pe in pes)
+            {
+                foreach (var wkl in cycletimes)
+                {
+                    if (string.Compare(pe, wkl.PE) == 0)
+                    {
+                        if (ret.ContainsKey(pe))
+                        {
+                            ret[pe].appendcycledata(wkl);
+                        }
+                        else
+                        {
+                            ret.Add(pe, new CycleTimeDataField());
+                            ret[pe].appendcycledata(wkl);
+                        }
+                    }//end if
+                }//foreach
+            }//foreach
+
+            return ret;
+        }
+
 
 
         private static int CountWorkDays(DateTime startDate, DateTime endDate)

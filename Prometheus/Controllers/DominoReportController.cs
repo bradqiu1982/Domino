@@ -37,7 +37,7 @@ namespace Domino.Controllers
 
         public ActionResult WorkLoad()
         {
-            var charts = new string[]{ "Department","PE","Monthly","Quarter","Customer" };
+            var charts = new string[]{ DominoChartType.Department, DominoChartType.PE, DominoChartType.Monthly, DominoChartType.Quarter, DominoChartType.Customer };
             var chartlist = new List<string>();
             chartlist.AddRange(charts);
             ViewBag.charttypelist = CreateSelectList(chartlist, "");
@@ -45,28 +45,14 @@ namespace Domino.Controllers
             return View();
         }
 
-        [HttpPost, ActionName("WorkLoad")]
-        [ValidateAntiForgeryToken]
-        public ActionResult WorkLoadPose()
+        private void DepartWorkLoad()
         {
-            var charts = new string[] { "Department", "PE", "Monthly", "Quarter", "Customer" };
-            var chartlist = new List<string>();
-            chartlist.AddRange(charts);
-            ViewBag.charttypelist = CreateSelectList(chartlist, "");
-
-            if (string.IsNullOrEmpty(Request.Form["StartDate"])
-                || string.IsNullOrEmpty(Request.Form["EndDate"])
-                || (DateTime.Parse(Request.Form["StartDate"]) > DateTime.Parse(Request.Form["EndDate"])))
-            {
-                return View();
-            }
-
             var startdate = DateTime.Parse(Request.Form["StartDate"]);
             var enddate = DateTime.Parse(Request.Form["EndDate"]);
             var workloaddata = DominoRPVM.RetrieveDepartWorkLoadData(startdate, enddate);
             if (workloaddata.Count == 0)
             {
-                return View();
+                return;
             }
 
             var ChartxAxisValues = string.Empty;
@@ -84,6 +70,7 @@ namespace Domino.Controllers
                 {
                     double complete = 0;
                     double all = 0;
+                    int tempmax = 0;
 
                     ChartxAxisValues = ChartxAxisValues+"'" + dpt + "',";
 
@@ -94,7 +81,7 @@ namespace Domino.Controllers
                     else
                     {
                         CompleteAmount = CompleteAmount + workloaddata[dpt].Complete.ToString() + ",";
-                        AmountMAX = AmountMAX + workloaddata[dpt].Complete;
+                        tempmax = tempmax + workloaddata[dpt].Complete;
                         complete = complete + workloaddata[dpt].Complete;
                         all = all + workloaddata[dpt].Complete;
                     }
@@ -106,7 +93,7 @@ namespace Domino.Controllers
                     else
                     {
                         SignoffAmount = SignoffAmount + workloaddata[dpt].SignOff.ToString() + ",";
-                        AmountMAX = AmountMAX + workloaddata[dpt].SignOff;
+                        tempmax = tempmax + workloaddata[dpt].SignOff;
                         complete = complete + workloaddata[dpt].SignOff;
                         all = all + workloaddata[dpt].SignOff;
                     }
@@ -118,7 +105,7 @@ namespace Domino.Controllers
                     else
                     {
                         OperationAmount = OperationAmount + workloaddata[dpt].Operation.ToString() + ",";
-                        AmountMAX = AmountMAX + workloaddata[dpt].Operation;
+                        tempmax = tempmax + workloaddata[dpt].Operation;
                         all = all + workloaddata[dpt].Operation;
                     }
 
@@ -129,7 +116,7 @@ namespace Domino.Controllers
                     else
                     {
                         HoldAmount = HoldAmount + workloaddata[dpt].Hold.ToString() + ",";
-                        AmountMAX = AmountMAX + workloaddata[dpt].Hold;
+                        tempmax = tempmax + workloaddata[dpt].Hold;
                         all = all + workloaddata[dpt].Hold;
                     }
 
@@ -141,6 +128,9 @@ namespace Domino.Controllers
                     {
                         FinishYield = FinishYield + ((complete / all) * 100.0).ToString("0.00")+",";
                     }
+
+                    if (tempmax > AmountMAX)
+                        AmountMAX = tempmax;
                 }
             }
 
@@ -155,32 +145,128 @@ namespace Domino.Controllers
             ViewBag.workloadchart = tempscript.Replace("#ElementID#", "workloadchart")
                 .Replace("#Title#", "Department WorkLoad "+startdate.ToString("yyyy/MM/dd")+"-"+enddate.ToString("yyyy/MM/dd"))
                 .Replace("#ChartxAxisValues#", ChartxAxisValues)
-                .Replace("#AmountMAX#", AmountMAX.ToString())
+                .Replace("#AmountMAX#", (AmountMAX + 1).ToString())
                 .Replace("#CompleteAmount#", CompleteAmount)
                 .Replace("#SignoffAmount#", SignoffAmount)
                 .Replace("#OperationAmount#", OperationAmount)
                 .Replace("#HoldAmount#", HoldAmount)
                 .Replace("#FinishYield#", FinishYield);
-
-            return View();
         }
 
-
-        public ActionResult CycleTime()
+        private void PEWorkLoad()
         {
-            var charts = new string[] { "Department", "PE", "Monthly", "Quarter", "Customer" };
-            var chartlist = new List<string>();
-            chartlist.AddRange(charts);
-            ViewBag.charttypelist = CreateSelectList(chartlist, "");
+            var startdate = DateTime.Parse(Request.Form["StartDate"]);
+            var enddate = DateTime.Parse(Request.Form["EndDate"]);
+            var workloaddata = DominoRPVM.RetrievePEWorkLoadData(startdate, enddate);
+            if (workloaddata.Count == 0)
+            {
+                return;
+            }
 
-            return View();
+            var ChartxAxisValues = string.Empty;
+            int AmountMAX = 0;
+            var CompleteAmount = string.Empty;
+            var SignoffAmount = string.Empty;
+            var OperationAmount = string.Empty;
+            var HoldAmount = string.Empty;
+            var FinishYield = string.Empty;
+
+            var pes = workloaddata.Keys.ToList();
+            pes.Sort();
+            foreach (var pe in pes)
+            {
+                if (workloaddata.ContainsKey(pe))
+                {
+                    int tempmax = 0;
+                    double complete = 0;
+                    double all = 0;
+
+                    ChartxAxisValues = ChartxAxisValues + "'" + pe.Split(new string[] { "@" },StringSplitOptions.RemoveEmptyEntries)[0] + "',";
+
+                    if (workloaddata[pe].Complete == 0)
+                    {
+                        CompleteAmount = CompleteAmount + "null,";
+                    }
+                    else
+                    {
+                        CompleteAmount = CompleteAmount + workloaddata[pe].Complete.ToString() + ",";
+                        tempmax = tempmax + workloaddata[pe].Complete;
+                        complete = complete + workloaddata[pe].Complete;
+                        all = all + workloaddata[pe].Complete;
+                    }
+
+                    if (workloaddata[pe].SignOff == 0)
+                    {
+                        SignoffAmount = SignoffAmount + "null,";
+                    }
+                    else
+                    {
+                        SignoffAmount = SignoffAmount + workloaddata[pe].SignOff.ToString() + ",";
+                        tempmax = tempmax + workloaddata[pe].SignOff;
+                        complete = complete + workloaddata[pe].SignOff;
+                        all = all + workloaddata[pe].SignOff;
+                    }
+
+                    if (workloaddata[pe].Operation == 0)
+                    {
+                        OperationAmount = OperationAmount + "null,";
+                    }
+                    else
+                    {
+                        OperationAmount = OperationAmount + workloaddata[pe].Operation.ToString() + ",";
+                        tempmax = tempmax + workloaddata[pe].Operation;
+                        all = all + workloaddata[pe].Operation;
+                    }
+
+                    if (workloaddata[pe].Hold == 0)
+                    {
+                        HoldAmount = HoldAmount + "null,";
+                    }
+                    else
+                    {
+                        HoldAmount = HoldAmount + workloaddata[pe].Hold.ToString() + ",";
+                        tempmax = tempmax + workloaddata[pe].Hold;
+                        all = all + workloaddata[pe].Hold;
+                    }
+
+                    if ((int)all == 0)
+                    {
+                        FinishYield = FinishYield + "0.00,";
+                    }
+                    else
+                    {
+                        FinishYield = FinishYield + ((complete / all) * 100.0).ToString("0.00") + ",";
+                    }
+
+                    if (tempmax > AmountMAX)
+                        AmountMAX = tempmax;
+                }
+            }
+
+            ChartxAxisValues = ChartxAxisValues.Substring(0, ChartxAxisValues.Length - 1);
+            CompleteAmount = CompleteAmount.Substring(0, CompleteAmount.Length - 1);
+            SignoffAmount = SignoffAmount.Substring(0, SignoffAmount.Length - 1);
+            OperationAmount = OperationAmount.Substring(0, OperationAmount.Length - 1);
+            HoldAmount = HoldAmount.Substring(0, HoldAmount.Length - 1);
+            FinishYield = FinishYield.Substring(0, FinishYield.Length - 1);
+
+            var tempscript = System.IO.File.ReadAllText(Server.MapPath("~/Scripts/DominoWorkLoad.xml"));
+            ViewBag.workloadchart = tempscript.Replace("#ElementID#", "workloadchart")
+                .Replace("#Title#", "PE WorkLoad " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd"))
+                .Replace("#ChartxAxisValues#", ChartxAxisValues)
+                .Replace("#AmountMAX#", (AmountMAX+1).ToString())
+                .Replace("#CompleteAmount#", CompleteAmount)
+                .Replace("#SignoffAmount#", SignoffAmount)
+                .Replace("#OperationAmount#", OperationAmount)
+                .Replace("#HoldAmount#", HoldAmount)
+                .Replace("#FinishYield#", FinishYield);
         }
 
-        [HttpPost, ActionName("CycleTime")]
+        [HttpPost, ActionName("WorkLoad")]
         [ValidateAntiForgeryToken]
-        public ActionResult CycleTimePose()
+        public ActionResult WorkLoadPose()
         {
-            var charts = new string[] { "Department", "PE", "Monthly", "Quarter", "Customer" };
+            var charts = new string[] { DominoChartType.Department, DominoChartType.PE, DominoChartType.Monthly, DominoChartType.Quarter, DominoChartType.Customer };
             var chartlist = new List<string>();
             chartlist.AddRange(charts);
             ViewBag.charttypelist = CreateSelectList(chartlist, "");
@@ -192,13 +278,40 @@ namespace Domino.Controllers
                 return View();
             }
 
+            var charttype = Request.Form["charttypelist"].ToString();
+
+            if (string.Compare(charttype, DominoChartType.Department) == 0)
+            {
+                DepartWorkLoad();
+            }
+            else if (string.Compare(charttype, DominoChartType.PE) == 0)
+            {
+                PEWorkLoad();
+            }
+
+            return View();
+        }
+
+
+        public ActionResult CycleTime()
+        {
+            var charts = new string[] { DominoChartType.Department, DominoChartType.PE, DominoChartType.Monthly, DominoChartType.Quarter, DominoChartType.Customer };
+            var chartlist = new List<string>();
+            chartlist.AddRange(charts);
+            ViewBag.charttypelist = CreateSelectList(chartlist, "");
+
+            return View();
+        }
+
+        private void DepartCycleTime()
+        {
             var startdate = DateTime.Parse(Request.Form["StartDate"]);
             var enddate = DateTime.Parse(Request.Form["EndDate"]);
 
             var cycletimedict = DominoRPVM.RetrieveDepartCycleTimeData(startdate, enddate);
             if (cycletimedict.Count == 0)
             {
-                return View();
+                return;
             }
 
             var ChartxAxisValues = string.Empty;
@@ -218,8 +331,12 @@ namespace Domino.Controllers
             {
                 if (cycletimedict.ContainsKey(dpt))
                 {
+                    double tempmaxday = 0.0;
+
                     ChartxAxisValues = ChartxAxisValues + "'" + dpt + "',";
-                    AmountMAX = cycletimedict[dpt].TotalMiniPIPs + AmountMAX;
+                    //AmountMAX = cycletimedict[dpt].TotalMiniPIPs + AmountMAX;
+                    if (cycletimedict[dpt].TotalMiniPIPs > AmountMAX)
+                        AmountMAX = cycletimedict[dpt].TotalMiniPIPs;
 
                     if (cycletimedict[dpt].CCBSignoffAgingAVG == 0)
                     {
@@ -228,7 +345,7 @@ namespace Domino.Controllers
                     else
                     {
                         CCBSignoffAging = CCBSignoffAging + cycletimedict[dpt].CCBSignoffAgingAVG.ToString("0.0") + ",";
-                        DayMAX = DayMAX + cycletimedict[dpt].CCBSignoffAgingAVG;
+                        tempmaxday = tempmaxday + cycletimedict[dpt].CCBSignoffAgingAVG;
 
                         if (cycletimedict[dpt].CCBSignoffAgingAVG < 0)
                             DayMIN = DayMIN + cycletimedict[dpt].CCBSignoffAgingAVG;
@@ -241,7 +358,7 @@ namespace Domino.Controllers
                     else
                     {
                         TechReviewAging = TechReviewAging + cycletimedict[dpt].TechReviewAgingAVG.ToString("0.0") + ",";
-                        DayMAX = DayMAX + cycletimedict[dpt].TechReviewAgingAVG;
+                        tempmaxday = tempmaxday + cycletimedict[dpt].TechReviewAgingAVG;
 
                         if (cycletimedict[dpt].TechReviewAgingAVG < 0)
                             DayMIN = DayMIN + cycletimedict[dpt].TechReviewAgingAVG;
@@ -254,7 +371,7 @@ namespace Domino.Controllers
                     else
                     {
                         EngineeringAging = EngineeringAging + cycletimedict[dpt].EngineeringAgingAVG.ToString("0.0") + ",";
-                        DayMAX = DayMAX + cycletimedict[dpt].EngineeringAgingAVG;
+                        tempmaxday = tempmaxday + cycletimedict[dpt].EngineeringAgingAVG;
 
                         if (cycletimedict[dpt].EngineeringAgingAVG < 0)
                             DayMIN = DayMIN + cycletimedict[dpt].EngineeringAgingAVG;
@@ -267,7 +384,7 @@ namespace Domino.Controllers
                     else
                     {
                         ChangeDelayAging = ChangeDelayAging + cycletimedict[dpt].ChangeDelayAgingAVG.ToString("0.0") + ",";
-                        DayMAX = DayMAX + cycletimedict[dpt].ChangeDelayAgingAVG;
+                        tempmaxday = tempmaxday + cycletimedict[dpt].ChangeDelayAgingAVG;
 
                         if (cycletimedict[dpt].ChangeDelayAgingAVG < 0)
                             DayMIN = DayMIN + cycletimedict[dpt].ChangeDelayAgingAVG;
@@ -280,13 +397,16 @@ namespace Domino.Controllers
                     else
                     {
                         ApprovalAging = ApprovalAging + cycletimedict[dpt].MiniPIPApprovalAgingAVG.ToString("0.0") + ",";
-                        DayMAX = DayMAX + cycletimedict[dpt].MiniPIPApprovalAgingAVG;
+                        tempmaxday = tempmaxday + cycletimedict[dpt].MiniPIPApprovalAgingAVG;
 
                         if (cycletimedict[dpt].MiniPIPApprovalAgingAVG < 0)
                             DayMIN = DayMIN + cycletimedict[dpt].MiniPIPApprovalAgingAVG;
                     }
 
                     TotalMiniPIPs = TotalMiniPIPs + cycletimedict[dpt].TotalMiniPIPs.ToString() + ",";
+
+                    if (tempmaxday > DayMAX)
+                        DayMAX = tempmaxday;
                 }
             }
 
@@ -302,15 +422,176 @@ namespace Domino.Controllers
             ViewBag.cycletimechart = tempscript.Replace("#ElementID#", "cycletimechart")
                 .Replace("#Title#", "Department CycleTime " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd"))
                 .Replace("#ChartxAxisValues#", ChartxAxisValues)
-                .Replace("#AmountMAX#", AmountMAX.ToString())
+                .Replace("#AmountMAX#", (AmountMAX+1).ToString())
                 .Replace("#DayMIN#", DayMIN.ToString())
-                .Replace("#DayMAX#", DayMAX.ToString())
+                .Replace("#DayMAX#", (DayMAX+3.0).ToString())
                 .Replace("#CCBSignoffAging#", CCBSignoffAging)
                 .Replace("#TechReviewAging#", TechReviewAging)
                 .Replace("#EngineeringAging#", EngineeringAging)
                 .Replace("#ChangeDelayAging#", ChangeDelayAging)
                 .Replace("#ApprovalAging#", ApprovalAging)
                 .Replace("#TotalMiniPIPs#", TotalMiniPIPs);
+        }
+
+        private void PECycleTime()
+        {
+            var startdate = DateTime.Parse(Request.Form["StartDate"]);
+            var enddate = DateTime.Parse(Request.Form["EndDate"]);
+
+            var cycletimedict = DominoRPVM.RetrievPECycleTimeData(startdate, enddate);
+            if (cycletimedict.Count == 0)
+            {
+                return;
+            }
+
+            var ChartxAxisValues = string.Empty;
+            double DayMAX = 0;
+            int AmountMAX = 0;
+            double DayMIN = 0;
+
+            var CCBSignoffAging = string.Empty;
+            var TechReviewAging = string.Empty;
+            var EngineeringAging = string.Empty;
+            var ChangeDelayAging = string.Empty;
+            var ApprovalAging = string.Empty;
+            var TotalMiniPIPs = string.Empty;
+
+            var pes = cycletimedict.Keys.ToList();
+            pes.Sort();
+            foreach (var pe in pes)
+            {
+                if (cycletimedict.ContainsKey(pe))
+                {
+                    double tempmaxday = 0.0;
+
+                    ChartxAxisValues = ChartxAxisValues + "'" + pe.Split(new string[] { "@" }, StringSplitOptions.RemoveEmptyEntries)[0] + "',";
+                    //AmountMAX = cycletimedict[dpt].TotalMiniPIPs + AmountMAX;
+                    if (cycletimedict[pe].TotalMiniPIPs > AmountMAX)
+                        AmountMAX = cycletimedict[pe].TotalMiniPIPs;
+
+                    if (cycletimedict[pe].CCBSignoffAgingAVG == 0)
+                    {
+                        CCBSignoffAging = CCBSignoffAging + "null,";
+                    }
+                    else
+                    {
+                        CCBSignoffAging = CCBSignoffAging + cycletimedict[pe].CCBSignoffAgingAVG.ToString("0.0") + ",";
+                        tempmaxday = tempmaxday + cycletimedict[pe].CCBSignoffAgingAVG;
+
+                        if (cycletimedict[pe].CCBSignoffAgingAVG < 0)
+                            DayMIN = DayMIN + cycletimedict[pe].CCBSignoffAgingAVG;
+                    }
+
+                    if (cycletimedict[pe].TechReviewAgingAVG == 0)
+                    {
+                        TechReviewAging = TechReviewAging + "null,";
+                    }
+                    else
+                    {
+                        TechReviewAging = TechReviewAging + cycletimedict[pe].TechReviewAgingAVG.ToString("0.0") + ",";
+                        tempmaxday = tempmaxday + cycletimedict[pe].TechReviewAgingAVG;
+
+                        if (cycletimedict[pe].TechReviewAgingAVG < 0)
+                            DayMIN = DayMIN + cycletimedict[pe].TechReviewAgingAVG;
+                    }
+
+                    if (cycletimedict[pe].EngineeringAgingAVG == 0)
+                    {
+                        EngineeringAging = EngineeringAging + "null,";
+                    }
+                    else
+                    {
+                        EngineeringAging = EngineeringAging + cycletimedict[pe].EngineeringAgingAVG.ToString("0.0") + ",";
+                        tempmaxday = tempmaxday + cycletimedict[pe].EngineeringAgingAVG;
+
+                        if (cycletimedict[pe].EngineeringAgingAVG < 0)
+                            DayMIN = DayMIN + cycletimedict[pe].EngineeringAgingAVG;
+                    }
+
+                    if (cycletimedict[pe].ChangeDelayAgingAVG == 0)
+                    {
+                        ChangeDelayAging = ChangeDelayAging + "null,";
+                    }
+                    else
+                    {
+                        ChangeDelayAging = ChangeDelayAging + cycletimedict[pe].ChangeDelayAgingAVG.ToString("0.0") + ",";
+                        tempmaxday = tempmaxday + cycletimedict[pe].ChangeDelayAgingAVG;
+
+                        if (cycletimedict[pe].ChangeDelayAgingAVG < 0)
+                            DayMIN = DayMIN + cycletimedict[pe].ChangeDelayAgingAVG;
+                    }
+
+                    if (cycletimedict[pe].MiniPIPApprovalAgingAVG == 0)
+                    {
+                        ApprovalAging = ApprovalAging + "null,";
+                    }
+                    else
+                    {
+                        ApprovalAging = ApprovalAging + cycletimedict[pe].MiniPIPApprovalAgingAVG.ToString("0.0") + ",";
+                        tempmaxday = tempmaxday + cycletimedict[pe].MiniPIPApprovalAgingAVG;
+
+                        if (cycletimedict[pe].MiniPIPApprovalAgingAVG < 0)
+                            DayMIN = DayMIN + cycletimedict[pe].MiniPIPApprovalAgingAVG;
+                    }
+
+                    TotalMiniPIPs = TotalMiniPIPs + cycletimedict[pe].TotalMiniPIPs.ToString() + ",";
+
+                    if (tempmaxday > DayMAX)
+                        DayMAX = tempmaxday;
+                }
+            }
+
+            ChartxAxisValues = ChartxAxisValues.Substring(0, ChartxAxisValues.Length - 1);
+            CCBSignoffAging = CCBSignoffAging.Substring(0, CCBSignoffAging.Length - 1);
+            TechReviewAging = TechReviewAging.Substring(0, TechReviewAging.Length - 1);
+            EngineeringAging = EngineeringAging.Substring(0, EngineeringAging.Length - 1);
+            ChangeDelayAging = ChangeDelayAging.Substring(0, ChangeDelayAging.Length - 1);
+            ApprovalAging = ApprovalAging.Substring(0, ApprovalAging.Length - 1);
+            TotalMiniPIPs = TotalMiniPIPs.Substring(0, TotalMiniPIPs.Length - 1);
+
+            var tempscript = System.IO.File.ReadAllText(Server.MapPath("~/Scripts/DominoCycleTime.xml"));
+            ViewBag.cycletimechart = tempscript.Replace("#ElementID#", "cycletimechart")
+                .Replace("#Title#", "PE CycleTime " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd"))
+                .Replace("#ChartxAxisValues#", ChartxAxisValues)
+                .Replace("#AmountMAX#", (AmountMAX+1).ToString())
+                .Replace("#DayMIN#", DayMIN.ToString())
+                .Replace("#DayMAX#", (DayMAX+3.0).ToString())
+                .Replace("#CCBSignoffAging#", CCBSignoffAging)
+                .Replace("#TechReviewAging#", TechReviewAging)
+                .Replace("#EngineeringAging#", EngineeringAging)
+                .Replace("#ChangeDelayAging#", ChangeDelayAging)
+                .Replace("#ApprovalAging#", ApprovalAging)
+                .Replace("#TotalMiniPIPs#", TotalMiniPIPs);
+        }
+
+        [HttpPost, ActionName("CycleTime")]
+        [ValidateAntiForgeryToken]
+        public ActionResult CycleTimePose()
+        {
+            var charts = new string[] { DominoChartType.Department, DominoChartType.PE, DominoChartType.Monthly, DominoChartType.Quarter, DominoChartType.Customer };
+            var chartlist = new List<string>();
+            chartlist.AddRange(charts);
+            ViewBag.charttypelist = CreateSelectList(chartlist, "");
+
+            if (string.IsNullOrEmpty(Request.Form["StartDate"])
+                || string.IsNullOrEmpty(Request.Form["EndDate"])
+                || (DateTime.Parse(Request.Form["StartDate"]) > DateTime.Parse(Request.Form["EndDate"])))
+            {
+                return View();
+            }
+
+
+
+            var charttype = Request.Form["charttypelist"].ToString();
+
+            if (string.Compare(charttype, DominoChartType.Department) == 0)
+            {
+                DepartCycleTime();
+            }
+            else if (string.Compare(charttype, DominoChartType.PE) == 0)
+            {
+                PECycleTime();
+            }
 
             return View();
         }
@@ -318,7 +599,7 @@ namespace Domino.Controllers
 
         public ActionResult FABuilding()
         {
-            var charts = new string[] { "Department", "PE", "Monthly", "Quarter", "Customer" };
+            var charts = new string[] { DominoChartType.Department, DominoChartType.PE, DominoChartType.Monthly, DominoChartType.Quarter, DominoChartType.Customer };
             var chartlist = new List<string>();
             chartlist.AddRange(charts);
             ViewBag.charttypelist = CreateSelectList(chartlist, "");
@@ -330,7 +611,7 @@ namespace Domino.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult FABuildingPose()
         {
-            var charts = new string[] { "Department", "PE", "Monthly", "Quarter", "Customer" };
+            var charts = new string[] { DominoChartType.Department, DominoChartType.PE, DominoChartType.Monthly, DominoChartType.Quarter, DominoChartType.Customer };
             var chartlist = new List<string>();
             chartlist.AddRange(charts);
             ViewBag.charttypelist = CreateSelectList(chartlist, "");
@@ -410,7 +691,7 @@ namespace Domino.Controllers
 
         public ActionResult Complex()
         {
-            var charts = new string[] { "Department", "PE", "Monthly", "Quarter", "Customer" };
+            var charts = new string[] { DominoChartType.Department, DominoChartType.PE, DominoChartType.Monthly, DominoChartType.Quarter, DominoChartType.Customer };
             var chartlist = new List<string>();
             chartlist.AddRange(charts);
             ViewBag.charttypelist = CreateSelectList(chartlist, "");
@@ -422,7 +703,7 @@ namespace Domino.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult ComplexPose()
         {
-            var charts = new string[] { "Department", "PE", "Monthly", "Quarter", "Customer" };
+            var charts = new string[] { DominoChartType.Department, DominoChartType.PE, DominoChartType.Monthly, DominoChartType.Quarter, DominoChartType.Customer };
             var chartlist = new List<string>();
             chartlist.AddRange(charts);
             ViewBag.charttypelist = CreateSelectList(chartlist, "");
@@ -509,7 +790,7 @@ namespace Domino.Controllers
 
         public ActionResult QAFACheck()
         {
-            var charts = new string[] { "Department", "PE", "Monthly", "Quarter", "Customer" };
+            var charts = new string[] { DominoChartType.Department, DominoChartType.PE, DominoChartType.Monthly, DominoChartType.Quarter, DominoChartType.Customer };
             var chartlist = new List<string>();
             chartlist.AddRange(charts);
             ViewBag.charttypelist = CreateSelectList(chartlist, "");
@@ -521,7 +802,7 @@ namespace Domino.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult QAFACheckPose()
         {
-            var charts = new string[] { "Department", "PE", "Monthly", "Quarter", "Customer" };
+            var charts = new string[] { DominoChartType.Department, DominoChartType.PE, DominoChartType.Monthly, DominoChartType.Quarter, DominoChartType.Customer };
             var chartlist = new List<string>();
             chartlist.AddRange(charts);
             ViewBag.charttypelist = CreateSelectList(chartlist, "");

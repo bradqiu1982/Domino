@@ -57,7 +57,7 @@ $(function () {
             name: 'CCB Signoff Aging',
             data: [#CCBSignoffAging#],
             yAxis:0,
-            color:'#00868b'
+            color:'#56c1d7'
         },
         {
             type: 'column',

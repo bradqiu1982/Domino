@@ -87,6 +87,14 @@ namespace Domino.Models
         public static string Production = "Production";
     }
 
+    public class DominoChartType
+    {
+        public static string Department = "Department";
+        public static string PE = "PE";
+        public static string Monthly = "Monthly";
+        public static string Quarter = "Quarter";
+        public static string Customer = "Customer";
+    }
 
     public class ECOCardComments
     {
