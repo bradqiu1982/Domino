@@ -17,6 +17,54 @@ namespace Domino.Models
         public static string WORKFLOW = "WORKFLOW";
     }
 
+    public class ECOWorkFlowRAWData
+    {
+        public ECOWorkFlowRAWData()
+        {
+            StatusCode = "";
+            WorkFlow = "";
+            WorkFlowStatus = "";
+            Action = "";
+            Reqd = "";
+            Reviewer = "";
+            SignoffUser = "";
+            StatusChangedBy = "";
+            LocalTime = "";
+            SignoffComment = "";
+            SignoffDuration = "";
+        }
+
+        public string StatusCode { set; get; }
+        public string WorkFlow { set; get; }
+        public string WorkFlowStatus { set; get; }
+        public string Action { set; get; }
+        public string Reqd { set; get; }
+        public string Reviewer { set; get; }
+        public string SignoffUser { set; get; }
+        public string StatusChangedBy { set; get; }
+        public string LocalTime { set; get; }
+        public string SignoffComment { set; get; }
+        public string SignoffDuration { set; get; }
+    }
+
+    public class ECOWorkFlowInfo
+    {
+        public ECOWorkFlowInfo()
+        {
+            CurrentProcess = "";
+            ECOTRApprover = "";
+            ECOMDApprover = "";
+            CApproveHoldDate = "";
+            ECOCompleteDate = "";
+        }
+
+        public string CurrentProcess { set; get; }
+        public string ECOTRApprover { set; get; }
+        public string ECOMDApprover { set; get; }
+        public string CApproveHoldDate { set; get; }
+        public string ECOCompleteDate { set; get; }
+    }
+
     public class DominoDataCollector
     {
 
@@ -62,6 +110,85 @@ namespace Domino.Models
                 myprocess.StartInfo.CreateNoWindow = true;
                 myprocess.Start();
             }
+        }
+
+        public static ECOWorkFlowInfo RetrieveAgileWorkFlowData(string ECONUM,Controller ctrl)
+        {
+            var rawdata = new List<ECOWorkFlowRAWData>();
+
+            var syscfgdict = GetSysConfig(ctrl);
+            var dir = syscfgdict["SAVELOCATION"] + "\\" + ECONUM;
+            var workflowfile = dir + "\\" + ECONUM + "_WorkFlowTable.csv";
+            if (File.Exists(workflowfile))
+            {
+                var data = ExcelReader.RetrieveDataFromExcel(workflowfile, null);
+                foreach (var line in data)
+                {
+                    var tempdata = new ECOWorkFlowRAWData();
+                    tempdata.StatusCode = line[0];
+                    tempdata.WorkFlow = line[1];
+                    tempdata.WorkFlowStatus = line[2];
+                    tempdata.Action = line[3];
+                    tempdata.Reqd = line[4];
+                    tempdata.Reviewer = line[5];
+                    tempdata.SignoffUser = line[6];
+                    tempdata.StatusChangedBy = line[7];
+                    tempdata.LocalTime = line[8];
+                    tempdata.SignoffComment = line[9];
+                    tempdata.SignoffDuration = line[10];
+                    rawdata.Add(tempdata);
+                }
+            }
+
+            var ret = new ECOWorkFlowInfo();
+            bool bcompletedate = false;
+
+            foreach (var line in rawdata)
+            {
+                if (bcompletedate)
+                {
+                    ret.ECOCompleteDate = line.LocalTime;
+                    bcompletedate = false;
+                }
+
+                if (string.Compare(line.StatusCode, "Current Process", true) == 0)
+                {
+                    ret.CurrentProcess = line.WorkFlowStatus;
+                    if (string.Compare(ret.CurrentProcess, "Completed") == 0)
+                    {
+                        bcompletedate = true;
+                    }
+                }
+
+                if (string.Compare(line.WorkFlowStatus, "Technical Review", true) == 0
+                    && string.Compare(line.Reqd, "Yes", true) == 0
+                    && !string.IsNullOrEmpty(line.Reviewer)
+                    && !ret.ECOTRApprover.Contains(line.Reviewer))
+                {
+                    ret.ECOTRApprover = ret.ECOTRApprover + line.Reviewer + ";";
+                }
+
+                if (string.Compare(line.WorkFlowStatus, "Material Disposition", true) == 0
+                    && string.Compare(line.Reqd, "Yes", true) == 0
+                    && !string.IsNullOrEmpty(line.Reviewer)
+                    && !ret.ECOMDApprover.Contains(line.Reviewer))
+                {
+                    ret.ECOMDApprover = ret.ECOMDApprover + line.Reviewer + ";";
+                }
+
+                if (line.StatusCode.ToUpper().Contains("CCB")
+                    && string.IsNullOrEmpty(ret.CApproveHoldDate)
+                    && string.IsNullOrEmpty(line.Reqd)
+                    && string.IsNullOrEmpty(line.Reviewer)
+                    && !string.IsNullOrEmpty(line.StatusChangedBy)
+                    && !string.IsNullOrEmpty(line.LocalTime))
+                {
+                    ret.CApproveHoldDate = line.LocalTime;
+                }
+
+            }
+
+            return ret;
         }
 
         public static void UpdateECOWeeklyUpdate(Controller ctrl, ECOBaseInfo baseinfo, string cardkey)

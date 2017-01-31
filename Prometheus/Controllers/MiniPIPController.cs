@@ -2126,8 +2126,8 @@ namespace Domino.Controllers
             var dir = syscfgdict["SAVELOCATION"] +"\\" + ECONUM;
             if (Directory.Exists(dir))
             {
-                string datestring = DateTime.Now.ToString("yyyyMMdd");
-                string imgdir = Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
+                //string datestring = DateTime.Now.ToString("yyyyMMdd");
+                string imgdir = Server.MapPath("~/userfiles") + "\\docs\\" + ECONUM + "\\";
                 if (!Directory.Exists(imgdir))
                 {
                     Directory.CreateDirectory(imgdir);
@@ -2141,40 +2141,39 @@ namespace Domino.Controllers
                 {
                     var fn = Path.GetFileName(fl);
                     var desfn = imgdir + fn;
-                    var url = "/userfiles/docs/" + datestring + "/" + fn;
+                    var url = "/userfiles/docs/" + ECONUM + "/" + fn;
 
                     if (fl.ToUpper().Contains("QR_")
                         || fl.ToUpper().Contains("QUALIFICATION"))
                     {
-                                
+                        System.IO.File.Copy(fl, desfn, true);
                         if (!cardinfo.ECOQRFile.Contains(fn))
                         {
-                            System.IO.File.Copy(fl, desfn, true);
                             cardinfo.ECOQRFile = cardinfo.ECOQRFile + url + ":::";
                         }
                     }
                     else if (fl.ToUpper().Contains("PEER")
                         && fl.ToUpper().Contains("REVIEW"))
                     {
+                        System.IO.File.Copy(fl, desfn, true);
                         if (!cardinfo.EEPROMPeerReview.Contains(fn))
                         {
-                            System.IO.File.Copy(fl, desfn, true);
                             cardinfo.EEPROMPeerReview = cardinfo.EEPROMPeerReview + url + ":::";
                         }
                     }
                     else if (fl.ToUpper().Contains("TRACEVIEW"))
                     {
+                        System.IO.File.Copy(fl, desfn, true);
                         if (!cardinfo.ECOTraceview.Contains(fn))
                         {
-                            System.IO.File.Copy(fl, desfn, true);
                             cardinfo.ECOTraceview = cardinfo.ECOTraceview + url + ":::";
                         }
                     }
                     else if (fl.ToUpper().Contains("COMPARE"))
                     {
+                        System.IO.File.Copy(fl, desfn, true);
                         if (!cardinfo.SpecCompresuite.Contains(fn))
                         {
-                            System.IO.File.Copy(fl, desfn, true);
                             cardinfo.SpecCompresuite = cardinfo.SpecCompresuite + url + ":::";
                         }
                     }
@@ -2200,6 +2199,32 @@ namespace Domino.Controllers
                     if (vm.Count > 0)
                     {
                         StoreAgileAttch(ECONUM, vm);
+                    }
+                }
+            }
+            return View();
+        }
+
+
+        public ActionResult AgileWorkFlow(string ECONUM)
+        {
+            var ecoinfo = ECOBaseInfo.RetrieveECOBaseInfoWithECONum(ECONUM);
+            if (ecoinfo.Count > 0)
+            {
+                var workflowinfo = DominoDataCollector.RetrieveAgileWorkFlowData(ECONUM, this);
+
+
+                var vm = DominoVM.RetrieveSpecialCard(ecoinfo[0], DominoCardType.ECOSignoff1);
+                if (vm.Count > 0)
+                {
+                    
+                }
+                else
+                {
+                    vm = DominoVM.RetrieveSpecialCard(ecoinfo[0], DominoCardType.ECOSignoff2);
+                    if (vm.Count > 0)
+                    {
+                        
                     }
                 }
             }
