@@ -612,6 +612,44 @@ namespace Domino.Models
             return ret;
         }
 
+        public static Dictionary<string, WorkLoadField> RetrieveCustomerWorkLoadData(DateTime startdate, DateTime enddate)
+        {
+            var pewkloads = RetrieveWorkLoadData(startdate, enddate);
+
+            var custdict = new Dictionary<string, bool>();
+            foreach (var w in pewkloads)
+            {
+                if (!custdict.ContainsKey(w.Customer))
+                {
+                    custdict.Add(w.Customer, true);
+                }
+            }
+
+            var ret = new Dictionary<string, WorkLoadField>();
+
+            var custs = custdict.Keys.ToList();
+            foreach (var cu in custs)
+            {
+                foreach (var wkl in pewkloads)
+                {
+                    if (string.Compare(cu, wkl.Customer) == 0)
+                    {
+                        if (ret.ContainsKey(cu))
+                        {
+                            ret[cu].SetStatus(wkl.Status);
+                        }
+                        else
+                        {
+                            ret.Add(cu, new WorkLoadField());
+                            ret[cu].SetStatus(wkl.Status);
+                        }
+                    }//end if
+                }//foreach
+            }//foreach
+
+            return ret;
+        }
+
         private static string ConvertDate(string date)
         {
             try
@@ -855,7 +893,7 @@ namespace Domino.Models
             return ret;
         }
 
-        public static Dictionary<string, CycleTimeDataField> RetrievPECycleTimeData(DateTime startdate, DateTime enddate)
+        public static Dictionary<string, CycleTimeDataField> RetrievePECycleTimeData(DateTime startdate, DateTime enddate)
         {
             var cycletimes = CalculateCycleTimePoints(startdate, enddate);
 
@@ -893,6 +931,44 @@ namespace Domino.Models
             return ret;
         }
 
+
+        public static Dictionary<string, CycleTimeDataField> RetrieveCustomerCycleTimeData(DateTime startdate, DateTime enddate)
+        {
+            var cycletimes = CalculateCycleTimePoints(startdate, enddate);
+
+            var custdict = new Dictionary<string, bool>();
+            foreach (var w in cycletimes)
+            {
+                if (!custdict.ContainsKey(w.Customer))
+                {
+                    custdict.Add(w.Customer, true);
+                }
+            }
+
+            var ret = new Dictionary<string, CycleTimeDataField>();
+
+            var custs = custdict.Keys.ToList();
+            foreach (var cu in custs)
+            {
+                foreach (var wkl in cycletimes)
+                {
+                    if (string.Compare(cu, wkl.Customer) == 0)
+                    {
+                        if (ret.ContainsKey(cu))
+                        {
+                            ret[cu].appendcycledata(wkl);
+                        }
+                        else
+                        {
+                            ret.Add(cu, new CycleTimeDataField());
+                            ret[cu].appendcycledata(wkl);
+                        }
+                    }//end if
+                }//foreach
+            }//foreach
+
+            return ret;
+        }
 
 
         private static int CountWorkDays(DateTime startDate, DateTime endDate)
@@ -1079,6 +1155,86 @@ namespace Domino.Models
             return ret;
         }
 
+        public static Dictionary<string, ComplexData> RetrievePEComplexData(DateTime startDate, DateTime endDate)
+        {
+            var allcomplexdata = RetrieveAllComplexData(startDate, endDate);
+
+            var pedict = new Dictionary<string, bool>();
+            foreach (var w in allcomplexdata)
+            {
+                if (!pedict.ContainsKey(w.PE))
+                {
+                    pedict.Add(w.PE, true);
+                }
+            }
+
+
+            var ret = new Dictionary<string, ComplexData>();
+
+            var pes = pedict.Keys.ToList();
+            
+            foreach (var pe in pes)
+            {
+                foreach (var wkl in allcomplexdata)
+                {
+                    if (string.Compare(pe, wkl.PE) == 0)
+                    {
+                        if (ret.ContainsKey(pe))
+                        {
+                            ret[pe].AppendComplexData(wkl);
+                        }
+                        else
+                        {
+                            ret.Add(pe, new ComplexData());
+                            ret[pe].AppendComplexData(wkl);
+                        }
+                    }//end if
+                }//foreach
+            }//foreach
+
+            return ret;
+        }
+
+
+        public static Dictionary<string, ComplexData> RetrieveCustomerComplexData(DateTime startDate, DateTime endDate)
+        {
+            var allcomplexdata = RetrieveAllComplexData(startDate, endDate);
+
+            var custdict = new Dictionary<string, bool>();
+            foreach (var w in allcomplexdata)
+            {
+                if (!custdict.ContainsKey(w.Customer))
+                {
+                    custdict.Add(w.Customer, true);
+                }
+            }
+
+            var ret = new Dictionary<string, ComplexData>();
+
+            var custs = custdict.Keys.ToList();
+
+            foreach (var cu in custs)
+            {
+                foreach (var wkl in allcomplexdata)
+                {
+                    if (string.Compare(cu, wkl.Customer) == 0)
+                    {
+                        if (ret.ContainsKey(cu))
+                        {
+                            ret[cu].AppendComplexData(wkl);
+                        }
+                        else
+                        {
+                            ret.Add(cu, new ComplexData());
+                            ret[cu].AppendComplexData(wkl);
+                        }
+                    }//end if
+                }//foreach
+            }//foreach
+
+            return ret;
+        }
+
 
         public static Dictionary<string, QACheckData> RetrieveDepartQACheckData(Controller ctrl,DateTime StartDate,DateTime EndDate)
         {
@@ -1132,8 +1288,49 @@ namespace Domino.Models
             return ret;
         }
 
+        public static Dictionary<string, QACheckData> RetrievePEQACheckData(Controller ctrl, DateTime StartDate, DateTime EndDate)
+        {
+            var alllist = DominoDataCollector.RetrieveAllQACheckInfo(ctrl);
+            var datelist = new List<QACheckData>();
+            foreach (var qacheck in alllist)
+            {
+                if (qacheck.QADate >= StartDate && qacheck.QADate <= EndDate)
+                {
+                    datelist.Add(qacheck);
+                }
+            }
 
+            var pedict = new Dictionary<string, bool>();
+            foreach (var w in datelist)
+            {
+                if (!pedict.ContainsKey(w.PE))
+                {
+                    pedict.Add(w.PE, true);
+                }
+            }
 
+            var ret = new Dictionary<string, QACheckData>();
+            var pes = pedict.Keys.ToList();
+            foreach (var pe in pes)
+            {
+                foreach (var wkl in datelist)
+                {
+                    if (string.Compare(pe, wkl.PE) == 0)
+                    {
+                        if (ret.ContainsKey(pe))
+                        {
+                            ret[pe].AppendQAData(wkl);
+                        }
+                        else
+                        {
+                            ret.Add(pe, new QACheckData());
+                            ret[pe].AppendQAData(wkl);
+                        }
+                    }//end if
+                }//foreach
+            }//foreach
+            return ret;
+        }
 
     }
 }

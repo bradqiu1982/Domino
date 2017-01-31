@@ -153,11 +153,21 @@ namespace Domino.Controllers
                 .Replace("#FinishYield#", FinishYield);
         }
 
-        private void PEWorkLoad()
+        private void DictWorkLoad(string charttype)
         {
             var startdate = DateTime.Parse(Request.Form["StartDate"]);
             var enddate = DateTime.Parse(Request.Form["EndDate"]);
-            var workloaddata = DominoRPVM.RetrievePEWorkLoadData(startdate, enddate);
+            var workloaddata = new Dictionary<string, WorkLoadField>();
+
+            if (string.Compare(charttype, DominoChartType.PE) == 0)
+            {
+                workloaddata = DominoRPVM.RetrievePEWorkLoadData(startdate, enddate);
+            }
+            else if (string.Compare(charttype, DominoChartType.Customer) == 0)
+            {
+                workloaddata = DominoRPVM.RetrieveCustomerWorkLoadData(startdate, enddate);
+            }
+
             if (workloaddata.Count == 0)
             {
                 return;
@@ -252,7 +262,7 @@ namespace Domino.Controllers
 
             var tempscript = System.IO.File.ReadAllText(Server.MapPath("~/Scripts/DominoWorkLoad.xml"));
             ViewBag.workloadchart = tempscript.Replace("#ElementID#", "workloadchart")
-                .Replace("#Title#", "PE WorkLoad " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd"))
+                .Replace("#Title#", charttype+" WorkLoad " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd"))
                 .Replace("#ChartxAxisValues#", ChartxAxisValues)
                 .Replace("#AmountMAX#", (AmountMAX+1).ToString())
                 .Replace("#CompleteAmount#", CompleteAmount)
@@ -261,6 +271,7 @@ namespace Domino.Controllers
                 .Replace("#HoldAmount#", HoldAmount)
                 .Replace("#FinishYield#", FinishYield);
         }
+
 
         [HttpPost, ActionName("WorkLoad")]
         [ValidateAntiForgeryToken]
@@ -279,14 +290,13 @@ namespace Domino.Controllers
             }
 
             var charttype = Request.Form["charttypelist"].ToString();
-
             if (string.Compare(charttype, DominoChartType.Department) == 0)
             {
                 DepartWorkLoad();
             }
-            else if (string.Compare(charttype, DominoChartType.PE) == 0)
+            else
             {
-                PEWorkLoad();
+                DictWorkLoad(charttype);
             }
 
             return View();
@@ -433,12 +443,22 @@ namespace Domino.Controllers
                 .Replace("#TotalMiniPIPs#", TotalMiniPIPs);
         }
 
-        private void PECycleTime()
+        private void DictCycleTime(string charttype)
         {
             var startdate = DateTime.Parse(Request.Form["StartDate"]);
             var enddate = DateTime.Parse(Request.Form["EndDate"]);
 
-            var cycletimedict = DominoRPVM.RetrievPECycleTimeData(startdate, enddate);
+            var cycletimedict = new Dictionary<string, CycleTimeDataField>();
+
+            if (string.Compare(charttype, DominoChartType.PE) == 0)
+            {
+                cycletimedict = DominoRPVM.RetrievePECycleTimeData(startdate, enddate);
+            }
+            else if (string.Compare(charttype, DominoChartType.Customer) == 0)
+            {
+                cycletimedict = DominoRPVM.RetrieveCustomerCycleTimeData(startdate, enddate);
+            }
+
             if (cycletimedict.Count == 0)
             {
                 return;
@@ -551,7 +571,7 @@ namespace Domino.Controllers
 
             var tempscript = System.IO.File.ReadAllText(Server.MapPath("~/Scripts/DominoCycleTime.xml"));
             ViewBag.cycletimechart = tempscript.Replace("#ElementID#", "cycletimechart")
-                .Replace("#Title#", "PE CycleTime " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd"))
+                .Replace("#Title#", charttype+" CycleTime " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd"))
                 .Replace("#ChartxAxisValues#", ChartxAxisValues)
                 .Replace("#AmountMAX#", (AmountMAX+1).ToString())
                 .Replace("#DayMIN#", DayMIN.ToString())
@@ -580,17 +600,15 @@ namespace Domino.Controllers
                 return View();
             }
 
-
-
             var charttype = Request.Form["charttypelist"].ToString();
 
             if (string.Compare(charttype, DominoChartType.Department) == 0)
             {
                 DepartCycleTime();
             }
-            else if (string.Compare(charttype, DominoChartType.PE) == 0)
+            else
             {
-                PECycleTime();
+                DictCycleTime(charttype);
             }
 
             return View();
@@ -605,6 +623,154 @@ namespace Domino.Controllers
             ViewBag.charttypelist = CreateSelectList(chartlist, "");
 
             return View();
+        }
+
+        private void DepartFABuilding()
+        {
+            var startdate = DateTime.Parse(Request.Form["StartDate"]);
+            var enddate = DateTime.Parse(Request.Form["EndDate"]);
+
+            var cycletimedict = DominoRPVM.RetrieveDepartCycleTimeData(startdate, enddate);
+            if (cycletimedict.Count == 0)
+            {
+                return;
+            }
+
+            var ChartxAxisValues = string.Empty;
+            double DAYMAX = 0;
+            int AmountMAX = 0;
+            double DayMIN = 0;
+
+            var SampleShipAging = string.Empty;
+            var TotalMiniPIPs = string.Empty;
+
+            var departs = DominoUserViewModels.RetrieveAllDepartment();
+            foreach (var dpt in departs)
+            {
+                if (cycletimedict.ContainsKey(dpt))
+                {
+
+
+                    if (cycletimedict[dpt].SampleShipAgingAVG == 0)
+                    {
+                        //SampleShipAging = SampleShipAging + "null,";
+                    }
+                    else
+                    {
+                        ChartxAxisValues = ChartxAxisValues + "'" + dpt + "',";
+                        if (cycletimedict[dpt].SampleShipAgingTM > AmountMAX)
+                            AmountMAX = cycletimedict[dpt].SampleShipAgingTM;
+
+                        SampleShipAging = SampleShipAging + cycletimedict[dpt].SampleShipAgingAVG.ToString("0.0") + ",";
+
+                        if (cycletimedict[dpt].SampleShipAgingAVG > DAYMAX)
+                            DAYMAX = cycletimedict[dpt].SampleShipAgingAVG;
+
+                        if (cycletimedict[dpt].SampleShipAgingAVG < 0)
+                            DayMIN = DayMIN + cycletimedict[dpt].SampleShipAgingAVG;
+
+                        TotalMiniPIPs = TotalMiniPIPs + cycletimedict[dpt].SampleShipAgingTM.ToString() + ",";
+                    }
+                }
+            }
+
+            if (string.IsNullOrEmpty(ChartxAxisValues))
+            {
+                return;
+            }
+
+            ChartxAxisValues = ChartxAxisValues.Substring(0, ChartxAxisValues.Length - 1);
+            SampleShipAging = SampleShipAging.Substring(0, SampleShipAging.Length - 1);
+            TotalMiniPIPs = TotalMiniPIPs.Substring(0, TotalMiniPIPs.Length - 1);
+
+            var tempscript = System.IO.File.ReadAllText(Server.MapPath("~/Scripts/DominoFABuilding.xml"));
+            ViewBag.fabuildingchart = tempscript.Replace("#ElementID#", "fabuildingchart")
+                .Replace("#Title#", "Depart FA Build Time " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd"))
+                .Replace("#ChartxAxisValues#", ChartxAxisValues)
+                .Replace("#AmountMAX#", (AmountMAX + 1).ToString())
+                .Replace("#DayMIN#", DayMIN.ToString())
+                .Replace("#DayMAX#", (DAYMAX + 1.0).ToString())
+                .Replace("#SampleShipAging#", SampleShipAging)
+                .Replace("#TotalMiniPIPs#", TotalMiniPIPs);
+        }
+
+        private void DictFABuilding(string charttype)
+        {
+            var startdate = DateTime.Parse(Request.Form["StartDate"]);
+            var enddate = DateTime.Parse(Request.Form["EndDate"]);
+
+            var cycletimedict = new Dictionary<string, CycleTimeDataField>();
+            if (string.Compare(charttype, DominoChartType.PE) == 0)
+            {
+                cycletimedict = DominoRPVM.RetrievePECycleTimeData(startdate, enddate);
+            }
+            else if (string.Compare(charttype, DominoChartType.Customer) == 0)
+            {
+                cycletimedict = DominoRPVM.RetrieveCustomerCycleTimeData(startdate, enddate);
+            }
+
+            if (cycletimedict.Count == 0)
+            {
+                return;
+            }
+
+            var ChartxAxisValues = string.Empty;
+            double DAYMAX = 0;
+            int AmountMAX = 0;
+            double DayMIN = 0;
+
+            var SampleShipAging = string.Empty;
+            var TotalMiniPIPs = string.Empty;
+
+            var pes = cycletimedict.Keys.ToList();
+            pes.Sort();
+
+            foreach (var pe in pes)
+            {
+                if (cycletimedict.ContainsKey(pe))
+                {
+                    if (cycletimedict[pe].SampleShipAgingAVG == 0)
+                    {
+                        //SampleShipAging = SampleShipAging + "null,";
+                    }
+                    else
+                    {
+                        ChartxAxisValues = ChartxAxisValues + "'" + pe.Split(new string[] { "@" }, StringSplitOptions.RemoveEmptyEntries)[0] + "',";
+
+                        if (cycletimedict[pe].SampleShipAgingTM > AmountMAX)
+                            AmountMAX = cycletimedict[pe].SampleShipAgingTM;
+
+                        SampleShipAging = SampleShipAging + cycletimedict[pe].SampleShipAgingAVG.ToString("0.0") + ",";
+
+                        if (cycletimedict[pe].SampleShipAgingAVG > DAYMAX)
+                            DAYMAX = cycletimedict[pe].SampleShipAgingAVG;
+
+                        if (cycletimedict[pe].SampleShipAgingAVG < 0)
+                            DayMIN = DayMIN + cycletimedict[pe].SampleShipAgingAVG;
+
+                        TotalMiniPIPs = TotalMiniPIPs + cycletimedict[pe].SampleShipAgingTM.ToString() + ",";
+                    }
+                }
+            }
+
+            if (string.IsNullOrEmpty(ChartxAxisValues))
+            {
+                return;
+            }
+
+            ChartxAxisValues = ChartxAxisValues.Substring(0, ChartxAxisValues.Length - 1);
+            SampleShipAging = SampleShipAging.Substring(0, SampleShipAging.Length - 1);
+            TotalMiniPIPs = TotalMiniPIPs.Substring(0, TotalMiniPIPs.Length - 1);
+
+            var tempscript = System.IO.File.ReadAllText(Server.MapPath("~/Scripts/DominoFABuilding.xml"));
+            ViewBag.fabuildingchart = tempscript.Replace("#ElementID#", "fabuildingchart")
+                .Replace("#Title#", charttype+" FA Build Time " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd"))
+                .Replace("#ChartxAxisValues#", ChartxAxisValues)
+                .Replace("#AmountMAX#", (AmountMAX + 1).ToString())
+                .Replace("#DayMIN#", DayMIN.ToString())
+                .Replace("#DayMAX#", (DAYMAX + 1.0).ToString())
+                .Replace("#SampleShipAging#", SampleShipAging)
+                .Replace("#TotalMiniPIPs#", TotalMiniPIPs);
         }
 
         [HttpPost, ActionName("FABuilding")]
@@ -623,67 +789,16 @@ namespace Domino.Controllers
                 return View();
             }
 
-            var startdate = DateTime.Parse(Request.Form["StartDate"]);
-            var enddate = DateTime.Parse(Request.Form["EndDate"]);
+            var charttype = Request.Form["charttypelist"].ToString();
 
-            var cycletimedict = DominoRPVM.RetrieveDepartCycleTimeData(startdate, enddate);
-            if (cycletimedict.Count == 0)
+            if (string.Compare(charttype, DominoChartType.Department) == 0)
             {
-                return View();
+                DepartFABuilding();
             }
-
-            var ChartxAxisValues = string.Empty;
-            double DayMAX = 0;
-            int AmountMAX = 0;
-            double DayMIN = 0;
-
-            var SampleShipAging = string.Empty;
-            var TotalMiniPIPs = string.Empty;
-
-            var departs = DominoUserViewModels.RetrieveAllDepartment();
-            foreach (var dpt in departs)
+            else
             {
-                if (cycletimedict.ContainsKey(dpt))
-                {
-                    
-
-                    if (cycletimedict[dpt].SampleShipAgingAVG == 0)
-                    {
-                        //SampleShipAging = SampleShipAging + "null,";
-                    }
-                    else
-                    {
-                        ChartxAxisValues = ChartxAxisValues + "'" + dpt + "',";
-                        AmountMAX = cycletimedict[dpt].SampleShipAgingTM + AmountMAX+1;
-                        SampleShipAging = SampleShipAging + cycletimedict[dpt].SampleShipAgingAVG.ToString("0.0") + ",";
-                        DayMAX = DayMAX + cycletimedict[dpt].SampleShipAgingAVG;
-
-                        if (cycletimedict[dpt].SampleShipAgingAVG < 0)
-                            DayMIN = DayMIN + cycletimedict[dpt].SampleShipAgingAVG;
-
-                        TotalMiniPIPs = TotalMiniPIPs + cycletimedict[dpt].SampleShipAgingTM.ToString() + ",";
-                    }
-                }
+                DictFABuilding(charttype);
             }
-
-            if (string.IsNullOrEmpty(ChartxAxisValues))
-            {
-                return View();
-            }
-
-            ChartxAxisValues = ChartxAxisValues.Substring(0, ChartxAxisValues.Length - 1);
-            SampleShipAging = SampleShipAging.Substring(0, SampleShipAging.Length - 1);
-            TotalMiniPIPs = TotalMiniPIPs.Substring(0, TotalMiniPIPs.Length - 1);
-
-            var tempscript = System.IO.File.ReadAllText(Server.MapPath("~/Scripts/DominoFABuilding.xml"));
-            ViewBag.fabuildingchart = tempscript.Replace("#ElementID#", "fabuildingchart")
-                .Replace("#Title#", "Department FA Build Time " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd"))
-                .Replace("#ChartxAxisValues#", ChartxAxisValues)
-                .Replace("#AmountMAX#", AmountMAX.ToString())
-                .Replace("#DayMIN#", DayMIN.ToString())
-                .Replace("#DayMAX#", DayMAX.ToString())
-                .Replace("#SampleShipAging#", SampleShipAging)
-                .Replace("#TotalMiniPIPs#", TotalMiniPIPs);
 
             return View();
         }
@@ -697,6 +812,169 @@ namespace Domino.Controllers
             ViewBag.charttypelist = CreateSelectList(chartlist, "");
 
             return View();
+        }
+
+        private void DepartComplex()
+        {
+            var startdate = DateTime.Parse(Request.Form["StartDate"]);
+            var enddate = DateTime.Parse(Request.Form["EndDate"]);
+            var complexdict = DominoRPVM.RetrieveDepartComplexData(startdate, enddate);
+            if (complexdict.Count == 0)
+            {
+                return;
+            }
+
+            var ChartxAxisValues = string.Empty;
+            int AmountMAX = 0;
+
+            var EXPEDITE = string.Empty;
+            var MEDIUM = string.Empty;
+            var SMALL = string.Empty;
+
+            var departs = DominoUserViewModels.RetrieveAllDepartment();
+            foreach (var dpt in departs)
+            {
+                if (complexdict.ContainsKey(dpt))
+                {
+                    int tempmaxamount = 0;
+                    ChartxAxisValues = ChartxAxisValues + "'" + dpt + "',";
+
+                    if (complexdict[dpt].E == 0)
+                    {
+                        EXPEDITE = EXPEDITE + "null,";
+                    }
+                    else
+                    {
+                        EXPEDITE = EXPEDITE + complexdict[dpt].E.ToString() + ",";
+                        tempmaxamount = tempmaxamount + complexdict[dpt].E;
+                    }
+
+                    if (complexdict[dpt].M == 0)
+                    {
+                        MEDIUM = MEDIUM + "null,";
+                    }
+                    else
+                    {
+                        MEDIUM = MEDIUM + complexdict[dpt].M.ToString() + ",";
+                        tempmaxamount = tempmaxamount + complexdict[dpt].M;
+                    }
+
+                    if (complexdict[dpt].S == 0)
+                    {
+                        SMALL = SMALL + "null,";
+                    }
+                    else
+                    {
+                        SMALL = SMALL + complexdict[dpt].S.ToString() + ",";
+                        tempmaxamount = tempmaxamount + complexdict[dpt].S;
+                    }
+
+                    if (tempmaxamount > AmountMAX)
+                        AmountMAX = tempmaxamount;
+                }
+            }
+
+            ChartxAxisValues = ChartxAxisValues.Substring(0, ChartxAxisValues.Length - 1);
+            EXPEDITE = EXPEDITE.Substring(0, EXPEDITE.Length - 1);
+            MEDIUM = MEDIUM.Substring(0, MEDIUM.Length - 1);
+            SMALL = SMALL.Substring(0, SMALL.Length - 1);
+
+            var tempscript = System.IO.File.ReadAllText(Server.MapPath("~/Scripts/DominoComplex.xml"));
+            ViewBag.complexchart = tempscript.Replace("#ElementID#", "complexchart")
+                .Replace("#Title#", "Department Type " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd"))
+                .Replace("#ChartxAxisValues#", ChartxAxisValues)
+                .Replace("#AmountMAX#", (AmountMAX+1).ToString())
+                .Replace("#EXPEDITE#", EXPEDITE)
+                .Replace("#MEDIUM#", MEDIUM)
+                .Replace("#SMALL#", SMALL);
+        }
+
+        private void DictComplex(string charttype)
+        {
+            var startdate = DateTime.Parse(Request.Form["StartDate"]);
+            var enddate = DateTime.Parse(Request.Form["EndDate"]);
+
+            var complexdict = new Dictionary<string, ComplexData>();
+
+            if (string.Compare(charttype, DominoChartType.PE) == 0)
+            {
+                complexdict = DominoRPVM.RetrievePEComplexData(startdate, enddate);
+            }
+            else if (string.Compare(charttype, DominoChartType.Customer) == 0)
+            {
+                complexdict = DominoRPVM.RetrieveCustomerComplexData(startdate, enddate);
+            }
+            
+            if (complexdict.Count == 0)
+            {
+                return;
+            }
+
+            var ChartxAxisValues = string.Empty;
+            int AmountMAX = 0;
+
+            var EXPEDITE = string.Empty;
+            var MEDIUM = string.Empty;
+            var SMALL = string.Empty;
+
+            var pes = complexdict.Keys.ToList();
+            pes.Sort();
+
+            foreach (var pe in pes)
+            {
+                if (complexdict.ContainsKey(pe))
+                {
+                    int tempmaxamount = 0;
+                    ChartxAxisValues = ChartxAxisValues + "'" + pe.Split(new string[] { "@" }, StringSplitOptions.RemoveEmptyEntries)[0] + "',";
+
+                    if (complexdict[pe].E == 0)
+                    {
+                        EXPEDITE = EXPEDITE + "null,";
+                    }
+                    else
+                    {
+                        EXPEDITE = EXPEDITE + complexdict[pe].E.ToString() + ",";
+                        tempmaxamount = tempmaxamount + complexdict[pe].E;
+                    }
+
+                    if (complexdict[pe].M == 0)
+                    {
+                        MEDIUM = MEDIUM + "null,";
+                    }
+                    else
+                    {
+                        MEDIUM = MEDIUM + complexdict[pe].M.ToString() + ",";
+                        tempmaxamount = tempmaxamount + complexdict[pe].M;
+                    }
+
+                    if (complexdict[pe].S == 0)
+                    {
+                        SMALL = SMALL + "null,";
+                    }
+                    else
+                    {
+                        SMALL = SMALL + complexdict[pe].S.ToString() + ",";
+                        tempmaxamount = tempmaxamount + complexdict[pe].S;
+                    }
+
+                    if (tempmaxamount > AmountMAX)
+                        AmountMAX = tempmaxamount;
+                }
+            }
+
+            ChartxAxisValues = ChartxAxisValues.Substring(0, ChartxAxisValues.Length - 1);
+            EXPEDITE = EXPEDITE.Substring(0, EXPEDITE.Length - 1);
+            MEDIUM = MEDIUM.Substring(0, MEDIUM.Length - 1);
+            SMALL = SMALL.Substring(0, SMALL.Length - 1);
+
+            var tempscript = System.IO.File.ReadAllText(Server.MapPath("~/Scripts/DominoComplex.xml"));
+            ViewBag.complexchart = tempscript.Replace("#ElementID#", "complexchart")
+                .Replace("#Title#", charttype+" Type " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd"))
+                .Replace("#ChartxAxisValues#", ChartxAxisValues)
+                .Replace("#AmountMAX#", (AmountMAX + 1).ToString())
+                .Replace("#EXPEDITE#", EXPEDITE)
+                .Replace("#MEDIUM#", MEDIUM)
+                .Replace("#SMALL#", SMALL);
         }
 
         [HttpPost, ActionName("Complex")]
@@ -715,74 +993,18 @@ namespace Domino.Controllers
                 return View();
             }
 
-            var startdate = DateTime.Parse(Request.Form["StartDate"]);
-            var enddate = DateTime.Parse(Request.Form["EndDate"]);
-            var complexdict = DominoRPVM.RetrieveDepartComplexData(startdate, enddate);
-            if (complexdict.Count == 0)
+
+
+            var charttype = Request.Form["charttypelist"].ToString();
+
+            if (string.Compare(charttype, DominoChartType.Department) == 0)
             {
-                return View();
+                DepartComplex();
             }
-
-            var ChartxAxisValues = string.Empty;
-            int AmountMAX = 0;
-
-            var EXPEDITE = string.Empty;
-            var MEDIUM = string.Empty;
-            var SMALL = string.Empty;
-
-            var departs = DominoUserViewModels.RetrieveAllDepartment();
-            foreach (var dpt in departs)
+            else
             {
-                if (complexdict.ContainsKey(dpt))
-                {
-                    ChartxAxisValues = ChartxAxisValues + "'" + dpt + "',";
-
-                    if (complexdict[dpt].E == 0)
-                    {
-                        EXPEDITE = EXPEDITE + "null,";
-                    }
-                    else
-                    {
-                        EXPEDITE = EXPEDITE + complexdict[dpt].E.ToString() + ",";
-                        AmountMAX = AmountMAX + complexdict[dpt].E;
-                    }
-
-                    if (complexdict[dpt].M == 0)
-                    {
-                        MEDIUM = MEDIUM + "null,";
-                    }
-                    else
-                    {
-                        MEDIUM = MEDIUM + complexdict[dpt].M.ToString() + ",";
-                        AmountMAX = AmountMAX + complexdict[dpt].M;
-                    }
-
-                    if (complexdict[dpt].S == 0)
-                    {
-                        SMALL = SMALL + "null,";
-                    }
-                    else
-                    {
-                        SMALL = SMALL + complexdict[dpt].S.ToString() + ",";
-                        AmountMAX = AmountMAX + complexdict[dpt].S;
-                    }
-                }
+                DictComplex(charttype);
             }
-
-            ChartxAxisValues = ChartxAxisValues.Substring(0, ChartxAxisValues.Length - 1);
-            EXPEDITE = EXPEDITE.Substring(0, EXPEDITE.Length - 1);
-            MEDIUM = MEDIUM.Substring(0, MEDIUM.Length - 1);
-            SMALL = SMALL.Substring(0, SMALL.Length - 1);
-
-            var tempscript = System.IO.File.ReadAllText(Server.MapPath("~/Scripts/DominoComplex.xml"));
-            ViewBag.complexchart = tempscript.Replace("#ElementID#", "complexchart")
-                .Replace("#Title#", "Department Type " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd"))
-                .Replace("#ChartxAxisValues#", ChartxAxisValues)
-                .Replace("#AmountMAX#", AmountMAX.ToString())
-                .Replace("#EXPEDITE#", EXPEDITE)
-                .Replace("#MEDIUM#", MEDIUM)
-                .Replace("#SMALL#", SMALL);
-
 
             return View();
         }
@@ -790,7 +1012,7 @@ namespace Domino.Controllers
 
         public ActionResult QAFACheck()
         {
-            var charts = new string[] { DominoChartType.Department, DominoChartType.PE, DominoChartType.Monthly, DominoChartType.Quarter, DominoChartType.Customer };
+            var charts = new string[] { DominoChartType.Department, DominoChartType.PE, DominoChartType.Monthly, DominoChartType.Quarter};
             var chartlist = new List<string>();
             chartlist.AddRange(charts);
             ViewBag.charttypelist = CreateSelectList(chartlist, "");
@@ -798,11 +1020,161 @@ namespace Domino.Controllers
             return View();
         }
 
+        private void DepartQAFACheck()
+        {
+            var startdate = DateTime.Parse(Request.Form["StartDate"]);
+            var enddate = DateTime.Parse(Request.Form["EndDate"]);
+            var qafadict = DominoRPVM.RetrieveDepartQACheckData(this,startdate, enddate);
+            if (qafadict.Count == 0)
+            {
+                return;
+            }
+
+            var ChartxAxisValues = string.Empty;
+            int AmountMAX = 0;
+            
+            var PassQTY = string.Empty;
+            var FailQTY = string.Empty;
+            var FailRate = string.Empty;
+
+            var departs = DominoUserViewModels.RetrieveAllDepartment();
+            foreach (var dpt in departs)
+            {
+                if (qafadict.ContainsKey(dpt))
+                {
+                    int tempmax = 0;
+                    ChartxAxisValues = ChartxAxisValues + "'" + dpt + "',";
+
+                    if (qafadict[dpt].EEPROMPASS == 0)
+                    {
+                        PassQTY = PassQTY + "null,";
+                    }
+                    else
+                    {
+                        PassQTY = PassQTY + qafadict[dpt].EEPROMPASS.ToString() + ",";
+                        tempmax = tempmax + qafadict[dpt].EEPROMPASS;
+                    }
+
+                    if (qafadict[dpt].EEPROMFAIL == 0)
+                    {
+                        FailQTY = FailQTY + "null,";
+                    }
+                    else
+                    {
+                        FailQTY = FailQTY + qafadict[dpt].EEPROMFAIL.ToString() + ",";
+                        tempmax = tempmax + qafadict[dpt].EEPROMFAIL;
+                    }
+
+                    if ((qafadict[dpt].EEPROMPASS+ qafadict[dpt].EEPROMFAIL) == 0)
+                    {
+                        FailRate = FailRate + "100.0,";
+                    }
+                    else
+                    {
+                        FailRate = FailRate + (((double)qafadict[dpt].EEPROMFAIL/(double)(qafadict[dpt].EEPROMPASS + qafadict[dpt].EEPROMFAIL))*100.0).ToString("0.0") + ",";
+                    }
+
+                    if (tempmax > AmountMAX)
+                        AmountMAX = tempmax;
+                }
+            }
+
+            ChartxAxisValues = ChartxAxisValues.Substring(0, ChartxAxisValues.Length - 1);
+            PassQTY = PassQTY.Substring(0, PassQTY.Length - 1);
+            FailQTY = FailQTY.Substring(0, FailQTY.Length - 1);
+            FailRate = FailRate.Substring(0, FailRate.Length - 1);
+
+            var tempscript = System.IO.File.ReadAllText(Server.MapPath("~/Scripts/DominoQAFACheck.xml"));
+            ViewBag.qafachart = tempscript.Replace("#ElementID#", "qafachart")
+                .Replace("#Title#", "Depart EEPROM QA Fail Rate/Fail QTY " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd"))
+                .Replace("#ChartxAxisValues#", ChartxAxisValues)
+                .Replace("#AmountMAX#", (AmountMAX+1).ToString())
+                .Replace("#PassQTY#", PassQTY)
+                .Replace("#FailQTY#", FailQTY)
+                .Replace("#FailRate#", FailRate);
+        }
+
+        private void PEQAFACheck()
+        {
+            var startdate = DateTime.Parse(Request.Form["StartDate"]);
+            var enddate = DateTime.Parse(Request.Form["EndDate"]);
+            var qafadict = DominoRPVM.RetrievePEQACheckData(this, startdate, enddate);
+            if (qafadict.Count == 0)
+            {
+                return;
+            }
+
+            var ChartxAxisValues = string.Empty;
+            int AmountMAX = 0;
+
+            var PassQTY = string.Empty;
+            var FailQTY = string.Empty;
+            var FailRate = string.Empty;
+
+            var pes = qafadict.Keys.ToList();
+            pes.Sort();
+
+            foreach (var pe in pes)
+            {
+                if (qafadict.ContainsKey(pe))
+                {
+                    int tempmax = 0;
+                    ChartxAxisValues = ChartxAxisValues + "'" + pe.Split(new string[] { "@" }, StringSplitOptions.RemoveEmptyEntries)[0] + "',";
+
+                    if (qafadict[pe].EEPROMPASS == 0)
+                    {
+                        PassQTY = PassQTY + "null,";
+                    }
+                    else
+                    {
+                        PassQTY = PassQTY + qafadict[pe].EEPROMPASS.ToString() + ",";
+                        tempmax = tempmax + qafadict[pe].EEPROMPASS;
+                    }
+
+                    if (qafadict[pe].EEPROMFAIL == 0)
+                    {
+                        FailQTY = FailQTY + "null,";
+                    }
+                    else
+                    {
+                        FailQTY = FailQTY + qafadict[pe].EEPROMFAIL.ToString() + ",";
+                        tempmax = tempmax + qafadict[pe].EEPROMFAIL;
+                    }
+
+                    if ((qafadict[pe].EEPROMPASS + qafadict[pe].EEPROMFAIL) == 0)
+                    {
+                        FailRate = FailRate + "100.0,";
+                    }
+                    else
+                    {
+                        FailRate = FailRate + (((double)qafadict[pe].EEPROMFAIL / (double)(qafadict[pe].EEPROMPASS + qafadict[pe].EEPROMFAIL)) * 100.0).ToString("0.0") + ",";
+                    }
+
+                    if (tempmax > AmountMAX)
+                        AmountMAX = tempmax;
+                }
+            }
+
+            ChartxAxisValues = ChartxAxisValues.Substring(0, ChartxAxisValues.Length - 1);
+            PassQTY = PassQTY.Substring(0, PassQTY.Length - 1);
+            FailQTY = FailQTY.Substring(0, FailQTY.Length - 1);
+            FailRate = FailRate.Substring(0, FailRate.Length - 1);
+
+            var tempscript = System.IO.File.ReadAllText(Server.MapPath("~/Scripts/DominoQAFACheck.xml"));
+            ViewBag.qafachart = tempscript.Replace("#ElementID#", "qafachart")
+                .Replace("#Title#", "PE EEPROM QA Fail Rate/Fail QTY " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd"))
+                .Replace("#ChartxAxisValues#", ChartxAxisValues)
+                .Replace("#AmountMAX#", (AmountMAX + 1).ToString())
+                .Replace("#PassQTY#", PassQTY)
+                .Replace("#FailQTY#", FailQTY)
+                .Replace("#FailRate#", FailRate);
+        }
+
         [HttpPost, ActionName("QAFACheck")]
         [ValidateAntiForgeryToken]
         public ActionResult QAFACheckPose()
         {
-            var charts = new string[] { DominoChartType.Department, DominoChartType.PE, DominoChartType.Monthly, DominoChartType.Quarter, DominoChartType.Customer };
+            var charts = new string[] { DominoChartType.Department, DominoChartType.PE, DominoChartType.Monthly, DominoChartType.Quarter};
             var chartlist = new List<string>();
             chartlist.AddRange(charts);
             ViewBag.charttypelist = CreateSelectList(chartlist, "");
@@ -814,72 +1186,18 @@ namespace Domino.Controllers
                 return View();
             }
 
-            var startdate = DateTime.Parse(Request.Form["StartDate"]);
-            var enddate = DateTime.Parse(Request.Form["EndDate"]);
-            var qafadict = DominoRPVM.RetrieveDepartQACheckData(this,startdate, enddate);
-            if (qafadict.Count == 0)
+
+
+            var charttype = Request.Form["charttypelist"].ToString();
+
+            if (string.Compare(charttype, DominoChartType.Department) == 0)
             {
-                return View();
+                DepartQAFACheck();
             }
-
-            var ChartxAxisValues = string.Empty;
-            int AmountMAX = 0;
-
-            var PassQTY = string.Empty;
-            var FailQTY = string.Empty;
-            var FailRate = string.Empty;
-
-            var departs = DominoUserViewModels.RetrieveAllDepartment();
-            foreach (var dpt in departs)
+            else if (string.Compare(charttype, DominoChartType.PE) == 0)
             {
-                if (qafadict.ContainsKey(dpt))
-                {
-                    ChartxAxisValues = ChartxAxisValues + "'" + dpt + "',";
-
-                    if (qafadict[dpt].EEPROMPASS == 0)
-                    {
-                        PassQTY = PassQTY + "null,";
-                    }
-                    else
-                    {
-                        PassQTY = PassQTY + qafadict[dpt].EEPROMPASS.ToString() + ",";
-                        AmountMAX = AmountMAX + qafadict[dpt].EEPROMPASS;
-                    }
-
-                    if (qafadict[dpt].EEPROMFAIL == 0)
-                    {
-                        FailQTY = FailQTY + "null,";
-                    }
-                    else
-                    {
-                        FailQTY = FailQTY + qafadict[dpt].EEPROMFAIL.ToString() + ",";
-                        AmountMAX = AmountMAX + qafadict[dpt].EEPROMFAIL;
-                    }
-
-                    if ((qafadict[dpt].EEPROMPASS+ qafadict[dpt].EEPROMFAIL) == 0)
-                    {
-                        FailRate = FailRate + "100.0,";
-                    }
-                    else
-                    {
-                        FailRate = FailRate + (((double)qafadict[dpt].EEPROMFAIL/(double)(qafadict[dpt].EEPROMPASS + qafadict[dpt].EEPROMFAIL))*100.0).ToString("0.0") + ",";
-                    }
-                }
+                PEQAFACheck();
             }
-
-            ChartxAxisValues = ChartxAxisValues.Substring(0, ChartxAxisValues.Length - 1);
-            PassQTY = PassQTY.Substring(0, PassQTY.Length - 1);
-            FailQTY = FailQTY.Substring(0, FailQTY.Length - 1);
-            FailRate = FailRate.Substring(0, FailRate.Length - 1);
-
-            var tempscript = System.IO.File.ReadAllText(Server.MapPath("~/Scripts/DominoQAFACheck.xml"));
-            ViewBag.qafachart = tempscript.Replace("#ElementID#", "qafachart")
-                .Replace("#Title#", "EEPROM QA Fail Rate/Fail QTY " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd"))
-                .Replace("#ChartxAxisValues#", ChartxAxisValues)
-                .Replace("#AmountMAX#", AmountMAX.ToString())
-                .Replace("#PassQTY#", PassQTY)
-                .Replace("#FailQTY#", FailQTY)
-                .Replace("#FailRate#", FailRate);
 
             return View();
         }
