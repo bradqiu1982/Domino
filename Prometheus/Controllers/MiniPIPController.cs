@@ -2076,13 +2076,42 @@ namespace Domino.Controllers
                 var ecolist = new List<string>();
                 ecolist.Add(baseinfo[0].ECONum);
                 DominoDataCollector.DownloadAgile(ecolist, this, DOMINOAGILEDOWNLOADTYPE.ATTACH);
-                //using (Process myprocess = new Process())
-                //{
-                //    myprocess.StartInfo.FileName = Path.Combine(System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath, @"Scripts\agiledownloadwraper\AgileDownload.exe").Replace("\\", "/");
-                //    myprocess.StartInfo.Arguments = baseinfo[0].ECONum;
-                //    myprocess.StartInfo.CreateNoWindow = true;
-                //    myprocess.Start();
-                //}
+            }
+
+            var dict = new RouteValueDictionary();
+            dict.Add("ECOKey", vm[0].ECOKey);
+            dict.Add("CardKey", vm[0].CardKey);
+            return RedirectToAction(vm[0].CardType, "MiniPIP", dict);
+        }
+
+        public ActionResult AgileFileNameDownload(string CardKey)
+        {
+            var vm = DominoVM.RetrieveCard(CardKey);
+
+            var baseinfo = ECOBaseInfo.RetrieveECOBaseInfo(vm[0].ECOKey);
+            if (baseinfo.Count > 0)
+            {
+                var ecolist = new List<string>();
+                ecolist.Add(baseinfo[0].ECONum);
+                DominoDataCollector.DownloadAgile(ecolist, this, DOMINOAGILEDOWNLOADTYPE.ATTACHNAME);
+            }
+
+            var dict = new RouteValueDictionary();
+            dict.Add("ECOKey", vm[0].ECOKey);
+            dict.Add("CardKey", vm[0].CardKey);
+            return RedirectToAction(vm[0].CardType, "MiniPIP", dict);
+        }
+
+        public ActionResult AgileWorkFlowDownload(string CardKey)
+        {
+            var vm = DominoVM.RetrieveCard(CardKey);
+
+            var baseinfo = ECOBaseInfo.RetrieveECOBaseInfo(vm[0].ECOKey);
+            if (baseinfo.Count > 0)
+            {
+                var ecolist = new List<string>();
+                ecolist.Add(baseinfo[0].ECONum);
+                DominoDataCollector.DownloadAgile(ecolist, this, DOMINOAGILEDOWNLOADTYPE.WORKFLOW);
             }
 
             var dict = new RouteValueDictionary();
@@ -2093,7 +2122,8 @@ namespace Domino.Controllers
 
         private void StoreAgileAttch(string ECONUM,List<DominoVM> vm)
         {
-            var dir = "D:\\Agile\\" + ECONUM;
+            var syscfgdict = DominoDataCollector.GetSysConfig(this);
+            var dir = syscfgdict["SAVELOCATION"] +"\\" + ECONUM;
             if (Directory.Exists(dir))
             {
                 string datestring = DateTime.Now.ToString("yyyyMMdd");

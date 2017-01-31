@@ -20,7 +20,7 @@ namespace Domino.Models
     public class DominoDataCollector
     {
 
-        private static Dictionary<string, string> GetSysConfig(Controller ctrl)
+        public static Dictionary<string, string> GetSysConfig(Controller ctrl)
         {
             var lines = System.IO.File.ReadAllLines(ctrl.Server.MapPath("~/Scripts/DominoCfg.txt"));
             var ret = new Dictionary<string, string>();

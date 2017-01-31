@@ -485,10 +485,10 @@ public class BOMFileAttachment {
 						
 						if(wtab.size() > 0)
 						{
-							File f=new File(savedlocation+"WorkFlowTable.csv");
+							File f=new File(savedlocation+Bomnumber+"_WorkFlowTable.csv");
 							DataOutputStream out=null;
 							try {
-							out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(savedlocation+"WorkFlowTable.csv")));
+							out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(savedlocation+Bomnumber+"_WorkFlowTable.csv")));
 							out.writeBytes("StatusCode,"+"WorkFlow,"+"WorkFlowStatus,"
 									+"Action,"+"Reqd,"+"Reviewer,"
 									+"SignoffUser,"+"StatusChangedBy,"+"LocalTime,"
