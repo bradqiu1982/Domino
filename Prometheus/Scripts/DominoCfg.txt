@@ -40,4 +40,4 @@ JO1STCHECKINFO:::\\wux-fs\public\Project\CFP\OQC\FA JO checklist_Engineering.xls
 JO2NDCHECKINFO:::\\wux-fs\public\Project\CFP\OQC
 AGILEURL:::http://sny-agile9app-p64:7001/Agile
 LOCALSITEPORT:::8080
-SAVELOCATION:::d:\Agile
+SAVELOCATION:::e:\Agile

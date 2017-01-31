@@ -111,7 +111,7 @@ public class BOMFileAttachment {
 				ecolist.add(args[idx]);
 			}
 			
-			HashMap<String,HashMap<String,String>> localfiledict = RetrieveLocalFiles(AgileDir);
+			HashMap<String,HashMap<String,String>> localfiledict = null; //RetrieveLocalFiles(AgileDir);
 			
 			for(int idx = 0;idx < ecolist.size();idx++)
 			{
@@ -127,6 +127,8 @@ public class BOMFileAttachment {
 				{
 					BOMFileAttachment gfa=new BOMFileAttachment();
 					gfa.getAgileFilesByName(sess,ecolist,AgileDir,localfiledict,false);
+					
+					NoticDominoAttach(LocalSitePort,ecolist,"AgileAttach");
 					NoticDominoAttach(LocalSitePort,ecolist,"AgileAttach");
 				}
 				//gfa.getAgileFilesByName("E150570");
@@ -140,6 +142,8 @@ public class BOMFileAttachment {
 				{
 					BOMFileAttachment gfa=new BOMFileAttachment();
 					gfa.getAgileFilesByName(sess,ecolist,AgileDir,localfiledict,true);
+					
+					NoticDominoAttach(LocalSitePort,ecolist,"AgileAttach");
 					NoticDominoAttach(LocalSitePort,ecolist,"AgileAttach");
 				}
 			}
@@ -150,6 +154,8 @@ public class BOMFileAttachment {
 				{
 					BOMFileAttachment gfa=new BOMFileAttachment();
 					gfa.getAgileWorkFlow(sess,ecolist,AgileDir);
+					
+					NoticDominoAttach(LocalSitePort,ecolist,"AgileWorkFlow");
 					NoticDominoAttach(LocalSitePort,ecolist,"AgileWorkFlow");
 				}
 			}
@@ -188,6 +194,9 @@ public class BOMFileAttachment {
 	{
 		HashMap<String,HashMap<String,String>> ret = new HashMap<String,HashMap<String,String>>();
         File maindir = new File(AgileDir);
+        if(!maindir.exists())
+        	return ret;
+        
         File[] subdirs = maindir.listFiles();
         for (File subdir : subdirs){
         	
