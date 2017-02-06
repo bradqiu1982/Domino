@@ -941,6 +941,7 @@
     <Content Include="Views\DominoReport\FABuilding.cshtml" />
     <Content Include="Views\MiniPIP\AgileWorkFlow.cshtml" />
     <Content Include="Views\MiniPIP\AgileAttach.cshtml" />
+    <Content Include="Views\MiniPIP\CompletedMiniPIP.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Scripts\agiledownloadwraper\jre\lib\applet\" />

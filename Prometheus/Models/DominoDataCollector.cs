@@ -56,6 +56,7 @@ namespace Domino.Models
             ECOMDApprover = "";
             CApproveHoldDate = "";
             ECOCompleteDate = "";
+            WorkFlowType = "";
         }
 
         public string CurrentProcess { set; get; }
@@ -63,6 +64,7 @@ namespace Domino.Models
         public string ECOMDApprover { set; get; }
         public string CApproveHoldDate { set; get; }
         public string ECOCompleteDate { set; get; }
+        public string WorkFlowType { set; get; }
     }
 
     public class DominoDataCollector
@@ -154,6 +156,15 @@ namespace Domino.Models
                 if (string.Compare(line.StatusCode, "Current Process", true) == 0)
                 {
                     ret.CurrentProcess = line.WorkFlowStatus;
+                    if (line.WorkFlow.ToUpper().Contains("REVISE"))
+                    {
+                        ret.WorkFlowType = DominoFlowInfo.Revise;
+                    }
+                    else
+                    {
+                        ret.WorkFlowType = DominoFlowInfo.Default;
+                    }
+
                     if (string.Compare(ret.CurrentProcess, "Completed") == 0)
                     {
                         bcompletedate = true;
@@ -176,7 +187,7 @@ namespace Domino.Models
                     ret.ECOMDApprover = ret.ECOMDApprover + line.Reviewer + ";";
                 }
 
-                if (line.StatusCode.ToUpper().Contains("CCB")
+                if (line.WorkFlowStatus.ToUpper().Contains("CCB")
                     && string.IsNullOrEmpty(ret.CApproveHoldDate)
                     && string.IsNullOrEmpty(line.Reqd)
                     && string.IsNullOrEmpty(line.Reviewer)

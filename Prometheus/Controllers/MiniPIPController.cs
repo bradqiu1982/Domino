@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Web.Routing;
 using System.IO;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace Domino.Controllers
 {
@@ -855,6 +856,24 @@ namespace Domino.Controllers
             catch (Exception ex) { return string.Empty; }
         }
 
+        private static string ConvertUSLocalToDate(string obj)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(obj.Trim()))
+                {
+                    return string.Empty;
+                }
+                CultureInfo culture = CultureInfo.GetCultureInfo("en-US");
+                var date = DateTime.ParseExact(obj.Trim().Replace("CST", "-6"), "ddd MMM dd HH:mm:ss z yyyy", culture);
+                return date.ToString("yyyy-MM-dd hh:mm:ss");
+            }
+            catch (Exception ex) {
+                return string.Empty;
+            }
+        }
+
+
         [HttpPost, ActionName("ECOComplete")]
         [ValidateAntiForgeryToken]
         public ActionResult ECOCompletePost()
@@ -1272,12 +1291,12 @@ namespace Domino.Controllers
                 StoreAttachAndComment(CardKey, updater);
 
                 DominoVM cardinfo = DominoVM.RetrieveCustomerApproveHoldInfo(CardKey);
-                cardinfo.ECOCustomerApproveDate = Request.Form["ECOCustomerApproveDate"];
-                cardinfo.UpdateCustomerApproveHoldInfo(CardKey);
+                //cardinfo.ECOCustomerApproveDate = Request.Form["ECOCustomerApproveDate"];
+                //cardinfo.UpdateCustomerApproveHoldInfo(CardKey);
 
                 if (string.IsNullOrEmpty(cardinfo.ECOCustomerApproveDate) && string.IsNullOrEmpty(baseinfos[0].FACustomerApproval))
                 {
-                    SetNoticeInfo("ECO Customer Approve Date or FAI Approve Date, At least one of them is inputed");
+                    SetNoticeInfo("ECO Sample Approve Date or FAI Approve Date, At least one of them is inputed");
                     var dict = new RouteValueDictionary();
                     dict.Add("ECOKey", ECOKey);
                     dict.Add("CardKey", CardKey);
@@ -1709,6 +1728,15 @@ namespace Domino.Controllers
                     dict1.Add("ECOKey", ECOKey);
                     dict1.Add("CardKey", CardKey);
                     return RedirectToAction(DominoCardType.SampleCustomerApproval, "MiniPIP", dict1);
+                }
+                else
+                {
+                    var customerholdcard = DominoVM.RetrieveSpecialCard(baseinfos[0], DominoCardType.CustomerApprovalHold);
+                    if (customerholdcard.Count > 0)
+                    {
+                        customerholdcard[0].ECOCustomerApproveDate = tempinfo.SampleCustomerApproveDate;
+                        customerholdcard[0].UpdateCustomerApproveHoldInfo(customerholdcard[0].CardKey);
+                    }
                 }
 
                 DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
@@ -2212,19 +2240,53 @@ namespace Domino.Controllers
             if (ecoinfo.Count > 0)
             {
                 var workflowinfo = DominoDataCollector.RetrieveAgileWorkFlowData(ECONUM, this);
-
+                if(!string.IsNullOrEmpty(workflowinfo.CurrentProcess))
+                {
+                    ecoinfo[0].CurrentECOProcess = workflowinfo.CurrentProcess;
+                    ecoinfo[0].CurrentFlowType = workflowinfo.WorkFlowType;
+                    ecoinfo[0].UpdateECO();
+                }
 
                 var vm = DominoVM.RetrieveSpecialCard(ecoinfo[0], DominoCardType.ECOSignoff1);
                 if (vm.Count > 0)
                 {
-                    
+                    var cardinfo = DominoVM.RetrieveSignoffInfo(vm[0].CardKey);
+                    cardinfo.ECOMDApprover = workflowinfo.ECOMDApprover;
+                    cardinfo.ECOTRApprover = workflowinfo.ECOTRApprover;
+                    cardinfo.UpdateSignoffInfo(vm[0].CardKey);
                 }
                 else
                 {
                     vm = DominoVM.RetrieveSpecialCard(ecoinfo[0], DominoCardType.ECOSignoff2);
                     if (vm.Count > 0)
                     {
-                        
+                        var cardinfo = DominoVM.RetrieveSignoffInfo(vm[0].CardKey);
+                        cardinfo.ECOMDApprover = workflowinfo.ECOMDApprover;
+                        cardinfo.ECOTRApprover = workflowinfo.ECOTRApprover;
+                        cardinfo.UpdateSignoffInfo(vm[0].CardKey);
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(workflowinfo.CApproveHoldDate))
+                {
+                    vm = DominoVM.RetrieveSpecialCard(ecoinfo[0], DominoCardType.ECOSignoff2);
+                    if (vm.Count > 0)
+                    {
+                        var cardinfo = DominoVM.RetrieveSignoffInfo(vm[0].CardKey);
+                        cardinfo.ECOCustomerHoldDate = ConvertUSLocalToDate(workflowinfo.CApproveHoldDate);
+                        cardinfo.UpdateSignoffInfo(vm[0].CardKey);
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(workflowinfo.ECOCompleteDate))
+                {
+                    vm = DominoVM.RetrieveSpecialCard(ecoinfo[0], DominoCardType.ECOComplete);
+                    if (vm.Count > 0)
+                    {
+                        vm[0].ECOCompleted = DominoYESNO.YES;
+                        vm[0].ECOCompleteDate = ConvertUSLocalToDate(workflowinfo.ECOCompleteDate);
+                        vm[0].UpdateECOCompleteInfo(vm[0].CardKey);
+                        DominoVM.UpdateCardStatus(vm[0].CardKey, DominoCardStatus.done);
                     }
                 }
             }

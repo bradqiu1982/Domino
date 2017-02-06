@@ -74,9 +74,14 @@
 
                                         <div class="panel-body panel-body-info" style="height:32px;">
                                             <div class="text-center" style="font-size:11px">
-                                                <strong>
-                                                    @kvp.Value
-                                                </strong>
+                                                @if (string.Compare(kvp.Key.ToUpper(), "ECO STATUS") == 0)
+                                                {
+                                                    <font color="red"><strong>@kvp.Value.ToUpper()</strong></font>
+                                                }
+                                                else
+                                                {
+                                                    <strong>@kvp.Value</strong>
+                                                }
                                             </div>
                                         </div>
                                     </div>
