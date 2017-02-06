@@ -7,14 +7,42 @@
 
 <div class="row">
     <div class="col-lg-3">
-        <h2>Completed MiniPIP</h2>
+        <h2>Completed MiniPIP Board</h2>
     </div>
-    <div class="col-lg-2">
-
+    <div class="col-lg-3">
+        <button data-toggle="tooltip" title="Working MiniPIP" type="button" onclick="WorkingMiniPIP()" class="btn btn-default" style="font-size:1.5em; margin-top: 0.83em;margin-bottom: 0.83em;width:100%;">Working MiniPIP</button>
     </div>
-    <div class="col-lg-7"></div>
+    <div class="col-lg-6"></div>
+    <script type="text/javascript">
+        function WorkingMiniPIP()
+        {
+            window.location.href = '/Domino/MiniPIP/ViewAll';
+        }
+    </script>
 </div>
 
+@if (ViewBag.FilterPEList != null)
+{
+    <hr />
+    <div class="row col-lg-12">
+        <div class="col-lg-1">
+            <label class="control-label" for="FilterPEList">Filter:</label>
+        </div>
+        <div class="col-lg-4">
+            @Html.DropDownList("FilterPEList", null, new { @id = "FilterPEList", @class = "form-control", @onchange = "ShowPEWorkingMiniPIP()" })
+        </div>
+        <div class="col-lg-7">
+        </div>
+        <script type="text/javascript">
+            function ShowPEWorkingMiniPIP() {
+                if (document.getElementById("FilterPEList").value && document.getElementById("FilterPEList").value != 'NONE')
+                {
+                    window.location.href = '/Domino/MiniPIP/ShowPECompletedMiniPIP?PE=' + document.getElementById("FilterPEList").value;
+                }
+            }
+        </script>
+    </div>
+}
 
 <hr />
 

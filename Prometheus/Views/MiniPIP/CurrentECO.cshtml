@@ -15,6 +15,9 @@
     <div class="col-lg-1">
         <h2><button data-toggle="tooltip" title="Refresh Card Content" type="button" class="btn btn-default" onclick="RefreshCard()"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button></h2>
     </div>
+    <div class="col-lg-1">
+        <h2><button data-toggle="tooltip" title="Renew Card Status" type="button" class="btn btn-default" value="@ViewBag.CardKey" onclick="RenewCard(this)"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span></button></h2>
+    </div>
     <div class="col-lg-2">
         <h2><button class="form-control" data-toggle="tooltip" title="Download Attachment Name" type="button" value="@ViewBag.CardKey" onclick="AgileAttachNameDownload(this)">Agile Attach Name</button></h2>
     </div>
@@ -24,9 +27,7 @@
     <div class="col-lg-2">
         <h2><button class="form-control" data-toggle="tooltip" title="Download WorkFlow Information" type="button" value="@ViewBag.CardKey" onclick="AgileWorkFlowDownload(this)">Agile WorkFlow</button></h2>
     </div>
-    <div class="col-lg-1">
-        <h2></h2>
-    </div>
+
     <script type="text/javascript">
                         function AgileAttachNameDownload(oBT)
                         {
@@ -45,6 +46,11 @@
                         function AgileWorkFlowDownload(oBT) {
                             window.alert("Info: the download action will be spent 5 mins.\n After that re-click card to get downloaded information.");
                             window.location.href = '/Domino/MiniPIP/AgileWorkFlowDownload?CardKey=' + oBT.value;
+                        }
+
+                        function RenewCard(oBT)
+                        {
+                            window.location.href = '/Domino/MiniPIP/ReNewCard?CardKey=' + oBT.value;
                         }
     </script>
 </div>

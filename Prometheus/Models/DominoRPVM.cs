@@ -675,7 +675,7 @@ namespace Domino.Models
         {
             var allcycletime = new List<CycleTimeData>();
 
-            var ecodone = ECOBaseInfo.RetrieveCompletedECOBaseInfo();
+            var ecodone = ECOBaseInfo.RetrieveECOCompletedBaseInfo();
             foreach (var eco in ecodone)
             {
                 var tempcycle = new CycleTimeData();

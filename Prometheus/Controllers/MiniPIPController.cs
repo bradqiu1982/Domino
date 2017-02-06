@@ -62,7 +62,70 @@ namespace Domino.Controllers
                 vm.Add(templist);
             }
 
+            var alluser = ECOBaseInfo.RetrieveAllPE();
+            var asilist = new List<string>();
+            asilist.Add("NONE");
+            asilist.AddRange(alluser);
+            ViewBag.FilterPEList = CreateSelectList(asilist, "");
+
             return View(vm);
+        }
+
+        public ActionResult ShowPEWkingMiniPIP(string PE)
+        {
+            var baseinfos = ECOBaseInfo.RetrievePEWorkingECOBaseInfo(PE);
+            var vm = new List<List<DominoVM>>();
+            foreach (var item in baseinfos)
+            {
+                var templist = DominoVM.RetrieveECOCards(item);
+                vm.Add(templist);
+            }
+
+            var alluser = ECOBaseInfo.RetrieveAllPE();
+            var asilist = new List<string>();
+            asilist.Add("NONE");
+            asilist.AddRange(alluser);
+            ViewBag.FilterPEList = CreateSelectList(asilist, PE);
+
+            return View("ViewAll", vm);
+        }
+
+        public ActionResult CompletedMiniPIP()
+        {
+            var baseinfos = ECOBaseInfo.RetrieveAllCompletedECOBaseInfo();
+            var vm = new List<List<DominoVM>>();
+            foreach (var item in baseinfos)
+            {
+                var templist = DominoVM.RetrieveECOCards(item);
+                vm.Add(templist);
+            }
+
+            var alluser = ECOBaseInfo.RetrieveAllPE();
+            var asilist = new List<string>();
+            asilist.Add("NONE");
+            asilist.AddRange(alluser);
+            ViewBag.FilterPEList = CreateSelectList(asilist, "");
+
+            return View(vm);
+        }
+
+        public ActionResult ShowPECompletedMiniPIP(string PE)
+        {
+            var baseinfos = ECOBaseInfo.RetrievePECompletedECOBaseInfo(PE);
+            var vm = new List<List<DominoVM>>();
+            foreach (var item in baseinfos)
+            {
+                var templist = DominoVM.RetrieveECOCards(item);
+                vm.Add(templist);
+            }
+
+            var alluser = ECOBaseInfo.RetrieveAllPE();
+            var asilist = new List<string>();
+            asilist.Add("NONE");
+            asilist.AddRange(alluser);
+            ViewBag.FilterPEList = CreateSelectList(asilist, PE);
+
+            return View("CompletedMiniPIP", vm);
         }
 
         private void logmaininfo(string info)
@@ -1877,7 +1940,7 @@ namespace Domino.Controllers
                    && string.IsNullOrEmpty(baseinfos[0].FACustomerApproval))
                 {
                     allchecked = false;
-                    SetNoticeInfo("FA Customer Approval must be inputed in ECOPending card");
+                    SetNoticeInfo("FAI Approve Date must be inputed in ECO Signoff1/ECO Signoff2 card");
                 }
 
                 if (!allchecked)
@@ -2122,6 +2185,38 @@ namespace Domino.Controllers
                 var ecolist = new List<string>();
                 ecolist.Add(baseinfo[0].ECONum);
                 DominoDataCollector.DownloadAgile(ecolist, this, DOMINOAGILEDOWNLOADTYPE.ATTACHNAME);
+            }
+
+            var dict = new RouteValueDictionary();
+            dict.Add("ECOKey", vm[0].ECOKey);
+            dict.Add("CardKey", vm[0].CardKey);
+            return RedirectToAction(vm[0].CardType, "MiniPIP", dict);
+        }
+
+        public ActionResult ReNewCard(string CardKey)
+        {
+            var vm = DominoVM.RetrieveCard(CardKey);
+
+            
+            if (string.Compare(vm[0].CardType, DominoCardType.SampleOrdering) == 0
+                || string.Compare(vm[0].CardType, DominoCardType.SampleBuilding) == 0
+                || string.Compare(vm[0].CardType, DominoCardType.SampleShipment) == 0)
+            {
+                DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.working);
+            }
+            else
+            {
+                DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.pending);
+            }
+
+            if (string.Compare(vm[0].CardType, DominoCardType.MiniPIPComplete) == 0)
+            {
+                var baseinfo = ECOBaseInfo.RetrieveECOBaseInfo(vm[0].ECOKey);
+                if (baseinfo.Count > 0)
+                {
+                    baseinfo[0].MiniPIPStatus = DominoMiniPIPStatus.working;
+                    baseinfo[0].UpdateECO();
+                }
             }
 
             var dict = new RouteValueDictionary();
