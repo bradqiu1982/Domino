@@ -130,7 +130,7 @@ namespace Domino.Controllers
 
         private void logmaininfo(string info)
         {
-            var dominofolder = "d:\\HeartBeat4Domino";
+            var dominofolder = "e:\\HeartBeat4Domino";
             if (!Directory.Exists(dominofolder))
             {
                 Directory.CreateDirectory(dominofolder);
@@ -152,82 +152,118 @@ namespace Domino.Controllers
 
         public ActionResult RefreshSys()
         {
-            DominoDataCollector.SetForceECORefresh(this);
-            DominoDataCollector.RefreshECOList(this);
+            string datestring = DateTime.Now.ToString("yyyyMMdd");
+            string imgdir = Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\RefreshSys";
+            if(Directory.Exists(imgdir))
+                return RedirectToAction("ViewAll", "MiniPIP");
 
-            logmaininfo(DateTime.Now.ToString() + "    ECO base info is refreshed!\r\n");
-
-            var cardtypes = new string[] { DominoCardType.ECOPending,DominoCardType.ECOSignoff1
-                                            , DominoCardType.ECOSignoff2, DominoCardType.SampleOrdering
-                                            ,DominoCardType.SampleBuilding,DominoCardType.SampleShipment };
-            var cardtypelist = new List<string>();
-            cardtypelist.AddRange(cardtypes);
-
-            var baseinfos = ECOBaseInfo.RetrieveAllWorkingECOBaseInfo();
-
-            foreach (var cardtype in cardtypelist)
+            try
             {
-                var cardlist = new List<DominoVM>();
-                foreach (var bs in baseinfos)
-                {
-                    if (string.Compare(bs.MiniPIPStatus,DominoMiniPIPStatus.hold) == 0)
-                    {
-                        continue;
-                    }//for hold card,we will not update info
+                Directory.CreateDirectory(imgdir);
+            }catch (Exception ex) { }
 
-                    var ret = DominoVM.RetrieveWorkingCard(bs, cardtype);
-                    if (!string.IsNullOrEmpty(ret.CardKey))
-                    {
-                        cardlist.Add(ret);
-                    }
-                }
-
-                foreach (var card in cardlist)
-                {
-                    if (string.Compare(cardtype, DominoCardType.ECOPending) == 0)
-                    {
-                        DominoDataCollector.UpdateECOWeeklyUpdate(this, card.EBaseInfo, card.CardKey);
-                        DominoVM.CardCanbeUpdate(card.CardKey);
-                    }
-                    else if (string.Compare(cardtype, DominoCardType.ECOSignoff1) == 0)
-                    {
-                        DominoDataCollector.RefreshQAFAI(card.EBaseInfo, card.CardKey, this);
-                        DominoVM.CardCanbeUpdate(card.CardKey);
-                    }
-                    else if (string.Compare(cardtype, DominoCardType.ECOSignoff2) == 0)
-                    {
-                        DominoDataCollector.RefreshQAFAI(card.EBaseInfo, card.CardKey, this);
-                        DominoVM.CardCanbeUpdate(card.CardKey);
-                    }
-                    else if (string.Compare(cardtype, DominoCardType.SampleOrdering) == 0)
-                    {
-                        DominoDataCollector.UpdateOrderInfoFromExcel(this, card.EBaseInfo, card.CardKey);
-                        DominoVM.CardCanbeUpdate(card.CardKey);
-                    }
-                    else if (string.Compare(cardtype, DominoCardType.SampleBuilding) == 0)
-                    {
-                        DominoDataCollector.UpdateJOInfoFromExcel(this, card.EBaseInfo, card.CardKey);
-                        DominoDataCollector.Update1STJOCheckFromExcel(this, card.EBaseInfo, card.CardKey);
-                        DominoDataCollector.Update2NDJOCheckFromExcel(this, card.EBaseInfo, card.CardKey);
-                        DominoDataCollector.UpdateJOMainStoreFromExcel(this, card.EBaseInfo, card.CardKey);
-                        DominoVM.CardCanbeUpdate(card.CardKey);
-                    }
-                    else if (string.Compare(cardtype, DominoCardType.SampleShipment) == 0)
-                    {
-                        DominoDataCollector.UpdateShipInfoFromExcel(this, card.EBaseInfo, card.CardKey);
-                        DominoVM.CardCanbeUpdate(card.CardKey);
-                    }
-                }//end foreach
-
-                if (cardlist.Count > 0)
-                {
-                    logmaininfo(DateTime.Now.ToString() + "    "+ cardtype +" info is refreshed!\r\n");
-                }
-            }//end foreach
+            RefreshCardsInfo();
+            //RefreshAgileInfo();
 
             return RedirectToAction("ViewAll", "MiniPIP");
         }
 
+        private void RefreshCardsInfo()
+        {
+            try
+            {
+                DominoDataCollector.SetForceECORefresh(this);
+                DominoDataCollector.RefreshECOList(this);
+
+                logmaininfo(DateTime.Now.ToString() + "    ECO base info is refreshed!\r\n");
+
+                var cardtypes = new string[] { DominoCardType.ECOPending,DominoCardType.ECOSignoff1
+                                                , DominoCardType.ECOSignoff2, DominoCardType.SampleOrdering
+                                                ,DominoCardType.SampleBuilding,DominoCardType.SampleShipment };
+                var cardtypelist = new List<string>();
+                cardtypelist.AddRange(cardtypes);
+
+                var baseinfos = ECOBaseInfo.RetrieveAllWorkingECOBaseInfo();
+
+                foreach (var cardtype in cardtypelist)
+                {
+                    var cardlist = new List<DominoVM>();
+                    foreach (var bs in baseinfos)
+                    {
+                        if (string.Compare(bs.MiniPIPStatus, DominoMiniPIPStatus.hold) == 0)
+                        {
+                            continue;
+                        }//for hold card,we will not update info
+
+                        var ret = DominoVM.RetrieveWorkingCard(bs, cardtype);
+                        if (!string.IsNullOrEmpty(ret.CardKey))
+                        {
+                            cardlist.Add(ret);
+                        }
+                    }
+
+                    foreach (var card in cardlist)
+                    {
+                        if (string.Compare(cardtype, DominoCardType.ECOPending) == 0)
+                        {
+                            DominoDataCollector.UpdateECOWeeklyUpdate(this, card.EBaseInfo, card.CardKey);
+                            DominoVM.CardCanbeUpdate(card.CardKey);
+                        }
+                        else if (string.Compare(cardtype, DominoCardType.ECOSignoff1) == 0)
+                        {
+                            DominoDataCollector.RefreshQAFAI(card.EBaseInfo, card.CardKey, this);
+                            DominoVM.CardCanbeUpdate(card.CardKey);
+                        }
+                        else if (string.Compare(cardtype, DominoCardType.ECOSignoff2) == 0)
+                        {
+                            DominoDataCollector.RefreshQAFAI(card.EBaseInfo, card.CardKey, this);
+                            DominoVM.CardCanbeUpdate(card.CardKey);
+                        }
+                        else if (string.Compare(cardtype, DominoCardType.SampleOrdering) == 0)
+                        {
+                            DominoDataCollector.UpdateOrderInfoFromExcel(this, card.EBaseInfo, card.CardKey);
+                            DominoVM.CardCanbeUpdate(card.CardKey);
+                        }
+                        else if (string.Compare(cardtype, DominoCardType.SampleBuilding) == 0)
+                        {
+                            DominoDataCollector.UpdateJOInfoFromExcel(this, card.EBaseInfo, card.CardKey);
+                            DominoDataCollector.Update1STJOCheckFromExcel(this, card.EBaseInfo, card.CardKey);
+                            DominoDataCollector.Update2NDJOCheckFromExcel(this, card.EBaseInfo, card.CardKey);
+                            DominoDataCollector.UpdateJOMainStoreFromExcel(this, card.EBaseInfo, card.CardKey);
+                            DominoVM.CardCanbeUpdate(card.CardKey);
+                        }
+                        else if (string.Compare(cardtype, DominoCardType.SampleShipment) == 0)
+                        {
+                            DominoDataCollector.UpdateShipInfoFromExcel(this, card.EBaseInfo, card.CardKey);
+                            DominoVM.CardCanbeUpdate(card.CardKey);
+                        }
+                    }//end foreach
+
+                    if (cardlist.Count > 0)
+                    {
+                        logmaininfo(DateTime.Now.ToString() + "    " + cardtype + " info is refreshed!\r\n");
+                    }
+                }//end foreach
+            }catch (Exception ex) { }
+        }
+
+        private void RefreshAgileInfo()
+        {
+            var ecolist = ECOBaseInfo.RetrieveECOUnCompletedBaseInfo();
+            var econumlist = new List<string>();
+            foreach (var eco in ecolist)
+            {
+                econumlist.Add(eco.ECONum);
+            }
+
+            logmaininfo(DateTime.Now.ToString() + "    " + "start refreshing agile attachement name.....\r\n");
+            DominoDataCollector.DownloadAgile(econumlist, this, DOMINOAGILEDOWNLOADTYPE.ATTACHNAME);
+            logmaininfo(DateTime.Now.ToString() + "    " + "agile attachement name is refreshed.....\r\n");
+
+            logmaininfo(DateTime.Now.ToString() + "    " + "start refreshing agile workflow.....\r\n");
+            DominoDataCollector.DownloadAgile(econumlist, this, DOMINOAGILEDOWNLOADTYPE.WORKFLOW);
+            logmaininfo(DateTime.Now.ToString() + "    " + "agile workflow is refreshed.....\r\n");
+        }
 
         private List<SelectListItem> CreateSelectList(List<string> valist, string defVal)
         {

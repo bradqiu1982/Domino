@@ -836,6 +836,32 @@ namespace Domino.Models
             return ecodone;
         }
 
+        public static List<ECOBaseInfo> RetrieveECOUnCompletedBaseInfo()
+        {
+            var alleco = ECOBaseInfo.RetrieveAllWorkingECOBaseInfo();
+            var econotdone = new List<ECOBaseInfo>();
+            foreach (var eco in alleco)
+            {
+                if (string.Compare(eco.MiniPIPStatus,DominoMiniPIPStatus.hold) == 0)
+                    continue;
+
+                var completecard = DominoVM.RetrieveSpecialCard(eco, DominoCardType.ECOComplete);
+                if (completecard.Count > 0)
+                {
+                    if (string.Compare(completecard[0].CardStatus, DominoCardStatus.done) != 0)
+                    {
+                        econotdone.Add(eco);
+                    }
+                }
+                else
+                {
+                    econotdone.Add(eco);
+                }
+            }
+
+            return econotdone;
+        }
+
         public static List<ECOBaseInfo> RetrieveECOBaseInfo(string ECOKey)
         {
             var ret = new List<ECOBaseInfo>();
