@@ -63,26 +63,27 @@ namespace Domino.Controllers
                             var templine = new List<string>();
                             templine.Add("Engineer");
                             templine.Add("Department");
+                            templine.Add("Authorization");
                             realdata.Add(templine);
 
                             for (var idx = 0; idx < data.Count; idx++)
                             {
                                 if (idx != 0)
                                 {
-                                        templine = new List<string>();
+                                    templine = new List<string>();
                                         
-                                        if (!data[idx][0].Contains("@"))
-                                        {
-                                            templine.Add((data[idx][0].Trim().Replace(" ", ".") + "@finisar.com").ToUpper());
-                                        }
-                                        else
-                                        {
-                                            templine.Add(data[idx][0].ToUpper());
-                                        }
+                                    if (!data[idx][0].Contains("@"))
+                                    {
+                                        templine.Add((data[idx][0].Trim().Replace(" ", ".") + "@finisar.com").ToUpper());
+                                    }
+                                    else
+                                    {
+                                        templine.Add(data[idx][0].ToUpper());
+                                    }
 
-                                        templine.Add(data[idx][1]);
-
-                                        realdata.Add(templine);
+                                    templine.Add(data[idx][1]);
+                                    templine.Add(data[idx][2]);
+                                    realdata.Add(templine);
                                 }//end if
                             }//end for
                         }
@@ -133,7 +134,8 @@ namespace Domino.Controllers
                         {
                             var username = data[i][0];
                             var depart = data[i][1];
-                            DominoUserViewModels.StoreUserMatrix(username, depart);
+                            var auth = data[i][2];
+                            DominoUserViewModels.StoreUserMatrix(username, depart,auth);
                         }
                     }//end for
                     return RedirectToAction("ViewAll", "MiniPIP");

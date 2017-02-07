@@ -10,6 +10,7 @@ namespace Domino.Models
     {
         public string UserName { set; get; }
         public string Depart { set; get; }
+        public string Auth { set; get; }
     }
 
     public class DominoUserViewModels
@@ -126,20 +127,20 @@ namespace Domino.Models
             return ret;
         }
 
-        public static void StoreUserMatrix(string username, string depart)
+        public static void StoreUserMatrix(string username, string depart,string auth)
         {
             var sql = "delete from UserMatrix where APVal1='<APVal1>'";
-            sql = sql.Replace("<APVal1>", username);
+            sql = sql.Replace("<APVal1>", username.ToUpper());
             DBUtility.ExeLocalSqlNoRes(sql);
 
-            sql = "insert into UserMatrix(APVal1,APVal2) values('<APVal1>','<APVal2>')";
-            sql = sql.Replace("<APVal1>", username).Replace("<APVal2>", depart);
+            sql = "insert into UserMatrix(APVal1,APVal2,APVal3) values('<APVal1>','<APVal2>','<APVal3>')";
+            sql = sql.Replace("<APVal1>", username).Replace("<APVal2>", depart).Replace("<APVal3>", auth);
             DBUtility.ExeLocalSqlNoRes(sql);
         }
 
         public static List<UserDepart> RetrieveAllUserDepart()
         {
-            var sql = "select APVal1,APVal2 from UserMatrix";
+            var sql = "select APVal1,APVal2,APVal3 from UserMatrix";
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
             var ret = new List<UserDepart>();
 
@@ -148,9 +149,47 @@ namespace Domino.Models
                 var tempinfo = new UserDepart();
                 tempinfo.UserName = Convert.ToString(line[0]);
                 tempinfo.Depart = Convert.ToString(line[1]);
+                tempinfo.Auth = Convert.ToString(line[2]);
                 ret.Add(tempinfo);
             }
             return ret;
+        }
+
+        public static bool IsAdmin(string username)
+        {
+            var sql = "select APVal1,APVal2,APVal3 from UserMatrix where APVal1 = '<APVal1>'";
+            sql.Replace("<APVal1>", username.ToUpper());
+            var dbret = DBUtility.ExeLocalSqlWithRes(sql);
+            if (dbret.Count > 0)
+            {
+                if (string.Compare(Convert.ToString(dbret[0][2]).ToUpper(), "ADMIN") == 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static bool UserExist(string username)
+        {
+            var sql = "select APVal1,APVal2,APVal3 from UserMatrix where APVal1 = '<APVal1>'";
+            sql.Replace("<APVal1>", username.ToUpper());
+            var dbret = DBUtility.ExeLocalSqlWithRes(sql);
+            if (dbret.Count > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
     }
