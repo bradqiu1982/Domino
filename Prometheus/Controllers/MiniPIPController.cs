@@ -45,6 +45,8 @@ namespace Domino.Controllers
                 return RedirectToAction("LoginUser", "DominoUser");
             }
 
+            GetAdminAuth();
+
             var baseinfos = ECOBaseInfo.RetrieveAllWorkingECOBaseInfo();
             var vm = new List<List<DominoVM>>();
             foreach (var item in baseinfos)
@@ -73,6 +75,7 @@ namespace Domino.Controllers
 
         public ActionResult ShowPEWkingMiniPIP(string PE)
         {
+            GetAdminAuth();
             var baseinfos = ECOBaseInfo.RetrievePEWorkingECOBaseInfo(PE);
             var vm = new List<List<DominoVM>>();
             foreach (var item in baseinfos)
@@ -92,6 +95,7 @@ namespace Domino.Controllers
 
         public ActionResult CompletedMiniPIP()
         {
+            GetAdminAuth();
             var baseinfos = ECOBaseInfo.RetrieveAllCompletedECOBaseInfo();
             var vm = new List<List<DominoVM>>();
             foreach (var item in baseinfos)
@@ -111,6 +115,7 @@ namespace Domino.Controllers
 
         public ActionResult ShowPECompletedMiniPIP(string PE)
         {
+            GetAdminAuth();
             var baseinfos = ECOBaseInfo.RetrievePECompletedECOBaseInfo(PE);
             var vm = new List<List<DominoVM>>();
             foreach (var item in baseinfos)
@@ -309,6 +314,16 @@ namespace Domino.Controllers
             }
         }
 
+        private void GetAdminAuth()
+        {
+            ViewBag.badmin = false;
+            var ckdict = CookieUtility.UnpackCookie(this);
+            if (ckdict.ContainsKey("logonuser"))
+            {
+                ViewBag.badmin = DominoUserViewModels.IsAdmin(ckdict["logonuser"].Split(new char[] { '|' })[0]);
+            }
+        }
+
         public ActionResult ECOPending(string ECOKey, string CardKey,string Refresh="No")
         {
             var ckdict = CookieUtility.UnpackCookie(this);
@@ -316,6 +331,9 @@ namespace Domino.Controllers
             {
                 return RedirectToAction("LoginUser", "DominoUser");
             }
+
+            GetAdminAuth();
+
             if (string.IsNullOrEmpty(ECOKey))
                 ECOKey = ckdict["ECOKey"];
             if (string.IsNullOrEmpty(CardKey))
@@ -634,6 +652,9 @@ namespace Domino.Controllers
             {
                 return RedirectToAction("LoginUser", "DominoUser");
             }
+
+            GetAdminAuth();
+
             if (string.IsNullOrEmpty(ECOKey))
                 ECOKey = ckdict["ECOKey"];
             if (string.IsNullOrEmpty(CardKey))
@@ -888,6 +909,9 @@ namespace Domino.Controllers
             {
                 return RedirectToAction("LoginUser", "DominoUser");
             }
+
+            GetAdminAuth();
+
             if (string.IsNullOrEmpty(ECOKey))
                 ECOKey = ckdict["ECOKey"];
             if (string.IsNullOrEmpty(CardKey))
@@ -1060,6 +1084,9 @@ namespace Domino.Controllers
             {
                 return RedirectToAction("LoginUser", "DominoUser");
             }
+
+            GetAdminAuth();
+
             if (string.IsNullOrEmpty(ECOKey))
                 ECOKey = ckdict["ECOKey"];
             if (string.IsNullOrEmpty(CardKey))
@@ -1328,6 +1355,9 @@ namespace Domino.Controllers
             {
                 return RedirectToAction("LoginUser", "DominoUser");
             }
+
+            GetAdminAuth();
+
             if (string.IsNullOrEmpty(ECOKey))
                 ECOKey = ckdict["ECOKey"];
             if (string.IsNullOrEmpty(CardKey))
@@ -1448,6 +1478,9 @@ namespace Domino.Controllers
             {
                 return RedirectToAction("LoginUser", "DominoUser");
             }
+
+            GetAdminAuth();
+
             if (string.IsNullOrEmpty(ECOKey))
                 ECOKey = ckdict["ECOKey"];
             if (string.IsNullOrEmpty(CardKey))
@@ -1547,6 +1580,9 @@ namespace Domino.Controllers
             {
                 return RedirectToAction("LoginUser", "DominoUser");
             }
+
+            GetAdminAuth();
+
             if (string.IsNullOrEmpty(ECOKey))
                 ECOKey = ckdict["ECOKey"];
             if (string.IsNullOrEmpty(CardKey))
@@ -1670,6 +1706,9 @@ namespace Domino.Controllers
             {
                 return RedirectToAction("LoginUser", "DominoUser");
             }
+
+            GetAdminAuth();
+
             if (string.IsNullOrEmpty(ECOKey))
                 ECOKey = ckdict["ECOKey"];
             if (string.IsNullOrEmpty(CardKey))
@@ -1766,6 +1805,9 @@ namespace Domino.Controllers
             {
                 return RedirectToAction("LoginUser", "DominoUser");
             }
+
+            GetAdminAuth();
+
             if (string.IsNullOrEmpty(ECOKey))
                 ECOKey = ckdict["ECOKey"];
             if (string.IsNullOrEmpty(CardKey))
@@ -1876,6 +1918,9 @@ namespace Domino.Controllers
             {
                 return RedirectToAction("LoginUser", "DominoUser");
             }
+
+            GetAdminAuth();
+
             if (string.IsNullOrEmpty(ECOKey))
                 ECOKey = ckdict["ECOKey"];
             if (string.IsNullOrEmpty(CardKey))
@@ -2137,6 +2182,7 @@ namespace Domino.Controllers
 
         public ActionResult RollBack2ThisCard(string CardKey, string ECOKey)
         {
+            
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
             var vm = DominoVM.RetrieveCard(CardKey);
 
@@ -2232,8 +2278,6 @@ namespace Domino.Controllers
         public ActionResult ReNewCard(string CardKey)
         {
             var vm = DominoVM.RetrieveCard(CardKey);
-
-            
             if (string.Compare(vm[0].CardType, DominoCardType.SampleOrdering) == 0
                 || string.Compare(vm[0].CardType, DominoCardType.SampleBuilding) == 0
                 || string.Compare(vm[0].CardType, DominoCardType.SampleShipment) == 0)

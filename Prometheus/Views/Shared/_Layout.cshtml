@@ -47,13 +47,15 @@
                                 <li>
                                     @Html.ActionLink("View All MiniPIP", "ViewAll", "MiniPIP")
                                 </li>
-                                <li>
+                                @*<li>
                                     @Html.ActionLink("Create MiniPIP", "CreateMiniPIP", "MiniPIP")
-                                </li>
+                                </li>*@
                             </ul>
                         </li>
                     </ul>
 
+                @if (ViewBag.badmin != null && ViewBag.badmin)
+                {
                     <ul class="nav navbar-nav">
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Report<span class="caret"></span></a>
@@ -76,6 +78,7 @@
                             </ul>
                         </li>
                     </ul>
+                }
                     
                     <ul class="nav navbar-nav">
                         <li class="dropdown">

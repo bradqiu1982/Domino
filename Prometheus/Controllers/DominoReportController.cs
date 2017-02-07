@@ -35,8 +35,20 @@ namespace Domino.Controllers
             return pslist;
         }
 
+        private void GetAdminAuth()
+        {
+            ViewBag.badmin = false;
+            var ckdict = CookieUtility.UnpackCookie(this);
+            if (ckdict.ContainsKey("logonuser"))
+            {
+                ViewBag.badmin = DominoUserViewModels.IsAdmin(ckdict["logonuser"].Split(new char[] { '|' })[0]);
+            }
+        }
+
         public ActionResult WorkLoad()
         {
+            GetAdminAuth();
+
             var charts = new string[]{ DominoChartType.Department, DominoChartType.PE, DominoChartType.Monthly, DominoChartType.Quarter, DominoChartType.Customer };
             var chartlist = new List<string>();
             chartlist.AddRange(charts);
@@ -277,6 +289,8 @@ namespace Domino.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult WorkLoadPose()
         {
+            GetAdminAuth();
+
             var charts = new string[] { DominoChartType.Department, DominoChartType.PE, DominoChartType.Monthly, DominoChartType.Quarter, DominoChartType.Customer };
             var chartlist = new List<string>();
             chartlist.AddRange(charts);
@@ -305,6 +319,8 @@ namespace Domino.Controllers
 
         public ActionResult CycleTime()
         {
+            GetAdminAuth();
+
             var charts = new string[] { DominoChartType.Department, DominoChartType.PE, DominoChartType.Monthly, DominoChartType.Quarter, DominoChartType.Customer };
             var chartlist = new List<string>();
             chartlist.AddRange(charts);
@@ -588,6 +604,8 @@ namespace Domino.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult CycleTimePose()
         {
+            GetAdminAuth();
+
             var charts = new string[] { DominoChartType.Department, DominoChartType.PE, DominoChartType.Monthly, DominoChartType.Quarter, DominoChartType.Customer };
             var chartlist = new List<string>();
             chartlist.AddRange(charts);
@@ -617,6 +635,8 @@ namespace Domino.Controllers
 
         public ActionResult FABuilding()
         {
+            GetAdminAuth();
+
             var charts = new string[] { DominoChartType.Department, DominoChartType.PE, DominoChartType.Monthly, DominoChartType.Quarter, DominoChartType.Customer };
             var chartlist = new List<string>();
             chartlist.AddRange(charts);
@@ -777,6 +797,8 @@ namespace Domino.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult FABuildingPose()
         {
+            GetAdminAuth();
+
             var charts = new string[] { DominoChartType.Department, DominoChartType.PE, DominoChartType.Monthly, DominoChartType.Quarter, DominoChartType.Customer };
             var chartlist = new List<string>();
             chartlist.AddRange(charts);
@@ -806,6 +828,8 @@ namespace Domino.Controllers
 
         public ActionResult Complex()
         {
+            GetAdminAuth();
+
             var charts = new string[] { DominoChartType.Department, DominoChartType.PE, DominoChartType.Monthly, DominoChartType.Quarter, DominoChartType.Customer };
             var chartlist = new List<string>();
             chartlist.AddRange(charts);
@@ -981,6 +1005,8 @@ namespace Domino.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult ComplexPose()
         {
+            GetAdminAuth();
+
             var charts = new string[] { DominoChartType.Department, DominoChartType.PE, DominoChartType.Monthly, DominoChartType.Quarter, DominoChartType.Customer };
             var chartlist = new List<string>();
             chartlist.AddRange(charts);
@@ -1012,6 +1038,8 @@ namespace Domino.Controllers
 
         public ActionResult QAFACheck()
         {
+            GetAdminAuth();
+
             var charts = new string[] { DominoChartType.Department, DominoChartType.PE, DominoChartType.Monthly, DominoChartType.Quarter};
             var chartlist = new List<string>();
             chartlist.AddRange(charts);
@@ -1174,6 +1202,8 @@ namespace Domino.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult QAFACheckPose()
         {
+            GetAdminAuth();
+
             var charts = new string[] { DominoChartType.Department, DominoChartType.PE, DominoChartType.Monthly, DominoChartType.Quarter};
             var chartlist = new List<string>();
             chartlist.AddRange(charts);
@@ -1185,8 +1215,6 @@ namespace Domino.Controllers
             {
                 return View();
             }
-
-
 
             var charttype = Request.Form["charttypelist"].ToString();
 

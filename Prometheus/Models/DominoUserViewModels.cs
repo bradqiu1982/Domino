@@ -158,7 +158,7 @@ namespace Domino.Models
         public static bool IsAdmin(string username)
         {
             var sql = "select APVal1,APVal2,APVal3 from UserMatrix where APVal1 = '<APVal1>'";
-            sql.Replace("<APVal1>", username.ToUpper());
+            sql = sql.Replace("<APVal1>", username.ToUpper());
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
             if (dbret.Count > 0)
             {
@@ -180,7 +180,7 @@ namespace Domino.Models
         public static bool UserExist(string username)
         {
             var sql = "select APVal1,APVal2,APVal3 from UserMatrix where APVal1 = '<APVal1>'";
-            sql.Replace("<APVal1>", username.ToUpper());
+            sql = sql.Replace("<APVal1>", username.ToUpper());
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
             if (dbret.Count > 0)
             {

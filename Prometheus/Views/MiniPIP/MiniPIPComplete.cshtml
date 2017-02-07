@@ -148,7 +148,9 @@
             <div class="row col-lg-12">
                 <div class="form-group">
                     <div class="row col-lg-3">
-                        <button data-toggle="tooltip" title="Roll Back To This Card" type="button" class="btn btn-default" onclick="RollBack2ThisCard()"><span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span> RollBack2This</button>
+                        @if (ViewBag.badmin != null && ViewBag.badmin)
+                        { <button data-toggle="tooltip" title="Roll Back To This Card" type="button" class="btn btn-default" onclick="RollBack2ThisCard()"><span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span> RollBack2This</button>}
+                        
                     </div>
                     <div class="row col-lg-6">
                     </div>
