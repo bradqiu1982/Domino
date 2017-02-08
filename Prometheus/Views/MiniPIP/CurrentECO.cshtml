@@ -59,7 +59,9 @@
 
                         function RenewCard(oBT)
                         {
-                            window.location.href = '/Domino/MiniPIP/ReNewCard?CardKey=' + oBT.value;
+                            if (confirm("Warning: Do you really want to re-initial this card?")) {
+                                window.location.href = '/Domino/MiniPIP/ReNewCard?CardKey=' + oBT.value;
+                            }
                         }
     </script>
 </div>
