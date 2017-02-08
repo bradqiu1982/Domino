@@ -183,6 +183,10 @@ namespace Domino.Controllers
             {
                 workloaddata = DominoRPVM.RetrieveMonthlyWorkLoadData(startdate, enddate);
             }
+            else if (string.Compare(charttype, DominoChartType.Quarter) == 0)
+            {
+                workloaddata = DominoRPVM.RetrieveQuartWorkLoadData(startdate, enddate);
+            }
 
             if (workloaddata.Count == 0)
             {
@@ -198,13 +202,14 @@ namespace Domino.Controllers
             var FinishYield = string.Empty;
 
             var pes = new List<string>();
-            if (string.Compare(charttype, DominoChartType.Monthly) == 0)
+            if (string.Compare(charttype, DominoChartType.Monthly) == 0
+                || string.Compare(charttype, DominoChartType.Quarter) == 0)
             {
                 pes = workloaddata.Keys.ToList();
                 pes.Sort(delegate (string sk1, string sk2)
                 {
-                    int ik1 = Convert.ToInt32(sk1.Replace("/", ""));
-                    int ik2 = Convert.ToInt32(sk2.Replace("/", ""));
+                    int ik1 = Convert.ToInt32(sk1.Replace("/", "").Replace("Q",""));
+                    int ik2 = Convert.ToInt32(sk2.Replace("/", "").Replace("Q",""));
                     if (ik1 > ik2) return 1;
                     if (ik1 < ik2) return -1;
                     return 0;
@@ -499,6 +504,10 @@ namespace Domino.Controllers
             {
                 cycletimedict = DominoRPVM.RetrieveMonthlyCycleTimeData(startdate, enddate);
             }
+            else if (string.Compare(charttype, DominoChartType.Quarter) == 0)
+            {
+                cycletimedict = DominoRPVM.RetrieveQuartCycleTimeData(startdate, enddate);
+            }
 
             if (cycletimedict.Count == 0)
             {
@@ -518,13 +527,14 @@ namespace Domino.Controllers
             var TotalMiniPIPs = string.Empty;
 
             var pes = new List<string>();
-            if (string.Compare(charttype, DominoChartType.Monthly) == 0)
+            if (string.Compare(charttype, DominoChartType.Monthly) == 0
+                || string.Compare(charttype, DominoChartType.Quarter) == 0)
             {
                 pes = cycletimedict.Keys.ToList();
                 pes.Sort(delegate (string sk1, string sk2)
                 {
-                    int ik1 = Convert.ToInt32(sk1.Replace("/", ""));
-                    int ik2 = Convert.ToInt32(sk2.Replace("/", ""));
+                    int ik1 = Convert.ToInt32(sk1.Replace("/", "").Replace("Q",""));
+                    int ik2 = Convert.ToInt32(sk2.Replace("/", "").Replace("Q",""));
                     if (ik1 > ik2) return 1;
                     if (ik1 < ik2) return -1;
                     return 0;
@@ -774,6 +784,10 @@ namespace Domino.Controllers
             {
                 cycletimedict = DominoRPVM.RetrieveMonthlyCycleTimeData(startdate, enddate);
             }
+            else if (string.Compare(charttype, DominoChartType.Quarter) == 0)
+            {
+                cycletimedict = DominoRPVM.RetrieveQuartCycleTimeData(startdate, enddate);
+            }
 
             if (cycletimedict.Count == 0)
             {
@@ -789,13 +803,14 @@ namespace Domino.Controllers
             var TotalMiniPIPs = string.Empty;
 
             var pes = new List<string>();
-            if (string.Compare(charttype, DominoChartType.Monthly) == 0)
+            if (string.Compare(charttype, DominoChartType.Monthly) == 0
+                || string.Compare(charttype, DominoChartType.Quarter) == 0)
             {
                 pes = cycletimedict.Keys.ToList();
                 pes.Sort(delegate (string sk1, string sk2)
                 {
-                    int ik1 = Convert.ToInt32(sk1.Replace("/", ""));
-                    int ik2 = Convert.ToInt32(sk2.Replace("/", ""));
+                    int ik1 = Convert.ToInt32(sk1.Replace("/", "").Replace("Q",""));
+                    int ik2 = Convert.ToInt32(sk2.Replace("/", "").Replace("Q",""));
                     if (ik1 > ik2) return 1;
                     if (ik1 < ik2) return -1;
                     return 0;
@@ -994,6 +1009,10 @@ namespace Domino.Controllers
             {
                 complexdict = DominoRPVM.RetrieveMonthlyComplexData(startdate, enddate);
             }
+            else if (string.Compare(charttype, DominoChartType.Quarter) == 0)
+            {
+                complexdict = DominoRPVM.RetrieveQuartComplexData(startdate, enddate);
+            }
 
             if (complexdict.Count == 0)
             {
@@ -1010,13 +1029,14 @@ namespace Domino.Controllers
 
 
             var pes = new List<string>();
-            if (string.Compare(charttype, DominoChartType.Monthly) == 0)
+            if (string.Compare(charttype, DominoChartType.Monthly) == 0
+                || string.Compare(charttype, DominoChartType.Quarter) == 0)
             {
                 pes = complexdict.Keys.ToList();
                 pes.Sort(delegate (string sk1, string sk2)
                 {
-                    int ik1 = Convert.ToInt32(sk1.Replace("/", ""));
-                    int ik2 = Convert.ToInt32(sk2.Replace("/", ""));
+                    int ik1 = Convert.ToInt32(sk1.Replace("/", "").Replace("Q",""));
+                    int ik2 = Convert.ToInt32(sk2.Replace("/", "").Replace("Q",""));
                     if (ik1 > ik2) return 1;
                     if (ik1 < ik2) return -1;
                     return 0;
@@ -1221,6 +1241,11 @@ namespace Domino.Controllers
             {
                 qafadict = DominoRPVM.RetrieveMonthlyQACheckData(this, startdate, enddate);
             }
+            else if (string.Compare(charttype, DominoChartType.Quarter) == 0)
+            {
+                qafadict = DominoRPVM.RetrieveQuartQACheckData(this, startdate, enddate);
+            }
+
 
             if (qafadict.Count == 0)
             {
@@ -1236,13 +1261,14 @@ namespace Domino.Controllers
 
 
             var pes = new List<string>();
-            if (string.Compare(charttype, DominoChartType.Monthly) == 0)
+            if (string.Compare(charttype, DominoChartType.Monthly) == 0
+                || string.Compare(charttype, DominoChartType.Quarter) == 0)
             {
                 pes = qafadict.Keys.ToList();
                 pes.Sort(delegate (string sk1, string sk2)
                 {
-                    int ik1 = Convert.ToInt32(sk1.Replace("/", ""));
-                    int ik2 = Convert.ToInt32(sk2.Replace("/", ""));
+                    int ik1 = Convert.ToInt32(sk1.Replace("/", "").Replace("Q",""));
+                    int ik2 = Convert.ToInt32(sk2.Replace("/", "").Replace("Q",""));
                     if (ik1 > ik2) return 1;
                     if (ik1 < ik2) return -1;
                     return 0;

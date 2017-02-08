@@ -49,8 +49,8 @@ namespace Domino.Models
         public string PE { set; get; }
         public string Depart { set; get; }
         public string Customer { set; get; }
-        public string Quarter { set; get; }
-        public string Month { set; get; }
+        //public string Quarter { set; get; }
+        //public string Month { set; get; }
 
         public string InitRevison { set; get; }
         public string FinalRevison { set; get; }
@@ -689,6 +689,94 @@ namespace Domino.Models
             return ret;
         }
 
+        private static string QuartStr(DateTime date)
+        {
+            int month = date.Month;
+
+            if (month >= 5 && month <= 7)
+            {
+                return date.ToString("yy") + "/Q1";
+            }
+            else if (month >= 8 && month <= 10)
+            {
+                return date.ToString("yy") + "/Q2";
+            }
+            else if (month >= 2 && month <= 4)
+            {
+                return date.AddYears(-1).ToString("yy") + "/Q4";
+            }
+            else
+            {
+                if (month >= 11 && month <= 12)
+                {
+                    return date.ToString("yy") + "/Q3";
+                }
+                else
+                {
+                    return date.AddYears(-1).ToString("yy") + "/Q3";
+                }
+            }
+        }
+
+        private static List<DateTime> RetrieveDateSpanByQuart(string startdate, string enddate)
+        {
+            var ret = new List<DateTime>();
+            var sdate = DateTime.Parse(DateTime.Parse(startdate).ToString("yyyy-MM-dd") + " 07:30:00");
+            ret.Add(sdate);
+            var edate = DateTime.Parse(DateTime.Parse(enddate).ToString("yyyy-MM-dd") + " 07:30:00");
+
+            var quartendday = sdate;
+
+            if (sdate.Month >= 5 && sdate.Month <= 7)
+            {
+                quartendday = DateTime.Parse(sdate.ToString("yyyy") + "-08-1 07:30:00");
+            }
+            else if (sdate.Month >= 8 && sdate.Month <= 10)
+            {
+                quartendday = DateTime.Parse(sdate.ToString("yyyy") + "-11-01 07:30:00");
+            }
+            else if (sdate.Month >= 11 && sdate.Month <= 12)
+            {
+                quartendday = DateTime.Parse(sdate.AddYears(1).ToString("yyyy") + "-02-01 07:30:00");
+            }
+            else if (sdate.Month == 1)
+            {
+                quartendday = DateTime.Parse(sdate.ToString("yyyy") + "-02-01 07:30:00");
+            }
+            else if (sdate.Month >= 2 && sdate.Month <= 4)
+            {
+                quartendday = DateTime.Parse(sdate.ToString("yyyy") + "-05-01 07:30:00");
+            }
+
+            if (quartendday >= edate)
+            {
+                ret.Add(edate);
+                return ret;
+            }
+            else
+            {
+                ret.Add(quartendday);
+            }
+
+            while (quartendday < edate)
+            {
+                quartendday = quartendday.AddMonths(3);
+                if (quartendday > edate)
+                {
+                    ret.Add(edate);
+                    return ret;
+                }
+                else
+                {
+                    ret.Add(quartendday);
+                }
+            }
+
+            return ret;
+
+        }
+
+
         public static Dictionary<string, WorkLoadField> RetrieveMonthlyWorkLoadData(DateTime startdate, DateTime enddate)
         {
             var ret = new Dictionary<string, WorkLoadField>();
@@ -707,6 +795,32 @@ namespace Domino.Models
                     {
                         ret.Add(ldate[idx].ToString("yy/MM"), new WorkLoadField());
                         ret[ldate[idx].ToString("yy/MM")].SetStatus(wkl.Status);
+                    }
+                }//foreach
+            }
+
+            return ret;
+        }
+
+        public static Dictionary<string, WorkLoadField> RetrieveQuartWorkLoadData(DateTime startdate, DateTime enddate)
+        {
+            var ret = new Dictionary<string, WorkLoadField>();
+
+            var ldate = RetrieveDateSpanByQuart(startdate.ToString(), enddate.ToString());
+            for (int idx = 0; idx < ldate.Count - 1; idx++)
+            {
+                var pewkloads = RetrieveWorkLoadData(ldate[idx], ldate[idx + 1]);
+                foreach (var wkl in pewkloads)
+                {
+                    var key = QuartStr(ldate[idx]);
+                    if (ret.ContainsKey(key))
+                    {
+                        ret[key].SetStatus(wkl.Status);
+                    }
+                    else
+                    {
+                        ret.Add(key, new WorkLoadField());
+                        ret[key].SetStatus(wkl.Status);
                     }
                 }//foreach
             }
@@ -756,8 +870,8 @@ namespace Domino.Models
                             var completedate = DateTime.Parse(tempcycle.ECOCompleteDate);
                             if (completedate >= startdate && completedate <= enddate)
                             {
-                                tempcycle.Month = completedate.Month.ToString();
-                                tempcycle.Quarter = QuartStr(completedate.Month, DateTime.Parse(tempcycle.ECOCompleteDate));
+                                //tempcycle.Month = completedate.Month.ToString();
+                                //tempcycle.Quarter = QuartStr(completedate.Month, DateTime.Parse(tempcycle.ECOCompleteDate));
                             }
                             else
                             {
@@ -1061,6 +1175,31 @@ namespace Domino.Models
             return ret;
         }
 
+        public static Dictionary<string, CycleTimeDataField> RetrieveQuartCycleTimeData(DateTime startdate, DateTime enddate)
+        {
+            var ret = new Dictionary<string, CycleTimeDataField>();
+            var ldate = RetrieveDateSpanByQuart(startdate.ToString(), enddate.ToString());
+            for (int idx = 0; idx < ldate.Count - 1; idx++)
+            {
+                var cycletimes = CalculateCycleTimePoints(ldate[idx], ldate[idx + 1]);
+                foreach (var wkl in cycletimes)
+                {
+                    var key = QuartStr(ldate[idx]);
+                    if (ret.ContainsKey(key))
+                    {
+                        ret[key].appendcycledata(wkl);
+                    }
+                    else
+                    {
+                        ret.Add(key, new CycleTimeDataField());
+                        ret[key].appendcycledata(wkl);
+                    }
+
+                }//foreach
+            }
+
+            return ret;
+        }
 
         private static int CountWorkDays(DateTime startDate, DateTime endDate)
         {
@@ -1110,32 +1249,7 @@ namespace Domino.Models
             return initdate;
         }
 
-        private static string QuartStr(int month,DateTime completedate)
-        {
-            if (month >= 5 && month <= 7)
-            {
-                return "Q1/" + completedate.ToString("yy");
-            }
-            else if (month >= 8 && month <= 10)
-            {
-                return "Q2/" + completedate.ToString("yy");
-            }
-            else if (month >= 2 && month <= 4)
-            {
-                return "Q4" + completedate.AddYears(-1).ToString("yy");
-            }
-            else
-            {
-                if (month >= 11 && month <= 12)
-                {
-                    return "Q3/" + completedate.ToString("yy");
-                }
-                else
-                {
-                    return "Q3/" + completedate.AddYears(-1).ToString("yy");
-                }
-            }
-        }
+
 
         private static List<ComplexData> RetrieveAllComplexData(DateTime startDate, DateTime endDate)
         {
@@ -1352,6 +1466,32 @@ namespace Domino.Models
         }
 
 
+        public static Dictionary<string, ComplexData> RetrieveQuartComplexData(DateTime startDate, DateTime endDate)
+        {
+            var ret = new Dictionary<string, ComplexData>();
+            var ldate = RetrieveDateSpanByQuart(startDate.ToString(), endDate.ToString());
+            for (int idx = 0; idx < ldate.Count - 1; idx++)
+            {
+                var allcomplexdata = RetrieveAllComplexData(ldate[idx], ldate[idx + 1]);
+                foreach (var wkl in allcomplexdata)
+                {
+                    var key = QuartStr(ldate[idx]);
+                    if (ret.ContainsKey(key))
+                    {
+                        ret[key].AppendComplexData(wkl);
+                    }
+                    else
+                    {
+                        ret.Add(key, new ComplexData());
+                        ret[key].AppendComplexData(wkl);
+                    }
+
+                }//foreach
+            }
+
+            return ret;
+        }
+
         public static Dictionary<string, QACheckData> RetrieveDepartQACheckData(Controller ctrl,DateTime StartDate,DateTime EndDate)
         {
             var alllist = DominoDataCollector.RetrieveAllQACheckInfo(ctrl);
@@ -1481,6 +1621,31 @@ namespace Domino.Models
                             ret.Add(ldate[idx].ToString("yy/MM"), new QACheckData());
                             ret[ldate[idx].ToString("yy/MM")].AppendQAData(wkl);
                         }
+                }//foreach
+            }
+
+            return ret;
+        }
+
+        public static Dictionary<string, QACheckData> RetrieveQuartQACheckData(Controller ctrl, DateTime StartDate, DateTime EndDate)
+        {
+            var ret = new Dictionary<string, QACheckData>();
+            var ldate = RetrieveDateSpanByQuart(StartDate.ToString(), EndDate.ToString());
+            for (int idx = 0; idx < ldate.Count - 1; idx++)
+            {
+                var datelist = getperiodqacheck(ctrl, ldate[idx], ldate[idx + 1]);
+                foreach (var wkl in datelist)
+                {
+                    var key = QuartStr(ldate[idx]);
+                    if (ret.ContainsKey(key))
+                    {
+                        ret[key].AppendQAData(wkl);
+                    }
+                    else
+                    {
+                        ret.Add(key, new QACheckData());
+                        ret[key].AppendQAData(wkl);
+                    }
                 }//foreach
             }
 
