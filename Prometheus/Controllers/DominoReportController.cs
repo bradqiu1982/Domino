@@ -179,6 +179,10 @@ namespace Domino.Controllers
             {
                 workloaddata = DominoRPVM.RetrieveCustomerWorkLoadData(startdate, enddate);
             }
+            else if (string.Compare(charttype, DominoChartType.Monthly) == 0)
+            {
+                workloaddata = DominoRPVM.RetrieveMonthlyWorkLoadData(startdate, enddate);
+            }
 
             if (workloaddata.Count == 0)
             {
@@ -193,8 +197,25 @@ namespace Domino.Controllers
             var HoldAmount = string.Empty;
             var FinishYield = string.Empty;
 
-            var pes = workloaddata.Keys.ToList();
-            pes.Sort();
+            var pes = new List<string>();
+            if (string.Compare(charttype, DominoChartType.Monthly) == 0)
+            {
+                pes = workloaddata.Keys.ToList();
+                pes.Sort(delegate (string sk1, string sk2)
+                {
+                    int ik1 = Convert.ToInt32(sk1.Replace("/", ""));
+                    int ik2 = Convert.ToInt32(sk2.Replace("/", ""));
+                    if (ik1 > ik2) return 1;
+                    if (ik1 < ik2) return -1;
+                    return 0;
+                });
+            }
+            else
+            {
+                pes = workloaddata.Keys.ToList();
+                pes.Sort();
+            }
+
             foreach (var pe in pes)
             {
                 if (workloaddata.ContainsKey(pe))
@@ -474,6 +495,10 @@ namespace Domino.Controllers
             {
                 cycletimedict = DominoRPVM.RetrieveCustomerCycleTimeData(startdate, enddate);
             }
+            else if (string.Compare(charttype, DominoChartType.Monthly) == 0)
+            {
+                cycletimedict = DominoRPVM.RetrieveMonthlyCycleTimeData(startdate, enddate);
+            }
 
             if (cycletimedict.Count == 0)
             {
@@ -492,8 +517,25 @@ namespace Domino.Controllers
             var ApprovalAging = string.Empty;
             var TotalMiniPIPs = string.Empty;
 
-            var pes = cycletimedict.Keys.ToList();
-            pes.Sort();
+            var pes = new List<string>();
+            if (string.Compare(charttype, DominoChartType.Monthly) == 0)
+            {
+                pes = cycletimedict.Keys.ToList();
+                pes.Sort(delegate (string sk1, string sk2)
+                {
+                    int ik1 = Convert.ToInt32(sk1.Replace("/", ""));
+                    int ik2 = Convert.ToInt32(sk2.Replace("/", ""));
+                    if (ik1 > ik2) return 1;
+                    if (ik1 < ik2) return -1;
+                    return 0;
+                });
+            }
+            else
+            {
+                pes = cycletimedict.Keys.ToList();
+                pes.Sort();
+            }
+
             foreach (var pe in pes)
             {
                 if (cycletimedict.ContainsKey(pe))
@@ -728,6 +770,10 @@ namespace Domino.Controllers
             {
                 cycletimedict = DominoRPVM.RetrieveCustomerCycleTimeData(startdate, enddate);
             }
+            else if (string.Compare(charttype, DominoChartType.Monthly) == 0)
+            {
+                cycletimedict = DominoRPVM.RetrieveMonthlyCycleTimeData(startdate, enddate);
+            }
 
             if (cycletimedict.Count == 0)
             {
@@ -742,8 +788,24 @@ namespace Domino.Controllers
             var SampleShipAging = string.Empty;
             var TotalMiniPIPs = string.Empty;
 
-            var pes = cycletimedict.Keys.ToList();
-            pes.Sort();
+            var pes = new List<string>();
+            if (string.Compare(charttype, DominoChartType.Monthly) == 0)
+            {
+                pes = cycletimedict.Keys.ToList();
+                pes.Sort(delegate (string sk1, string sk2)
+                {
+                    int ik1 = Convert.ToInt32(sk1.Replace("/", ""));
+                    int ik2 = Convert.ToInt32(sk2.Replace("/", ""));
+                    if (ik1 > ik2) return 1;
+                    if (ik1 < ik2) return -1;
+                    return 0;
+                });
+            }
+            else
+            {
+                pes = cycletimedict.Keys.ToList();
+                pes.Sort();
+            }
 
             foreach (var pe in pes)
             {
@@ -928,7 +990,11 @@ namespace Domino.Controllers
             {
                 complexdict = DominoRPVM.RetrieveCustomerComplexData(startdate, enddate);
             }
-            
+            else if (string.Compare(charttype, DominoChartType.Monthly) == 0)
+            {
+                complexdict = DominoRPVM.RetrieveMonthlyComplexData(startdate, enddate);
+            }
+
             if (complexdict.Count == 0)
             {
                 return;
@@ -941,8 +1007,26 @@ namespace Domino.Controllers
             var MEDIUM = string.Empty;
             var SMALL = string.Empty;
 
-            var pes = complexdict.Keys.ToList();
-            pes.Sort();
+
+
+            var pes = new List<string>();
+            if (string.Compare(charttype, DominoChartType.Monthly) == 0)
+            {
+                pes = complexdict.Keys.ToList();
+                pes.Sort(delegate (string sk1, string sk2)
+                {
+                    int ik1 = Convert.ToInt32(sk1.Replace("/", ""));
+                    int ik2 = Convert.ToInt32(sk2.Replace("/", ""));
+                    if (ik1 > ik2) return 1;
+                    if (ik1 < ik2) return -1;
+                    return 0;
+                });
+            }
+            else
+            {
+                pes = complexdict.Keys.ToList();
+                pes.Sort();
+            }
 
             foreach (var pe in pes)
             {
@@ -1122,11 +1206,22 @@ namespace Domino.Controllers
                 .Replace("#FailRate#", FailRate);
         }
 
-        private void PEQAFACheck()
+        private void DictQAFACheck(string charttype)
         {
             var startdate = DateTime.Parse(Request.Form["StartDate"]);
             var enddate = DateTime.Parse(Request.Form["EndDate"]);
-            var qafadict = DominoRPVM.RetrievePEQACheckData(this, startdate, enddate);
+
+            var qafadict = new Dictionary<string, QACheckData>();
+
+            if (string.Compare(charttype, DominoChartType.PE) == 0)
+            {
+                qafadict = DominoRPVM.RetrievePEQACheckData(this, startdate, enddate);
+            }
+            else if (string.Compare(charttype, DominoChartType.Monthly) == 0)
+            {
+                qafadict = DominoRPVM.RetrieveMonthlyQACheckData(this, startdate, enddate);
+            }
+
             if (qafadict.Count == 0)
             {
                 return;
@@ -1139,8 +1234,25 @@ namespace Domino.Controllers
             var FailQTY = string.Empty;
             var FailRate = string.Empty;
 
-            var pes = qafadict.Keys.ToList();
-            pes.Sort();
+
+            var pes = new List<string>();
+            if (string.Compare(charttype, DominoChartType.Monthly) == 0)
+            {
+                pes = qafadict.Keys.ToList();
+                pes.Sort(delegate (string sk1, string sk2)
+                {
+                    int ik1 = Convert.ToInt32(sk1.Replace("/", ""));
+                    int ik2 = Convert.ToInt32(sk2.Replace("/", ""));
+                    if (ik1 > ik2) return 1;
+                    if (ik1 < ik2) return -1;
+                    return 0;
+                });
+            }
+            else
+            {
+                pes = qafadict.Keys.ToList();
+                pes.Sort();
+            }
 
             foreach (var pe in pes)
             {
@@ -1222,9 +1334,9 @@ namespace Domino.Controllers
             {
                 DepartQAFACheck();
             }
-            else if (string.Compare(charttype, DominoChartType.PE) == 0)
+            else
             {
-                PEQAFACheck();
+                DictQAFACheck(charttype);
             }
 
             return View();

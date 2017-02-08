@@ -650,6 +650,70 @@ namespace Domino.Models
             return ret;
         }
 
+        private static List<DateTime> RetrieveDateSpanByMonth(string startdate, string enddate)
+        {
+            var ret = new List<DateTime>();
+            var sdate = DateTime.Parse(DateTime.Parse(startdate).ToString("yyyy-MM-dd") + " 07:30:00");
+            ret.Add(sdate);
+
+            var temptimepoint = sdate;
+            var edate = DateTime.Parse(enddate);
+
+            temptimepoint = temptimepoint.AddMonths(1);
+            temptimepoint = DateTime.Parse(temptimepoint.ToString("yyyy-MM") + "-01 07:30:00");
+
+
+            if (temptimepoint > edate)
+            {
+                ret.Add(DateTime.Parse(DateTime.Parse(enddate).ToString("yyyy-MM-dd") + " 07:30:00"));
+                return ret;
+            }
+            else
+            {
+                ret.Add(temptimepoint);
+            }
+
+            while (temptimepoint < edate)
+            {
+                temptimepoint = temptimepoint.AddMonths(1);
+                if (temptimepoint > edate)
+                {
+                    ret.Add(DateTime.Parse(DateTime.Parse(enddate).ToString("yyyy-MM-dd") + " 07:30:00"));
+                    return ret;
+                }
+                else
+                {
+                    ret.Add(DateTime.Parse(temptimepoint.ToString("yyyy-MM-dd") + " 07:30:00"));
+                }
+            }
+            return ret;
+        }
+
+        public static Dictionary<string, WorkLoadField> RetrieveMonthlyWorkLoadData(DateTime startdate, DateTime enddate)
+        {
+            var ret = new Dictionary<string, WorkLoadField>();
+
+            var ldate = RetrieveDateSpanByMonth(startdate.ToString(), enddate.ToString());
+            for (int idx = 0; idx < ldate.Count - 1; idx++)
+            {
+                var pewkloads = RetrieveWorkLoadData(ldate[idx], ldate[idx + 1]);
+                foreach (var wkl in pewkloads)
+                {
+                    if (ret.ContainsKey(ldate[idx].ToString("yy/MM")))
+                    {
+                        ret[ldate[idx].ToString("yy/MM")].SetStatus(wkl.Status);
+                    }
+                    else
+                    {
+                        ret.Add(ldate[idx].ToString("yy/MM"), new WorkLoadField());
+                        ret[ldate[idx].ToString("yy/MM")].SetStatus(wkl.Status);
+                    }
+                }//foreach
+            }
+
+            return ret;
+        }
+
         private static string ConvertDate(string date)
         {
             try
@@ -971,6 +1035,33 @@ namespace Domino.Models
         }
 
 
+        public static Dictionary<string, CycleTimeDataField> RetrieveMonthlyCycleTimeData(DateTime startdate, DateTime enddate)
+        {
+            var ret = new Dictionary<string, CycleTimeDataField>();
+            var ldate = RetrieveDateSpanByMonth(startdate.ToString(), enddate.ToString());
+            for (int idx = 0; idx < ldate.Count - 1; idx++)
+            {
+                var cycletimes = CalculateCycleTimePoints(ldate[idx], ldate[idx + 1]);
+                foreach (var wkl in cycletimes)
+                {
+
+                        if (ret.ContainsKey(ldate[idx].ToString("yy/MM")))
+                        {
+                            ret[ldate[idx].ToString("yy/MM")].appendcycledata(wkl);
+                        }
+                        else
+                        {
+                            ret.Add(ldate[idx].ToString("yy/MM"), new CycleTimeDataField());
+                            ret[ldate[idx].ToString("yy/MM")].appendcycledata(wkl);
+                        }
+
+                }//foreach
+            }
+
+            return ret;
+        }
+
+
         private static int CountWorkDays(DateTime startDate, DateTime endDate)
         {
             int dayCount = 0;
@@ -1235,6 +1326,31 @@ namespace Domino.Models
             return ret;
         }
 
+        public static Dictionary<string, ComplexData> RetrieveMonthlyComplexData(DateTime startDate, DateTime endDate)
+        {
+            var ret = new Dictionary<string, ComplexData>();
+            var ldate = RetrieveDateSpanByMonth(startDate.ToString(), endDate.ToString());
+            for (int idx = 0; idx < ldate.Count - 1; idx++)
+            {
+                var allcomplexdata = RetrieveAllComplexData(ldate[idx], ldate[idx + 1]);
+                foreach (var wkl in allcomplexdata)
+                {
+                        if (ret.ContainsKey(ldate[idx].ToString("yy/MM")))
+                        {
+                            ret[ldate[idx].ToString("yy/MM")].AppendComplexData(wkl);
+                        }
+                        else
+                        {
+                            ret.Add(ldate[idx].ToString("yy/MM"), new ComplexData());
+                            ret[ldate[idx].ToString("yy/MM")].AppendComplexData(wkl);
+                        }
+
+                }//foreach
+            }
+                
+            return ret;
+        }
+
 
         public static Dictionary<string, QACheckData> RetrieveDepartQACheckData(Controller ctrl,DateTime StartDate,DateTime EndDate)
         {
@@ -1329,6 +1445,45 @@ namespace Domino.Models
                     }//end if
                 }//foreach
             }//foreach
+            return ret;
+        }
+
+
+        private static List<QACheckData> getperiodqacheck(Controller ctrl, DateTime StartDate, DateTime EndDate)
+        {
+            var alllist = DominoDataCollector.RetrieveAllQACheckInfo(ctrl);
+            var datelist = new List<QACheckData>();
+            foreach (var qacheck in alllist)
+            {
+                if (qacheck.QADate >= StartDate && qacheck.QADate <= EndDate)
+                {
+                    datelist.Add(qacheck);
+                }
+            }
+            return datelist;
+        }
+
+        public static Dictionary<string, QACheckData> RetrieveMonthlyQACheckData(Controller ctrl, DateTime StartDate, DateTime EndDate)
+        {
+            var ret = new Dictionary<string, QACheckData>();
+            var ldate = RetrieveDateSpanByMonth(StartDate.ToString(), EndDate.ToString());
+            for (int idx = 0; idx < ldate.Count - 1; idx++)
+            {
+                var datelist = getperiodqacheck(ctrl,ldate[idx], ldate[idx + 1]);
+                foreach (var wkl in datelist)
+                {
+                        if (ret.ContainsKey(ldate[idx].ToString("yy/MM")))
+                        {
+                            ret[ldate[idx].ToString("yy/MM")].AppendQAData(wkl);
+                        }
+                        else
+                        {
+                            ret.Add(ldate[idx].ToString("yy/MM"), new QACheckData());
+                            ret[ldate[idx].ToString("yy/MM")].AppendQAData(wkl);
+                        }
+                }//foreach
+            }
+
             return ret;
         }
 
