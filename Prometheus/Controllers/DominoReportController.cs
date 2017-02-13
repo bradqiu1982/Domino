@@ -61,6 +61,8 @@ namespace Domino.Controllers
         {
             var startdate = DateTime.Parse(Request.Form["StartDate"]);
             var enddate = DateTime.Parse(Request.Form["EndDate"]);
+            var title = Request.Form["ChartTitle"];
+
             var workloaddata = DominoRPVM.RetrieveDepartWorkLoadData(startdate, enddate);
             if (workloaddata.Count == 0)
             {
@@ -153,9 +155,13 @@ namespace Domino.Controllers
             HoldAmount = HoldAmount.Substring(0, HoldAmount.Length - 1);
             FinishYield = FinishYield.Substring(0, FinishYield.Length - 1);
 
+            var temptitle = "Department WorkLoad " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd");
+            if (!string.IsNullOrEmpty(title.Trim()))
+                temptitle = title.Trim();
+
             var tempscript = System.IO.File.ReadAllText(Server.MapPath("~/Scripts/DominoWorkLoad.xml"));
             ViewBag.workloadchart = tempscript.Replace("#ElementID#", "workloadchart")
-                .Replace("#Title#", "Department WorkLoad "+startdate.ToString("yyyy/MM/dd")+"-"+enddate.ToString("yyyy/MM/dd"))
+                .Replace("#Title#", temptitle)
                 .Replace("#ChartxAxisValues#", ChartxAxisValues)
                 .Replace("#AmountMAX#", (AmountMAX + 1).ToString())
                 .Replace("#CompleteAmount#", CompleteAmount)
@@ -169,6 +175,9 @@ namespace Domino.Controllers
         {
             var startdate = DateTime.Parse(Request.Form["StartDate"]);
             var enddate = DateTime.Parse(Request.Form["EndDate"]);
+            var title = Request.Form["ChartTitle"];
+
+
             var workloaddata = new Dictionary<string, WorkLoadField>();
 
             if (string.Compare(charttype, DominoChartType.PE) == 0)
@@ -298,9 +307,13 @@ namespace Domino.Controllers
             HoldAmount = HoldAmount.Substring(0, HoldAmount.Length - 1);
             FinishYield = FinishYield.Substring(0, FinishYield.Length - 1);
 
+            var temptitle = charttype + " WorkLoad " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd");
+            if (!string.IsNullOrEmpty(title.Trim()))
+                temptitle = title.Trim();
+
             var tempscript = System.IO.File.ReadAllText(Server.MapPath("~/Scripts/DominoWorkLoad.xml"));
             ViewBag.workloadchart = tempscript.Replace("#ElementID#", "workloadchart")
-                .Replace("#Title#", charttype+" WorkLoad " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd"))
+                .Replace("#Title#", temptitle)
                 .Replace("#ChartxAxisValues#", ChartxAxisValues)
                 .Replace("#AmountMAX#", (AmountMAX+1).ToString())
                 .Replace("#CompleteAmount#", CompleteAmount)
@@ -359,6 +372,8 @@ namespace Domino.Controllers
         {
             var startdate = DateTime.Parse(Request.Form["StartDate"]);
             var enddate = DateTime.Parse(Request.Form["EndDate"]);
+            var title = Request.Form["ChartTitle"];
+
 
             var cycletimedict = DominoRPVM.RetrieveDepartCycleTimeData(startdate, enddate);
             if (cycletimedict.Count == 0)
@@ -470,9 +485,13 @@ namespace Domino.Controllers
             ApprovalAging = ApprovalAging.Substring(0, ApprovalAging.Length - 1);
             TotalMiniPIPs = TotalMiniPIPs.Substring(0, TotalMiniPIPs.Length - 1);
 
+            var temptitle = "Department CycleTime " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd");
+            if (!string.IsNullOrEmpty(title.Trim()))
+                temptitle = title.Trim();
+
             var tempscript = System.IO.File.ReadAllText(Server.MapPath("~/Scripts/DominoCycleTime.xml"));
             ViewBag.cycletimechart = tempscript.Replace("#ElementID#", "cycletimechart")
-                .Replace("#Title#", "Department CycleTime " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd"))
+                .Replace("#Title#", temptitle)
                 .Replace("#ChartxAxisValues#", ChartxAxisValues)
                 .Replace("#AmountMAX#", (AmountMAX+1).ToString())
                 .Replace("#DayMIN#", DayMIN.ToString())
@@ -489,6 +508,7 @@ namespace Domino.Controllers
         {
             var startdate = DateTime.Parse(Request.Form["StartDate"]);
             var enddate = DateTime.Parse(Request.Form["EndDate"]);
+            var title = Request.Form["ChartTitle"];
 
             var cycletimedict = new Dictionary<string, CycleTimeDataField>();
 
@@ -637,9 +657,13 @@ namespace Domino.Controllers
             ApprovalAging = ApprovalAging.Substring(0, ApprovalAging.Length - 1);
             TotalMiniPIPs = TotalMiniPIPs.Substring(0, TotalMiniPIPs.Length - 1);
 
+            var temptitle = charttype + " CycleTime " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd");
+            if (!string.IsNullOrEmpty(title.Trim()))
+                temptitle = title.Trim();
+
             var tempscript = System.IO.File.ReadAllText(Server.MapPath("~/Scripts/DominoCycleTime.xml"));
             ViewBag.cycletimechart = tempscript.Replace("#ElementID#", "cycletimechart")
-                .Replace("#Title#", charttype+" CycleTime " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd"))
+                .Replace("#Title#", temptitle)
                 .Replace("#ChartxAxisValues#", ChartxAxisValues)
                 .Replace("#AmountMAX#", (AmountMAX+1).ToString())
                 .Replace("#DayMIN#", DayMIN.ToString())
@@ -701,6 +725,7 @@ namespace Domino.Controllers
         {
             var startdate = DateTime.Parse(Request.Form["StartDate"]);
             var enddate = DateTime.Parse(Request.Form["EndDate"]);
+            var title = Request.Form["ChartTitle"];
 
             var cycletimedict = DominoRPVM.RetrieveDepartCycleTimeData(startdate, enddate);
             if (cycletimedict.Count == 0)
@@ -755,9 +780,13 @@ namespace Domino.Controllers
             SampleShipAging = SampleShipAging.Substring(0, SampleShipAging.Length - 1);
             TotalMiniPIPs = TotalMiniPIPs.Substring(0, TotalMiniPIPs.Length - 1);
 
+            var temptitle = "Depart FA Build Time " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd");
+            if (!string.IsNullOrEmpty(title.Trim()))
+                temptitle = title.Trim();
+
             var tempscript = System.IO.File.ReadAllText(Server.MapPath("~/Scripts/DominoFABuilding.xml"));
             ViewBag.fabuildingchart = tempscript.Replace("#ElementID#", "fabuildingchart")
-                .Replace("#Title#", "Depart FA Build Time " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd"))
+                .Replace("#Title#", temptitle)
                 .Replace("#ChartxAxisValues#", ChartxAxisValues)
                 .Replace("#AmountMAX#", (AmountMAX + 1).ToString())
                 .Replace("#DayMIN#", DayMIN.ToString())
@@ -770,6 +799,7 @@ namespace Domino.Controllers
         {
             var startdate = DateTime.Parse(Request.Form["StartDate"]);
             var enddate = DateTime.Parse(Request.Form["EndDate"]);
+            var title = Request.Form["ChartTitle"];
 
             var cycletimedict = new Dictionary<string, CycleTimeDataField>();
             if (string.Compare(charttype, DominoChartType.PE) == 0)
@@ -859,9 +889,13 @@ namespace Domino.Controllers
             SampleShipAging = SampleShipAging.Substring(0, SampleShipAging.Length - 1);
             TotalMiniPIPs = TotalMiniPIPs.Substring(0, TotalMiniPIPs.Length - 1);
 
+            var temptitle = charttype+" FA Build Time " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd");
+            if (!string.IsNullOrEmpty(title.Trim()))
+                temptitle = title.Trim();
+
             var tempscript = System.IO.File.ReadAllText(Server.MapPath("~/Scripts/DominoFABuilding.xml"));
             ViewBag.fabuildingchart = tempscript.Replace("#ElementID#", "fabuildingchart")
-                .Replace("#Title#", charttype+" FA Build Time " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd"))
+                .Replace("#Title#", temptitle)
                 .Replace("#ChartxAxisValues#", ChartxAxisValues)
                 .Replace("#AmountMAX#", (AmountMAX + 1).ToString())
                 .Replace("#DayMIN#", DayMIN.ToString())
@@ -919,6 +953,8 @@ namespace Domino.Controllers
         {
             var startdate = DateTime.Parse(Request.Form["StartDate"]);
             var enddate = DateTime.Parse(Request.Form["EndDate"]);
+            var title = Request.Form["ChartTitle"];
+
             var complexdict = DominoRPVM.RetrieveDepartComplexData(startdate, enddate);
             if (complexdict.Count == 0)
             {
@@ -980,9 +1016,13 @@ namespace Domino.Controllers
             MEDIUM = MEDIUM.Substring(0, MEDIUM.Length - 1);
             SMALL = SMALL.Substring(0, SMALL.Length - 1);
 
+            var temptitle = "Department Type " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd");
+            if (!string.IsNullOrEmpty(title.Trim()))
+                temptitle = title.Trim();
+
             var tempscript = System.IO.File.ReadAllText(Server.MapPath("~/Scripts/DominoComplex.xml"));
             ViewBag.complexchart = tempscript.Replace("#ElementID#", "complexchart")
-                .Replace("#Title#", "Department Type " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd"))
+                .Replace("#Title#", temptitle)
                 .Replace("#ChartxAxisValues#", ChartxAxisValues)
                 .Replace("#AmountMAX#", (AmountMAX+1).ToString())
                 .Replace("#EXPEDITE#", EXPEDITE)
@@ -994,6 +1034,7 @@ namespace Domino.Controllers
         {
             var startdate = DateTime.Parse(Request.Form["StartDate"]);
             var enddate = DateTime.Parse(Request.Form["EndDate"]);
+            var title = Request.Form["ChartTitle"];
 
             var complexdict = new Dictionary<string, ComplexData>();
 
@@ -1095,9 +1136,13 @@ namespace Domino.Controllers
             MEDIUM = MEDIUM.Substring(0, MEDIUM.Length - 1);
             SMALL = SMALL.Substring(0, SMALL.Length - 1);
 
+            var temptitle = charttype+" Type " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd");
+            if (!string.IsNullOrEmpty(title.Trim()))
+                temptitle = title.Trim();
+
             var tempscript = System.IO.File.ReadAllText(Server.MapPath("~/Scripts/DominoComplex.xml"));
             ViewBag.complexchart = tempscript.Replace("#ElementID#", "complexchart")
-                .Replace("#Title#", charttype+" Type " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd"))
+                .Replace("#Title#", temptitle)
                 .Replace("#ChartxAxisValues#", ChartxAxisValues)
                 .Replace("#AmountMAX#", (AmountMAX + 1).ToString())
                 .Replace("#EXPEDITE#", EXPEDITE)
@@ -1156,6 +1201,8 @@ namespace Domino.Controllers
         {
             var startdate = DateTime.Parse(Request.Form["StartDate"]);
             var enddate = DateTime.Parse(Request.Form["EndDate"]);
+            var title = Request.Form["ChartTitle"];
+
             var qafadict = DominoRPVM.RetrieveDepartQACheckData(this,startdate, enddate);
             if (qafadict.Count == 0)
             {
@@ -1216,9 +1263,13 @@ namespace Domino.Controllers
             FailQTY = FailQTY.Substring(0, FailQTY.Length - 1);
             FailRate = FailRate.Substring(0, FailRate.Length - 1);
 
+            var temptitle = "Depart EEPROM QA Fail Rate/Fail QTY " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd");
+            if (!string.IsNullOrEmpty(title.Trim()))
+                temptitle = title.Trim();
+
             var tempscript = System.IO.File.ReadAllText(Server.MapPath("~/Scripts/DominoQAFACheck.xml"));
             ViewBag.qafachart = tempscript.Replace("#ElementID#", "qafachart")
-                .Replace("#Title#", "Depart EEPROM QA Fail Rate/Fail QTY " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd"))
+                .Replace("#Title#", temptitle)
                 .Replace("#ChartxAxisValues#", ChartxAxisValues)
                 .Replace("#AmountMAX#", (AmountMAX+1).ToString())
                 .Replace("#PassQTY#", PassQTY)
@@ -1230,6 +1281,7 @@ namespace Domino.Controllers
         {
             var startdate = DateTime.Parse(Request.Form["StartDate"]);
             var enddate = DateTime.Parse(Request.Form["EndDate"]);
+            var title = Request.Form["ChartTitle"];
 
             var qafadict = new Dictionary<string, QACheckData>();
 
@@ -1326,9 +1378,13 @@ namespace Domino.Controllers
             FailQTY = FailQTY.Substring(0, FailQTY.Length - 1);
             FailRate = FailRate.Substring(0, FailRate.Length - 1);
 
+            var temptitle = "PE EEPROM QA Fail Rate/Fail QTY " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd");
+            if (!string.IsNullOrEmpty(title.Trim()))
+                temptitle = title.Trim();
+
             var tempscript = System.IO.File.ReadAllText(Server.MapPath("~/Scripts/DominoQAFACheck.xml"));
             ViewBag.qafachart = tempscript.Replace("#ElementID#", "qafachart")
-                .Replace("#Title#", "PE EEPROM QA Fail Rate/Fail QTY " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd"))
+                .Replace("#Title#", temptitle)
                 .Replace("#ChartxAxisValues#", ChartxAxisValues)
                 .Replace("#AmountMAX#", (AmountMAX + 1).ToString())
                 .Replace("#PassQTY#", PassQTY)
