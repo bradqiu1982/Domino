@@ -13,7 +13,7 @@ namespace Domino.Models
     {
         private static void logthdinfo(string info)
         {
-            var filename = "e:\\sqlexception-" + DateTime.Now.ToString("yyyy-MM-dd");
+            var filename = "d:\\log\\sqlexception-" + DateTime.Now.ToString("yyyy-MM-dd");
             if (File.Exists(filename))
             {
                 var content = System.IO.File.ReadAllText(filename);

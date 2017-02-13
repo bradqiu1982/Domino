@@ -135,7 +135,7 @@ namespace Domino.Controllers
 
         private void logmaininfo(string info)
         {
-            var dominofolder = "e:\\HeartBeat4Domino";
+            var dominofolder = "d:\\HeartBeat4Domino";
             if (!Directory.Exists(dominofolder))
             {
                 Directory.CreateDirectory(dominofolder);

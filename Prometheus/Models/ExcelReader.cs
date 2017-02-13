@@ -51,7 +51,7 @@ bool updateLinks)
 
         private static void logthdinfo(string info)
         {
-            var filename = "e:\\excelexception-" + DateTime.Now.ToString("yyyy-MM-dd");
+            var filename = "d:\\log\\excelexception-" + DateTime.Now.ToString("yyyy-MM-dd");
             if (System.IO.File.Exists(filename))
             {
                 var content = System.IO.File.ReadAllText(filename);
