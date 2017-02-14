@@ -148,6 +148,37 @@
         }
 }
 
+@if (ViewBag.HistoryInfos != null && ViewBag.HistoryInfos.Count > 0)
+{
+    <div class="modal" id="historymodal" tabindex="-1" role="dialog" aria-labelledby="historymodalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="historymodalLabel">Operation History</h4>
+                </div>
+                <div class="row text-center">
+@foreach (var hsinfo in ViewBag.HistoryInfos)
+{
+                    <div class="row">
+                        <div class="col-lg-6">@(hsinfo.ECONum)</div>
+                        <div class="col-lg-6"><a data-toggle="tooltip" title="Refresh System Information" href="/Domino/MiniPIP/ShowCardByCardKey?CardKey=@(hsinfo.CardKey)">@(hsinfo.CardType)</a></div>
+                    </div>
+}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#historymodal').modal();
+    });
+    </script>
+}
+
             <script type="text/javascript">
                 $(document).ready(function () {
                     $('.divclickable').click(function () {

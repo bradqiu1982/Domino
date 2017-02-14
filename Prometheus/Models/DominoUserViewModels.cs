@@ -13,6 +13,14 @@ namespace Domino.Models
         public string Auth { set; get; }
     }
 
+    public class UserHistoryRec
+    {
+        public string UserName { set; get; }
+        public string ECONum { set; get; }
+        public string CardType { set; get; }
+        public string CardKey { set; get; }
+    }
+
     public class DominoUserViewModels
     {
         [Required]
@@ -190,6 +198,34 @@ namespace Domino.Models
             {
                 return false;
             }
+        }
+
+        public static void UpdateUserHistory(string UserName, string ECONum, string CardType, string CardKey)
+        {
+            var sql = "insert into UserRank(UserName,Rank,APVal1,APVal2,UpdateDate) values('<UserName>','<ECONum>','<CardType>','<CardKey>','<UpdateDate>')";
+            sql = sql.Replace("<UserName>", UserName.ToUpper()).Replace("<ECONum>", ECONum)
+                .Replace("<CardType>", CardType).Replace("<CardKey>", CardKey).Replace("<UpdateDate>", DateTime.Now.ToString());
+            DBUtility.ExeLocalSqlNoRes(sql);
+        }
+
+        public static List<UserHistoryRec> RetrieveUserHistory(string UserName)
+        {
+            var sql = "select top 10 UserName,Rank,APVal1,APVal2 from UserRank where UserName = '<UserName>' order by UpdateDate DESC";
+            sql = sql.Replace("<UserName>", UserName.ToUpper());
+
+            var dbret = DBUtility.ExeLocalSqlWithRes(sql);
+            var ret = new List<UserHistoryRec>();
+
+            foreach (var line in dbret)
+            {
+                var tempinfo = new UserHistoryRec();
+                tempinfo.UserName = Convert.ToString(line[0]);
+                tempinfo.ECONum = Convert.ToString(line[1]);
+                tempinfo.CardType = Convert.ToString(line[2]);
+                tempinfo.CardKey = Convert.ToString(line[3]);
+                ret.Add(tempinfo);
+            }
+            return ret;
         }
 
     }

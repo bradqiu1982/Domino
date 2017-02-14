@@ -203,7 +203,7 @@ namespace Domino.Controllers
                 ck.Add("logonredirectctrl","");
                 CookieUtility.SetCookie(this, ck);
 
-                UserRankViewModel.UpdateUserRank(username,1);
+                //UserRankViewModel.UpdateUserRank(username,1);
 
                 return RedirectToAction(logonredirectact, logonredirectctrl);
             }
@@ -215,7 +215,7 @@ namespace Domino.Controllers
                 ck.Add("logonuser", logonuser);
                 CookieUtility.SetCookie(this, ck);
 
-                UserRankViewModel.UpdateUserRank(username, 1);
+                //UserRankViewModel.UpdateUserRank(username, 1);
 
                 return RedirectToAction("ViewAll", "MiniPIP");
             }

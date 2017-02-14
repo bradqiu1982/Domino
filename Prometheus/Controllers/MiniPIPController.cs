@@ -45,7 +45,7 @@ namespace Domino.Controllers
                 return RedirectToAction("LoginUser", "DominoUser");
             }
 
-            GetAdminAuth();
+            var updater = GetAdminAuth();
 
             var baseinfos = ECOBaseInfo.RetrieveAllWorkingECOBaseInfo();
             var vm = new List<List<DominoVM>>();
@@ -69,6 +69,8 @@ namespace Domino.Controllers
             asilist.Add("NONE");
             asilist.AddRange(alluser);
             ViewBag.FilterPEList = CreateSelectList(asilist, "");
+
+            ViewBag.HistoryInfos = DominoUserViewModels.RetrieveUserHistory(updater);
 
             return View(vm);
         }
@@ -336,14 +338,17 @@ namespace Domino.Controllers
             }
         }
 
-        private void GetAdminAuth()
+        private string GetAdminAuth()
         {
             ViewBag.badmin = false;
             var ckdict = CookieUtility.UnpackCookie(this);
             if (ckdict.ContainsKey("logonuser"))
             {
                 ViewBag.badmin = DominoUserViewModels.IsAdmin(ckdict["logonuser"].Split(new char[] { '|' })[0]);
+                return ckdict["logonuser"].Split(new char[] { '|' })[0];
             }
+
+            return string.Empty;
         }
 
         public ActionResult ECOPending(string ECOKey, string CardKey,string Refresh="No")
@@ -354,7 +359,7 @@ namespace Domino.Controllers
                 return RedirectToAction("LoginUser", "DominoUser");
             }
 
-            GetAdminAuth();
+            var updater = GetAdminAuth();
 
             if (string.IsNullOrEmpty(ECOKey))
                 ECOKey = ckdict["ECOKey"];
@@ -439,6 +444,11 @@ namespace Domino.Controllers
                 ViewBag.ECOKey = ECOKey;
                 ViewBag.CardKey = CardKey;
                 ViewBag.CardDetailPage = DominoCardType.ECOPending;
+
+                if (!string.IsNullOrEmpty(updater))
+                {
+                    DominoUserViewModels.UpdateUserHistory(updater, baseinfos[0].ECONum, currentcard[0].CardType, currentcard[0].CardKey);
+                }
 
                 GetNoticeInfo();
                 return View("CurrentECO", vm);
@@ -692,7 +702,7 @@ namespace Domino.Controllers
                 return RedirectToAction("LoginUser", "DominoUser");
             }
 
-            GetAdminAuth();
+            var updater = GetAdminAuth();
 
             if (string.IsNullOrEmpty(ECOKey))
                 ECOKey = ckdict["ECOKey"];
@@ -838,6 +848,11 @@ namespace Domino.Controllers
                 ViewBag.CardKey = CardKey;
                 ViewBag.CardDetailPage = DominoCardType.ECOSignoff1;
 
+                if (!string.IsNullOrEmpty(updater))
+                {
+                    DominoUserViewModels.UpdateUserHistory(updater, baseinfos[0].ECONum, currentcard[0].CardType, currentcard[0].CardKey);
+                }
+
                 GetNoticeInfo();
                 return View("CurrentECO", vm);
             }
@@ -949,7 +964,7 @@ namespace Domino.Controllers
                 return RedirectToAction("LoginUser", "DominoUser");
             }
 
-            GetAdminAuth();
+            var updater = GetAdminAuth();
 
             if (string.IsNullOrEmpty(ECOKey))
                 ECOKey = ckdict["ECOKey"];
@@ -994,6 +1009,11 @@ namespace Domino.Controllers
                 ViewBag.ECOKey = ECOKey;
                 ViewBag.CardKey = CardKey;
                 ViewBag.CardDetailPage = DominoCardType.ECOComplete;
+
+                if (!string.IsNullOrEmpty(updater))
+                {
+                    DominoUserViewModels.UpdateUserHistory(updater, baseinfos[0].ECONum, ViewBag.CurrentCard.CardType, ViewBag.CurrentCard.CardKey);
+                }
 
                 GetNoticeInfo();
                 return View("CurrentECO", vm);
@@ -1124,7 +1144,7 @@ namespace Domino.Controllers
                 return RedirectToAction("LoginUser", "DominoUser");
             }
 
-            GetAdminAuth();
+            var updater = GetAdminAuth();
 
             if (string.IsNullOrEmpty(ECOKey))
                 ECOKey = ckdict["ECOKey"];
@@ -1277,6 +1297,10 @@ namespace Domino.Controllers
                 ViewBag.CardKey = CardKey;
                 ViewBag.CardDetailPage = DominoCardType.ECOSignoff2;
 
+                if (!string.IsNullOrEmpty(updater))
+                {
+                    DominoUserViewModels.UpdateUserHistory(updater, baseinfos[0].ECONum, currentcard[0].CardType, currentcard[0].CardKey);
+                }
                 GetNoticeInfo();
                 return View("CurrentECO", vm);
             }
@@ -1395,7 +1419,7 @@ namespace Domino.Controllers
                 return RedirectToAction("LoginUser", "DominoUser");
             }
 
-            GetAdminAuth();
+            var updater = GetAdminAuth();
 
             if (string.IsNullOrEmpty(ECOKey))
                 ECOKey = ckdict["ECOKey"];
@@ -1433,6 +1457,11 @@ namespace Domino.Controllers
                 ViewBag.ECOKey = ECOKey;
                 ViewBag.CardKey = CardKey;
                 ViewBag.CardDetailPage = DominoCardType.CustomerApprovalHold;
+
+                if (!string.IsNullOrEmpty(updater))
+                {
+                    DominoUserViewModels.UpdateUserHistory(updater, baseinfos[0].ECONum, ViewBag.CurrentCard.CardType, ViewBag.CurrentCard.CardKey);
+                }
 
                 GetNoticeInfo();
                 return View("CurrentECO", vm);
@@ -1518,7 +1547,7 @@ namespace Domino.Controllers
                 return RedirectToAction("LoginUser", "DominoUser");
             }
 
-            GetAdminAuth();
+            var updater = GetAdminAuth();
 
             if (string.IsNullOrEmpty(ECOKey))
                 ECOKey = ckdict["ECOKey"];
@@ -1557,6 +1586,11 @@ namespace Domino.Controllers
                 ViewBag.ECOKey = ECOKey;
                 ViewBag.CardKey = CardKey;
                 ViewBag.CardDetailPage = DominoCardType.SampleOrdering;
+
+                if (!string.IsNullOrEmpty(updater))
+                {
+                    DominoUserViewModels.UpdateUserHistory(updater, baseinfos[0].ECONum, currentcard[0].CardType, currentcard[0].CardKey);
+                }
 
                 GetNoticeInfo();
                 return View("CurrentECO", vm);
@@ -1620,7 +1654,7 @@ namespace Domino.Controllers
                 return RedirectToAction("LoginUser", "DominoUser");
             }
 
-            GetAdminAuth();
+            var updater = GetAdminAuth();
 
             if (string.IsNullOrEmpty(ECOKey))
                 ECOKey = ckdict["ECOKey"];
@@ -1665,6 +1699,10 @@ namespace Domino.Controllers
                 ViewBag.CardKey = CardKey;
                 ViewBag.CardDetailPage = DominoCardType.SampleBuilding;
 
+                if (!string.IsNullOrEmpty(updater))
+                {
+                    DominoUserViewModels.UpdateUserHistory(updater, baseinfos[0].ECONum, currentcard[0].CardType, currentcard[0].CardKey);
+                }
                 GetNoticeInfo();
                 return View("CurrentECO", vm);
             }
@@ -1746,7 +1784,7 @@ namespace Domino.Controllers
                 return RedirectToAction("LoginUser", "DominoUser");
             }
 
-            GetAdminAuth();
+            var updater = GetAdminAuth();
 
             if (string.IsNullOrEmpty(ECOKey))
                 ECOKey = ckdict["ECOKey"];
@@ -1784,6 +1822,11 @@ namespace Domino.Controllers
                 ViewBag.ECOKey = ECOKey;
                 ViewBag.CardKey = CardKey;
                 ViewBag.CardDetailPage = DominoCardType.SampleShipment;
+
+                if (!string.IsNullOrEmpty(updater))
+                {
+                    DominoUserViewModels.UpdateUserHistory(updater, baseinfos[0].ECONum, currentcard[0].CardType, currentcard[0].CardKey);
+                }
 
                 GetNoticeInfo();
                 return View("CurrentECO", vm);
@@ -1845,7 +1888,7 @@ namespace Domino.Controllers
                 return RedirectToAction("LoginUser", "DominoUser");
             }
 
-            GetAdminAuth();
+            var updater = GetAdminAuth();
 
             if (string.IsNullOrEmpty(ECOKey))
                 ECOKey = ckdict["ECOKey"];
@@ -1874,6 +1917,11 @@ namespace Domino.Controllers
                 ViewBag.ECOKey = ECOKey;
                 ViewBag.CardKey = CardKey;
                 ViewBag.CardDetailPage = DominoCardType.SampleCustomerApproval;
+
+                if (!string.IsNullOrEmpty(updater))
+                {
+                    DominoUserViewModels.UpdateUserHistory(updater, baseinfos[0].ECONum, ViewBag.CurrentCard.CardType, ViewBag.CurrentCard.CardKey);
+                }
 
                 GetNoticeInfo();
                 return View("CurrentECO", vm);
@@ -1958,7 +2006,7 @@ namespace Domino.Controllers
                 return RedirectToAction("LoginUser", "DominoUser");
             }
 
-            GetAdminAuth();
+            var updater = GetAdminAuth();
 
             if (string.IsNullOrEmpty(ECOKey))
                 ECOKey = ckdict["ECOKey"];
@@ -1998,6 +2046,11 @@ namespace Domino.Controllers
                 ViewBag.ECOKey = ECOKey;
                 ViewBag.CardKey = CardKey;
                 ViewBag.CardDetailPage = DominoCardType.MiniPIPComplete;
+
+                if (!string.IsNullOrEmpty(updater))
+                {
+                    DominoUserViewModels.UpdateUserHistory(updater, baseinfos[0].ECONum, ViewBag.CurrentCard.CardType, ViewBag.CurrentCard.CardKey);
+                }
 
                 GetNoticeInfo();
                 return View("CurrentECO", vm);
@@ -2101,6 +2154,15 @@ namespace Domino.Controllers
             dict.Add("ECOKey", vm[0].ECOKey);
             dict.Add("CardKey", vm[0].CardKey);
             dict.Add("Refresh", "YES");
+            return RedirectToAction(vm[0].CardType, "MiniPIP", dict);
+        }
+
+        public ActionResult ShowCardByCardKey(string CardKey)
+        {
+            var vm = DominoVM.RetrieveCard(CardKey);
+            var dict = new RouteValueDictionary();
+            dict.Add("ECOKey", vm[0].ECOKey);
+            dict.Add("CardKey", vm[0].CardKey);
             return RedirectToAction(vm[0].CardType, "MiniPIP", dict);
         }
 
