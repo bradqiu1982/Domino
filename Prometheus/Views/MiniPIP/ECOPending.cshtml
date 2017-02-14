@@ -3,6 +3,7 @@
     using (Html.BeginForm("ECOPending", "MiniPIP", FormMethod.Post, new { enctype = "multipart/form-data" }))
     {
         @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
         <script src="../../ckeditor/ckeditor.js"></script>
 
@@ -34,20 +35,14 @@
                     </div>
                 </div>
                 <div class="row col-lg-6">
-                    @*<label class="control-label col-lg-2">FA Custome Approval</label>
-                    <div class="col-lg-10">
-                        <input class="form-control text-box single-line" typeof="text" value="@ViewBag.CurrentCard.EBaseInfo.FACustomerApproval" id="FACustomerApproval" name="FACustomerApproval" />
-                    </div>*@
+                    @if (ViewBag.badmin != null && ViewBag.badmin && ViewBag.ActualPEList != null)
+                    {
+                        <label class="control-label col-lg-2">Actual PE</label>
+                        <div class="col-lg-10">
+                            @Html.DropDownList("ActualPEList", null, new { @id = "ActualPEList", @class = "form-control" })
+                        </div>
+                    }
                 </div>
-                @*<script type="text/javascript">
-                    $(document).ready(function () {
-                        $("#FACustomerApproval").datepicker({
-                            changeMonth: true,
-                            changeYear: true,
-                            dateFormat: 'yy-mm-dd'
-                        });
-                    });
-                </script>*@
             </div>
 
             <div class="form-group">
@@ -63,7 +58,6 @@
                     <label class="control-label col-lg-2">Flow Info</label>
                     <div class="col-lg-10">
                         @Html.DropDownList("FlowInfoList", null, new { @id = "FlowInfoList", @class = "form-control" })
-                        @*@Html.DropDownList("ECOTypeList", null, new { @id = "ECOTypeList", @class = "form-control" })*@
                     </div>
                 </div>
             </div>

@@ -356,6 +356,15 @@ namespace Domino.Controllers
                 asilist.AddRange(pnimpls);
                 ViewBag.PNImplementList= CreateSelectList(asilist, baseinfos[0].PNImplement);
 
+                var alluser = DominoUserViewModels.RetrieveAllUser();
+                asilist = new List<string>();
+                asilist.Add("NONE");
+                foreach (var u in alluser)
+                {
+                    asilist.Add(u.Split(new char[] { '@' })[0].Replace(".", " ").ToUpper());
+                }
+                ViewBag.ActualPEList = CreateSelectList(asilist, baseinfos[0].PE.ToUpper());
+
                 foreach (var card in cardlist)
                 {
                     if (string.Compare(baseinfos[0].MiniPIPStatus, DominoMiniPIPStatus.hold) == 0)
@@ -526,6 +535,14 @@ namespace Domino.Controllers
                         && DateTime.Parse(baseinfos[0].ECOHoldEndDate).ToString("yyyy-MM-dd").Contains("1982-05-06"))
                     {
                         baseinfos[0].ECOHoldEndDate = DateTime.Now.ToString("yyyy-MM-dd") + " 07:30:00";
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(Request.Form["ActualPEList"]))
+                {
+                    if (string.Compare(Request.Form["ActualPEList"].ToString(), "NONE") != 0)
+                    {
+                        baseinfos[0].ActualPE = Request.Form["ActualPEList"].ToString();
                     }
                 }
 
