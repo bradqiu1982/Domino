@@ -583,8 +583,8 @@ namespace Domino.Models
         {
             var ret = new List<ECOBaseInfo>();
             var sql = "select ECOKey,ECONum,ECOType,PNDesc,Customer,Complex,RSM,PE,RiskBuild,InitRevison,FinalRevison"
-                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement,FACustomerApproval,MiniPIPStatus,ECOHoldStartDate,ECOHoldEndDate,CurrentECOProcess,CurrentFlowType,APVal1 from ECOBaseInfo where (MiniPIPStatus='<MiniPIPStatus1>' or MiniPIPStatus='<MiniPIPStatus2>') and PE='<PE>' order by InitRevison DESC";
-            sql = sql.Replace("<MiniPIPStatus1>", DominoMiniPIPStatus.working).Replace("<MiniPIPStatus2>", DominoMiniPIPStatus.hold).Replace("<PE>",pe);
+                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement,FACustomerApproval,MiniPIPStatus,ECOHoldStartDate,ECOHoldEndDate,CurrentECOProcess,CurrentFlowType,APVal1 from ECOBaseInfo where (MiniPIPStatus='<MiniPIPStatus1>' or MiniPIPStatus='<MiniPIPStatus2>') and (PE='<PE>' or APVal1='<ActualPE>') order by InitRevison DESC";
+            sql = sql.Replace("<MiniPIPStatus1>", DominoMiniPIPStatus.working).Replace("<MiniPIPStatus2>", DominoMiniPIPStatus.hold).Replace("<PE>",pe).Replace("<ActualPE>", pe);
 
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
             foreach (var line in dbret)
@@ -681,8 +681,8 @@ namespace Domino.Models
         {
             var ret = new List<ECOBaseInfo>();
             var sql = "select ECOKey,ECONum,ECOType,PNDesc,Customer,Complex,RSM,PE,RiskBuild,InitRevison,FinalRevison"
-                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement,FACustomerApproval,MiniPIPStatus,ECOHoldStartDate,ECOHoldEndDate,CurrentECOProcess,CurrentFlowType,APVal1 from ECOBaseInfo where MiniPIPStatus='<MiniPIPStatus>' and PE='<PE>'  order by InitRevison DESC";
-            sql = sql.Replace("<MiniPIPStatus>", DominoMiniPIPStatus.done).Replace("<PE>",pe);
+                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement,FACustomerApproval,MiniPIPStatus,ECOHoldStartDate,ECOHoldEndDate,CurrentECOProcess,CurrentFlowType,APVal1 from ECOBaseInfo where MiniPIPStatus='<MiniPIPStatus>' and (PE='<PE>' or APVal1='<ActualPE>')  order by InitRevison DESC";
+            sql = sql.Replace("<MiniPIPStatus>", DominoMiniPIPStatus.done).Replace("<PE>",pe).Replace("<ActualPE>", pe);
 
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
             foreach (var line in dbret)

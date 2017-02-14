@@ -93,6 +93,26 @@ namespace Domino.Controllers
             return View("ViewAll", vm);
         }
 
+        public ActionResult ShowECOMiniPIP(string ECONum)
+        {
+            GetAdminAuth();
+            var baseinfos = ECOBaseInfo.RetrieveECOBaseInfoWithECONum(ECONum);
+            var vm = new List<List<DominoVM>>();
+            foreach (var item in baseinfos)
+            {
+                var templist = DominoVM.RetrieveECOCards(item);
+                vm.Add(templist);
+            }
+
+            var alluser = ECOBaseInfo.RetrieveAllPE();
+            var asilist = new List<string>();
+            asilist.Add("NONE");
+            asilist.AddRange(alluser);
+            ViewBag.FilterPEList = CreateSelectList(asilist, "");
+
+            return View("ViewAll", vm);
+        }
+
         public ActionResult CompletedMiniPIP()
         {
             GetAdminAuth();
@@ -132,6 +152,8 @@ namespace Domino.Controllers
 
             return View("CompletedMiniPIP", vm);
         }
+
+
 
         private void logmaininfo(string info)
         {

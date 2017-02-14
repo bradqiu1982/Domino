@@ -25,18 +25,35 @@
     </script>
 </div>
 
-@if (ViewBag.FilterPEList != null)
-{
+
     <hr/>
     <div class="row col-lg-12">
-        <div class="col-lg-1">
-            <label class="control-label" for="FilterPEList">Filter:</label>
-        </div>
-        <div class="col-lg-4">
-            @Html.DropDownList("FilterPEList", null, new { @id = "FilterPEList", @class = "form-control", @onchange = "ShowPEWorkingMiniPIP()" })
-        </div>
-        <div class="col-lg-7">
-        </div>
+
+            <div class="col-lg-2">
+                <label class="control-label">ECONum Filter:</label>
+            </div>
+            <div class="col-lg-3">
+                <input class="form-control text-box single-line" typeof="text" value="" id="ECONumFilter" name="ECONumFilter" />
+            </div>
+            <div class="col-lg-1">
+                <button data-toggle="tooltip" title="ECO Num Filter" type="button" class="btn btn-default" onclick="FilterECONum()"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+            </div>
+
+            @if (ViewBag.FilterPEList != null)
+            {
+                <div class="col-lg-2">
+                    <label class="control-label" for="FilterPEList">PE Filter:</label>
+                </div>
+                <div class="col-lg-4">
+                    @Html.DropDownList("FilterPEList", null, new { @id = "FilterPEList", @class = "form-control", @onchange = "ShowPEWorkingMiniPIP()" })
+                </div>
+            }
+            else
+            {
+                <div class="col-lg-6"></div>
+            }          
+
+
         <script type="text/javascript">
             function ShowPEWorkingMiniPIP() {
                 if (document.getElementById("FilterPEList").value && document.getElementById("FilterPEList").value != 'NONE')
@@ -44,9 +61,17 @@
                     window.location.href = '/Domino/MiniPIP/ShowPEWkingMiniPIP?PE=' + document.getElementById("FilterPEList").value;
                 }
             }
+
+            function FilterECONum()
+            {
+                if (document.getElementById("ECONumFilter").value)
+                {
+                    window.location.href = '/Domino/MiniPIP/ShowECOMiniPIP?ECONum=' + document.getElementById("ECONumFilter").value;
+                }
+            }
         </script>
     </div>
-}
+
 <hr/>
 
 @if (Model != null)
