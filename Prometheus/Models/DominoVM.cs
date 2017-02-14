@@ -190,6 +190,7 @@ namespace Domino.Models
         public string JOQTY { set; get; }
         public string Planner { set; get; }
         public string Creator { set; get; }
+        public string RleaseDate { set; get; }
     }
 
     public class DOMINOJOCHECKTYPE
@@ -1764,11 +1765,11 @@ namespace Domino.Models
                     continue;
                 }
 
-                var csql = "insert into ECOJOOrderInfo(CardKey,APVal1,APVal2,APVal3,APVal4,APVal5,APVal6,APVal7,APVal8)  "
-                    + "  values('<CardKey>','<APVal1>','<APVal2>','<APVal3>','<APVal4>','<APVal5>','<APVal6>','<APVal7>','<APVal8>')";
+                var csql = "insert into ECOJOOrderInfo(CardKey,APVal1,APVal2,APVal3,APVal4,APVal5,APVal6,APVal7,APVal8,APVal9)  "
+                    + "  values('<CardKey>','<APVal1>','<APVal2>','<APVal3>','<APVal4>','<APVal5>','<APVal6>','<APVal7>','<APVal8>','<APVal9>')";
                 csql = csql.Replace("<CardKey>", cardkey).Replace("<APVal1>", ordinfo.Description).Replace("<APVal2>", ordinfo.Category).Replace("<APVal3>", ordinfo.WipJob)
                     .Replace("<APVal4>", ordinfo.JobStatus).Replace("<APVal5>", ordinfo.SSTD).Replace("<APVal6>", ordinfo.JOQTY)
-                    .Replace("<APVal7>", ordinfo.Planner).Replace("<APVal8>", ordinfo.Creator);
+                    .Replace("<APVal7>", ordinfo.Planner).Replace("<APVal8>", ordinfo.Creator).Replace("<APVal9>", ordinfo.RleaseDate);
                 DBUtility.ExeLocalSqlNoRes(csql);
             }
         }
@@ -1777,7 +1778,7 @@ namespace Domino.Models
         {
             var ret = new List<ECOJOOrderInfo>();
 
-            var sql = "select CardKey,APVal1,APVal2,APVal3,APVal4,APVal5,APVal6,APVal7,APVal8 from ECOJOOrderInfo where CardKey = '<CardKey>' and APVal10 <> 'delete'";
+            var sql = "select CardKey,APVal1,APVal2,APVal3,APVal4,APVal5,APVal6,APVal7,APVal8,APVal9 from ECOJOOrderInfo where CardKey = '<CardKey>' and APVal10 <> 'delete'";
             sql = sql.Replace("<CardKey>", cardkey);
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
 
@@ -1793,6 +1794,7 @@ namespace Domino.Models
                 tempinfo.JOQTY = Convert.ToString(line[6]);
                 tempinfo.Planner = Convert.ToString(line[7]);
                 tempinfo.Creator = Convert.ToString(line[8]);
+                tempinfo.RleaseDate = Convert.ToString(line[9]);
 
                 ret.Add(tempinfo);
             }

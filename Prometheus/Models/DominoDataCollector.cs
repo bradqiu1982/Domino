@@ -1001,6 +1001,7 @@ namespace Domino.Models
                                     tempinfo.WipJob = line[11];
                                     tempinfo.JobStatus = line[14];
                                     tempinfo.SSTD = line[15];
+                                    tempinfo.RleaseDate = line[17];
                                     tempinfo.JOQTY = line[20];
                                     tempinfo.Planner = line[37];
                                     tempinfo.Creator = line[38];
