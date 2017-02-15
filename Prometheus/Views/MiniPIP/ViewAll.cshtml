@@ -12,17 +12,38 @@
     <div class="col-lg-1">
         <h2><a data-toggle="tooltip" title="Refresh System Information" href="/Domino/MiniPIP/RefreshSys"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></a></h2>
     </div>
+    <div class="col-lg-1">
+        <button data-toggle="tooltip" title="Operation History" type="button" onclick="OperationHistory()" class="btn btn-default" style="font-size:1.5em; margin-top: 0.83em;margin-bottom: 0.83em;width:100%;"><span class="glyphicon glyphicon-time" aria-hidden="true"></span></button>
+    </div>
     <div class="col-lg-3">
         <button data-toggle="tooltip" title="Completed MiniPIP" type="button" onclick="CompletedMiniPIP()" class="btn btn-default" style="font-size:1.5em; margin-top: 0.83em;margin-bottom: 0.83em;width:100%;">Completed MiniPIP</button>
     </div>
-    <div class="col-lg-5">
+    <div class="col-lg-4">
     </div>
+
     <script type="text/javascript">
         function CompletedMiniPIP()
         {
             window.location.href = '/Domino/MiniPIP/CompletedMiniPIP';
         }
     </script>
+
+    @if (ViewBag.HistoryInfos != null && ViewBag.HistoryInfos.Count > 0)
+    {
+        <script type="text/javascript">
+        function OperationHistory()
+        {
+            $('#historymodal').modal();
+        }
+        </script>
+    }
+    else
+    {
+        <script type="text/javascript">
+        function OperationHistory()
+        {}
+        </script>
+    }
 </div>
 
 
@@ -171,12 +192,6 @@
             </div>
         </div>
     </div>
-
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('#historymodal').modal();
-    });
-    </script>
 }
 
             <script type="text/javascript">
