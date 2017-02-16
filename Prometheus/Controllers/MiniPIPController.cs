@@ -436,11 +436,6 @@ namespace Domino.Controllers
                 asilist.AddRange(pipholds);
                 ViewBag.MiniPIPHoldList = CreateSelectList(asilist, cardinfo.MiniPIPHold);
 
-                if (string.IsNullOrEmpty(baseinfos[0].ECONum))
-                {
-                    ViewBag.PendingDays = (DateTime.Now - DateTime.Parse(baseinfos[0].InitRevison)).Days.ToString();
-                }
-
                 ViewBag.ECOKey = ECOKey;
                 ViewBag.CardKey = CardKey;
                 ViewBag.CardDetailPage = DominoCardType.ECOPending;
@@ -448,6 +443,12 @@ namespace Domino.Controllers
                 if (!string.IsNullOrEmpty(updater))
                 {
                     DominoUserViewModels.UpdateUserHistory(updater, baseinfos[0].ECONum, currentcard[0].CardType, currentcard[0].CardKey);
+                }
+
+                if (string.IsNullOrEmpty(baseinfos[0].ECONum) 
+                    || string.Compare(currentcard[0].CardStatus, DominoCardStatus.done) != 0)
+                {
+                    ViewBag.PendingDays = (DateTime.Now - DateTime.Parse(baseinfos[0].InitRevison)).Days.ToString();
                 }
 
                 GetNoticeInfo();
@@ -2031,6 +2032,10 @@ namespace Domino.Controllers
 
                 ViewBag.MCOIssued = baseinfos[0].MCOIssued;
                 ViewBag.FACustomerApproval = baseinfos[0].FACustomerApproval;
+
+                var approvecard = DominoVM.RetrieveSpecialCard(baseinfos[0], DominoCardType.SampleCustomerApproval);
+                var approvecardinfo = DominoVM.RetrieveSampleCustomerApproveInfo(approvecard[0].CardKey);
+                ViewBag.SampleCustomerApproveDate = approvecardinfo.SampleCustomerApproveDate;
 
                 var cardinfo = DominoVM.RetrieveMinipipCompleteInfo(CardKey);
 
