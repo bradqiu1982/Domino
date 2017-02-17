@@ -156,6 +156,107 @@ namespace Domino.Models
     public class DominoDataCollector
     {
 
+        private static bool FileExist(Controller ctrl,string filename)
+        {
+            try
+            {
+                var syscfgdict = GetSysConfig(ctrl);
+                var folderuser = syscfgdict["SHAREFOLDERUSER"];
+                var folderdomin = syscfgdict["SHAREFOLDERDOMIN"];
+                var folderpwd = syscfgdict["SHAREFOLDERPWD"];
+
+                using (NativeMethods cv = new NativeMethods(folderuser, folderdomin, folderpwd))
+                {
+                    return File.Exists(filename);
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+        }
+
+        private static void FileCopy(Controller ctrl,string src, string des, bool overwrite=true)
+        {
+            try
+            {
+                var syscfgdict = GetSysConfig(ctrl);
+                var folderuser = syscfgdict["SHAREFOLDERUSER"];
+                var folderdomin = syscfgdict["SHAREFOLDERDOMIN"];
+                var folderpwd = syscfgdict["SHAREFOLDERPWD"];
+
+                using (NativeMethods cv = new NativeMethods(folderuser, folderdomin, folderpwd))
+                {
+                    File.Copy(src,des,overwrite);
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        private static bool DirectoryExists(Controller ctrl, string dirname)
+        {
+            try
+            {
+                var syscfgdict = GetSysConfig(ctrl);
+                var folderuser = syscfgdict["SHAREFOLDERUSER"];
+                var folderdomin = syscfgdict["SHAREFOLDERDOMIN"];
+                var folderpwd = syscfgdict["SHAREFOLDERPWD"];
+
+                using (NativeMethods cv = new NativeMethods(folderuser, folderdomin, folderpwd))
+                {
+                    return Directory.Exists(dirname);
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+        }
+
+        private static IEnumerable<string> DirectoryEnumerateFiles(Controller ctrl, string dirname)
+        {
+            try
+            {
+                var syscfgdict = GetSysConfig(ctrl);
+                var folderuser = syscfgdict["SHAREFOLDERUSER"];
+                var folderdomin = syscfgdict["SHAREFOLDERDOMIN"];
+                var folderpwd = syscfgdict["SHAREFOLDERPWD"];
+
+                using (NativeMethods cv = new NativeMethods(folderuser, folderdomin, folderpwd))
+                {
+                    return Directory.EnumerateFiles(dirname);
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        private static IEnumerable<string> DirectoryEnumerateDirs(Controller ctrl, string dirname)
+        {
+            try
+            {
+                var syscfgdict = GetSysConfig(ctrl);
+                var folderuser = syscfgdict["SHAREFOLDERUSER"];
+                var folderdomin = syscfgdict["SHAREFOLDERDOMIN"];
+                var folderpwd = syscfgdict["SHAREFOLDERPWD"];
+
+                using (NativeMethods cv = new NativeMethods(folderuser, folderdomin, folderpwd))
+                {
+                    return Directory.EnumerateDirectories(dirname);
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
         public static Dictionary<string, string> GetSysConfig(Controller ctrl)
         {
             var lines = System.IO.File.ReadAllLines(ctrl.Server.MapPath("~/Scripts/DominoCfg.txt"));
@@ -207,7 +308,7 @@ namespace Domino.Models
             var syscfgdict = GetSysConfig(ctrl);
             var dir = syscfgdict["SAVELOCATION"] + "\\" + ECONUM;
             var workflowfile = dir + "\\" + ECONUM + "_WorkFlowTable.csv";
-            if (File.Exists(workflowfile))
+            if (FileExist(ctrl,workflowfile))
             {
                 var data = ExcelReader.RetrieveDataFromExcel(workflowfile, null);
                 foreach (var line in data)
@@ -299,16 +400,16 @@ namespace Domino.Models
             var sheetname = syscfgdict["MINIPIPSHEETNAME"];
             try
             {
-                if (!Directory.Exists(imgdir))
+                if (!DirectoryExists(ctrl,imgdir))
                 {
                     Directory.CreateDirectory(imgdir);
                 }
 
                 var pendinghistory = new List<ECOPendingUpdate>();
 
-                if (Directory.Exists(desfolder))
+                if (DirectoryExists(ctrl,desfolder))
                 {
-                    var fds = Directory.EnumerateFiles(desfolder);
+                    var fds = DirectoryEnumerateFiles(ctrl,desfolder);
                     foreach (var fd in fds)
                     {
                         try
@@ -321,7 +422,7 @@ namespace Domino.Models
                             }
 
                             var fn = imgdir + Path.GetFileName(fd);
-                            System.IO.File.Copy(fd, fn, true);
+                            FileCopy(ctrl,fd, fn, true);
                             var data = ExcelReader.RetrieveDataFromExcel(fn, sheetname);
                             foreach (var line in data)
                             {
@@ -450,7 +551,7 @@ namespace Domino.Models
                                 var allattach = DominoVM.RetrieveCardExistedAttachment(pendingcard[0].CardKey);
 
                                 var customerfold = new List<string>();
-                                var allcustomerfolder = Directory.EnumerateDirectories(syscfgdict["MINIPIPCUSTOMERFOLDER"]);
+                                var allcustomerfolder = DirectoryEnumerateDirs(ctrl,syscfgdict["MINIPIPCUSTOMERFOLDER"]);
                                 foreach (var cf in allcustomerfolder)
                                 {
                                     var lastlevelfd = cf.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
@@ -466,9 +567,9 @@ namespace Domino.Models
                                     { 
                                         var MiniPIPDocFolder = cf + "\\" + baseinfo.PNDesc;
 
-                                        if (Directory.Exists(MiniPIPDocFolder))
+                                        if (DirectoryExists(ctrl,MiniPIPDocFolder))
                                         {
-                                            var minidocfiles = Directory.EnumerateFiles(MiniPIPDocFolder);
+                                            var minidocfiles = DirectoryEnumerateFiles(ctrl,MiniPIPDocFolder);
                                             foreach (var minifile in minidocfiles)
                                             {
                                                 var fn = System.IO.Path.GetFileName(minifile);
@@ -490,7 +591,7 @@ namespace Domino.Models
                                                     var desfile = localdir + fn;
                                                     try
                                                     {
-                                                        System.IO.File.Copy(minifile, desfile, true);
+                                                        FileCopy(ctrl,minifile, desfile, true);
                                                         var url = "/userfiles/docs/" + urlfolder + "/" + fn;
                                                         DominoVM.StoreCardAttachment(pendingcard[0].CardKey, url);
                                                     }
@@ -523,7 +624,7 @@ namespace Domino.Models
                         }
 
                         var customerfold = new List<string>();
-                        var allcustomerfolder = Directory.EnumerateDirectories(syscfgdict["MINIPIPCUSTOMERFOLDER"]);
+                        var allcustomerfolder = DirectoryEnumerateDirs(ctrl,syscfgdict["MINIPIPCUSTOMERFOLDER"]);
                         foreach (var cf in allcustomerfolder)
                         {
                             var lastlevelfd = cf.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
@@ -538,9 +639,9 @@ namespace Domino.Models
                         foreach (var cf in customerfold)
                         {
                             var MiniPIPDocFolder = cf + "\\" + baseinfo.PNDesc;
-                            if (Directory.Exists(MiniPIPDocFolder))
+                            if (DirectoryExists(ctrl,MiniPIPDocFolder))
                             {
-                                var minidocfiles = Directory.EnumerateFiles(MiniPIPDocFolder);
+                                var minidocfiles = DirectoryEnumerateFiles(ctrl,MiniPIPDocFolder);
                                 foreach (var minifile in minidocfiles)
                                 {
                                     var fn = System.IO.Path.GetFileName(minifile);
@@ -550,7 +651,7 @@ namespace Domino.Models
 
                                     try
                                     {
-                                        System.IO.File.Copy(minifile, desfile, true);
+                                        FileCopy(ctrl,minifile, desfile, true);
                                         var url = "/userfiles/docs/" + urlfolder + "/" + fn;
                                         DominoVM.StoreCardAttachment(CardKey, url);
                                     }
@@ -572,7 +673,7 @@ namespace Domino.Models
             string datestring = DateTime.Now.ToString("yyyyMMdd");
             string imgdir = ctrl.Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
             var desfile = imgdir + syscfgdict["MINIPIPECOFILENAME"];
-            if (System.IO.File.Exists(desfile))
+            if (FileExist(ctrl,desfile))
             {
                 try
                 {
@@ -591,20 +692,20 @@ namespace Domino.Models
             var desfile = imgdir + syscfgdict["MINIPIPECOFILENAME"];
             try
             {
-                if (!Directory.Exists(imgdir) || !System.IO.File.Exists(desfile))
+                if (!DirectoryExists(ctrl,imgdir) || !FileExist(ctrl,desfile))
                 {
-                    if (!Directory.Exists(imgdir))
+                    if (!DirectoryExists(ctrl,imgdir))
                         Directory.CreateDirectory(imgdir);
 
                     var srcfile = syscfgdict["MINIPIPECOFOLDER"] + "\\" + syscfgdict["MINIPIPECOFILENAME"];
 
-                    if (System.IO.File.Exists(srcfile) && !System.IO.File.Exists(desfile))
+                    if (FileExist(ctrl,srcfile) && !FileExist(ctrl,desfile))
                     {
-                        System.IO.File.Copy(srcfile, desfile, true);
+                        FileCopy(ctrl,srcfile, desfile, true);
                     }
                 }
 
-                if (System.IO.File.Exists(desfile))
+                if (FileExist(ctrl,desfile))
                 {
                     var data = ExcelReader.RetrieveDataFromExcel(desfile, syscfgdict["MINIPIPSHEETNAME"]);
                     updateecolist(data, ctrl, imgdir, datestring);
@@ -641,7 +742,7 @@ namespace Domino.Models
                         var allattach = DominoVM.RetrieveCardExistedAttachment(pendingcard[0].CardKey);
 
                         var customerfold = new List<string>();
-                        var allcustomerfolder = Directory.EnumerateDirectories(syscfgdict["MINIPIPCUSTOMERFOLDER"]);
+                        var allcustomerfolder = DirectoryEnumerateDirs(ctrl,syscfgdict["MINIPIPCUSTOMERFOLDER"]);
                         foreach (var cf in allcustomerfolder)
                         {
                             var lastlevelfd = cf.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
@@ -657,9 +758,9 @@ namespace Domino.Models
                         {
                             var MiniPIPDocFolder = cf + "\\" + item.PNDesc;
 
-                            if (Directory.Exists(MiniPIPDocFolder))
+                            if (DirectoryExists(ctrl,MiniPIPDocFolder))
                             {
-                                var minidocfiles = Directory.EnumerateFiles(MiniPIPDocFolder);
+                                var minidocfiles = DirectoryEnumerateFiles(ctrl,MiniPIPDocFolder);
                                 foreach (var minifile in minidocfiles)
                                 {
                                     var fn = System.IO.Path.GetFileName(minifile);
@@ -681,7 +782,7 @@ namespace Domino.Models
                                         var desfile = imgdir + fn;
                                         try
                                         {
-                                            System.IO.File.Copy(minifile, desfile, true);
+                                            FileCopy(ctrl,minifile, desfile, true);
                                             var url = "/userfiles/docs/" + datestring + "/" + fn;
                                             DominoVM.StoreCardAttachment(pendingcard[0].CardKey, url);
                                         }
@@ -719,7 +820,7 @@ namespace Domino.Models
             var srcrootfolder = syscfgdict["QAEEPROMFAI"];
             var eepromfilter = syscfgdict["QAEEPROMCHECKLISTFILTER"];
 
-            if (Directory.Exists(srcrootfolder))
+            if (DirectoryExists(ctrl,srcrootfolder))
             {
                 var currentcard = DominoVM.RetrieveCard(CardKey);
                 if (currentcard.Count == 0)
@@ -728,7 +829,7 @@ namespace Domino.Models
                 var allattach = DominoVM.RetrieveCardExistedAttachment(currentcard[0].CardKey);
 
                 var destfolderlist = new List<string>();
-                var srcfolders = Directory.EnumerateDirectories(srcrootfolder);
+                var srcfolders = DirectoryEnumerateDirs(ctrl,srcrootfolder);
                 foreach (var fd in srcfolders)
                 {
                     if (fd.ToUpper().Contains(baseinfo.PNDesc.ToUpper()))
@@ -740,7 +841,7 @@ namespace Domino.Models
                 var destfiles = new List<string>();
                 foreach (var fd in destfolderlist)
                 {
-                    var qafiles = Directory.EnumerateFiles(fd);
+                    var qafiles = DirectoryEnumerateFiles(ctrl,fd);
                     foreach (var qaf in qafiles)
                     {
                         if (Path.GetFileName(qaf).ToUpper().Contains(eepromfilter))
@@ -764,7 +865,7 @@ namespace Domino.Models
 
                     string datestring = DateTime.Now.ToString("yyyyMMdd");
                     string imgdir = ctrl.Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
-                    if (!Directory.Exists(imgdir))
+                    if (!DirectoryExists(ctrl,imgdir))
                         Directory.CreateDirectory(imgdir);
 
                     var attpath = imgdir + attfn;
@@ -784,7 +885,7 @@ namespace Domino.Models
                     {
                         try
                         {
-                            System.IO.File.Copy(desf, attpath, true);
+                            FileCopy(ctrl,desf, attpath, true);
                             DominoVM.StoreCardAttachment(CardKey, url);
                         }
                         catch (Exception ex) { }
@@ -802,7 +903,7 @@ namespace Domino.Models
             var srcrootfolder = syscfgdict["QALABELFAI"];
             var labelfilter = syscfgdict["QALABELFILTER"];
 
-            if (Directory.Exists(srcrootfolder))
+            if (DirectoryExists(ctrl,srcrootfolder))
             {
                 var currentcard = DominoVM.RetrieveCard(CardKey);
                 if (currentcard.Count == 0)
@@ -811,13 +912,13 @@ namespace Domino.Models
                 var allattach = DominoVM.RetrieveCardExistedAttachment(currentcard[0].CardKey);
 
                 var firstleveldirs = new List<string>();
-                var ffold = Directory.EnumerateDirectories(srcrootfolder);
+                var ffold = DirectoryEnumerateDirs(ctrl,srcrootfolder);
                 firstleveldirs.AddRange(ffold);
 
                 var seconfleveldir = new List<string>();
                 foreach (var ffd in ffold)
                 {
-                    var sfd = Directory.EnumerateDirectories(ffd);
+                    var sfd = DirectoryEnumerateDirs(ctrl,ffd);
                     seconfleveldir.AddRange(sfd);
                 }
 
@@ -833,7 +934,7 @@ namespace Domino.Models
                 var destfiles = new List<string>();
                 foreach (var fd in destfolderlist)
                 {
-                    var qafiles = Directory.EnumerateFiles(fd);
+                    var qafiles = DirectoryEnumerateFiles(ctrl,fd);
                     foreach (var qaf in qafiles)
                     {
                         if (Path.GetFileName(qaf).ToUpper().Contains(labelfilter))
@@ -857,7 +958,7 @@ namespace Domino.Models
 
                     string datestring = DateTime.Now.ToString("yyyyMMdd");
                     string imgdir = ctrl.Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
-                    if (!Directory.Exists(imgdir))
+                    if (!DirectoryExists(ctrl,imgdir))
                         Directory.CreateDirectory(imgdir);
 
                     var attpath = imgdir + attfn;
@@ -877,7 +978,7 @@ namespace Domino.Models
                     {
                         try
                         {
-                            System.IO.File.Copy(desf, attpath, true);
+                            FileCopy(ctrl,desf, attpath, true);
                             DominoVM.StoreCardAttachment(CardKey, url);
                         }
                         catch (Exception ex) { }
@@ -920,14 +1021,14 @@ namespace Domino.Models
             try
             {
                 var backlogfiles = new List<string>();
-                if (!Directory.Exists(imgdir))
+                if (!DirectoryExists(ctrl,imgdir))
                 {
                     Directory.CreateDirectory(imgdir);
                 }
 
-                if (Directory.Exists(desfolder))
+                if (DirectoryExists(ctrl,desfolder))
                 {
-                    var fds = Directory.EnumerateFiles(desfolder);
+                    var fds = DirectoryEnumerateFiles(ctrl,desfolder);
                     foreach (var fd in fds)
                     {
                         try
@@ -936,7 +1037,7 @@ namespace Domino.Models
                             if (ogfn.Contains("_0630"))
                             {
                                 var fn = imgdir + Path.GetFileName(fd);
-                                System.IO.File.Copy(fd, fn, true);
+                                FileCopy(ctrl,fd, fn, true);
                                 backlogfiles.Add(fn);
                             }
                         }
@@ -1038,17 +1139,17 @@ namespace Domino.Models
             try
             {
                 var backlogfiles = new List<string>();
-                if (!Directory.Exists(imgdir))
+                if (!DirectoryExists(ctrl,imgdir))
                 {
                     Directory.CreateDirectory(imgdir);
                 }
 
-                if (System.IO.File.Exists(desfile))
+                if (FileExist(ctrl,desfile))
                 {
                     try
                     {
                         var fn = imgdir + Path.GetFileName(desfile);
-                        System.IO.File.Copy(desfile, fn, true);
+                        FileCopy(ctrl,desfile, fn, true);
                         var data = ExcelReader.RetrieveDataFromExcel(fn, null);
                         foreach (var line in data)
                         {
@@ -1140,17 +1241,17 @@ namespace Domino.Models
 
                 try
                 {
-                    if (!Directory.Exists(imgdir))
+                    if (!DirectoryExists(ctrl,imgdir))
                     {
                         Directory.CreateDirectory(imgdir);
                     }
 
-                    if (System.IO.File.Exists(desfile))
+                    if (FileExist(ctrl,desfile))
                     {
                         try
                         {
                             var fn = imgdir + Path.GetFileName(desfile);
-                            System.IO.File.Copy(desfile, fn, true);
+                            FileCopy(ctrl,desfile, fn, true);
 
                             var data = ExcelReader.RetrieveDataFromExcel(fn, null);
                             foreach (var line in data)
@@ -1227,12 +1328,12 @@ namespace Domino.Models
 
                 try
                 {
-                    if (!Directory.Exists(imgdir))
+                    if (!DirectoryExists(ctrl,imgdir))
                     {
                         Directory.CreateDirectory(imgdir);
                     }
 
-                    var fs = Directory.EnumerateFiles(desfolder);
+                    var fs = DirectoryEnumerateFiles(ctrl,desfolder);
                     var desfile = string.Empty;
                     foreach (var f in fs)
                     {
@@ -1243,12 +1344,12 @@ namespace Domino.Models
                         }
                     }
 
-                    if (System.IO.File.Exists(desfile))
+                    if (FileExist(ctrl,desfile))
                     {
                         try
                         {
                             var fn = imgdir + "QA_FAI_OCQ"+Path.GetExtension(desfile);
-                            System.IO.File.Copy(desfile, fn, true);
+                            FileCopy(ctrl,desfile, fn, true);
 
                             var data = ExcelReader.RetrieveDataFromExcel(fn, null);
                             foreach (var line in data)
@@ -1322,17 +1423,17 @@ namespace Domino.Models
 
                 try
                 {
-                    if (!Directory.Exists(imgdir))
+                    if (!DirectoryExists(ctrl,imgdir))
                     {
                         Directory.CreateDirectory(imgdir);
                     }
 
-                    if (System.IO.File.Exists(desfile))
+                    if (FileExist(ctrl,desfile))
                     {
                         try
                         {
                             var fn = imgdir + Path.GetFileName(desfile);
-                            System.IO.File.Copy(desfile, fn, true);
+                            FileCopy(ctrl,desfile, fn, true);
 
                             var data = ExcelReader.RetrieveDataFromExcel(fn, null);
                             foreach (var line in data)
@@ -1395,12 +1496,12 @@ namespace Domino.Models
 
             try
             {
-                if (!Directory.Exists(imgdir))
+                if (!DirectoryExists(ctrl,imgdir))
                 {
                     Directory.CreateDirectory(imgdir);
                 }
 
-                var fs = Directory.EnumerateFiles(desfolder);
+                var fs = DirectoryEnumerateFiles(ctrl,desfolder);
                 var desfile = string.Empty;
                 foreach (var f in fs)
                 {
@@ -1412,13 +1513,13 @@ namespace Domino.Models
                 }
                 
 
-                if (System.IO.File.Exists(desfile))
+                if (FileExist(ctrl,desfile))
                 {
                     var sheetname = Path.GetFileNameWithoutExtension(desfile);
                     try
                     {
                         var fn = imgdir + Path.GetFileName(desfile);
-                        System.IO.File.Copy(desfile, fn, true);
+                        FileCopy(ctrl,desfile, fn, true);
 
                         var data = ExcelReader.RetrieveDataFromExcel(fn, sheetname);
                         foreach (var line in data)
@@ -1455,8 +1556,6 @@ namespace Domino.Models
 
         public static List<QACheckData> RetrieveAllQACheckInfo(Controller ctrl)
         {
-            using (NativeMethods cv = new NativeMethods("brad.qiu", "china", "wangle@5321"))
-            {
             var ret = new List<QACheckData>();
             var syscfgdict = GetSysConfig(ctrl);
             var srcfile = syscfgdict["QAFACHECKCHART"];
@@ -1466,17 +1565,17 @@ namespace Domino.Models
 
             try
             {
-                if (!Directory.Exists(imgdir))
+                if (!DirectoryExists(ctrl,imgdir))
                 {
                     Directory.CreateDirectory(imgdir);
                 }
 
-                if (System.IO.File.Exists(srcfile))
+                if (FileExist(ctrl,srcfile))
                 {
                     try
                     {
                         var fn = imgdir + Path.GetFileNameWithoutExtension(srcfile) + DateTime.Now.ToString("yyyyMMddhhmmss")+ Path.GetExtension(srcfile);
-                        System.IO.File.Copy(srcfile, fn, true);
+                        FileCopy(ctrl,srcfile, fn, true);
                         var data = ExcelReader.RetrieveDataFromExcel(fn, sheetname);
                         foreach (var line in data)
                         {
@@ -1541,9 +1640,6 @@ namespace Domino.Models
             catch (Exception ex) { }
 
             return ret;
-            }
-
-
         }
 
     }

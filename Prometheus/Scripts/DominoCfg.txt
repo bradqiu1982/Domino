@@ -41,3 +41,6 @@ JO2NDCHECKINFO:::\\wux-fs\public\Project\CFP\OQC
 AGILEURL:::http://sny-agile9app-p64:7001/Agile
 LOCALSITEPORT:::8080
 SAVELOCATION:::d:\Agile
+SHAREFOLDERUSER:::brad.qiu
+SHAREFOLDERDOMIN:::china
+SHAREFOLDERPWD:::wangle@5321
