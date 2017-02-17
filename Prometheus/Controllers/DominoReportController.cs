@@ -1378,7 +1378,7 @@ namespace Domino.Controllers
             FailQTY = FailQTY.Substring(0, FailQTY.Length - 1);
             FailRate = FailRate.Substring(0, FailRate.Length - 1);
 
-            var temptitle = "PE EEPROM QA Fail Rate/Fail QTY " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd");
+            var temptitle = charttype + " EEPROM QA Fail Rate/Fail QTY " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd");
             if (!string.IsNullOrEmpty(title.Trim()))
                 temptitle = title.Trim();
 
