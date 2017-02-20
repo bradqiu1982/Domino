@@ -56,7 +56,7 @@ namespace Domino.Controllers
 
                     if (!string.IsNullOrEmpty(wholefn))
                     {
-                        var data = ExcelReader.RetrieveDataFromExcel(wholefn,null);
+                        var data = DominoDataCollector.RetrieveDataFromExcel(this,wholefn,null);
                         var realdata = new List<List<string>>();
                         if (data.Count > 1)
                         {

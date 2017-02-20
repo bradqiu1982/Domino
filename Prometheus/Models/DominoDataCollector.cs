@@ -217,7 +217,7 @@ namespace Domino.Models
 
         }
 
-        private static IEnumerable<string> DirectoryEnumerateFiles(Controller ctrl, string dirname)
+        private static List<string> DirectoryEnumerateFiles(Controller ctrl, string dirname)
         {
             try
             {
@@ -228,7 +228,9 @@ namespace Domino.Models
 
                 using (NativeMethods cv = new NativeMethods(folderuser, folderdomin, folderpwd))
                 {
-                    return Directory.EnumerateFiles(dirname);
+                    var ret = new List<string>();
+                    ret.AddRange(Directory.EnumerateFiles(dirname));
+                    return ret;
                 }
             }
             catch (Exception ex)
@@ -237,7 +239,7 @@ namespace Domino.Models
             }
         }
 
-        private static IEnumerable<string> DirectoryEnumerateDirs(Controller ctrl, string dirname)
+        public static List<List<string>> RetrieveDataFromExcel(Controller ctrl, string filename,string sheetname)
         {
             try
             {
@@ -248,7 +250,29 @@ namespace Domino.Models
 
                 using (NativeMethods cv = new NativeMethods(folderuser, folderdomin, folderpwd))
                 {
-                    return Directory.EnumerateDirectories(dirname);
+                    return ExcelReader.RetrieveDataFromExcel(filename, sheetname);
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        private static List<string> DirectoryEnumerateDirs(Controller ctrl, string dirname)
+        {
+            try
+            {
+                var syscfgdict = GetSysConfig(ctrl);
+                var folderuser = syscfgdict["SHAREFOLDERUSER"];
+                var folderdomin = syscfgdict["SHAREFOLDERDOMIN"];
+                var folderpwd = syscfgdict["SHAREFOLDERPWD"];
+
+                using (NativeMethods cv = new NativeMethods(folderuser, folderdomin, folderpwd))
+                {
+                    var ret = new List<string>();
+                    ret.AddRange(Directory.EnumerateDirectories(dirname));
+                    return ret;
                 }
             }
             catch (Exception ex)
@@ -310,7 +334,7 @@ namespace Domino.Models
             var workflowfile = dir + "\\" + ECONUM + "_WorkFlowTable.csv";
             if (FileExist(ctrl,workflowfile))
             {
-                var data = ExcelReader.RetrieveDataFromExcel(workflowfile, null);
+                var data = RetrieveDataFromExcel(ctrl,workflowfile, null);
                 foreach (var line in data)
                 {
                     var tempdata = new ECOWorkFlowRAWData();
@@ -423,7 +447,7 @@ namespace Domino.Models
 
                             var fn = imgdir + Path.GetFileName(fd);
                             FileCopy(ctrl,fd, fn, true);
-                            var data = ExcelReader.RetrieveDataFromExcel(fn, sheetname);
+                            var data = RetrieveDataFromExcel(ctrl,fn, sheetname);
                             foreach (var line in data)
                             {
                                 if (string.Compare(line[2], baseinfo.PNDesc, true) == 0
@@ -707,7 +731,7 @@ namespace Domino.Models
 
                 if (FileExist(ctrl,desfile))
                 {
-                    var data = ExcelReader.RetrieveDataFromExcel(desfile, syscfgdict["MINIPIPSHEETNAME"]);
+                    var data = RetrieveDataFromExcel(ctrl,desfile, syscfgdict["MINIPIPSHEETNAME"]);
                     updateecolist(data, ctrl, imgdir, datestring);
                 }
             }
@@ -911,9 +935,7 @@ namespace Domino.Models
 
                 var allattach = DominoVM.RetrieveCardExistedAttachment(currentcard[0].CardKey);
 
-                var firstleveldirs = new List<string>();
                 var ffold = DirectoryEnumerateDirs(ctrl,srcrootfolder);
-                firstleveldirs.AddRange(ffold);
 
                 var seconfleveldir = new List<string>();
                 foreach (var ffd in ffold)
@@ -1047,7 +1069,7 @@ namespace Domino.Models
                     var alldata = new List<List<string>>();
                     foreach (var bcklog in backlogfiles)
                     {
-                        var data = ExcelReader.RetrieveDataFromExcel(bcklog, null);
+                        var data = RetrieveDataFromExcel(ctrl,bcklog, null);
                         alldata.AddRange(data);
                     }
 
@@ -1150,7 +1172,7 @@ namespace Domino.Models
                     {
                         var fn = imgdir + Path.GetFileName(desfile);
                         FileCopy(ctrl,desfile, fn, true);
-                        var data = ExcelReader.RetrieveDataFromExcel(fn, null);
+                        var data = RetrieveDataFromExcel(ctrl,fn, null);
                         foreach (var line in data)
                         {
                             var baseinfopn = string.Empty;
@@ -1253,7 +1275,7 @@ namespace Domino.Models
                             var fn = imgdir + Path.GetFileName(desfile);
                             FileCopy(ctrl,desfile, fn, true);
 
-                            var data = ExcelReader.RetrieveDataFromExcel(fn, null);
+                            var data = RetrieveDataFromExcel(ctrl,fn, null);
                             foreach (var line in data)
                             {
                                 if (jodict.ContainsKey(line[1]))
@@ -1351,7 +1373,7 @@ namespace Domino.Models
                             var fn = imgdir + "QA_FAI_OCQ"+Path.GetExtension(desfile);
                             FileCopy(ctrl,desfile, fn, true);
 
-                            var data = ExcelReader.RetrieveDataFromExcel(fn, null);
+                            var data = RetrieveDataFromExcel(ctrl,fn, null);
                             foreach (var line in data)
                             {
                                 var jos = line[9].Split(new string[] { "\r", "\n"," ","," }, StringSplitOptions.RemoveEmptyEntries);
@@ -1435,7 +1457,7 @@ namespace Domino.Models
                             var fn = imgdir + Path.GetFileName(desfile);
                             FileCopy(ctrl,desfile, fn, true);
 
-                            var data = ExcelReader.RetrieveDataFromExcel(fn, null);
+                            var data = RetrieveDataFromExcel(ctrl,fn, null);
                             foreach (var line in data)
                             {
                                 if (jodict.ContainsKey(line[11]))
@@ -1521,7 +1543,7 @@ namespace Domino.Models
                         var fn = imgdir + Path.GetFileName(desfile);
                         FileCopy(ctrl,desfile, fn, true);
 
-                        var data = ExcelReader.RetrieveDataFromExcel(fn, sheetname);
+                        var data = RetrieveDataFromExcel(ctrl,fn, sheetname);
                         foreach (var line in data)
                         {
                             if (sodict.ContainsKey(line[8]))
@@ -1576,7 +1598,7 @@ namespace Domino.Models
                     {
                         var fn = imgdir + Path.GetFileNameWithoutExtension(srcfile) + DateTime.Now.ToString("yyyyMMddhhmmss")+ Path.GetExtension(srcfile);
                         FileCopy(ctrl,srcfile, fn, true);
-                        var data = ExcelReader.RetrieveDataFromExcel(fn, sheetname);
+                        var data = RetrieveDataFromExcel(ctrl,fn, sheetname);
                         foreach (var line in data)
                         {
                             try
