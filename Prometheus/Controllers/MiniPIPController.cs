@@ -236,21 +236,25 @@ namespace Domino.Controllers
                         if (string.Compare(cardtype, DominoCardType.ECOPending) == 0)
                         {
                             DominoDataCollector.UpdateECOWeeklyUpdate(this, card.EBaseInfo, card.CardKey);
+                            logmaininfo(DateTime.Now.ToString() + " updated ECO "+card.EBaseInfo.ECONum+"  ECOPending info\r\n");
                             DominoVM.CardCanbeUpdate(card.CardKey);
                         }
                         else if (string.Compare(cardtype, DominoCardType.ECOSignoff1) == 0)
                         {
                             DominoDataCollector.RefreshQAFAI(card.EBaseInfo, card.CardKey, this);
+                            logmaininfo(DateTime.Now.ToString() + " updated ECO " + card.EBaseInfo.ECONum + "  ECOSignoff1 info\r\n");
                             DominoVM.CardCanbeUpdate(card.CardKey);
                         }
                         else if (string.Compare(cardtype, DominoCardType.ECOSignoff2) == 0)
                         {
                             DominoDataCollector.RefreshQAFAI(card.EBaseInfo, card.CardKey, this);
+                            logmaininfo(DateTime.Now.ToString() + " updated ECO " + card.EBaseInfo.ECONum + "  ECOSignoff2 info\r\n");
                             DominoVM.CardCanbeUpdate(card.CardKey);
                         }
                         else if (string.Compare(cardtype, DominoCardType.SampleOrdering) == 0)
                         {
                             DominoDataCollector.UpdateOrderInfoFromExcel(this, card.EBaseInfo, card.CardKey);
+                            logmaininfo(DateTime.Now.ToString() + " updated ECO " + card.EBaseInfo.ECONum + "  SampleOrdering info\r\n");
                             DominoVM.CardCanbeUpdate(card.CardKey);
                         }
                         else if (string.Compare(cardtype, DominoCardType.SampleBuilding) == 0)
@@ -259,11 +263,13 @@ namespace Domino.Controllers
                             DominoDataCollector.Update1STJOCheckFromExcel(this, card.EBaseInfo, card.CardKey);
                             DominoDataCollector.Update2NDJOCheckFromExcel(this, card.EBaseInfo, card.CardKey);
                             DominoDataCollector.UpdateJOMainStoreFromExcel(this, card.EBaseInfo, card.CardKey);
+                            logmaininfo(DateTime.Now.ToString() + " updated ECO " + card.EBaseInfo.ECONum + "  SampleBuilding info\r\n");
                             DominoVM.CardCanbeUpdate(card.CardKey);
                         }
                         else if (string.Compare(cardtype, DominoCardType.SampleShipment) == 0)
                         {
                             DominoDataCollector.UpdateShipInfoFromExcel(this, card.EBaseInfo, card.CardKey);
+                            logmaininfo(DateTime.Now.ToString() + " updated ECO " + card.EBaseInfo.ECONum + "  SampleShipment info\r\n");
                             DominoVM.CardCanbeUpdate(card.CardKey);
                         }
                     }//end foreach
