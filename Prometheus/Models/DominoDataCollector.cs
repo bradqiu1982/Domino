@@ -177,10 +177,12 @@ namespace Domino.Models
 
         }
 
-        private static void FileCopy(Controller ctrl,string src, string des, bool overwrite=true)
+        private static void FileCopy(Controller ctrl,string src, string des, bool overwrite,bool checklocal = false)
         {
             try
             {
+
+
                 var syscfgdict = GetSysConfig(ctrl);
                 var folderuser = syscfgdict["SHAREFOLDERUSER"];
                 var folderdomin = syscfgdict["SHAREFOLDERDOMIN"];
@@ -188,6 +190,14 @@ namespace Domino.Models
 
                 using (NativeMethods cv = new NativeMethods(folderuser, folderdomin, folderpwd))
                 {
+                    if (checklocal)
+                    {
+                        if (File.Exists(des))
+                        {
+                            return;
+                        }
+                    }
+
                     File.Copy(src,des,overwrite);
                 }
             }
@@ -446,7 +456,7 @@ namespace Domino.Models
                             }
 
                             var fn = imgdir + Path.GetFileName(fd);
-                            FileCopy(ctrl,fd, fn, true);
+                            FileCopy(ctrl,fd, fn, true,true);
                             var data = RetrieveDataFromExcel(ctrl,fn, sheetname);
                             foreach (var line in data)
                             {
@@ -506,12 +516,11 @@ namespace Domino.Models
                     catch (Exception ex)
                     { initialmini = string.Empty; }
 
-                    //if (string.IsNullOrEmpty(initialmini)
-                    //    || DateTime.Parse(initialmini) > DateTime.Parse("2016-9-30 10:00:00")
-                    //    || DateTime.Parse(initialmini) < DateTime.Parse("2016-9-1 10:00:00"))
-                    //{
-                    //    continue;
-                    //}
+                    if (string.IsNullOrEmpty(initialmini)
+                        || DateTime.Parse(initialmini) < DateTime.Parse("2017-01-01 01:00:00"))
+                    {
+                        continue;
+                    }
 
                     var baseinfo = new ECOBaseInfo();
                     baseinfo.PNDesc = line[2];
