@@ -2523,28 +2523,19 @@ namespace Domino.Controllers
 
         public ActionResult AgileWorkFlow(string ECONUM)
         {
-            var ecoinfo = ECOBaseInfo.RetrieveECOBaseInfoWithECONum(ECONUM);
-            if (ecoinfo.Count > 0)
-            {
-                var workflowinfo = DominoDataCollector.RetrieveAgileWorkFlowData(ECONUM, this);
-                if(!string.IsNullOrEmpty(workflowinfo.CurrentProcess))
-                {
-                    ecoinfo[0].CurrentECOProcess = workflowinfo.CurrentProcess;
-                    ecoinfo[0].CurrentFlowType = workflowinfo.WorkFlowType;
-                    ecoinfo[0].UpdateECO();
-                }
+            var ecoinfos = ECOBaseInfo.RetrieveECOBaseInfoWithECONum(ECONUM);
+            var workflowinfo = DominoDataCollector.RetrieveAgileWorkFlowData(ECONUM, this);
 
-                var vm = DominoVM.RetrieveSpecialCard(ecoinfo[0], DominoCardType.ECOSignoff1);
-                if (vm.Count > 0)
-                {
-                    var cardinfo = DominoVM.RetrieveSignoffInfo(vm[0].CardKey);
-                    cardinfo.ECOMDApprover = workflowinfo.ECOMDApprover;
-                    cardinfo.ECOTRApprover = workflowinfo.ECOTRApprover;
-                    cardinfo.UpdateSignoffInfo(vm[0].CardKey);
-                }
-                else
-                {
-                    vm = DominoVM.RetrieveSpecialCard(ecoinfo[0], DominoCardType.ECOSignoff2);
+            foreach (var ecoitem in ecoinfos)
+            {
+                    if(!string.IsNullOrEmpty(workflowinfo.CurrentProcess))
+                    {
+                    ecoitem.CurrentECOProcess = workflowinfo.CurrentProcess;
+                    ecoitem.CurrentFlowType = workflowinfo.WorkFlowType;
+                    ecoitem.UpdateECO();
+                    }
+
+                    var vm = DominoVM.RetrieveSpecialCard(ecoitem, DominoCardType.ECOSignoff1);
                     if (vm.Count > 0)
                     {
                         var cardinfo = DominoVM.RetrieveSignoffInfo(vm[0].CardKey);
@@ -2552,31 +2543,42 @@ namespace Domino.Controllers
                         cardinfo.ECOTRApprover = workflowinfo.ECOTRApprover;
                         cardinfo.UpdateSignoffInfo(vm[0].CardKey);
                     }
-                }
-
-                if (!string.IsNullOrEmpty(workflowinfo.CApproveHoldDate))
-                {
-                    vm = DominoVM.RetrieveSpecialCard(ecoinfo[0], DominoCardType.ECOSignoff2);
-                    if (vm.Count > 0)
+                    else
                     {
-                        var cardinfo = DominoVM.RetrieveSignoffInfo(vm[0].CardKey);
-                        cardinfo.ECOCustomerHoldDate = ConvertUSLocalToDate(workflowinfo.CApproveHoldDate);
-                        cardinfo.UpdateSignoffInfo(vm[0].CardKey);
+                        vm = DominoVM.RetrieveSpecialCard(ecoitem, DominoCardType.ECOSignoff2);
+                        if (vm.Count > 0)
+                        {
+                            var cardinfo = DominoVM.RetrieveSignoffInfo(vm[0].CardKey);
+                            cardinfo.ECOMDApprover = workflowinfo.ECOMDApprover;
+                            cardinfo.ECOTRApprover = workflowinfo.ECOTRApprover;
+                            cardinfo.UpdateSignoffInfo(vm[0].CardKey);
+                        }
                     }
-                }
 
-                if (!string.IsNullOrEmpty(workflowinfo.ECOCompleteDate))
-                {
-                    vm = DominoVM.RetrieveSpecialCard(ecoinfo[0], DominoCardType.ECOComplete);
-                    if (vm.Count > 0)
+                    if (!string.IsNullOrEmpty(workflowinfo.CApproveHoldDate))
                     {
-                        vm[0].ECOCompleted = DominoYESNO.YES;
-                        vm[0].ECOCompleteDate = ConvertUSLocalToDate(workflowinfo.ECOCompleteDate);
-                        vm[0].UpdateECOCompleteInfo(vm[0].CardKey);
-                        DominoVM.UpdateCardStatus(vm[0].CardKey, DominoCardStatus.done);
+                        vm = DominoVM.RetrieveSpecialCard(ecoitem, DominoCardType.ECOSignoff2);
+                        if (vm.Count > 0)
+                        {
+                            var cardinfo = DominoVM.RetrieveSignoffInfo(vm[0].CardKey);
+                            cardinfo.ECOCustomerHoldDate = ConvertUSLocalToDate(workflowinfo.CApproveHoldDate);
+                            cardinfo.UpdateSignoffInfo(vm[0].CardKey);
+                        }
                     }
-                }
+
+                    if (!string.IsNullOrEmpty(workflowinfo.ECOCompleteDate))
+                    {
+                        vm = DominoVM.RetrieveSpecialCard(ecoitem, DominoCardType.ECOComplete);
+                        if (vm.Count > 0)
+                        {
+                            vm[0].ECOCompleted = DominoYESNO.YES;
+                            vm[0].ECOCompleteDate = ConvertUSLocalToDate(workflowinfo.ECOCompleteDate);
+                            vm[0].UpdateECOCompleteInfo(vm[0].CardKey);
+                            DominoVM.UpdateCardStatus(vm[0].CardKey, DominoCardStatus.done);
+                        }
+                    }
             }
+
             return View();
         }
 
