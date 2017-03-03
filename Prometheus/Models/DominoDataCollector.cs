@@ -578,7 +578,7 @@ namespace Domino.Models
                                 if (!string.IsNullOrEmpty(item.ECONum)
                                 && string.Compare(pendingcard[0].CardStatus, DominoCardStatus.working) == 0)
                                 {
-                                    DominoVM.UpdateCardStatus(pendingcard[0].CardKey, DominoCardType.ECOPending);
+                                    DominoVM.UpdateCardStatus(pendingcard[0].CardKey, DominoCardStatus.pending);
                                 }
 
                                 var allattach = DominoVM.RetrieveCardExistedAttachment(pendingcard[0].CardKey);
