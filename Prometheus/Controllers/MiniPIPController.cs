@@ -2500,17 +2500,17 @@ namespace Domino.Controllers
 
         public ActionResult AgileAttach(string ECONUM)
         {
-            var ecoinfo = ECOBaseInfo.RetrieveECOBaseInfoWithECONum(ECONUM);
-            if (ecoinfo.Count > 0)
+            var ecoinfos = ECOBaseInfo.RetrieveECOBaseInfoWithECONum(ECONUM);
+            foreach (var ecoitem in ecoinfos)
             {
-                var vm = DominoVM.RetrieveSpecialCard(ecoinfo[0], DominoCardType.ECOSignoff1);
+                var vm = DominoVM.RetrieveSpecialCard(ecoitem, DominoCardType.ECOSignoff1);
                 if (vm.Count > 0)
                 {
                     StoreAgileAttch(ECONUM,vm);
                 }
                 else
                 {
-                    vm = DominoVM.RetrieveSpecialCard(ecoinfo[0], DominoCardType.ECOSignoff2);
+                    vm = DominoVM.RetrieveSpecialCard(ecoitem, DominoCardType.ECOSignoff2);
                     if (vm.Count > 0)
                     {
                         StoreAgileAttch(ECONUM, vm);
