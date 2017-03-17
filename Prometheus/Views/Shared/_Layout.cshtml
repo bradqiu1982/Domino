@@ -87,6 +87,12 @@
                                 <li>
                                     @Html.ActionLink("User Center", "UserCenter", "DominoUser")
                                 </li>
+                                @if (ViewBag.badmin != null && ViewBag.badmin)
+                                {
+                                    <li>
+                                        @Html.ActionLink("User Matrix", "CommitUserMatrix", "ExtenalData")
+                                    </li>
+                                }
                             </ul>
                         </li>
                     </ul>

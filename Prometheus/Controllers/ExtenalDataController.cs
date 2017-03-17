@@ -10,8 +10,27 @@ namespace Domino.Controllers
 {
     public class ExtenalDataController : Controller
     {
+        private string GetAdminAuth()
+        {
+            ViewBag.badmin = false;
+            var ckdict = CookieUtility.UnpackCookie(this);
+            if (ckdict.ContainsKey("logonuser"))
+            {
+                ViewBag.badmin = DominoUserViewModels.IsAdmin(ckdict["logonuser"].Split(new char[] { '|' })[0]);
+                return ckdict["logonuser"].Split(new char[] { '|' })[0];
+            }
+
+            return string.Empty;
+        }
+
         public ActionResult CommitUserMatrix()
         {
+            GetAdminAuth();
+            if (!ViewBag.badmin)
+            {
+                return RedirectToAction("ViewAll", "MiniPIP");
+            }
+
             return View();
         }
 
@@ -19,6 +38,8 @@ namespace Domino.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult CommitUserMatrixPost()
         {
+            GetAdminAuth();
+
             var wholefn = "";
             try
             {
@@ -109,6 +130,8 @@ namespace Domino.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult ConfirmUserMatrix()
         {
+            GetAdminAuth();
+
             if (Request.Form["confirmdata"] != null)
             {
 
