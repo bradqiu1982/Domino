@@ -207,6 +207,7 @@
     <Compile Include="Models\DBUtility.cs" />
     <Compile Include="Models\DominoDataCollector.cs" />
     <Compile Include="Models\DominoRPVM.cs" />
+    <Compile Include="Models\DominoUserCacheVM.cs" />
     <Compile Include="Models\DominoVM.cs" />
     <Compile Include="Models\EmailUtility.cs" />
     <Compile Include="Models\ExcelReader.cs" />
@@ -696,6 +697,7 @@
     <Content Include="Scripts\agiledownloadwraper\jre\lib\rt.jar" />
     <Content Include="Scripts\agiledownloadwraper\jre\lib\security\local_policy.jar" />
     <Content Include="Scripts\agiledownloadwraper\jre\lib\security\US_export_policy.jar" />
+    <Content Include="Scripts\ajaxfileupload.js" />
     <Content Include="Scripts\AreaChart.xml" />
     <Content Include="Scripts\BISuperYield.xml" />
     <Content Include="Scripts\BOMFileAttachment.java" />
@@ -877,6 +879,7 @@
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery-ui-1.11.4.js" />
     <Content Include="Scripts\jquery-ui-1.11.4.min.js" />
+    <Content Include="Scripts\jquery.base64.js" />
     <Content Include="Scripts\jquery.dataTables.min.js" />
     <Content Include="Scripts\jquery.stickytableheaders.js" />
     <Content Include="Scripts\jquery.validate.js" />
@@ -943,6 +946,8 @@
     <Content Include="Views\MiniPIP\AgileAttach.cshtml" />
     <Content Include="Views\MiniPIP\CompletedMiniPIP.cshtml" />
     <Content Include="Scripts\usermatrix.xlsx" />
+    <Content Include="userfiles\ImageUpload.ashx" />
+    <Content Include="Views\DominoUser\UserCachedInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Scripts\agiledownloadwraper\jre\lib\applet\" />

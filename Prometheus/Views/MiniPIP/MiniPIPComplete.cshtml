@@ -146,8 +146,56 @@
                         </script>
                     </div>
                 </div>
-            </div>
 
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="col-lg-4">
+                                <span class="btn btn-default btn-file" id="choosefile6">
+                                    Editor Attachment <input type="file" name="file6" id="file6" runat="server" onchange="ShowFileNames6(this)" />
+                                </span>
+                            </div>
+                            <div class="col-lg-1"></div>
+                            <div class="col-lg-1"><button class="form-control" type="button" data-toggle="tooltip" title="Save User Info" onclick="SaveUserContent()"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span></button></div>
+                            <div class="col-lg-1"><button class="form-control" type="button" data-toggle="tooltip" title="Retrieve User Info" onclick="UserCacheContent()"><span class="glyphicon glyphicon-time" aria-hidden="true"></span></button></div>
+                            <div class="col-lg-5"></div>
+                        </div>
+                        <script type="text/javascript">
+                                            function ShowFileNames6(oFile) {
+                                                ajaxFileUpload();
+                                            }
+                                            function ajaxFileUpload() {
+                                                $.ajaxFileUpload
+                                                (
+                                                    {
+                                                        url: '/userfiles/ImageUpload.ashx',
+                                                        secureuri: false,
+                                                        fileElementId: 'file6',
+                                                        dataType: 'HTML',
+                                                        success: function (data, status)
+                                                        {
+                                                            var wholeval = CKEDITOR.instances.commenteditor.getData() + data;
+                                                            CKEDITOR.instances.commenteditor.setData(wholeval);
+                                                        },
+                                                        error: function (e)
+                                                        {
+                                                            alert(e);
+                                                        }
+                                                    }
+                                                )
+                                                return false;
+                                            }
+
+                                            function SaveUserContent() {
+                                                RealSaveUserContent(CKEDITOR.instances.commenteditor.getData());
+                                                return false;
+                                            }
+                        </script>
+                    </div>
+                </div>
+
+            </div>
+            <hr />
             <div class="row col-lg-12">
                 <div class="form-group">
                     <div class="row col-lg-3">

@@ -22,6 +22,8 @@
     <link href="@Url.Content("~/Content/domino.css")" rel="stylesheet" type="text/css" />
 
     <script src="~/Scripts/jquery.stickytableheaders.js"></script>
+    <script src="~/Scripts/ajaxfileupload.js" type="text/javascript"></script>
+    <script src="~/Scripts/jquery.base64.js" type="text/javascript"></script>
 </head>
 
 <body>
@@ -109,6 +111,42 @@
         <footer>
             <p>&copy; @DateTime.Now.Year - MiniPIP Trace System</p>
         </footer>
+
+        <script type="text/javascript">
+                        function RealSaveUserContent(myval)
+                        {
+                            if (myval)
+                            {
+                                var userdata = {};
+                                $.base64.utf8encode = true;
+                                userdata['myval'] = $.base64.btoa(myval);
+
+                                $.ajax({
+                                    url: "/Domino/DominoUser/SaveCacheInfo",
+                                    data: userdata,
+                                    type: 'POST',
+                                    dataType: 'text',
+                                    success: function (data, e)
+                                    {
+                                        alert(data);
+                                    },
+                                    error: function (e)
+                                    {
+                                        alert(e);
+                                    }
+                                });
+                            }
+
+                            return false;
+                        }
+
+                        function UserCacheContent()
+                        {
+                            var myurl = '/Domino/DominoUser/UserCachedInfo';
+                            window.open(myurl, '_blank');
+                        }
+        </script>
+
     </div>
 
     @*@Scripts.Render("~/bundles/jquery")
