@@ -598,25 +598,29 @@ namespace Domino.Controllers
                 }
 
 
-                if (string.IsNullOrEmpty(baseinfos[0].ECONum))
+                if (Request.Form["forcecard"] == null)
                 {
-                    var dict = new RouteValueDictionary();
-                    dict.Add("ECOKey", ECOKey);
-                    dict.Add("CardKey", CardKey);
-                    SetNoticeInfo("ECO Number is not ready");
+                    if (string.IsNullOrEmpty(baseinfos[0].ECONum))
+                    {
+                        var dict = new RouteValueDictionary();
+                        dict.Add("ECOKey", ECOKey);
+                        dict.Add("CardKey", CardKey);
+                        SetNoticeInfo("ECO Number is not ready");
 
-                    return RedirectToAction(DominoCardType.ECOPending, "MiniPIP", dict);
+                        return RedirectToAction(DominoCardType.ECOPending, "MiniPIP", dict);
+                    }
+
+                    if (string.Compare(ecohold, DominoYESNO.YES) == 0)
+                    {
+                        var dict = new RouteValueDictionary();
+                        dict.Add("ECOKey", ECOKey);
+                        dict.Add("CardKey", CardKey);
+                        SetNoticeInfo("ECO Status is on hold");
+
+                        return RedirectToAction(DominoCardType.ECOPending, "MiniPIP", dict);
+                    }
                 }
 
-                if (string.Compare(ecohold, DominoYESNO.YES) == 0)
-                {
-                    var dict = new RouteValueDictionary();
-                    dict.Add("ECOKey", ECOKey);
-                    dict.Add("CardKey", CardKey);
-                    SetNoticeInfo("ECO Status is on hold");
-
-                    return RedirectToAction(DominoCardType.ECOPending, "MiniPIP", dict);
-                }
 
                 DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
 
@@ -923,39 +927,42 @@ namespace Domino.Controllers
                     return RedirectToAction("GoBackToCardByCardKey", "MiniPIP", redict);
                 }
 
-                var allchecked = true;
-                if (string.Compare(cardinfo.QAEEPROMCheck, DominoYESNO.NO) == 0)
+                if (Request.Form["forcecard"] == null)
                 {
-                    SetNoticeInfo("QA EEPROM is not checked");
-                    allchecked = false;
-                }
-                else if (string.Compare(cardinfo.QALabelCheck, DominoYESNO.NO) == 0)
-                {
-                    SetNoticeInfo("QA Label is not checked");
-                    allchecked = false;
-                }
-                else if (string.Compare(cardinfo.PeerReview, DominoYESNO.NO) == 0)
-                {
-                    SetNoticeInfo("Peer Review is not finish");
-                    allchecked = false;
-                }
-                else if (string.Compare(cardinfo.ECOAttachmentCheck, DominoYESNO.NO) == 0)
-                {
-                    SetNoticeInfo("ECO Attachement is not checked");
-                    allchecked = false;
-                }
-                else if (string.Compare(cardinfo.MiniPVTCheck, DominoYESNO.NO) == 0)
-                {
-                    SetNoticeInfo("Mini PVT is not checked");
-                    allchecked = false;
-                }
+                    var allchecked = true;
+                    if (string.Compare(cardinfo.QAEEPROMCheck, DominoYESNO.NO) == 0)
+                    {
+                        SetNoticeInfo("QA EEPROM is not checked");
+                        allchecked = false;
+                    }
+                    else if (string.Compare(cardinfo.QALabelCheck, DominoYESNO.NO) == 0)
+                    {
+                        SetNoticeInfo("QA Label is not checked");
+                        allchecked = false;
+                    }
+                    else if (string.Compare(cardinfo.PeerReview, DominoYESNO.NO) == 0)
+                    {
+                        SetNoticeInfo("Peer Review is not finish");
+                        allchecked = false;
+                    }
+                    else if (string.Compare(cardinfo.ECOAttachmentCheck, DominoYESNO.NO) == 0)
+                    {
+                        SetNoticeInfo("ECO Attachement is not checked");
+                        allchecked = false;
+                    }
+                    else if (string.Compare(cardinfo.MiniPVTCheck, DominoYESNO.NO) == 0)
+                    {
+                        SetNoticeInfo("Mini PVT is not checked");
+                        allchecked = false;
+                    }
 
-                if (!allchecked)
-                {
-                    var dict1 = new RouteValueDictionary();
-                    dict1.Add("ECOKey", ECOKey);
-                    dict1.Add("CardKey", CardKey);
-                    return RedirectToAction(DominoCardType.ECOSignoff1, "MiniPIP", dict1);
+                    if (!allchecked)
+                    {
+                        var dict1 = new RouteValueDictionary();
+                        dict1.Add("ECOKey", ECOKey);
+                        dict1.Add("CardKey", CardKey);
+                        return RedirectToAction(DominoCardType.ECOSignoff1, "MiniPIP", dict1);
+                    }
                 }
 
                 DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
@@ -1105,24 +1112,27 @@ namespace Domino.Controllers
                     return RedirectToAction("GoBackToCardByCardKey", "MiniPIP", redict);
                 }
 
-                var allchecked = true;
-                if (string.Compare(cardinfo.ECOCompleted, DominoYESNO.NO) == 0)
+                if (Request.Form["forcecard"] == null)
                 {
-                    SetNoticeInfo("ECO should be completed");
-                    allchecked = false;
-                }
-                else if (string.IsNullOrEmpty(cardinfo.ECOCompleteDate))
-                {
-                    SetNoticeInfo("ECO Complete Date is needed");
-                    allchecked = false;
-                }
+                    var allchecked = true;
+                    if (string.Compare(cardinfo.ECOCompleted, DominoYESNO.NO) == 0)
+                    {
+                        SetNoticeInfo("ECO should be completed");
+                        allchecked = false;
+                    }
+                    else if (string.IsNullOrEmpty(cardinfo.ECOCompleteDate))
+                    {
+                        SetNoticeInfo("ECO Complete Date is needed");
+                        allchecked = false;
+                    }
 
-                if (!allchecked)
-                {
-                    var dict1 = new RouteValueDictionary();
-                    dict1.Add("ECOKey", ECOKey);
-                    dict1.Add("CardKey", CardKey);
-                    return RedirectToAction(DominoCardType.ECOComplete, "MiniPIP", dict1);
+                    if (!allchecked)
+                    {
+                        var dict1 = new RouteValueDictionary();
+                        dict1.Add("ECOKey", ECOKey);
+                        dict1.Add("CardKey", CardKey);
+                        return RedirectToAction(DominoCardType.ECOComplete, "MiniPIP", dict1);
+                    }
                 }
 
                 DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
@@ -1387,45 +1397,47 @@ namespace Domino.Controllers
                     return RedirectToAction("GoBackToCardByCardKey", "MiniPIP", redict);
                 }
 
+                if (Request.Form["forcecard"] == null)
+                {
+                    var allchecked = true;
+                    if (string.Compare(cardinfo.QAEEPROMCheck, DominoYESNO.NO) == 0)
+                    {
+                        SetNoticeInfo("QA EEPROM is not checked");
+                        allchecked = false;
+                    }
+                    else if (string.Compare(cardinfo.QALabelCheck, DominoYESNO.NO) == 0)
+                    {
+                        SetNoticeInfo("QA Label is not checked");
+                        allchecked = false;
+                    }
+                    else if (string.Compare(cardinfo.PeerReview, DominoYESNO.NO) == 0)
+                    {
+                        SetNoticeInfo("Peer Review is not finish");
+                        allchecked = false;
+                    }
+                    else if (string.Compare(cardinfo.ECOAttachmentCheck, DominoYESNO.NO) == 0)
+                    {
+                        SetNoticeInfo("ECO Attachement is not checked");
+                        allchecked = false;
+                    }
+                    else if (string.Compare(cardinfo.MiniPVTCheck, DominoYESNO.NO) == 0)
+                    {
+                        SetNoticeInfo("Mini PVT is not checked");
+                        allchecked = false;
+                    }
+                    else if (string.IsNullOrEmpty(cardinfo.ECOCustomerHoldDate))
+                    {
+                        SetNoticeInfo("ECO Customer Hold Date need to be inputed");
+                        allchecked = false;
+                    }
 
-                var allchecked = true;
-                if (string.Compare(cardinfo.QAEEPROMCheck, DominoYESNO.NO) == 0)
-                {
-                    SetNoticeInfo("QA EEPROM is not checked");
-                    allchecked = false;
-                }
-                else if (string.Compare(cardinfo.QALabelCheck, DominoYESNO.NO) == 0)
-                {
-                    SetNoticeInfo("QA Label is not checked");
-                    allchecked = false;
-                }
-                else if (string.Compare(cardinfo.PeerReview, DominoYESNO.NO) == 0)
-                {
-                    SetNoticeInfo("Peer Review is not finish");
-                    allchecked = false;
-                }
-                else if (string.Compare(cardinfo.ECOAttachmentCheck, DominoYESNO.NO) == 0)
-                {
-                    SetNoticeInfo("ECO Attachement is not checked");
-                    allchecked = false;
-                }
-                else if (string.Compare(cardinfo.MiniPVTCheck, DominoYESNO.NO) == 0)
-                {
-                    SetNoticeInfo("Mini PVT is not checked");
-                    allchecked = false;
-                }
-                else if (string.IsNullOrEmpty(cardinfo.ECOCustomerHoldDate))
-                {
-                    SetNoticeInfo("ECO Customer Hold Date need to be inputed");
-                    allchecked = false;
-                }
-
-                if (!allchecked)
-                {
-                    var dict1 = new RouteValueDictionary();
-                    dict1.Add("ECOKey", ECOKey);
-                    dict1.Add("CardKey", CardKey);
-                    return RedirectToAction(DominoCardType.ECOSignoff2, "MiniPIP", dict1);
+                    if (!allchecked)
+                    {
+                        var dict1 = new RouteValueDictionary();
+                        dict1.Add("ECOKey", ECOKey);
+                        dict1.Add("CardKey", CardKey);
+                        return RedirectToAction(DominoCardType.ECOSignoff2, "MiniPIP", dict1);
+                    }
                 }
 
                 DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
@@ -1535,14 +1547,16 @@ namespace Domino.Controllers
                 DominoVM cardinfo = DominoVM.RetrieveCustomerApproveHoldInfo(CardKey);
                 //cardinfo.ECOCustomerApproveDate = Request.Form["ECOCustomerApproveDate"];
                 //cardinfo.UpdateCustomerApproveHoldInfo(CardKey);
-
-                if (string.IsNullOrEmpty(cardinfo.ECOCustomerApproveDate) && string.IsNullOrEmpty(baseinfos[0].FACustomerApproval))
+                if (Request.Form["forcecard"] == null)
                 {
-                    SetNoticeInfo("ECO Sample Approve Date or FAI Approve Date, At least one of them is inputed");
-                    var dict = new RouteValueDictionary();
-                    dict.Add("ECOKey", ECOKey);
-                    dict.Add("CardKey", CardKey);
-                    return RedirectToAction(DominoCardType.CustomerApprovalHold, "MiniPIP", dict);
+                    if (string.IsNullOrEmpty(cardinfo.ECOCustomerApproveDate) && string.IsNullOrEmpty(baseinfos[0].FACustomerApproval))
+                    {
+                        SetNoticeInfo("ECO Sample Approve Date or FAI Approve Date, At least one of them is inputed");
+                        var dict = new RouteValueDictionary();
+                        dict.Add("ECOKey", ECOKey);
+                        dict.Add("CardKey", CardKey);
+                        return RedirectToAction(DominoCardType.CustomerApprovalHold, "MiniPIP", dict);
+                    }
                 }
 
                 DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
@@ -1667,15 +1681,17 @@ namespace Domino.Controllers
                     return RedirectToAction("GoBackToCardByCardKey", "MiniPIP", redict);
                 }
 
-
-                var orderinfo = DominoVM.RetrieveOrderInfo(CardKey);
-                if (orderinfo.Count == 0)
+                if (Request.Form["forcecard"] == null)
                 {
-                    SetNoticeInfo("No order information is found");
-                    var dict1 = new RouteValueDictionary();
-                    dict1.Add("ECOKey", ECOKey);
-                    dict1.Add("CardKey", CardKey);
-                    return RedirectToAction(DominoCardType.SampleOrdering, "MiniPIP", dict1);
+                    var orderinfo = DominoVM.RetrieveOrderInfo(CardKey);
+                    if (orderinfo.Count == 0)
+                    {
+                        SetNoticeInfo("No order information is found");
+                        var dict1 = new RouteValueDictionary();
+                        dict1.Add("ECOKey", ECOKey);
+                        dict1.Add("CardKey", CardKey);
+                        return RedirectToAction(DominoCardType.SampleOrdering, "MiniPIP", dict1);
+                    }
                 }
 
                 DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
@@ -1786,33 +1802,36 @@ namespace Domino.Controllers
                     return RedirectToAction("GoBackToCardByCardKey", "MiniPIP", redict);
                 }
 
-                var JoTable = DominoVM.RetrieveJOInfo(CardKey);
-                var FirstCheckTable = DominoVM.RetrieveJOCheck(CardKey, DOMINOJOCHECKTYPE.ENGTYPE);
-                var SecondCheckTable = DominoVM.RetrieveJOCheck(CardKey, DOMINOJOCHECKTYPE.QATYPE);
+                if (Request.Form["forcecard"] == null)
+                {
+                    var JoTable = DominoVM.RetrieveJOInfo(CardKey);
+                    var FirstCheckTable = DominoVM.RetrieveJOCheck(CardKey, DOMINOJOCHECKTYPE.ENGTYPE);
+                    var SecondCheckTable = DominoVM.RetrieveJOCheck(CardKey, DOMINOJOCHECKTYPE.QATYPE);
 
-                if (JoTable.Count == 0)
-                {
-                    SetNoticeInfo("No JO information is found");
-                    var dict1 = new RouteValueDictionary();
-                    dict1.Add("ECOKey", ECOKey);
-                    dict1.Add("CardKey", CardKey);
-                    return RedirectToAction(DominoCardType.SampleBuilding, "MiniPIP", dict1);
-                }
-                else if (SecondCheckTable.Count == 0)
-                {
-                    SetNoticeInfo("No EEPROM second check information is found");
-                    var dict1 = new RouteValueDictionary();
-                    dict1.Add("ECOKey", ECOKey);
-                    dict1.Add("CardKey", CardKey);
-                    return RedirectToAction(DominoCardType.SampleBuilding, "MiniPIP", dict1);
-                }
-                else if (FirstCheckTable.Count == 0)
-                {
-                    SetNoticeInfo("No Engineering check information is found");
-                    var dict1 = new RouteValueDictionary();
-                    dict1.Add("ECOKey", ECOKey);
-                    dict1.Add("CardKey", CardKey);
-                    return RedirectToAction(DominoCardType.SampleBuilding, "MiniPIP", dict1);
+                    if (JoTable.Count == 0)
+                    {
+                        SetNoticeInfo("No JO information is found");
+                        var dict1 = new RouteValueDictionary();
+                        dict1.Add("ECOKey", ECOKey);
+                        dict1.Add("CardKey", CardKey);
+                        return RedirectToAction(DominoCardType.SampleBuilding, "MiniPIP", dict1);
+                    }
+                    else if (SecondCheckTable.Count == 0)
+                    {
+                        SetNoticeInfo("No EEPROM second check information is found");
+                        var dict1 = new RouteValueDictionary();
+                        dict1.Add("ECOKey", ECOKey);
+                        dict1.Add("CardKey", CardKey);
+                        return RedirectToAction(DominoCardType.SampleBuilding, "MiniPIP", dict1);
+                    }
+                    else if (FirstCheckTable.Count == 0)
+                    {
+                        SetNoticeInfo("No Engineering check information is found");
+                        var dict1 = new RouteValueDictionary();
+                        dict1.Add("ECOKey", ECOKey);
+                        dict1.Add("CardKey", CardKey);
+                        return RedirectToAction(DominoCardType.SampleBuilding, "MiniPIP", dict1);
+                    }
                 }
 
                 DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
@@ -1917,15 +1936,17 @@ namespace Domino.Controllers
                     return RedirectToAction("GoBackToCardByCardKey", "MiniPIP", redict);
                 }
 
-
-                var shipinfo = DominoVM.RetrieveShipInfo(CardKey);
-                if (shipinfo.Count == 0)
+                if (Request.Form["forcecard"] == null)
                 {
-                    SetNoticeInfo("No Shipment information is found");
-                    var dict1 = new RouteValueDictionary();
-                    dict1.Add("ECOKey", ECOKey);
-                    dict1.Add("CardKey", CardKey);
-                    return RedirectToAction(DominoCardType.SampleShipment, "MiniPIP", dict1);
+                    var shipinfo = DominoVM.RetrieveShipInfo(CardKey);
+                    if (shipinfo.Count == 0)
+                    {
+                        SetNoticeInfo("No Shipment information is found");
+                        var dict1 = new RouteValueDictionary();
+                        dict1.Add("ECOKey", ECOKey);
+                        dict1.Add("CardKey", CardKey);
+                        return RedirectToAction(DominoCardType.SampleShipment, "MiniPIP", dict1);
+                    }
                 }
 
                 DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
@@ -2024,13 +2045,17 @@ namespace Domino.Controllers
                     return RedirectToAction("GoBackToCardByCardKey", "MiniPIP", redict);
                 }
 
+
                 if (string.IsNullOrEmpty(tempinfo.SampleCustomerApproveDate))
                 {
-                    SetNoticeInfo("Sample Customer Approve Date is not inputed");
-                    var dict1 = new RouteValueDictionary();
-                    dict1.Add("ECOKey", ECOKey);
-                    dict1.Add("CardKey", CardKey);
-                    return RedirectToAction(DominoCardType.SampleCustomerApproval, "MiniPIP", dict1);
+                    if (Request.Form["forcecard"] == null)
+                    {
+                        SetNoticeInfo("Sample Customer Approve Date is not inputed");
+                        var dict1 = new RouteValueDictionary();
+                        dict1.Add("ECOKey", ECOKey);
+                        dict1.Add("CardKey", CardKey);
+                        return RedirectToAction(DominoCardType.SampleCustomerApproval, "MiniPIP", dict1);
+                    }
                 }
                 else
                 {
@@ -2172,42 +2197,45 @@ namespace Domino.Controllers
                     return RedirectToAction("GoBackToCardByCardKey", "MiniPIP", redict);
                 }
 
-                var allchecked = true;
+                if (Request.Form["forcecard"] == null)
+                {
+                    var allchecked = true;
 
-                if (string.IsNullOrEmpty(baseinfos[0].MCOIssued))
-                {
-                    allchecked = false;
-                    SetNoticeInfo("MCO number must be input on the ECO Pending card");
-                }
-                else if (string.IsNullOrEmpty(tempinfo.ECOPartLifeCycle))
-                {
-                    allchecked = false;
-                    SetNoticeInfo("ECO LifeCycle should not be empty");
-                }
-                else if (string.IsNullOrEmpty(tempinfo.GenericPartLifeCycle))
-                {
-                    allchecked = false;
-                    SetNoticeInfo("Generic LifeCycle should not be empty");
-                }
-                else if (string.Compare(tempinfo.ECOPartLifeCycle, tempinfo.GenericPartLifeCycle, true) != 0)
-                {
-                    allchecked = false;
-                    SetNoticeInfo("ECO LifeCycle is different from Generic LifeCycle");
-                }
-                else if ((string.Compare(baseinfos[0].ECOType, DominoECOType.DVNS) == 0
-                   || string.Compare(baseinfos[0].ECOType, DominoECOType.RVNS) == 0)
-                   && string.IsNullOrEmpty(baseinfos[0].FACustomerApproval))
-                {
-                    allchecked = false;
-                    SetNoticeInfo("FAI Approve Date must be inputed in ECO Signoff1/ECO Signoff2 card");
-                }
+                    if (string.IsNullOrEmpty(baseinfos[0].MCOIssued))
+                    {
+                        allchecked = false;
+                        SetNoticeInfo("MCO number must be input on the ECO Pending card");
+                    }
+                    else if (string.IsNullOrEmpty(tempinfo.ECOPartLifeCycle))
+                    {
+                        allchecked = false;
+                        SetNoticeInfo("ECO LifeCycle should not be empty");
+                    }
+                    else if (string.IsNullOrEmpty(tempinfo.GenericPartLifeCycle))
+                    {
+                        allchecked = false;
+                        SetNoticeInfo("Generic LifeCycle should not be empty");
+                    }
+                    else if (string.Compare(tempinfo.ECOPartLifeCycle, tempinfo.GenericPartLifeCycle, true) != 0)
+                    {
+                        allchecked = false;
+                        SetNoticeInfo("ECO LifeCycle is different from Generic LifeCycle");
+                    }
+                    else if ((string.Compare(baseinfos[0].ECOType, DominoECOType.DVNS) == 0
+                       || string.Compare(baseinfos[0].ECOType, DominoECOType.RVNS) == 0)
+                       && string.IsNullOrEmpty(baseinfos[0].FACustomerApproval))
+                    {
+                        allchecked = false;
+                        SetNoticeInfo("FAI Approve Date must be inputed in ECO Signoff1/ECO Signoff2 card");
+                    }
 
-                if (!allchecked)
-                {
-                    var dict1 = new RouteValueDictionary();
-                    dict1.Add("ECOKey", ECOKey);
-                    dict1.Add("CardKey", CardKey);
-                    return RedirectToAction(DominoCardType.MiniPIPComplete, "MiniPIP", dict1);
+                    if (!allchecked)
+                    {
+                        var dict1 = new RouteValueDictionary();
+                        dict1.Add("ECOKey", ECOKey);
+                        dict1.Add("CardKey", CardKey);
+                        return RedirectToAction(DominoCardType.MiniPIPComplete, "MiniPIP", dict1);
+                    }
                 }
 
                 DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
