@@ -475,6 +475,15 @@ namespace Domino.Models
                     }//end foreach
 
                     DominoVM.UpdateHistoryInfo(pendinghistory, cardkey);
+
+                    var spcard = DominoVM.RetrieveCard(cardkey);
+                    if (spcard.Count > 0
+                        && !string.IsNullOrEmpty(baseinfo.ECONum)
+                        && string.Compare(spcard[0].CardStatus, DominoCardStatus.working) == 0)
+                    {
+                        DominoVM.UpdateCardStatus(cardkey, DominoCardStatus.pending);
+                    }
+
                 }
             }
             catch (Exception ex) { }
@@ -920,6 +929,13 @@ namespace Domino.Models
                         {
                             FileCopy(ctrl,desf, attpath, true);
                             DominoVM.StoreCardAttachment(CardKey, url);
+
+                            var spcard = DominoVM.RetrieveCard(CardKey);
+                            if (spcard.Count > 0
+                                && string.Compare(spcard[0].CardStatus, DominoCardStatus.working) == 0)
+                            {
+                                DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.pending);
+                            }
                         }
                         catch (Exception ex) { }
                     }
@@ -1011,6 +1027,13 @@ namespace Domino.Models
                         {
                             FileCopy(ctrl,desf, attpath, true);
                             DominoVM.StoreCardAttachment(CardKey, url);
+
+                            var spcard = DominoVM.RetrieveCard(CardKey);
+                            if (spcard.Count > 0
+                                && string.Compare(spcard[0].CardStatus, DominoCardStatus.working) == 0)
+                            {
+                                DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.pending);
+                            }
                         }
                         catch (Exception ex) { }
                     }

@@ -2653,6 +2653,11 @@ namespace Domino.Controllers
                 if (vm.Count > 0)
                 {
                     StoreAgileAttch(ECONUM,vm);
+
+                    if (string.Compare(vm[0].CardStatus, DominoCardStatus.working) == 0)
+                    {
+                        DominoVM.UpdateCardStatus(vm[0].CardKey, DominoCardStatus.pending);
+                    }
                 }
                 else
                 {
@@ -2660,6 +2665,11 @@ namespace Domino.Controllers
                     if (vm.Count > 0)
                     {
                         StoreAgileAttch(ECONUM, vm);
+
+                        if (string.Compare(vm[0].CardStatus, DominoCardStatus.working) == 0)
+                        {
+                            DominoVM.UpdateCardStatus(vm[0].CardKey, DominoCardStatus.pending);
+                        }
                     }
                 }
             }
@@ -2688,6 +2698,11 @@ namespace Domino.Controllers
                         cardinfo.ECOMDApprover = workflowinfo.ECOMDApprover;
                         cardinfo.ECOTRApprover = workflowinfo.ECOTRApprover;
                         cardinfo.UpdateSignoffInfo(vm[0].CardKey);
+
+                        if (string.Compare(vm[0].CardStatus, DominoCardStatus.working) == 0)
+                        {
+                            DominoVM.UpdateCardStatus(vm[0].CardKey, DominoCardStatus.pending);
+                        }
                     }
                     else
                     {
@@ -2698,6 +2713,11 @@ namespace Domino.Controllers
                             cardinfo.ECOMDApprover = workflowinfo.ECOMDApprover;
                             cardinfo.ECOTRApprover = workflowinfo.ECOTRApprover;
                             cardinfo.UpdateSignoffInfo(vm[0].CardKey);
+
+                            if (string.Compare(vm[0].CardStatus, DominoCardStatus.working) == 0)
+                            {
+                                DominoVM.UpdateCardStatus(vm[0].CardKey, DominoCardStatus.pending);
+                            }
                         }
                     }
 
