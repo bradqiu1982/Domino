@@ -2740,7 +2740,11 @@ namespace Domino.Controllers
                             vm[0].ECOCompleted = DominoYESNO.YES;
                             vm[0].ECOCompleteDate = ConvertUSLocalToDate(workflowinfo.ECOCompleteDate);
                             vm[0].UpdateECOCompleteInfo(vm[0].CardKey);
-                            DominoVM.UpdateCardStatus(vm[0].CardKey, DominoCardStatus.done);
+
+                            if (string.Compare(vm[0].CardStatus, DominoCardStatus.working) == 0)
+                            {
+                                DominoVM.UpdateCardStatus(vm[0].CardKey, DominoCardStatus.pending);
+                            }
                         }
                     }
             }
