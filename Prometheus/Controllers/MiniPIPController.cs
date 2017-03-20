@@ -2351,6 +2351,57 @@ namespace Domino.Controllers
 
         }
 
+        public ActionResult GoBackToCardByCardKey(string CardKey)
+        {
+            var vm = DominoVM.RetrieveCard(CardKey);
+            var dict = new RouteValueDictionary();
+            dict.Add("ECOKey", vm[0].ECOKey);
+            dict.Add("CardKey", vm[0].CardKey);
+            return RedirectToAction(vm[0].CardType, "MiniPIP", dict);
+        }
+
+        public ActionResult DeleteSPCardComment(string CardKey, string Date)
+        {
+            var vm = DominoVM.RetrieveCard(CardKey);
+
+            DominoVM.DeleteSPCardComment(CardKey, Date);
+
+            var dict = new RouteValueDictionary();
+            dict.Add("ECOKey", vm[0].ECOKey);
+            dict.Add("CardKey", vm[0].CardKey);
+            return RedirectToAction(vm[0].CardType, "MiniPIP", dict);
+        }
+
+        public ActionResult ModifyCardComment(string CardKey, string Date)
+        {
+            var vm = DominoVM.RetrieveSPCardComment(CardKey, Date);
+            if (!string.IsNullOrEmpty(vm.CardKey))
+                return View(vm);
+            else
+                return RedirectToAction("ViewAll", "MiniPIP");
+        }
+
+        [HttpPost, ActionName("ModifyCardComment")]
+        [ValidateAntiForgeryToken]
+        public ActionResult ModifyCardCommentPost()
+        {
+            var CardKey = Request.Form["HCardKey"];
+            var Date = Request.Form["HDate"];
+
+            if (!string.IsNullOrEmpty(Request.Form["commenteditor"]))
+            {
+                var comm = new ECOCardComments();
+                comm.Comment = SeverHtmlDecode.Decode(this, Request.Form["commenteditor"]);
+                DominoVM.UpdateSPCardComment(CardKey, Date, comm.dbComment);
+            }
+
+            var vm = DominoVM.RetrieveCard(CardKey);
+            var dict = new RouteValueDictionary();
+            dict.Add("ECOKey", vm[0].ECOKey);
+            dict.Add("CardKey", vm[0].CardKey);
+            return RedirectToAction(vm[0].CardType, "MiniPIP", dict);
+        }
+
         public ActionResult AgileFileDownload(string CardKey)
         {
             var vm = DominoVM.RetrieveCard(CardKey);

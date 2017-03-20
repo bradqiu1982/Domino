@@ -207,5 +207,19 @@
                         window.location.href = '/Domino/MiniPIP/RollBack2ThisCard?CardKey=' + document.getElementById("CardKey").value + '&ECOKey=' + document.getElementById("ECOKey").value;
                     }
                 }
+
+                function DeleteSPCardComment(oBT) {
+                        if (oBT.value) {
+                            if (confirm("Do you really want to delete this comment?")) {
+                                window.location.href = "/Domino/MiniPIP/DeleteSPCardComment?" + oBT.value;
+                            }
+                        }
+                }
+
+                function ModifyCardComment(oBT) {
+                    if (oBT.value) {
+                        window.location.href = "/Domino/MiniPIP/ModifyCardComment?" + oBT.value;
+                    }
+                }
 </script>
 

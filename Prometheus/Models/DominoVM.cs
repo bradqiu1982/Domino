@@ -96,8 +96,21 @@ namespace Domino.Models
         public static string Customer = "Customer";
     }
 
+    public class SeverHtmlDecode
+    {
+        public static string Decode(Controller ctrl, string src)
+        {
+            return ctrl.Server.HtmlDecode(src).Replace("border=\"0\"", "border=\"2\"");
+        }
+    }
+
     public class ECOCardComments
     {
+        public ECOCardComments()
+        {
+            CardKey = "";
+        }
+
         public string CardKey { set; get; }
 
         private string sComment = "";
@@ -1365,13 +1378,38 @@ namespace Domino.Models
             return ret;
         }
 
-        public static void DeleteCardComment(string CardKey, string Date)
+        public static ECOCardComments RetrieveSPCardComment(string CardKey, string Date)
+        {
+            var ret = new ECOCardComments();
+
+            var sql = "select CardKey,Comment,Reporter,CommentDate from ECOCardComment where CardKey = '<CardKey>' and CommentDate='<CommentDate>' and DeleteMark <> 'true'";
+            sql = sql.Replace("<CardKey>", CardKey).Replace("<CommentDate>", Date);
+            var dbret = DBUtility.ExeLocalSqlWithRes(sql);
+
+            foreach (var r in dbret)
+            {
+                ret.CardKey = Convert.ToString(r[0]);
+                ret.dbComment = Convert.ToString(r[1]);
+                ret.Reporter = Convert.ToString(r[2]);
+                ret.CommentDate = DateTime.Parse(Convert.ToString(r[3]));
+            }
+
+            return ret;
+        }
+
+        public static void UpdateSPCardComment(string CardKey, string Date, string dbComment)
+        {
+            var sql = "update ECOCardComment set Comment = '<Comment>' where CardKey='<CardKey>' and CommentDate='<CommentDate>'";
+            sql = sql.Replace("<CardKey>", CardKey).Replace("<CommentDate>", Date).Replace("<Comment>", dbComment);
+            DBUtility.ExeLocalSqlNoRes(sql);
+        }
+
+        public static void DeleteSPCardComment(string CardKey, string Date)
         {
             var sql = "update ECOCardComment set DeleteMark = 'true' where CardKey='<CardKey>' and CommentDate='<CommentDate>'";
             sql = sql.Replace("<CardKey>", CardKey).Replace("<CommentDate>", Date);
             DBUtility.ExeLocalSqlNoRes(sql);
         }
-
 
         public static void StoreCardAttachment(string CardKey, string attachmenturl)
         {

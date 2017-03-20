@@ -948,6 +948,7 @@
     <Content Include="Scripts\usermatrix.xlsx" />
     <Content Include="userfiles\ImageUpload.ashx" />
     <Content Include="Views\DominoUser\UserCachedInfo.cshtml" />
+    <Content Include="Views\MiniPIP\ModifyCardComment.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Scripts\agiledownloadwraper\jre\lib\applet\" />
