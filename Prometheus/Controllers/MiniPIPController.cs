@@ -590,6 +590,14 @@ namespace Domino.Controllers
                 
                 StoreAttachAndComment(CardKey, updater);
 
+                if (Request.Form["commitinfo"] != null)
+                {
+                    var redict = new RouteValueDictionary();
+                    redict.Add("CardKey", CardKey);
+                    return RedirectToAction("GoBackToCardByCardKey", "MiniPIP", redict);
+                }
+
+
                 if (string.IsNullOrEmpty(baseinfos[0].ECONum))
                 {
                     var dict = new RouteValueDictionary();
@@ -908,6 +916,13 @@ namespace Domino.Controllers
 
                 cardinfo.UpdateSignoffInfo(CardKey);
 
+                if (Request.Form["commitinfo"] != null)
+                {
+                    var redict = new RouteValueDictionary();
+                    redict.Add("CardKey", CardKey);
+                    return RedirectToAction("GoBackToCardByCardKey", "MiniPIP", redict);
+                }
+
                 var allchecked = true;
                 if (string.Compare(cardinfo.QAEEPROMCheck, DominoYESNO.NO) == 0)
                 {
@@ -1081,6 +1096,15 @@ namespace Domino.Controllers
                 cardinfo.ECOCompleteDate = ConvertToDate(Request.Form["ECOCompleteDate"]);
                 cardinfo.UpdateECOCompleteInfo(CardKey);
 
+                StoreAttachAndComment(CardKey, updater);
+
+                if (Request.Form["commitinfo"] != null)
+                {
+                    var redict = new RouteValueDictionary();
+                    redict.Add("CardKey", CardKey);
+                    return RedirectToAction("GoBackToCardByCardKey", "MiniPIP", redict);
+                }
+
                 var allchecked = true;
                 if (string.Compare(cardinfo.ECOCompleted, DominoYESNO.NO) == 0)
                 {
@@ -1100,8 +1124,6 @@ namespace Domino.Controllers
                     dict1.Add("CardKey", CardKey);
                     return RedirectToAction(DominoCardType.ECOComplete, "MiniPIP", dict1);
                 }
-
-                StoreAttachAndComment(CardKey, updater);
 
                 DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
 
@@ -1358,6 +1380,14 @@ namespace Domino.Controllers
 
                 cardinfo.UpdateSignoffInfo(CardKey);
 
+                if (Request.Form["commitinfo"] != null)
+                {
+                    var redict = new RouteValueDictionary();
+                    redict.Add("CardKey", CardKey);
+                    return RedirectToAction("GoBackToCardByCardKey", "MiniPIP", redict);
+                }
+
+
                 var allchecked = true;
                 if (string.Compare(cardinfo.QAEEPROMCheck, DominoYESNO.NO) == 0)
                 {
@@ -1494,6 +1524,14 @@ namespace Domino.Controllers
 
                 StoreAttachAndComment(CardKey, updater);
 
+                if (Request.Form["commitinfo"] != null)
+                {
+                    var redict = new RouteValueDictionary();
+                    redict.Add("CardKey", CardKey);
+                    return RedirectToAction("GoBackToCardByCardKey", "MiniPIP", redict);
+                }
+
+
                 DominoVM cardinfo = DominoVM.RetrieveCustomerApproveHoldInfo(CardKey);
                 //cardinfo.ECOCustomerApproveDate = Request.Form["ECOCustomerApproveDate"];
                 //cardinfo.UpdateCustomerApproveHoldInfo(CardKey);
@@ -1622,6 +1660,14 @@ namespace Domino.Controllers
             {
                 StoreAttachAndComment(CardKey, updater);
 
+                if (Request.Form["commitinfo"] != null)
+                {
+                    var redict = new RouteValueDictionary();
+                    redict.Add("CardKey", CardKey);
+                    return RedirectToAction("GoBackToCardByCardKey", "MiniPIP", redict);
+                }
+
+
                 var orderinfo = DominoVM.RetrieveOrderInfo(CardKey);
                 if (orderinfo.Count == 0)
                 {
@@ -1733,6 +1779,12 @@ namespace Domino.Controllers
             {
                 StoreAttachAndComment(CardKey, updater);
 
+                if (Request.Form["commitinfo"] != null)
+                {
+                    var redict = new RouteValueDictionary();
+                    redict.Add("CardKey", CardKey);
+                    return RedirectToAction("GoBackToCardByCardKey", "MiniPIP", redict);
+                }
 
                 var JoTable = DominoVM.RetrieveJOInfo(CardKey);
                 var FirstCheckTable = DominoVM.RetrieveJOCheck(CardKey, DOMINOJOCHECKTYPE.ENGTYPE);
@@ -1858,6 +1910,14 @@ namespace Domino.Controllers
             {
                 StoreAttachAndComment(CardKey, updater);
 
+                if (Request.Form["commitinfo"] != null)
+                {
+                    var redict = new RouteValueDictionary();
+                    redict.Add("CardKey", CardKey);
+                    return RedirectToAction("GoBackToCardByCardKey", "MiniPIP", redict);
+                }
+
+
                 var shipinfo = DominoVM.RetrieveShipInfo(CardKey);
                 if (shipinfo.Count == 0)
                 {
@@ -1952,9 +2012,17 @@ namespace Domino.Controllers
             if (baseinfos.Count > 0)
             {
                 StoreAttachAndComment(CardKey, updater);
+
                 var tempinfo = new DominoVM();
                 tempinfo.SampleCustomerApproveDate = Request.Form["SampleCustomerApproveDate"];
                 tempinfo.UpdateSampleCustomerApproveInfo(CardKey);
+
+                if (Request.Form["commitinfo"] != null)
+                {
+                    var redict = new RouteValueDictionary();
+                    redict.Add("CardKey", CardKey);
+                    return RedirectToAction("GoBackToCardByCardKey", "MiniPIP", redict);
+                }
 
                 if (string.IsNullOrEmpty(tempinfo.SampleCustomerApproveDate))
                 {
@@ -2096,6 +2164,13 @@ namespace Domino.Controllers
                     tempinfo.GenericPartLifeCycle = Request.Form["GenericPartLifeCycleList"];
                 }
                 tempinfo.UpdateMinipipCompleteInfo(CardKey);
+
+                if (Request.Form["commitinfo"] != null)
+                {
+                    var redict = new RouteValueDictionary();
+                    redict.Add("CardKey", CardKey);
+                    return RedirectToAction("GoBackToCardByCardKey", "MiniPIP", redict);
+                }
 
                 var allchecked = true;
 

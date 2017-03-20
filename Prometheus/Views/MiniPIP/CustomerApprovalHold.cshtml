@@ -217,10 +217,17 @@
                         @if (ViewBag.badmin != null && ViewBag.badmin)
                         { <button data-toggle="tooltip" title="Roll Back To This Card" type="button" class="btn btn-default" onclick="RollBack2ThisCard()"><span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span> RollBack2This</button>}
                     </div>
-                    <div class="row col-lg-6">
+                    <div class="row col-lg-2">
+                        <input type="submit" value="Commit Info" id="commitinfo" name="commitinfo" class="btn btn-default" />
+                    </div>
+                    <div class="row col-lg-2">
+                        <input type="submit" value="Pass Card" id="submitcard" name="submitcard" class="btn btn-default" />
+                    </div>
+                    <div class="row col-lg-2">
+                        @if (ViewBag.badmin != null && ViewBag.badmin)
+                        { <input type="submit" value="Force Pass" id="forcecard" name="forcecard" class="btn btn-default" />}
                     </div>
                     <div class="row col-lg-3">
-                        <input type="submit" value="Submit" id="modalinput" name="modalinput" class="btn btn-default" />
                     </div>
                 </div>
             </div>
