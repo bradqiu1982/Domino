@@ -2544,16 +2544,18 @@ namespace Domino.Controllers
         public ActionResult ReNewCard(string CardKey)
         {
             var vm = DominoVM.RetrieveCard(CardKey);
-            if (string.Compare(vm[0].CardType, DominoCardType.SampleOrdering) == 0
-                || string.Compare(vm[0].CardType, DominoCardType.SampleBuilding) == 0
-                || string.Compare(vm[0].CardType, DominoCardType.SampleShipment) == 0)
-            {
-                DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.working);
-            }
-            else
-            {
-                DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.pending);
-            }
+            //if (string.Compare(vm[0].CardType, DominoCardType.SampleOrdering) == 0
+            //    || string.Compare(vm[0].CardType, DominoCardType.SampleBuilding) == 0
+            //    || string.Compare(vm[0].CardType, DominoCardType.SampleShipment) == 0)
+            //{
+            //    DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.working);
+            //}
+            //else
+            //{
+            //    DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.pending);
+            //}
+
+            DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.working);
 
             if (string.Compare(vm[0].CardType, DominoCardType.MiniPIPComplete) == 0)
             {
