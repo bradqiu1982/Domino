@@ -769,7 +769,7 @@ namespace Domino.Models
                         if (!string.IsNullOrEmpty(item.ECONum)
                         && string.Compare(pendingcard[0].CardStatus, DominoCardStatus.working) == 0)
                         {
-                            DominoVM.UpdateCardStatus(pendingcard[0].CardKey, DominoCardType.ECOPending);
+                            DominoVM.UpdateCardStatus(pendingcard[0].CardKey, DominoCardStatus.pending);
                         }
 
                         var allattach = DominoVM.RetrieveCardExistedAttachment(pendingcard[0].CardKey);
@@ -1321,13 +1321,13 @@ namespace Domino.Models
                             }
                         }
 
-                        if (jochecklist.Count == 0 && currentcard.Count > 0)
-                        {
-                            if (string.Compare(currentcard[0].CardStatus, DominoCardStatus.pending) == 0)
-                            {
-                                DominoVM.UpdateCardStatus(cardkey, DominoCardStatus.working);
-                            }
-                        }
+                        //if (jochecklist.Count == 0 && currentcard.Count > 0)
+                        //{
+                        //    if (string.Compare(currentcard[0].CardStatus, DominoCardStatus.pending) == 0)
+                        //    {
+                        //        DominoVM.UpdateCardStatus(cardkey, DominoCardStatus.working);
+                        //    }
+                        //}
                     }
                 }
                 catch (Exception ex) { }
@@ -1417,13 +1417,13 @@ namespace Domino.Models
                             }
                         }
 
-                        if (jochecklist.Count == 0 && currentcard.Count > 0)
-                        {
-                            if (string.Compare(currentcard[0].CardStatus, DominoCardStatus.pending) == 0)
-                            {
-                                DominoVM.UpdateCardStatus(cardkey, DominoCardStatus.working);
-                            }
-                        }
+                        //if (jochecklist.Count == 0 && currentcard.Count > 0)
+                        //{
+                        //    if (string.Compare(currentcard[0].CardStatus, DominoCardStatus.pending) == 0)
+                        //    {
+                        //        DominoVM.UpdateCardStatus(cardkey, DominoCardStatus.working);
+                        //    }
+                        //}
                     }
                 }
                 catch (Exception ex) { }

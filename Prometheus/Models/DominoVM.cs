@@ -1130,7 +1130,7 @@ namespace Domino.Models
         }
 
 
-        public static string CreateCard(string ECOKey,string NewCardKey,string CardType,string CardStatus)
+        public static string CreateCard(string ECOKey,string NewCardKey,string CardType,string CardStatus= "working")
         {
             var cardexist = DominoVM.RetrieveSpecialCard(ECOKey, CardType);
             if (cardexist.Count == 0)
