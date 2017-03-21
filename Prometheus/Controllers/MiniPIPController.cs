@@ -51,6 +51,11 @@ namespace Domino.Controllers
             var vm = new List<List<DominoVM>>();
             foreach (var item in baseinfos)
             {
+                var loginer = updater.Split(new string[] { "@" }, StringSplitOptions.RemoveEmptyEntries)[0].Replace(".","").Replace(" ", "").ToUpper();
+                var pe = item.PE.Split(new string[] { "@" }, StringSplitOptions.RemoveEmptyEntries)[0].Replace(".", "").Replace(" ", "").ToUpper();
+                if (string.Compare(loginer, pe) != 0 && !ViewBag.badmin)
+                    continue;
+
                 var templist = DominoVM.RetrieveECOCards(item);
 
                 if (string.Compare(item.MiniPIPStatus, DominoMiniPIPStatus.hold) == 0)
@@ -117,11 +122,17 @@ namespace Domino.Controllers
 
         public ActionResult CompletedMiniPIP()
         {
-            GetAdminAuth();
+            var updater = GetAdminAuth();
+
             var baseinfos = ECOBaseInfo.RetrieveAllCompletedECOBaseInfo();
             var vm = new List<List<DominoVM>>();
             foreach (var item in baseinfos)
             {
+                var loginer = updater.Split(new string[] { "@" }, StringSplitOptions.RemoveEmptyEntries)[0].Replace(".", "").Replace(" ", "").ToUpper();
+                var pe = item.PE.Split(new string[] { "@" }, StringSplitOptions.RemoveEmptyEntries)[0].Replace(".", "").Replace(" ", "").ToUpper();
+                if (string.Compare(loginer, pe) != 0 && !ViewBag.badmin)
+                    continue;
+
                 var templist = DominoVM.RetrieveECOCards(item);
                 vm.Add(templist);
             }
