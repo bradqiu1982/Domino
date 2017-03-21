@@ -1068,6 +1068,7 @@ namespace Domino.Models
             CardType = string.Empty;
 
             MiniPIPHold = string.Empty;
+            ECOPendingDays = string.Empty;
 
             QAEEPROMCheck = string.Empty;
             QALabelCheck = string.Empty;
@@ -1084,6 +1085,8 @@ namespace Domino.Models
             ECOTRApprover = string.Empty;
             ECOMDApprover = string.Empty;
 
+            
+
             MiniPVTCheck = string.Empty;
             AgileCodeFile = string.Empty;
             AgileSpecFile = string.Empty;
@@ -1096,6 +1099,9 @@ namespace Domino.Models
 
 
             ECOCustomerApproveDate = string.Empty;
+            ECOCustomerHoldStartDate = string.Empty;
+            ECOCustomerHoldAging = string.Empty;
+
 
             ECOCompleted = string.Empty;
             ECOSubmitDate = string.Empty;
@@ -1662,6 +1668,8 @@ namespace Domino.Models
 
         
         public string ECOCustomerApproveDate { set; get; }
+        public string ECOCustomerHoldStartDate { set; get; }
+        public string ECOCustomerHoldAging { set; get; }
 
         public void UpdateCustomerApproveHoldInfo(string cardkey)
         {
@@ -1680,17 +1688,51 @@ namespace Domino.Models
             DBUtility.ExeLocalSqlNoRes(sql);
         }
 
+        public void UpdateCustomerApproveHoldStartDate(string cardkey)
+        {
+
+            var infoexist = RetrieveCustomerApproveHoldInfo(cardkey);
+
+            if (string.IsNullOrEmpty(infoexist.CardKey))
+            {
+                var csql = "insert into ECOCardContent(CardKey,APVal1) values('<CardKey>','<APVal1>')";
+                csql = csql.Replace("<CardKey>", cardkey).Replace("<APVal1>", string.Empty);
+                DBUtility.ExeLocalSqlNoRes(csql);
+            }
+
+            var sql = "Update ECOCardContent Set APVal2 = '<APVal2>' where CardKey = '<CardKey>'";
+            sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal2>", ECOCustomerHoldStartDate);
+            DBUtility.ExeLocalSqlNoRes(sql);
+        }
+
+        public void UpdateCustomerApproveHoldAging(string cardkey)
+        {
+            var infoexist = RetrieveCustomerApproveHoldInfo(cardkey);
+
+            if (string.IsNullOrEmpty(infoexist.CardKey))
+            {
+                var csql = "insert into ECOCardContent(CardKey,APVal1) values('<CardKey>','<APVal1>')";
+                csql = csql.Replace("<CardKey>", cardkey).Replace("<APVal1>", string.Empty);
+                DBUtility.ExeLocalSqlNoRes(csql);
+            }
+
+            var sql = "Update ECOCardContent Set APVal3 = '<APVal3>' where CardKey = '<CardKey>'";
+            sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal3>", ECOCustomerHoldAging);
+            DBUtility.ExeLocalSqlNoRes(sql);
+        }
 
         public static DominoVM RetrieveCustomerApproveHoldInfo(string cardkey)
         {
             var ret = new DominoVM();
-            var sql = "select CardKey,APVal1 from ECOCardContent where CardKey = '<CardKey>'";
+            var sql = "select CardKey,APVal1,APVal2,APVal3 from ECOCardContent where CardKey = '<CardKey>'";
             sql = sql.Replace("<CardKey>", cardkey);
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
             if (dbret.Count > 0)
             {
                 ret.CardKey = Convert.ToString(dbret[0][0]);
                 ret.ECOCustomerApproveDate = Convert.ToString(dbret[0][1]);
+                ret.ECOCustomerHoldStartDate = Convert.ToString(dbret[0][2]);
+                ret.ECOCustomerHoldAging = Convert.ToString(dbret[0][3]);
             }
             return ret;
         }

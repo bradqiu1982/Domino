@@ -15,9 +15,39 @@
                     </div>
                 </div>
                 <div class="row col-lg-6">
+                    @if (!string.IsNullOrEmpty(ViewBag.CurrentCard.ECOCustomerHoldAging))
+                    {
+                        <label class="control-label col-lg-2">Customer Hold Aging</label>
+                        <div class="col-lg-10">
+                            <input class="form-control text-box single-line" value="@ViewBag.CurrentCard.ECOCustomerHoldAging" readonly="readonly" id="modalname" name="modalname" type="text" />
+                        </div>
+                    }
                 </div>
-
             </div>
+
+            <hr />
+
+            <div class="form-group">
+                <div class="row col-lg-6">
+                    <label class="control-label col-lg-2">Customer Approval Hold Start Date</label>
+                    <div class="col-lg-10">
+                        <input class="form-control text-box single-line" id="ECOCustomerHoldStartDate" name="ECOCustomerHoldStartDate" type="text" value="@ViewBag.CurrentCard.ECOCustomerHoldStartDate" />
+                    </div>
+                </div>
+                <div class="row col-lg-6">
+                </div>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+                        $("#ECOCustomerHoldStartDate").datepicker({
+                            changeMonth: true,
+                            changeYear: true,
+                            dateFormat: 'yy-mm-dd'
+                        });
+                    });
+                </script>
+            </div>
+
+            <hr />
 
             <div class="form-group">
                 <div class="row col-lg-6">

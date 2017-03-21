@@ -1437,11 +1437,11 @@ namespace Domino.Controllers
                         SetNoticeInfo("Mini PVT is not checked");
                         allchecked = false;
                     }
-                    else if (string.IsNullOrEmpty(cardinfo.ECOCustomerHoldDate))
-                    {
-                        SetNoticeInfo("ECO Customer Hold Date need to be inputed");
-                        allchecked = false;
-                    }
+                    //else if (string.IsNullOrEmpty(cardinfo.ECOCustomerHoldDate))
+                    //{
+                    //    SetNoticeInfo("ECO Customer Hold Date need to be inputed");
+                    //    allchecked = false;
+                    //}
 
                     if (!allchecked)
                     {
@@ -1505,6 +1505,8 @@ namespace Domino.Controllers
 
                 DominoVM cardinfo = DominoVM.RetrieveCustomerApproveHoldInfo(ViewBag.CurrentCard.CardKey);
                 ViewBag.CurrentCard.ECOCustomerApproveDate = cardinfo.ECOCustomerApproveDate;
+                ViewBag.CurrentCard.ECOCustomerHoldStartDate = cardinfo.ECOCustomerHoldStartDate;
+                ViewBag.CurrentCard.ECOCustomerHoldAging = cardinfo.ECOCustomerHoldAging;
 
                 if (!string.IsNullOrEmpty(cardinfo.ECOCustomerApproveDate))
                 {
@@ -1513,6 +1515,55 @@ namespace Domino.Controllers
                         ViewBag.CurrentCard.ECOCustomerApproveDate = DateTime.Parse(cardinfo.ECOCustomerApproveDate).ToString("yyyy-MM-dd");
                     }
                     catch (Exception ex) { }
+                }
+
+                if (!string.IsNullOrEmpty(cardinfo.ECOCustomerHoldStartDate))
+                {
+                    try
+                    {
+                        ViewBag.CurrentCard.ECOCustomerHoldStartDate = DateTime.Parse(cardinfo.ECOCustomerHoldStartDate).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex) { }
+                }
+                else
+                {
+                    //try to get customeholddate from signoff2 card to retrieve previous stored data
+                    var signoffcard = DominoVM.RetrieveSpecialCard(baseinfos[0], DominoCardType.ECOSignoff2);
+                    if (signoffcard.Count > 0)
+                    {
+                        var signoffinfo = DominoVM.RetrieveSignoffInfo(signoffcard[0].CardKey);
+                        if (!string.IsNullOrEmpty(signoffinfo.ECOCustomerHoldDate))
+                        {
+                            try
+                            {
+                                ViewBag.CurrentCard.ECOCustomerHoldStartDate = DateTime.Parse(signoffinfo.ECOCustomerHoldDate).ToString("yyyy-MM-dd");
+                                cardinfo.ECOCustomerHoldStartDate = signoffinfo.ECOCustomerHoldDate;
+                                cardinfo.UpdateCustomerApproveHoldStartDate(ViewBag.CurrentCard.CardKey);
+                            }
+                            catch (Exception ex) { }
+                        }
+                    }
+                }
+
+                if (string.Compare(ViewBag.CurrentCard.CardStatus,DominoCardStatus.done,true) != 0)
+                {
+                    if (!string.IsNullOrEmpty(cardinfo.ECOCustomerHoldStartDate))
+                    {
+                        //only hold start date exist, we can compute the hold aging
+                        cardinfo.ECOCustomerHoldAging = (DateTime.Now - DateTime.Parse(cardinfo.ECOCustomerHoldStartDate)).Days.ToString();
+                        ViewBag.CurrentCard.ECOCustomerHoldAging = cardinfo.ECOCustomerHoldAging;
+                        cardinfo.UpdateCustomerApproveHoldAging(ViewBag.CurrentCard.CardKey);
+                    }
+                }
+                else
+                {
+                    //if card is pass but hold aging is empty, we set it to 0
+                    if (string.IsNullOrEmpty(cardinfo.ECOCustomerHoldAging))
+                    {
+                        cardinfo.ECOCustomerHoldAging = "0";
+                        ViewBag.CurrentCard.ECOCustomerHoldAging = cardinfo.ECOCustomerHoldAging;
+                        cardinfo.UpdateCustomerApproveHoldAging(ViewBag.CurrentCard.CardKey);
+                    }
                 }
 
                 ViewBag.ECOKey = ECOKey;
@@ -1547,6 +1598,13 @@ namespace Domino.Controllers
             {
 
                 StoreAttachAndComment(CardKey, updater);
+                DominoVM cardinfo = DominoVM.RetrieveCustomerApproveHoldInfo(CardKey);
+
+                cardinfo.ECOCustomerHoldStartDate = Request.Form["ECOCustomerHoldStartDate"];
+                if (!string.IsNullOrEmpty(cardinfo.ECOCustomerHoldStartDate))
+                {
+                    cardinfo.UpdateCustomerApproveHoldStartDate(CardKey);
+                }
 
                 if (Request.Form["commitinfo"] != null)
                 {
@@ -1555,8 +1613,7 @@ namespace Domino.Controllers
                     return RedirectToAction("GoBackToCardByCardKey", "MiniPIP", redict);
                 }
 
-
-                DominoVM cardinfo = DominoVM.RetrieveCustomerApproveHoldInfo(CardKey);
+                
                 //cardinfo.ECOCustomerApproveDate = Request.Form["ECOCustomerApproveDate"];
                 //cardinfo.UpdateCustomerApproveHoldInfo(CardKey);
                 if (Request.Form["forcecard"] == null)
@@ -1564,6 +1621,15 @@ namespace Domino.Controllers
                     if (string.IsNullOrEmpty(cardinfo.ECOCustomerApproveDate) && string.IsNullOrEmpty(baseinfos[0].FACustomerApproval))
                     {
                         SetNoticeInfo("ECO Sample Approve Date or FAI Approve Date, At least one of them is inputed");
+                        var dict = new RouteValueDictionary();
+                        dict.Add("ECOKey", ECOKey);
+                        dict.Add("CardKey", CardKey);
+                        return RedirectToAction(DominoCardType.CustomerApprovalHold, "MiniPIP", dict);
+                    }
+
+                    if (string.IsNullOrEmpty(cardinfo.ECOCustomerHoldStartDate))
+                    {
+                        SetNoticeInfo("ECOCustomerHoldStartDate need to be inputed");
                         var dict = new RouteValueDictionary();
                         dict.Add("ECOKey", ECOKey);
                         dict.Add("CardKey", CardKey);
@@ -2735,12 +2801,12 @@ namespace Domino.Controllers
 
                     if (!string.IsNullOrEmpty(workflowinfo.CApproveHoldDate))
                     {
-                        vm = DominoVM.RetrieveSpecialCard(ecoitem, DominoCardType.ECOSignoff2);
+                        vm = DominoVM.RetrieveSpecialCard(ecoitem, DominoCardType.CustomerApprovalHold);
                         if (vm.Count > 0)
                         {
-                            var cardinfo = DominoVM.RetrieveSignoffInfo(vm[0].CardKey);
-                            cardinfo.ECOCustomerHoldDate = ConvertUSLocalToDate(workflowinfo.CApproveHoldDate);
-                            cardinfo.UpdateSignoffInfo(vm[0].CardKey);
+                            var cardinfo = DominoVM.RetrieveCustomerApproveHoldInfo(vm[0].CardKey);
+                            cardinfo.ECOCustomerHoldStartDate = ConvertUSLocalToDate(workflowinfo.CApproveHoldDate);
+                            cardinfo.UpdateCustomerApproveHoldStartDate(vm[0].CardKey);
                         }
                     }
 
