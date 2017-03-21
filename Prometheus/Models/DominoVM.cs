@@ -1457,31 +1457,64 @@ namespace Domino.Models
 
 
         public string MiniPIPHold { set; get; }
+        public string ECOPendingDays { set; get; }
 
-        public static void StoreECOPendingInfo(string cardkey,string hold)
+        public static void UpdateECOPendingHoldInfo(string cardkey,string hold)
         {
-            var sql = "delete from ECOCardContent where CardKey = '<CardKey>'";
+            var sql = "select * from ECOCardContent where CardKey = '<CardKey>'";
             sql = sql.Replace("<CardKey>", cardkey);
-            DBUtility.ExeLocalSqlNoRes(sql);
+            var dbret = DBUtility.ExeLocalSqlWithRes(sql);
 
-            sql = "insert into ECOCardContent(CardKey,APVal2) values('<CardKey>','<APVal2>')";
-            sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal2>", hold);
-            DBUtility.ExeLocalSqlNoRes(sql);
+            if (dbret.Count == 0)
+            {
+                sql = "insert into ECOCardContent(CardKey,APVal2) values('<CardKey>','<APVal2>')";
+                sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal2>", hold);
+                DBUtility.ExeLocalSqlNoRes(sql);
+            }
+            else
+            {
+                sql = "update ECOCardContent set APVal2 = '<APVal2>' where CardKey = '<CardKey>'";
+                sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal2>", hold);
+                DBUtility.ExeLocalSqlNoRes(sql);
+            }
+        }
+
+        public static void UpdateECOPendingPendingDays(string cardkey, string pendingdays)
+        {
+            var sql = "select * from ECOCardContent where CardKey = '<CardKey>'";
+            sql = sql.Replace("<CardKey>", cardkey);
+            var dbret = DBUtility.ExeLocalSqlWithRes(sql);
+
+            if (dbret.Count == 0)
+            {
+                sql = "insert into ECOCardContent(CardKey,APVal3) values('<CardKey>','<APVal3>')";
+                sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal3>", pendingdays);
+                DBUtility.ExeLocalSqlNoRes(sql);
+            }
+            else
+            {
+                sql = "update ECOCardContent set APVal3 = '<APVal3>' where CardKey = '<CardKey>'";
+                sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal3>", pendingdays);
+                DBUtility.ExeLocalSqlNoRes(sql);
+            }
         }
 
         public static DominoVM RetrieveECOPendingInfo(string cardkey)
         {
             var ret = new DominoVM();
-            var sql = "select CardKey,APVal2 from ECOCardContent where CardKey = '<CardKey>'";
+            var sql = "select CardKey,APVal2,APVal3 from ECOCardContent where CardKey = '<CardKey>'";
             sql = sql.Replace("<CardKey>", cardkey);
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
             if (dbret.Count > 0)
             {
                 ret.CardKey = Convert.ToString(dbret[0][0]);
                 ret.MiniPIPHold = Convert.ToString(dbret[0][1]);
+                ret.ECOPendingDays = Convert.ToString(dbret[0][2]);
             }
             return ret;
         }
+
+
 
         private List<ECOPendingUpdate> pendinhistory = new List<ECOPendingUpdate>();
         public List<ECOPendingUpdate> PendingHistoryTable

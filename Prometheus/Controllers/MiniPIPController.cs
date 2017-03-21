@@ -415,7 +415,7 @@ namespace Domino.Controllers
                 DominoVM cardinfo = DominoVM.RetrieveECOPendingInfo(ViewBag.CurrentCard.CardKey);
                 if (string.IsNullOrEmpty(cardinfo.CardKey))
                 {
-                    DominoVM.StoreECOPendingInfo(ViewBag.CurrentCard.CardKey, DominoYESNO.NO);
+                    DominoVM.UpdateECOPendingHoldInfo(ViewBag.CurrentCard.CardKey, DominoYESNO.NO);
                 }
 
                 var currentcard = DominoVM.RetrieveSpecialCard(baseinfos[0], DominoCardType.ECOPending);
@@ -451,10 +451,22 @@ namespace Domino.Controllers
                     DominoUserViewModels.UpdateUserHistory(updater, baseinfos[0].ECONum, currentcard[0].CardType, currentcard[0].CardKey);
                 }
 
-                if (string.IsNullOrEmpty(baseinfos[0].ECONum) 
-                    || string.Compare(currentcard[0].CardStatus, DominoCardStatus.done) != 0)
+                if (string.IsNullOrEmpty(baseinfos[0].ECONum))
                 {
                     ViewBag.PendingDays = (DateTime.Now - DateTime.Parse(baseinfos[0].InitRevison)).Days.ToString();
+                    DominoVM.UpdateECOPendingPendingDays(ViewBag.CurrentCard.CardKey, ViewBag.PendingDays);
+                }
+                else
+                {
+                    if (string.IsNullOrEmpty(cardinfo.ECOPendingDays))
+                    {
+                        ViewBag.PendingDays = "0";
+                        DominoVM.UpdateECOPendingPendingDays(ViewBag.CurrentCard.CardKey, "0");
+                    }
+                    else
+                    {
+                        ViewBag.PendingDays = cardinfo.ECOPendingDays;
+                    }
                 }
 
                 GetNoticeInfo();
@@ -586,7 +598,7 @@ namespace Domino.Controllers
                 }
 
                 baseinfos[0].UpdateECO();
-                DominoVM.StoreECOPendingInfo(CardKey, ecohold);
+                DominoVM.UpdateECOPendingHoldInfo(CardKey, ecohold);
                 
                 StoreAttachAndComment(CardKey, updater);
 
@@ -2747,7 +2759,7 @@ namespace Domino.Controllers
                             }
                         }
                     }
-            }
+                }
 
             return View();
         }

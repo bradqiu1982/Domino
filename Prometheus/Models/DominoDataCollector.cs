@@ -584,6 +584,16 @@ namespace Domino.Models
 
                             if (pendingcard.Count > 0)
                             {
+                                if (string.IsNullOrEmpty(item.ECONum))
+                                {
+                                    try
+                                    {
+                                        var PendingDays = (DateTime.Now - DateTime.Parse(item.InitRevison)).Days.ToString();
+                                        DominoVM.UpdateECOPendingPendingDays(pendingcard[0].CardKey, PendingDays);
+                                    }
+                                    catch (Exception ex) { }
+                                }
+
                                 if (!string.IsNullOrEmpty(item.ECONum)
                                 && string.Compare(pendingcard[0].CardStatus, DominoCardStatus.working) == 0)
                                 {
@@ -659,6 +669,8 @@ namespace Domino.Models
                         if (string.IsNullOrEmpty(baseinfo.ECONum))
                         {
                             DominoVM.CreateCard(baseinfo.ECOKey, CardKey, DominoCardType.ECOPending, DominoCardStatus.working);
+                            var PendingDays = (DateTime.Now - DateTime.Parse(baseinfo.InitRevison)).Days.ToString();
+                            DominoVM.UpdateECOPendingPendingDays(CardKey, PendingDays);
                         }
                         else
                         {
