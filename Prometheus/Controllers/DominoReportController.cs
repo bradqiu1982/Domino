@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Domino.Models;
+using System.IO;
 
 namespace Domino.Controllers
 {
@@ -368,14 +369,14 @@ namespace Domino.Controllers
             return View();
         }
 
-        private void DepartCycleTime()
+        private void DepartCycleTime(string filename)
         {
             var startdate = DateTime.Parse(Request.Form["StartDate"]);
             var enddate = DateTime.Parse(Request.Form["EndDate"]);
             var title = Request.Form["ChartTitle"];
 
 
-            var cycletimedict = DominoRPVM.RetrieveDepartCycleTimeData(startdate, enddate);
+            var cycletimedict = DominoRPVM.RetrieveDepartCycleTimeData(startdate, enddate,filename);
             if (cycletimedict.Count == 0)
             {
                 return;
@@ -504,7 +505,7 @@ namespace Domino.Controllers
                 .Replace("#TotalMiniPIPs#", TotalMiniPIPs);
         }
 
-        private void DictCycleTime(string charttype)
+        private void DictCycleTime(string charttype,string filename)
         {
             var startdate = DateTime.Parse(Request.Form["StartDate"]);
             var enddate = DateTime.Parse(Request.Form["EndDate"]);
@@ -514,19 +515,19 @@ namespace Domino.Controllers
 
             if (string.Compare(charttype, DominoChartType.PE) == 0)
             {
-                cycletimedict = DominoRPVM.RetrievePECycleTimeData(startdate, enddate);
+                cycletimedict = DominoRPVM.RetrievePECycleTimeData(startdate, enddate,filename);
             }
             else if (string.Compare(charttype, DominoChartType.Customer) == 0)
             {
-                cycletimedict = DominoRPVM.RetrieveCustomerCycleTimeData(startdate, enddate);
+                cycletimedict = DominoRPVM.RetrieveCustomerCycleTimeData(startdate, enddate,filename);
             }
             else if (string.Compare(charttype, DominoChartType.Monthly) == 0)
             {
-                cycletimedict = DominoRPVM.RetrieveMonthlyCycleTimeData(startdate, enddate);
+                cycletimedict = DominoRPVM.RetrieveMonthlyCycleTimeData(startdate, enddate,filename);
             }
             else if (string.Compare(charttype, DominoChartType.Quarter) == 0)
             {
-                cycletimedict = DominoRPVM.RetrieveQuartCycleTimeData(startdate, enddate);
+                cycletimedict = DominoRPVM.RetrieveQuartCycleTimeData(startdate, enddate,filename);
             }
 
             if (cycletimedict.Count == 0)
@@ -694,15 +695,26 @@ namespace Domino.Controllers
                 return View();
             }
 
+            var fn = "CycleTime-data" + "-" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".csv";
+            string datestring = DateTime.Now.ToString("yyyyMMdd");
+            string imgdir = Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
+            if (!Directory.Exists(imgdir))
+            {
+                Directory.CreateDirectory(imgdir);
+            }
+            var realpath = imgdir + fn;
+            ViewBag.cycleurl = "/userfiles/docs/" + datestring + "/" + fn;
+
+
             var charttype = Request.Form["charttypelist"].ToString();
 
             if (string.Compare(charttype, DominoChartType.Department) == 0)
             {
-                DepartCycleTime();
+                DepartCycleTime(realpath);
             }
             else
             {
-                DictCycleTime(charttype);
+                DictCycleTime(charttype, realpath);
             }
 
             return View();
@@ -721,13 +733,13 @@ namespace Domino.Controllers
             return View();
         }
 
-        private void DepartFABuilding()
+        private void DepartFABuilding(string filename)
         {
             var startdate = DateTime.Parse(Request.Form["StartDate"]);
             var enddate = DateTime.Parse(Request.Form["EndDate"]);
             var title = Request.Form["ChartTitle"];
 
-            var cycletimedict = DominoRPVM.RetrieveDepartCycleTimeData(startdate, enddate);
+            var cycletimedict = DominoRPVM.RetrieveDepartCycleTimeData(startdate, enddate,filename);
             if (cycletimedict.Count == 0)
             {
                 return;
@@ -795,7 +807,7 @@ namespace Domino.Controllers
                 .Replace("#TotalMiniPIPs#", TotalMiniPIPs);
         }
 
-        private void DictFABuilding(string charttype)
+        private void DictFABuilding(string charttype,string filename)
         {
             var startdate = DateTime.Parse(Request.Form["StartDate"]);
             var enddate = DateTime.Parse(Request.Form["EndDate"]);
@@ -804,19 +816,19 @@ namespace Domino.Controllers
             var cycletimedict = new Dictionary<string, CycleTimeDataField>();
             if (string.Compare(charttype, DominoChartType.PE) == 0)
             {
-                cycletimedict = DominoRPVM.RetrievePECycleTimeData(startdate, enddate);
+                cycletimedict = DominoRPVM.RetrievePECycleTimeData(startdate, enddate,filename);
             }
             else if (string.Compare(charttype, DominoChartType.Customer) == 0)
             {
-                cycletimedict = DominoRPVM.RetrieveCustomerCycleTimeData(startdate, enddate);
+                cycletimedict = DominoRPVM.RetrieveCustomerCycleTimeData(startdate, enddate,filename);
             }
             else if (string.Compare(charttype, DominoChartType.Monthly) == 0)
             {
-                cycletimedict = DominoRPVM.RetrieveMonthlyCycleTimeData(startdate, enddate);
+                cycletimedict = DominoRPVM.RetrieveMonthlyCycleTimeData(startdate, enddate,filename);
             }
             else if (string.Compare(charttype, DominoChartType.Quarter) == 0)
             {
-                cycletimedict = DominoRPVM.RetrieveQuartCycleTimeData(startdate, enddate);
+                cycletimedict = DominoRPVM.RetrieveQuartCycleTimeData(startdate, enddate,filename);
             }
 
             if (cycletimedict.Count == 0)
@@ -922,15 +934,24 @@ namespace Domino.Controllers
                 return View();
             }
 
-            var charttype = Request.Form["charttypelist"].ToString();
+            var fn = "CycleTime-data" + "-" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".csv";
+            string datestring = DateTime.Now.ToString("yyyyMMdd");
+            string imgdir = Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
+            if (!Directory.Exists(imgdir))
+            {
+                Directory.CreateDirectory(imgdir);
+            }
+            var realpath = imgdir + fn;
+            ViewBag.cycleurl = "/userfiles/docs/" + datestring + "/" + fn;
 
+            var charttype = Request.Form["charttypelist"].ToString();
             if (string.Compare(charttype, DominoChartType.Department) == 0)
             {
-                DepartFABuilding();
+                DepartFABuilding(realpath);
             }
             else
             {
-                DictFABuilding(charttype);
+                DictFABuilding(charttype, realpath);
             }
 
             return View();

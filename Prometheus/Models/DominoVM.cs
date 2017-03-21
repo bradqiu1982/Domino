@@ -860,19 +860,24 @@ namespace Domino.Models
         {
             var alleco = ECOBaseInfo.RetrieveAllNotDeleteECOBaseInfo();
             var ecodone = new List<ECOBaseInfo>();
-                foreach (var eco in alleco)
+            foreach (var eco in alleco)
+            {
+                if (!string.IsNullOrEmpty(eco.ECOSubmit)
+                && string.Compare(DateTime.Parse(eco.ECOSubmit).ToString("yyyy-MM-dd"), "1982-05-06") != 0)
                 {
-                    var completecard = DominoVM.RetrieveSpecialCard(eco, DominoCardType.ECOComplete);
-                    if (completecard.Count > 0)
-                    {
-                        var cardinfo = DominoVM.RetrieveECOCompleteInfo(completecard[0].CardKey);
-                        if (!string.IsNullOrEmpty(cardinfo.ECOCompleteDate)
-                            && !string.IsNullOrEmpty(ConvertDate(cardinfo.ECOCompleteDate)))
-                        {
-                            ecodone.Add(eco);
-                        }
-                    }
+                    ecodone.Add(eco);
                 }
+                    //var completecard = DominoVM.RetrieveSpecialCard(eco, DominoCardType.ECOComplete);
+                    //if (completecard.Count > 0)
+                    //{
+                    //    var cardinfo = DominoVM.RetrieveECOCompleteInfo(completecard[0].CardKey);
+                    //    if (!string.IsNullOrEmpty(cardinfo.ECOCompleteDate)
+                    //        && !string.IsNullOrEmpty(ConvertDate(cardinfo.ECOCompleteDate)))
+                    //    {
+                    //        ecodone.Add(eco);
+                    //    }
+                    //}
+            }
             return ecodone;
         }
 

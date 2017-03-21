@@ -46,6 +46,8 @@ namespace Domino.Models
         }
 
         public string ECOKey { set; get; }
+        public string ECONUM { set; get; }
+        public string PN { set; get; }
         public string PE { set; get; }
         public string Depart { set; get; }
         public string Customer { set; get; }
@@ -859,34 +861,42 @@ namespace Domino.Models
                 var tempcycle = new CycleTimeData();
                 try
                 {
-                    var completecard = DominoVM.RetrieveSpecialCard(eco, DominoCardType.ECOComplete);
-                    if (completecard.Count > 0)
+                    var ecosubmitdate = DateTime.Parse(eco.ECOSubmit);
+                    if (ecosubmitdate < startdate || ecosubmitdate > enddate)
                     {
-                        var cardinfo = DominoVM.RetrieveECOCompleteInfo(completecard[0].CardKey);
-                        tempcycle.ECOCompleteDate = ConvertDate(cardinfo.ECOCompleteDate);
+                        continue;
+                    }
 
-                        if (!string.IsNullOrEmpty(tempcycle.ECOCompleteDate))
-                        {
-                            var completedate = DateTime.Parse(tempcycle.ECOCompleteDate);
-                            if (completedate >= startdate && completedate <= enddate)
-                            {
-                                //tempcycle.Month = completedate.Month.ToString();
-                                //tempcycle.Quarter = QuartStr(completedate.Month, DateTime.Parse(tempcycle.ECOCompleteDate));
-                            }
-                            else
-                            {
-                                continue;
-                            }
+                    //var completecard = DominoVM.RetrieveSpecialCard(eco, DominoCardType.ECOComplete);
+                    //if (completecard.Count > 0)
+                    //{
+                    //    var cardinfo = DominoVM.RetrieveECOCompleteInfo(completecard[0].CardKey);
+                    //    tempcycle.ECOCompleteDate = ConvertDate(cardinfo.ECOCompleteDate);
 
-                        }
-                        else
-                        {
-                            continue;
-                        }
-                    }//end if
+                    //    if (!string.IsNullOrEmpty(tempcycle.ECOCompleteDate))
+                    //    {
+                    //        var completedate = DateTime.Parse(tempcycle.ECOCompleteDate);
+                    //        if (completedate >= startdate && completedate <= enddate)
+                    //        {
+                    //            //tempcycle.Month = completedate.Month.ToString();
+                    //            //tempcycle.Quarter = QuartStr(completedate.Month, DateTime.Parse(tempcycle.ECOCompleteDate));
+                    //        }
+                    //        else
+                    //        {
+                    //            continue;
+                    //        }
+
+                    //    }
+                    //    else
+                    //    {
+                    //        continue;
+                    //    }
+                    //}//end if
 
 
                     tempcycle.ECOKey = eco.ECOKey;
+                    tempcycle.ECONUM = eco.ECONum;
+                    tempcycle.PN = eco.PNDesc;
                     tempcycle.Customer = eco.Customer;
                     if (!eco.PE.Contains("@"))
                     {
@@ -938,16 +948,54 @@ namespace Domino.Models
             return allcycletime;
         }
 
+        private static void logreportinfo(string filename,string info)
+        {
+            try
+            {
+                if (System.IO.File.Exists(filename))
+                {
+                    var content = System.IO.File.ReadAllText(filename);
+                    content = content + info;
+                    System.IO.File.WriteAllText(filename, content);
+                }
+                else
+                {
+                    System.IO.File.WriteAllText(filename, info);
+                }
+            }
+            catch (Exception ex) { }
+        }
 
-        private static List<CycleTimeData> CalculateCycleTimePoints(DateTime startdate, DateTime enddate)
+        private static List<CycleTimeData> CalculateCycleTimePoints(DateTime startdate, DateTime enddate,string filename)
         {
             var cyclelist = CollectAllCycleTimePoint(startdate, enddate);
-
             var calculatedlist = new List<CycleTimeData>();
+
+
+            var udlist = DominoUserViewModels.RetrieveAllUserDepart();
+            var uddict = new Dictionary<string, string>();
+            foreach (var ud in udlist)
+            {
+                uddict.Add(ud.UserName, ud.Depart);
+            }
+            logreportinfo(filename, "PE,Depart,ECONUM,PN,InitRevison,FinalRevison,OpsLogEntry,TLAAvailable,TestModification,ECOSubmit,ECOTRSignoff,ECOCCBSignoff,SampleShipDate\r\n");
+
             foreach (var cycle in cyclelist)
             {
+                var depart = "";
+                if (uddict.ContainsKey(cycle.PE))
+                {
+                    depart = uddict[cycle.PE];
+                }
+
+                logreportinfo(filename, cycle.PE+","+ depart + "," + cycle.ECONUM + "," + cycle.PN
+                    + "," + cycle.InitRevison + "," + cycle.FinalRevison + "," + cycle.OpsEntry
+                    + "," + cycle.TLAAvailable + "," + cycle.TestModification + "," + cycle.ECOSubmit
+                    + "," + cycle.ECOTRSignoff + "," + cycle.ECOCCBSignoff + "," + cycle.SampleShipDate+"\r\n");
+
                 try
                 {
+
                     if (string.IsNullOrEmpty(cycle.OpsEntry))
                     {
                         cycle.MiniPIPApprovalAging = DOMINOCYCLETIMEVAL.DInvalidVAL;
@@ -963,6 +1011,7 @@ namespace Domino.Models
                             cycle.MiniPIPApprovalAging = CountWorkDays(DateTime.Parse(cycle.InitRevison), DateTime.Parse(cycle.OpsEntry)) - 1;
                         }
                     }
+                    
 
                     if (string.IsNullOrEmpty(cycle.FinalRevison))
                     {
@@ -987,7 +1036,8 @@ namespace Domino.Models
                         datelist.Add(cycle.OpsEntry);
                         datelist.Add(cycle.TestModification);
 
-                        cycle.EngineeringAging = CountWorkDays(MaxDate(datelist), DateTime.Parse(cycle.ECOSubmit)) - 1;
+                        var maxdate = MaxDate(datelist);
+                        cycle.EngineeringAging = CountWorkDays(maxdate, DateTime.Parse(cycle.ECOSubmit)) - 1;
                     }
 
                     if (string.IsNullOrEmpty(cycle.ECOTRSignoff))
@@ -1025,7 +1075,7 @@ namespace Domino.Models
         }
 
 
-        public static Dictionary<string, CycleTimeDataField> RetrieveDepartCycleTimeData(DateTime startdate, DateTime enddate)
+        public static Dictionary<string, CycleTimeDataField> RetrieveDepartCycleTimeData(DateTime startdate, DateTime enddate,string filename)
         {
             var udlist = DominoUserViewModels.RetrieveAllUserDepart();
             var uddict = new Dictionary<string, string>();
@@ -1034,7 +1084,7 @@ namespace Domino.Models
                 uddict.Add(ud.UserName, ud.Depart);
             }
 
-            var cycletimes = CalculateCycleTimePoints(startdate, enddate);
+            var cycletimes = CalculateCycleTimePoints(startdate, enddate, filename);
 
             var departcycle = new List<CycleTimeData>();
             foreach (var wkl in cycletimes)
@@ -1071,9 +1121,9 @@ namespace Domino.Models
             return ret;
         }
 
-        public static Dictionary<string, CycleTimeDataField> RetrievePECycleTimeData(DateTime startdate, DateTime enddate)
+        public static Dictionary<string, CycleTimeDataField> RetrievePECycleTimeData(DateTime startdate, DateTime enddate,string filename)
         {
-            var cycletimes = CalculateCycleTimePoints(startdate, enddate);
+            var cycletimes = CalculateCycleTimePoints(startdate, enddate,filename);
 
             var pedict = new Dictionary<string, bool>();
             foreach (var w in cycletimes)
@@ -1110,9 +1160,9 @@ namespace Domino.Models
         }
 
 
-        public static Dictionary<string, CycleTimeDataField> RetrieveCustomerCycleTimeData(DateTime startdate, DateTime enddate)
+        public static Dictionary<string, CycleTimeDataField> RetrieveCustomerCycleTimeData(DateTime startdate, DateTime enddate,string filename)
         {
-            var cycletimes = CalculateCycleTimePoints(startdate, enddate);
+            var cycletimes = CalculateCycleTimePoints(startdate, enddate, filename);
 
             var custdict = new Dictionary<string, bool>();
             foreach (var w in cycletimes)
@@ -1149,13 +1199,13 @@ namespace Domino.Models
         }
 
 
-        public static Dictionary<string, CycleTimeDataField> RetrieveMonthlyCycleTimeData(DateTime startdate, DateTime enddate)
+        public static Dictionary<string, CycleTimeDataField> RetrieveMonthlyCycleTimeData(DateTime startdate, DateTime enddate,string filename)
         {
             var ret = new Dictionary<string, CycleTimeDataField>();
             var ldate = RetrieveDateSpanByMonth(startdate.ToString(), enddate.ToString());
             for (int idx = 0; idx < ldate.Count - 1; idx++)
             {
-                var cycletimes = CalculateCycleTimePoints(ldate[idx], ldate[idx + 1]);
+                var cycletimes = CalculateCycleTimePoints(ldate[idx], ldate[idx + 1], filename);
                 foreach (var wkl in cycletimes)
                 {
 
@@ -1175,13 +1225,13 @@ namespace Domino.Models
             return ret;
         }
 
-        public static Dictionary<string, CycleTimeDataField> RetrieveQuartCycleTimeData(DateTime startdate, DateTime enddate)
+        public static Dictionary<string, CycleTimeDataField> RetrieveQuartCycleTimeData(DateTime startdate, DateTime enddate,string filename)
         {
             var ret = new Dictionary<string, CycleTimeDataField>();
             var ldate = RetrieveDateSpanByQuart(startdate.ToString(), enddate.ToString());
             for (int idx = 0; idx < ldate.Count - 1; idx++)
             {
-                var cycletimes = CalculateCycleTimePoints(ldate[idx], ldate[idx + 1]);
+                var cycletimes = CalculateCycleTimePoints(ldate[idx], ldate[idx + 1], filename);
                 foreach (var wkl in cycletimes)
                 {
                     var key = QuartStr(ldate[idx]);

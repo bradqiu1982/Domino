@@ -103,6 +103,26 @@
             </div>
         }
 
+        @if (ViewBag.cycleurl != null)
+        {
+            <hr />
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">CycleTime Data</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="col-lg-1"></div>
+                            <div class="col-lg-10">
+                                <a href="@ViewBag.cycleurl" target="_blank">CycleTime Data File</a>
+                            </div>
+                            <div class="col-lg-1"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
 
     </div>
 }
