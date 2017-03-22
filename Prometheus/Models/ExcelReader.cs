@@ -95,7 +95,7 @@ bool updateLinks)
                     {
                         if (saRet[1, colidx] != null)
                         {
-                            newline.Add(saRet[1,colidx].ToString().Replace("'",""));
+                            newline.Add(saRet[1,colidx].ToString().Replace("'","").Trim());
                         }
                         else
                         {
