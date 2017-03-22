@@ -24,15 +24,15 @@ namespace Domino.Models
             {
                 HttpCookie ck = null;
 
-                if (ctrl.Request.Cookies["activenpi"] != null)
+                if (ctrl.Request.Cookies["activenpidomino"] != null)
                 {
-                    ck = ctrl.Request.Cookies["activenpi"];
+                    ck = ctrl.Request.Cookies["activenpidomino"];
                     foreach (var item in values)
                     {
                         ck.Values[item.Key] = Convert.ToBase64String(UTF8Encoding.UTF8.GetBytes(item.Value));
                     }
 
-                    if (ctrl.Response.Cookies["activenpi"] != null)
+                    if (ctrl.Response.Cookies["activenpidomino"] != null)
                     {
                         ctrl.Response.SetCookie(ck);
                     }
@@ -44,13 +44,13 @@ namespace Domino.Models
                 }
                 else
                 {
-                    ck = new HttpCookie("activenpi");
+                    ck = new HttpCookie("activenpidomino");
                     foreach (var item in values)
                     {
                         ck.Values[item.Key] = Convert.ToBase64String(UTF8Encoding.UTF8.GetBytes(item.Value));
                     }
 
-                    if (ctrl.Response.Cookies["activenpi"] != null)
+                    if (ctrl.Response.Cookies["activenpidomino"] != null)
                     {
                         ctrl.Response.SetCookie(ck);
                     }
@@ -78,11 +78,11 @@ namespace Domino.Models
 
             var ret = new Dictionary<string, string>();
 
-            if (req.Cookies["activenpi"] != null)
+            if (req.Cookies["activenpidomino"] != null)
             {
                 try
                 {
-                    var ck = req.Cookies["activenpi"];
+                    var ck = req.Cookies["activenpidomino"];
                     foreach (var key in ck.Values.AllKeys)
                     {
                         ret.Add(key, UTF8Encoding.UTF8.GetString(Convert.FromBase64String(ck.Values[key])));

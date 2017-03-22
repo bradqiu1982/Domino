@@ -24,7 +24,7 @@ namespace Domino
             //    return;
             //}
 
-            var fooCookie = filterContext.HttpContext.Request.Cookies["activenpi"];
+            var fooCookie = filterContext.HttpContext.Request.Cookies["activenpidomino"];
 
             if (fooCookie != null)
             {
