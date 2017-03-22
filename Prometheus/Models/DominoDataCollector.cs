@@ -988,7 +988,33 @@ namespace Domino.Models
                 var destfolderlist = new List<string>();
                 foreach (var desf in seconfleveldir)
                 {
-                    if (desf.ToUpper().Contains(baseinfo.PNDesc.ToUpper()))
+                    var baseinfopn = "";
+                    var excelpn = "";
+
+                    var dirs = desf.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
+                    var expn = dirs[dirs.Length -1].Trim();
+
+                    if (baseinfo.PNDesc.Contains("xx"))
+                    {
+                        var lastidx = baseinfo.PNDesc.LastIndexOf("xx");
+                        baseinfopn = baseinfo.PNDesc.Remove(lastidx, 2);
+
+                        if (expn.Length > (lastidx + 2))
+                        {
+                            excelpn = expn.Remove(lastidx, 2);
+                        }
+                        else
+                        {
+                            excelpn = expn;
+                        }
+                    }
+                    else
+                    {
+                        baseinfopn = baseinfo.PNDesc;
+                        excelpn = expn;
+                    }
+
+                    if (excelpn.ToUpper().Contains(baseinfopn.ToUpper()))
                     {
                         destfolderlist.Add(desf);
                     }
