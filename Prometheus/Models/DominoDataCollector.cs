@@ -890,7 +890,33 @@ namespace Domino.Models
                 var srcfolders = DirectoryEnumerateDirs(ctrl,srcrootfolder);
                 foreach (var fd in srcfolders)
                 {
-                    if (fd.ToUpper().Contains(baseinfo.PNDesc.ToUpper()))
+                    var baseinfopn = "";
+                    var excelpn = "";
+
+                    var dirs = fd.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
+                    var expn = dirs[dirs.Length - 1].Trim();
+
+                    if (baseinfo.PNDesc.Contains("xx"))
+                    {
+                        var lastidx = baseinfo.PNDesc.LastIndexOf("xx");
+                        baseinfopn = baseinfo.PNDesc.Remove(lastidx, 2);
+
+                        if (expn.Length > (lastidx + 2))
+                        {
+                            excelpn = expn.Remove(lastidx, 2);
+                        }
+                        else
+                        {
+                            excelpn = expn;
+                        }
+                    }
+                    else
+                    {
+                        baseinfopn = baseinfo.PNDesc;
+                        excelpn = expn;
+                    }
+
+                    if (excelpn.ToUpper().Contains(baseinfopn.ToUpper()))
                     {
                         destfolderlist.Add(fd);
                     }
