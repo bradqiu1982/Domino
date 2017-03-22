@@ -607,9 +607,11 @@ namespace Domino.Models
                                 foreach (var cf in allcustomerfolder)
                                 {
                                     var lastlevelfd = cf.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
-                                    var lastfd = lastlevelfd[lastlevelfd.Length - 1];
-                                    if (lastfd.ToUpper().Contains(baseinfo.Customer.ToUpper())
-                                        || baseinfo.Customer.ToUpper().Contains(lastfd.ToUpper()))
+                                    var lastfd = lastlevelfd[lastlevelfd.Length - 1].Replace(" ", "").Replace("-", "").Replace("_", "").Replace("'", "").ToUpper();
+                                    var baseinfocustomer = baseinfo.Customer.Replace(" ", "").Replace("-", "").Replace("_", "").Replace("'", "").ToUpper();
+
+                                    if (lastfd.Contains(baseinfocustomer)
+                                        || baseinfocustomer.Contains(lastfd))
                                     {
                                         customerfold.Add(cf);
                                     }
@@ -682,9 +684,11 @@ namespace Domino.Models
                         foreach (var cf in allcustomerfolder)
                         {
                             var lastlevelfd = cf.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
-                            var lastfd = lastlevelfd[lastlevelfd.Length - 1];
-                            if (lastfd.ToUpper().Contains(baseinfo.Customer.ToUpper())
-                                || baseinfo.Customer.ToUpper().Contains(lastfd.ToUpper()))
+                            var lastfd = lastlevelfd[lastlevelfd.Length - 1].Replace(" ","").Replace("-", "").Replace("_", "").Replace("'", "").ToUpper();
+                            var baseinfocustomer = baseinfo.Customer.Replace(" ", "").Replace("-", "").Replace("_", "").Replace("'", "").ToUpper();
+
+                            if (lastfd.Contains(baseinfocustomer)
+                                || baseinfocustomer.Contains(lastfd))
                             {
                                 customerfold.Add(cf);
                             }
