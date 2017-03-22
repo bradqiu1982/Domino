@@ -277,7 +277,13 @@ namespace Domino.Models
     public class ECOBaseInfo
     {
         public string ECOKey { set; get; }
-        public string ECONum { set; get; }
+
+        private string peconum;
+        public string ECONum {
+            set { peconum = value.Trim(); }
+            get { return peconum.Trim(); }
+        }
+
         public string ECOType { set; get; }
         public string FirstArticleNeed { set; get; }
         public string FlowInfo { set; get; }
@@ -393,6 +399,7 @@ namespace Domino.Models
             CurrentECOProcess = string.Empty;
             CurrentFlowType = string.Empty;
             ActualPE = string.Empty;
+            peconum = string.Empty;
         }
 
         public static List<KeyValuePair<string, string>> RetrieveBaseInfoKV(ECOBaseInfo info)
