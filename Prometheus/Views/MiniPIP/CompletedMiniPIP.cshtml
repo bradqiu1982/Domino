@@ -159,3 +159,32 @@
                     });
                 });
 </script>
+
+
+@if (ViewBag.DominoNoticeInfo != null)
+{
+    <div class="modal" id="noticmodal" tabindex="-1" role="dialog" aria-labelledby="noticmodalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="noticmodalLabel">Notic</h4>
+                </div>
+                <div class="row text-center">
+                    <strong> @ViewBag.DominoNoticeInfo</strong>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (ViewBag.DominoNoticeInfo != null)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#noticmodal').modal();
+    });
+    </script>
+}

@@ -77,6 +77,8 @@ namespace Domino.Controllers
 
             ViewBag.HistoryInfos = DominoUserViewModels.RetrieveUserHistory(updater);
 
+            GetNoticeInfo();
+
             return View(vm);
         }
 
@@ -143,6 +145,7 @@ namespace Domino.Controllers
             asilist.AddRange(alluser);
             ViewBag.FilterPEList = CreateSelectList(asilist, "");
 
+            GetNoticeInfo();
             return View(vm);
         }
 
@@ -2377,6 +2380,28 @@ namespace Domino.Controllers
                 baseinfos[0].MiniPIPStatus = DominoMiniPIPStatus.delete;
                 baseinfos[0].UpdateECO();
             }
+            return RedirectToAction("ViewAll", "MiniPIP");
+        }
+
+        public ActionResult ForceCompleteMiniPIP(string ECOKey)
+        {
+            var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
+            if (baseinfos.Count > 0)
+            {
+                if (string.Compare(baseinfos[0].CurrentECOProcess.ToUpper(), "COMPLETED") == 0)
+                {
+                    baseinfos[0].MiniPIPStatus = DominoMiniPIPStatus.done;
+                    baseinfos[0].UpdateECO();
+                    SetNoticeInfo("Force complete MiniPIP "+ baseinfos[0].ECONum + " sucessfully !");
+                    return RedirectToAction("CompletedMiniPIP", "MiniPIP");
+                }
+                else
+                {
+                    SetNoticeInfo("Fail to Force complete MiniPIP "+baseinfos[0].ECONum+". Current workflow process is "+ baseinfos[0].CurrentECOProcess + " not COMPLETED !");
+                    return RedirectToAction("ViewAll", "MiniPIP");
+                }
+            }
+            
             return RedirectToAction("ViewAll", "MiniPIP");
         }
 
