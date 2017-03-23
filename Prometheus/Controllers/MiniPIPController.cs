@@ -467,7 +467,16 @@ namespace Domino.Controllers
 
                 if (string.IsNullOrEmpty(baseinfos[0].ECONum))
                 {
-                    ViewBag.PendingDays = (DateTime.Now - DateTime.Parse(baseinfos[0].InitRevison)).Days.ToString();
+                    ViewBag.PendingDays = "0";
+                    if (!string.IsNullOrEmpty(baseinfos[0].FinalRevison))
+                    {
+                        ViewBag.PendingDays = (DateTime.Now - DateTime.Parse(baseinfos[0].FinalRevison)).Days.ToString();
+                    }
+                    else
+                    {
+                        ViewBag.PendingDays = (DateTime.Now - DateTime.Parse(baseinfos[0].InitRevison)).Days.ToString();
+                    }
+                    
                     DominoVM.UpdateECOPendingPendingDays(ViewBag.CurrentCard.CardKey, ViewBag.PendingDays);
                 }
                 else

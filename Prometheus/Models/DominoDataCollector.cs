@@ -588,7 +588,16 @@ namespace Domino.Models
                                 {
                                     try
                                     {
-                                        var PendingDays = (DateTime.Now - DateTime.Parse(item.InitRevison)).Days.ToString();
+                                        var PendingDays = "0";
+                                        if (!string.IsNullOrEmpty(item.FinalRevison))
+                                        {
+                                            PendingDays = (DateTime.Now - DateTime.Parse(item.FinalRevison)).Days.ToString();
+                                        }
+                                        else
+                                        {
+                                            PendingDays = (DateTime.Now - DateTime.Parse(item.InitRevison)).Days.ToString();
+                                        }
+                                        
                                         DominoVM.UpdateECOPendingPendingDays(pendingcard[0].CardKey, PendingDays);
                                     }
                                     catch (Exception ex) { }
@@ -671,7 +680,17 @@ namespace Domino.Models
                         if (string.IsNullOrEmpty(baseinfo.ECONum))
                         {
                             DominoVM.CreateCard(baseinfo.ECOKey, CardKey, DominoCardType.ECOPending, DominoCardStatus.working);
-                            var PendingDays = (DateTime.Now - DateTime.Parse(baseinfo.InitRevison)).Days.ToString();
+
+                            var PendingDays = "0";
+                            if (!string.IsNullOrEmpty(baseinfo.FinalRevison))
+                            {
+                                PendingDays = (DateTime.Now - DateTime.Parse(baseinfo.FinalRevison)).Days.ToString();
+                            }
+                            else
+                            {
+                                PendingDays = (DateTime.Now - DateTime.Parse(baseinfo.InitRevison)).Days.ToString();
+                            }
+
                             DominoVM.UpdateECOPendingPendingDays(CardKey, PendingDays);
                         }
                         else
