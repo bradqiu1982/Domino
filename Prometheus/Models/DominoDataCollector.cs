@@ -947,7 +947,7 @@ namespace Domino.Models
                     var qafiles = DirectoryEnumerateFiles(ctrl,fd);
                     foreach (var qaf in qafiles)
                     {
-                        if (Path.GetFileName(qaf).ToUpper().Contains(eepromfilter))
+                        if (Path.GetFileName(qaf).ToUpper().Contains(eepromfilter.ToUpper()))
                         {
                             destfiles.Add(qaf);
                         }
@@ -1071,7 +1071,7 @@ namespace Domino.Models
                     var qafiles = DirectoryEnumerateFiles(ctrl,fd);
                     foreach (var qaf in qafiles)
                     {
-                        if (Path.GetFileName(qaf).ToUpper().Contains(labelfilter))
+                        if (Path.GetFileName(qaf).ToUpper().Contains(labelfilter.ToUpper()))
                         {
                             destfiles.Add(qaf);
                         }
@@ -1134,6 +1134,131 @@ namespace Domino.Models
         {
             RefreshQAEEPROMFAI(baseinfo, CardKey, ctrl);
             RefreshQALabelFAI(baseinfo, CardKey, ctrl);
+        }
+
+        private static void RefreshTunableQAFile(ECOBaseInfo baseinfo, string CardKey, Controller ctrl, string srcrootfolder, string eepromfilter)
+        {
+            if (DirectoryExists(ctrl, srcrootfolder))
+            {
+                var currentcard = DominoVM.RetrieveCard(CardKey);
+                if (currentcard.Count == 0)
+                    return;
+
+                var allattach = DominoVM.RetrieveCardExistedAttachment(currentcard[0].CardKey);
+
+                var destfolderlist = new List<string>();
+                var srcfolders = DirectoryEnumerateDirs(ctrl, srcrootfolder);
+                foreach (var fd in srcfolders)
+                {
+                    var baseinfopn = "";
+                    var excelpn = "";
+
+                    var dirs = fd.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
+                    var expn = dirs[dirs.Length - 1].Trim();
+
+                    if (baseinfo.PNDesc.Contains("xx"))
+                    {
+                        var lastidx = baseinfo.PNDesc.LastIndexOf("xx");
+                        baseinfopn = baseinfo.PNDesc.Remove(lastidx, 2);
+
+                        if (expn.Length > (lastidx + 2))
+                        {
+                            excelpn = expn.Remove(lastidx, 2);
+                        }
+                        else
+                        {
+                            excelpn = expn;
+                        }
+                    }
+                    else
+                    {
+                        baseinfopn = baseinfo.PNDesc;
+                        excelpn = expn;
+                    }
+
+                    if (excelpn.ToUpper().Contains(baseinfopn.ToUpper()))
+                    {
+                        destfolderlist.Add(fd);
+                    }
+                }//end foreach get folder contains PNDESC
+
+                var destfiles = new List<string>();
+                foreach (var fd in destfolderlist)
+                {
+                    var qafiles = DirectoryEnumerateFiles(ctrl, fd);
+                    foreach (var qaf in qafiles)
+                    {
+                        if (Path.GetFileName(qaf).ToUpper().Contains(eepromfilter.ToUpper()))
+                        {
+                            destfiles.Add(qaf);
+                        }
+                    }
+                }
+
+                foreach (var desf in destfiles)
+                {
+                    var fn = Path.GetFileName(desf);
+                    fn = fn.Replace(" ", "_").Replace("#", "")
+                            .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
+
+                    var pathstrs = desf.Split(Path.DirectorySeparatorChar);
+                    var uplevel = pathstrs[pathstrs.Length - 2];
+                    var prefix = RMSpectialCh(uplevel);
+
+                    var attfn = prefix + "_" + fn;
+
+                    string datestring = DateTime.Now.ToString("yyyyMMdd");
+                    string imgdir = ctrl.Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
+                    if (!DirectoryExists(ctrl, imgdir))
+                        Directory.CreateDirectory(imgdir);
+
+                    var attpath = imgdir + attfn;
+                    var url = "/userfiles/docs/" + datestring + "/" + attfn;
+
+                    var attexist = false;
+                    foreach (var att in allattach)
+                    {
+                        if (att.Contains(attfn))
+                        {
+                            attexist = true;
+                            break;
+                        }
+                    }
+
+                    if (!attexist)
+                    {
+                        try
+                        {
+                            FileCopy(ctrl, desf, attpath, true);
+                            DominoVM.StoreCardAttachment(CardKey, url);
+
+                            var spcard = DominoVM.RetrieveCard(CardKey);
+                            if (spcard.Count > 0
+                                && string.Compare(spcard[0].CardStatus, DominoCardStatus.working) == 0)
+                            {
+                                DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.pending);
+                            }
+                        }
+                        catch (Exception ex) { }
+                    }
+
+                }//end foreach
+
+            }//end if
+
+        }
+
+        public static void RefreshTnuableQAFAI(Controller ctrl,ECOBaseInfo baseinfo, string CardKey)
+        {
+            var syscfgdict = GetSysConfig(ctrl);
+
+            var srcrootfolder = syscfgdict["TUNABLEQAEEPROMFAI"];
+            var eepromfilter = syscfgdict["TUNABLEQAEEPROMFILTER"];
+            RefreshTunableQAFile(baseinfo, CardKey, ctrl, srcrootfolder, eepromfilter);
+
+            srcrootfolder = syscfgdict["TUNABLEQALABELFAI"];
+            eepromfilter = syscfgdict["TUNABLEQALABELFILTER"];
+            RefreshTunableQAFile(baseinfo, CardKey, ctrl, srcrootfolder, eepromfilter);
         }
 
         private static bool IsDigitsOnly(string str)

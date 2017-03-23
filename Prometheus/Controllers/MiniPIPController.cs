@@ -277,6 +277,8 @@ namespace Domino.Controllers
                             DominoDataCollector.Update1STJOCheckFromExcel(this, card.EBaseInfo, card.CardKey);
                             DominoDataCollector.Update2NDJOCheckFromExcel(this, card.EBaseInfo, card.CardKey);
                             DominoDataCollector.UpdateJOMainStoreFromExcel(this, card.EBaseInfo, card.CardKey);
+                            DominoDataCollector.RefreshTnuableQAFAI(this, card.EBaseInfo, card.CardKey);
+
                             logmaininfo(DateTime.Now.ToString() + " updated ECO " + card.EBaseInfo.ECONum + "  SampleBuilding info\r\n");
                             DominoVM.CardCanbeUpdate(card.CardKey);
                         }
@@ -1844,6 +1846,7 @@ namespace Domino.Controllers
                         DominoDataCollector.Update1STJOCheckFromExcel(this, baseinfos[0], CardKey);
                         DominoDataCollector.Update2NDJOCheckFromExcel(this, baseinfos[0], CardKey);
                         DominoDataCollector.UpdateJOMainStoreFromExcel(this, baseinfos[0], CardKey);
+                        DominoDataCollector.RefreshTnuableQAFAI(this, baseinfos[0], CardKey);
                     }
                 }
 
