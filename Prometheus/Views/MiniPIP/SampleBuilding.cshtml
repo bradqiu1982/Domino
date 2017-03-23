@@ -295,10 +295,20 @@
                                 {
                                     var fns = item.Split(new char[] { '/' });
                                     var fn = fns[fns.Length - 1];
-                                    <div class="row">
-                                        <a href="@item" target="_blank">
-                                            <span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span>@fn
-                                        </a>
+                                    <div class="row col-lg-12">
+                                        <div class="col-lg-11">
+                                            <a href="@item" target="_blank">
+                                                <span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span>@fn
+                                            </a>
+                                        </div>
+                                        <div class="col-lg-1">
+                                            @if (ViewBag.badmin != null && ViewBag.badmin)
+                                            {
+                                            <button class="form-control" value="@fn" onclick="DeleteCardAttachment(this)" type="button">
+                                                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                            </button>
+                                            }
+                                        </div>
                                     </div>
                                 }
                             </div>

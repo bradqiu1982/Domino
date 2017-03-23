@@ -544,9 +544,12 @@
                                             </a>
                                         </div>
                                         <div class="col-lg-1">
+                                            @if (ViewBag.badmin != null && ViewBag.badmin)
+                                            {
                                             <button class="form-control" value="@fn" onclick="DeleteCardAttachment(this)" type="button">
                                                 <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                                             </button>
+                                            }
                                         </div>
                                     </div>
                                 }
