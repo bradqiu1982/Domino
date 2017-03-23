@@ -22,13 +22,6 @@
     vertical-align: middle;
 }
 
-/*.panel-default > .panel-heading-working {
-    background: #ffffff; color: #fff;
-}
-
-.panel-default > .panel-body-working {
-    background: #f2f2f2; color: #fff;
-}*/
 
 .panel-default > .panel-heading-pending {
     background: #F75D59; color: #fff;
