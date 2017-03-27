@@ -444,66 +444,71 @@ namespace Domino.Models
             var alleco = ECOBaseInfo.RetrieveAllNotDeleteECOBaseInfo();
             foreach (var eco in alleco)
             {
-                if (string.Compare(DateTime.Parse(eco.InitRevison).ToString("yyyy-MM-dd"), "1982-05-06") == 0)
+                try
                 {
-
-                }
-                else
-                {
-                    var tempworkload = new WorkLoadData();
-                    tempworkload.ECOKey = eco.ECOKey;
-                    tempworkload.Customer = eco.Customer;
-                    if (!eco.PE.Contains("@"))
+                    if (string.Compare(DateTime.Parse(eco.InitRevison).ToString("yyyy-MM-dd"), "1982-05-06") == 0)
                     {
-                        tempworkload.PE = (eco.PE.Trim().Replace(" ", ".") + "@finisar.com").ToUpper();
+
                     }
                     else
                     {
-                        tempworkload.PE = eco.PE;
-                    }
-                    
-                    tempworkload.InitReceiveDate = DateTime.Parse(DateTime.Parse(eco.InitRevison).ToString("yyyy-MM-dd") + " 07:30:00");
-
-                    if (string.Compare(DateTime.Parse(eco.ECOSubmit).ToString("yyyy-MM-dd"), "1982-05-06") == 0)
-                    {
-                        tempworkload.ECOSubmitDate = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd") + " 07:30:00").AddDays(30);
-                    }
-                    else
-                    {
-                        tempworkload.ECOSubmitDate = DateTime.Parse(DateTime.Parse(eco.ECOSubmit).ToString("yyyy-MM-dd") + " 07:30:00");
-                    }
-
-                    var completecard = DominoVM.RetrieveSpecialCard(eco, DominoCardType.ECOComplete);
-                    if (completecard.Count > 0)
-                    {
-                        var cardinfo = DominoVM.RetrieveECOCompleteInfo(completecard[0].CardKey);
-                        if (string.IsNullOrEmpty(cardinfo.ECOCompleteDate))
+                        var tempworkload = new WorkLoadData();
+                        tempworkload.ECOKey = eco.ECOKey;
+                        tempworkload.Customer = eco.Customer;
+                        if (!eco.PE.Contains("@"))
                         {
-                            tempworkload.ECOCompleteDate = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd") + " 07:30:00").AddDays(60);
+                            tempworkload.PE = (eco.PE.Trim().Replace(" ", ".") + "@finisar.com").ToUpper();
                         }
                         else
                         {
-                            tempworkload.ECOCompleteDate = DateTime.Parse(DateTime.Parse(cardinfo.ECOCompleteDate).ToString("yyyy-MM-dd") + " 07:30:00");
+                            tempworkload.PE = eco.PE;
                         }
-                    }
-                    else
-                    {
-                        tempworkload.ECOCompleteDate = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd") + " 07:30:00").AddDays(60);
-                    }
+                    
+                        tempworkload.InitReceiveDate = DateTime.Parse(DateTime.Parse(eco.InitRevison).ToString("yyyy-MM-dd") + " 07:30:00");
 
-                    //tempworkload.HoldStartDate = DateTime.Parse(eco.ECOHoldStartDate);
-                    //tempworkload.HoldEndDate = DateTime.Parse(eco.ECOHoldEndDate);
+                        if (string.Compare(DateTime.Parse(eco.ECOSubmit).ToString("yyyy-MM-dd"), "1982-05-06") == 0)
+                        {
+                            tempworkload.ECOSubmitDate = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd") + " 07:30:00").AddDays(30);
+                        }
+                        else
+                        {
+                            tempworkload.ECOSubmitDate = DateTime.Parse(DateTime.Parse(eco.ECOSubmit).ToString("yyyy-MM-dd") + " 07:30:00");
+                        }
 
-                    tempworkload.HoldStartDate = tempworkload.InitReceiveDate.AddDays(3);
-                    tempworkload.HoldEndDate = tempworkload.ECOSubmitDate.AddDays(-3);
+                        var completecard = DominoVM.RetrieveSpecialCard(eco, DominoCardType.ECOComplete);
+                        if (completecard.Count > 0)
+                        {
+                            var cardinfo = DominoVM.RetrieveECOCompleteInfo(completecard[0].CardKey);
+                            if (string.IsNullOrEmpty(cardinfo.ECOCompleteDate))
+                            {
+                                tempworkload.ECOCompleteDate = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd") + " 07:30:00").AddDays(60);
+                            }
+                            else
+                            {
+                                tempworkload.ECOCompleteDate = DateTime.Parse(DateTime.Parse(cardinfo.ECOCompleteDate).ToString("yyyy-MM-dd") + " 07:30:00");
+                            }
+                        }
+                        else
+                        {
+                            tempworkload.ECOCompleteDate = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd") + " 07:30:00").AddDays(60);
+                        }
 
-                    if (tempworkload.HoldStartDate > tempworkload.HoldEndDate)
-                    {
-                        tempworkload.HoldEndDate = tempworkload.HoldStartDate;
-                    }
+                        tempworkload.HoldStartDate = DateTime.Parse(eco.ECOHoldStartDate);
+                        tempworkload.HoldEndDate = DateTime.Parse(eco.ECOHoldEndDate);
 
-                    allworkload.Add(tempworkload);
-                }//end else
+                        //tempworkload.HoldStartDate = tempworkload.InitReceiveDate.AddDays(3);
+                        //tempworkload.HoldEndDate = tempworkload.ECOSubmitDate.AddDays(-3);
+
+                        if (tempworkload.HoldStartDate > tempworkload.HoldEndDate)
+                        {
+                            tempworkload.HoldEndDate = tempworkload.HoldStartDate;
+                        }
+
+                        allworkload.Add(tempworkload);
+                    }//end else
+                }
+                catch (Exception ex)
+                { }
             }//end foreach
 
             return allworkload;
