@@ -415,8 +415,8 @@ namespace Domino.Controllers
                         CCBSignoffAging = CCBSignoffAging + cycletimedict[dpt].CCBSignoffAgingAVG.ToString("0.0") + ",";
                         tempmaxday = tempmaxday + cycletimedict[dpt].CCBSignoffAgingAVG;
 
-                        if (cycletimedict[dpt].CCBSignoffAgingAVG < 0)
-                            DayMIN = DayMIN + cycletimedict[dpt].CCBSignoffAgingAVG;
+                        if (cycletimedict[dpt].CCBSignoffAgingAVG < 0 && cycletimedict[dpt].CCBSignoffAgingAVG < DayMIN)
+                            DayMIN = cycletimedict[dpt].CCBSignoffAgingAVG;
                     }
 
                     if (cycletimedict[dpt].TechReviewAgingAVG == 0)
@@ -428,8 +428,8 @@ namespace Domino.Controllers
                         TechReviewAging = TechReviewAging + cycletimedict[dpt].TechReviewAgingAVG.ToString("0.0") + ",";
                         tempmaxday = tempmaxday + cycletimedict[dpt].TechReviewAgingAVG;
 
-                        if (cycletimedict[dpt].TechReviewAgingAVG < 0)
-                            DayMIN = DayMIN + cycletimedict[dpt].TechReviewAgingAVG;
+                        if (cycletimedict[dpt].TechReviewAgingAVG < 0 && cycletimedict[dpt].TechReviewAgingAVG < DayMIN)
+                            DayMIN =  cycletimedict[dpt].TechReviewAgingAVG;
                     }
 
                     if (cycletimedict[dpt].EngineeringAgingAVG == 0)
@@ -441,8 +441,8 @@ namespace Domino.Controllers
                         EngineeringAging = EngineeringAging + cycletimedict[dpt].EngineeringAgingAVG.ToString("0.0") + ",";
                         tempmaxday = tempmaxday + cycletimedict[dpt].EngineeringAgingAVG;
 
-                        if (cycletimedict[dpt].EngineeringAgingAVG < 0)
-                            DayMIN = DayMIN + cycletimedict[dpt].EngineeringAgingAVG;
+                        if (cycletimedict[dpt].EngineeringAgingAVG < 0 && cycletimedict[dpt].EngineeringAgingAVG < DayMIN)
+                            DayMIN =  cycletimedict[dpt].EngineeringAgingAVG;
                     }
 
                     if (cycletimedict[dpt].ChangeDelayAgingAVG == 0)
@@ -454,8 +454,8 @@ namespace Domino.Controllers
                         ChangeDelayAging = ChangeDelayAging + cycletimedict[dpt].ChangeDelayAgingAVG.ToString("0.0") + ",";
                         tempmaxday = tempmaxday + cycletimedict[dpt].ChangeDelayAgingAVG;
 
-                        if (cycletimedict[dpt].ChangeDelayAgingAVG < 0)
-                            DayMIN = DayMIN + cycletimedict[dpt].ChangeDelayAgingAVG;
+                        if (cycletimedict[dpt].ChangeDelayAgingAVG < 0 && cycletimedict[dpt].ChangeDelayAgingAVG < DayMIN)
+                            DayMIN =  cycletimedict[dpt].ChangeDelayAgingAVG;
                     }
 
                     if (cycletimedict[dpt].MiniPIPApprovalAgingAVG == 0)
@@ -467,8 +467,8 @@ namespace Domino.Controllers
                         ApprovalAging = ApprovalAging + cycletimedict[dpt].MiniPIPApprovalAgingAVG.ToString("0.0") + ",";
                         tempmaxday = tempmaxday + cycletimedict[dpt].MiniPIPApprovalAgingAVG;
 
-                        if (cycletimedict[dpt].MiniPIPApprovalAgingAVG < 0)
-                            DayMIN = DayMIN + cycletimedict[dpt].MiniPIPApprovalAgingAVG;
+                        if (cycletimedict[dpt].MiniPIPApprovalAgingAVG < 0 && cycletimedict[dpt].MiniPIPApprovalAgingAVG < DayMIN)
+                            DayMIN =  cycletimedict[dpt].MiniPIPApprovalAgingAVG;
                     }
 
                     TotalMiniPIPs = TotalMiniPIPs + cycletimedict[dpt].TotalMiniPIPs.ToString() + ",";
@@ -587,8 +587,8 @@ namespace Domino.Controllers
                         CCBSignoffAging = CCBSignoffAging + cycletimedict[pe].CCBSignoffAgingAVG.ToString("0.0") + ",";
                         tempmaxday = tempmaxday + cycletimedict[pe].CCBSignoffAgingAVG;
 
-                        if (cycletimedict[pe].CCBSignoffAgingAVG < 0)
-                            DayMIN = DayMIN + cycletimedict[pe].CCBSignoffAgingAVG;
+                        if (cycletimedict[pe].CCBSignoffAgingAVG < 0 && cycletimedict[pe].CCBSignoffAgingAVG < DayMIN)
+                            DayMIN = cycletimedict[pe].CCBSignoffAgingAVG;
                     }
 
                     if (cycletimedict[pe].TechReviewAgingAVG == 0)
@@ -600,8 +600,8 @@ namespace Domino.Controllers
                         TechReviewAging = TechReviewAging + cycletimedict[pe].TechReviewAgingAVG.ToString("0.0") + ",";
                         tempmaxday = tempmaxday + cycletimedict[pe].TechReviewAgingAVG;
 
-                        if (cycletimedict[pe].TechReviewAgingAVG < 0)
-                            DayMIN = DayMIN + cycletimedict[pe].TechReviewAgingAVG;
+                        if (cycletimedict[pe].TechReviewAgingAVG < 0 && cycletimedict[pe].TechReviewAgingAVG < DayMIN)
+                            DayMIN =  cycletimedict[pe].TechReviewAgingAVG;
                     }
 
                     if (cycletimedict[pe].EngineeringAgingAVG == 0)
@@ -613,8 +613,8 @@ namespace Domino.Controllers
                         EngineeringAging = EngineeringAging + cycletimedict[pe].EngineeringAgingAVG.ToString("0.0") + ",";
                         tempmaxday = tempmaxday + cycletimedict[pe].EngineeringAgingAVG;
 
-                        if (cycletimedict[pe].EngineeringAgingAVG < 0)
-                            DayMIN = DayMIN + cycletimedict[pe].EngineeringAgingAVG;
+                        if (cycletimedict[pe].EngineeringAgingAVG < 0 && cycletimedict[pe].EngineeringAgingAVG < DayMIN)
+                            DayMIN =  cycletimedict[pe].EngineeringAgingAVG;
                     }
 
                     if (cycletimedict[pe].ChangeDelayAgingAVG == 0)
@@ -626,8 +626,8 @@ namespace Domino.Controllers
                         ChangeDelayAging = ChangeDelayAging + cycletimedict[pe].ChangeDelayAgingAVG.ToString("0.0") + ",";
                         tempmaxday = tempmaxday + cycletimedict[pe].ChangeDelayAgingAVG;
 
-                        if (cycletimedict[pe].ChangeDelayAgingAVG < 0)
-                            DayMIN = DayMIN + cycletimedict[pe].ChangeDelayAgingAVG;
+                        if (cycletimedict[pe].ChangeDelayAgingAVG < 0 && cycletimedict[pe].ChangeDelayAgingAVG < DayMIN)
+                            DayMIN =  cycletimedict[pe].ChangeDelayAgingAVG;
                     }
 
                     if (cycletimedict[pe].MiniPIPApprovalAgingAVG == 0)
@@ -639,8 +639,8 @@ namespace Domino.Controllers
                         ApprovalAging = ApprovalAging + cycletimedict[pe].MiniPIPApprovalAgingAVG.ToString("0.0") + ",";
                         tempmaxday = tempmaxday + cycletimedict[pe].MiniPIPApprovalAgingAVG;
 
-                        if (cycletimedict[pe].MiniPIPApprovalAgingAVG < 0)
-                            DayMIN = DayMIN + cycletimedict[pe].MiniPIPApprovalAgingAVG;
+                        if (cycletimedict[pe].MiniPIPApprovalAgingAVG < 0 && cycletimedict[pe].MiniPIPApprovalAgingAVG < DayMIN)
+                            DayMIN =  cycletimedict[pe].MiniPIPApprovalAgingAVG;
                     }
 
                     TotalMiniPIPs = TotalMiniPIPs + cycletimedict[pe].TotalMiniPIPs.ToString() + ",";
