@@ -895,7 +895,7 @@ namespace Domino.Controllers
                 asilist.AddRange(yesno);
                 ViewBag.MiniPVTCheckList = CreateSelectList(asilist, cardinfo.MiniPVTCheck);
 
-                var facats = new string[] { DominoFACategory.EEPROMFA, DominoFACategory.LABELFA, DominoFACategory.LABELEEPROMFA };
+                var facats = new string[] {"NA",DominoFACategory.EEPROMFA, DominoFACategory.LABELFA, DominoFACategory.LABELEEPROMFA };
                 asilist = new List<string>();
                 asilist.AddRange(facats);
                 ViewBag.FACategoryList = CreateSelectList(asilist, cardinfo.FACategory);
@@ -1364,7 +1364,7 @@ namespace Domino.Controllers
                 asilist.AddRange(yesno);
                 ViewBag.MiniPVTCheckList = CreateSelectList(asilist, cardinfo.MiniPVTCheck);
 
-                var facats = new string[] { DominoFACategory.EEPROMFA, DominoFACategory.LABELFA, DominoFACategory.LABELEEPROMFA };
+                var facats = new string[] { "NA",DominoFACategory.EEPROMFA, DominoFACategory.LABELFA, DominoFACategory.LABELEEPROMFA };
                 asilist = new List<string>();
                 asilist.AddRange(facats);
                 ViewBag.FACategoryList = CreateSelectList(asilist, cardinfo.FACategory);
