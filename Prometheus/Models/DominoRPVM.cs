@@ -466,9 +466,9 @@ namespace Domino.Models
                     
                         tempworkload.InitReceiveDate = DateTime.Parse(DateTime.Parse(eco.InitRevison).ToString("yyyy-MM-dd") + " 07:30:00");
 
-                        if (string.Compare(DateTime.Parse(eco.ECOSubmit).ToString("yyyy-MM-dd"), "1982-05-06") == 0)
+                        if (string.IsNullOrEmpty(eco.ECOSubmit) || string.Compare(DateTime.Parse(eco.ECOSubmit).ToString("yyyy-MM-dd"), "1982-05-06") == 0)
                         {
-                            tempworkload.ECOSubmitDate = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd") + " 07:30:00").AddDays(30);
+                            tempworkload.ECOSubmitDate = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd") + " 07:30:00").AddMonths(1);
                         }
                         else
                         {
@@ -481,7 +481,7 @@ namespace Domino.Models
                             var cardinfo = DominoVM.RetrieveECOCompleteInfo(completecard[0].CardKey);
                             if (string.IsNullOrEmpty(cardinfo.ECOCompleteDate))
                             {
-                                tempworkload.ECOCompleteDate = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd") + " 07:30:00").AddDays(60);
+                                tempworkload.ECOCompleteDate = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd") + " 07:30:00").AddMonths(2);
                             }
                             else
                             {
@@ -490,7 +490,7 @@ namespace Domino.Models
                         }
                         else
                         {
-                            tempworkload.ECOCompleteDate = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd") + " 07:30:00").AddDays(60);
+                            tempworkload.ECOCompleteDate = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd") + " 07:30:00").AddMonths(2);
                         }
 
                         tempworkload.HoldStartDate = DateTime.Parse(eco.ECOHoldStartDate);
@@ -499,9 +499,25 @@ namespace Domino.Models
                         //tempworkload.HoldStartDate = tempworkload.InitReceiveDate.AddDays(3);
                         //tempworkload.HoldEndDate = tempworkload.ECOSubmitDate.AddDays(-3);
 
-                        if (tempworkload.HoldStartDate > tempworkload.HoldEndDate)
+                        if (string.Compare(tempworkload.HoldStartDate.ToString("yyyy-MM-dd"), "1982-05-06") != 0)
                         {
-                            tempworkload.HoldEndDate = tempworkload.HoldStartDate;
+                            if (string.Compare(tempworkload.HoldEndDate.ToString("yyyy-MM-dd"), "1982-05-06") == 0)
+                            {
+                                tempworkload.HoldEndDate = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd") + " 07:30:00").AddMonths(1);
+                                tempworkload.ECOSubmitDate = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd") + " 07:30:00").AddMonths(2);
+                                tempworkload.ECOCompleteDate = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd") + " 07:30:00").AddMonths(3);
+                            }
+                            else
+                            {
+                                if (tempworkload.HoldStartDate > tempworkload.HoldEndDate)
+                                {
+                                    tempworkload.HoldEndDate = tempworkload.HoldStartDate;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            tempworkload.HoldEndDate = DateTime.Parse("1982-05-06 07:30:00");
                         }
 
                         allworkload.Add(tempworkload);
