@@ -300,11 +300,11 @@ namespace Domino.Models
             get {
                 if (!string.IsNullOrEmpty(ActualPE))
                 {
-                    return ActualPE;
+                    return ActualPE.ToUpper();
                 }
                 else
                 {
-                    return pe;
+                    return pe.ToUpper();
                 }
             }
         }

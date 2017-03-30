@@ -75,6 +75,14 @@ namespace Domino.Controllers
             asilist.AddRange(alluser);
             ViewBag.FilterPEList = CreateSelectList(asilist, "");
 
+            var ecocardtypelistarray = new string[] { DominoCardType.ECOPending, DominoCardType.ECOSignoff1, DominoCardType.CustomerApprovalHold
+                                                        ,DominoCardType.ECOComplete,DominoCardType.SampleOrdering,DominoCardType.SampleBuilding
+                                                        ,DominoCardType.SampleShipment,DominoCardType.SampleCustomerApproval,DominoCardType.MiniPIPComplete };
+            asilist = new List<string>();
+            asilist.Add("NONE");
+            asilist.AddRange(ecocardtypelistarray);
+            ViewBag.ecocardtypelist = CreateSelectList(asilist, "");
+
             ViewBag.HistoryInfos = DominoUserViewModels.RetrieveUserHistory(updater);
 
             GetNoticeInfo();
@@ -82,9 +90,180 @@ namespace Domino.Controllers
             return View(vm);
         }
 
+        public ActionResult SummaryMiniPIP(string CardType)
+        {
+            var updater = GetAdminAuth();
+
+            var fn = "MiniPIP-Summary-data-" + CardType.ToUpper().Replace(" ", "_") + "-" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".csv";
+            string datestring = DateTime.Now.ToString("yyyyMMdd");
+            string imgdir = Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
+            if (!Directory.Exists(imgdir))
+            {
+                Directory.CreateDirectory(imgdir);
+            }
+            var realpath = imgdir + fn;
+            var realurl = "/userfiles/docs/" + datestring + "/" + fn;
+            logreportinfo(realpath, "Product requested,customer,type,RSM,PE\r\n");
+
+            var baseinfos = ECOBaseInfo.RetrieveAllWorkingECOBaseInfo();
+            var vm = new List<List<DominoVM>>();
+
+            foreach (var item in baseinfos)
+            {
+                var templist = DominoVM.RetrieveECOCards(item);
+                if (string.Compare(item.MiniPIPStatus, DominoMiniPIPStatus.hold) == 0)
+                {
+                    foreach (var card in templist)
+                    {
+                        card.CardStatus = DominoCardStatus.info;
+                    }
+                }
+
+                foreach (var card in templist)
+                {
+                    if (string.Compare(card.CardStatus, DominoCardStatus.pending) == 0
+                        || string.Compare(card.CardStatus, DominoCardStatus.working) == 0
+                        || string.Compare(card.CardStatus, DominoCardStatus.info) == 0)
+                    {
+                        if (string.Compare(card.CardType, DominoCardType.ECOPending) == 0)
+                        {
+                            if (string.IsNullOrEmpty(item.ECONum))
+                            {
+                                if (string.Compare(CardType, DominoCardType.ECOPending) == 0)
+                                {
+                                    vm.Add(templist);
+                                    logreportinfo(realpath, item.PNDesc+","+item.Customer+","+item.Complex+","+item.RSM+","+item.PE+ "\r\n");
+                                    ViewBag.minipipsummaryurl = realurl;
+                                }
+                                break;
+                            }
+                        }
+
+                        if (string.Compare(card.CardType, DominoCardType.ECOSignoff1) == 0
+                            || string.Compare(card.CardType, DominoCardType.ECOSignoff2) == 0)
+                        {
+                            if (string.Compare(CardType, DominoCardType.ECOSignoff1) == 0)
+                            {
+                                vm.Add(templist);
+                                logreportinfo(realpath, item.PNDesc + "," + item.Customer + "," + item.Complex + "," + item.RSM + "," + item.PE + "\r\n");
+                                ViewBag.minipipsummaryurl = realurl;
+                            }
+
+                            break;
+                        }
+
+                        if (string.Compare(card.CardType, DominoCardType.CustomerApprovalHold) == 0)
+                        {
+                            DominoVM cardinfo = DominoVM.RetrieveCustomerApproveHoldInfo(card.CardKey);
+                            if (!string.IsNullOrEmpty(cardinfo.ECOCustomerHoldStartDate))
+                            {
+                                if (string.Compare(CardType, DominoCardType.CustomerApprovalHold) == 0)
+                                {
+                                    vm.Add(templist);
+                                    logreportinfo(realpath, item.PNDesc + "," + item.Customer + "," + item.Complex + "," + item.RSM + "," + item.PE + "\r\n");
+                                    ViewBag.minipipsummaryurl = realurl;
+                                }
+
+                                break;
+                            }
+                        }
+
+                        if (string.Compare(card.CardType, DominoCardType.ECOComplete) == 0)
+                        {
+                            if (string.Compare(CardType, DominoCardType.ECOComplete) == 0)
+                            {
+                                vm.Add(templist);
+                                logreportinfo(realpath, item.PNDesc + "," + item.Customer + "," + item.Complex + "," + item.RSM + "," + item.PE + "\r\n");
+                                ViewBag.minipipsummaryurl = realurl;
+                            }
+                            break;
+                        }
+
+                        if (string.Compare(card.CardType, DominoCardType.SampleOrdering) == 0)
+                        {
+                            if (string.Compare(CardType, DominoCardType.SampleOrdering) == 0)
+                            {
+                                vm.Add(templist);
+                                logreportinfo(realpath, item.PNDesc + "," + item.Customer + "," + item.Complex + "," + item.RSM + "," + item.PE + "\r\n");
+                                ViewBag.minipipsummaryurl = realurl;
+                            }
+                            break;
+                        }
+
+                        if (string.Compare(card.CardType, DominoCardType.SampleBuilding) == 0)
+                        {
+                            if (string.Compare(CardType, DominoCardType.SampleBuilding) == 0)
+                            {
+                                vm.Add(templist);
+                                logreportinfo(realpath, item.PNDesc + "," + item.Customer + "," + item.Complex + "," + item.RSM + "," + item.PE + "\r\n");
+                                ViewBag.minipipsummaryurl = realurl;
+                            }
+                            break;
+                        }
+
+                        if (string.Compare(card.CardType, DominoCardType.SampleShipment) == 0)
+                        {
+                            if (string.Compare(CardType, DominoCardType.SampleShipment) == 0)
+                            {
+                                vm.Add(templist);
+                                logreportinfo(realpath, item.PNDesc + "," + item.Customer + "," + item.Complex + "," + item.RSM + "," + item.PE + "\r\n");
+                                ViewBag.minipipsummaryurl = realurl;
+                            }
+                            break;
+                        }
+
+                        if (string.Compare(card.CardType, DominoCardType.SampleCustomerApproval) == 0)
+                        {
+                            if (string.Compare(CardType, DominoCardType.SampleCustomerApproval) == 0)
+                            {
+                                vm.Add(templist);
+                                logreportinfo(realpath, item.PNDesc + "," + item.Customer + "," + item.Complex + "," + item.RSM + "," + item.PE + "\r\n");
+                                ViewBag.minipipsummaryurl = realurl;
+                            }
+                            break;
+                        }
+
+                        if (string.Compare(card.CardType, DominoCardType.MiniPIPComplete) == 0)
+                        {
+                            if (string.Compare(CardType, DominoCardType.MiniPIPComplete) == 0)
+                            {
+                                vm.Add(templist);
+                                logreportinfo(realpath, item.PNDesc + "," + item.Customer + "," + item.Complex + "," + item.RSM + "," + item.PE + "\r\n");
+                                ViewBag.minipipsummaryurl = realurl;
+                            }
+                            break;
+                        }
+
+                        break;
+                    }//end if
+                }//end foreach
+
+            }//end foreach
+
+
+            var alluser = ECOBaseInfo.RetrieveAllPE();
+            var asilist = new List<string>();
+            asilist.Add("NONE");
+            asilist.AddRange(alluser);
+            ViewBag.FilterPEList = CreateSelectList(asilist, "");
+
+            var ecocardtypelistarray = new string[] { DominoCardType.ECOPending, DominoCardType.ECOSignoff1, DominoCardType.CustomerApprovalHold
+                                                        ,DominoCardType.ECOComplete,DominoCardType.SampleOrdering,DominoCardType.SampleBuilding
+                                                        ,DominoCardType.SampleShipment,DominoCardType.SampleCustomerApproval,DominoCardType.MiniPIPComplete };
+            asilist = new List<string>();
+            asilist.Add("NONE");
+            asilist.AddRange(ecocardtypelistarray);
+            ViewBag.ecocardtypelist = CreateSelectList(asilist, "");
+
+            ViewBag.HistoryInfos = DominoUserViewModels.RetrieveUserHistory(updater);
+            GetNoticeInfo();
+
+            return View("ViewAll", vm);
+        }
+
         public ActionResult ShowPEWkingMiniPIP(string PE)
         {
-            GetAdminAuth();
+            var updater = GetAdminAuth();
             var baseinfos = ECOBaseInfo.RetrievePEWorkingECOBaseInfo(PE);
             var vm = new List<List<DominoVM>>();
             foreach (var item in baseinfos)
@@ -99,12 +278,23 @@ namespace Domino.Controllers
             asilist.AddRange(alluser);
             ViewBag.FilterPEList = CreateSelectList(asilist, PE);
 
+            var ecocardtypelistarray = new string[] { DominoCardType.ECOPending, DominoCardType.ECOSignoff1, DominoCardType.CustomerApprovalHold
+                                                        ,DominoCardType.ECOComplete,DominoCardType.SampleOrdering,DominoCardType.SampleBuilding
+                                                        ,DominoCardType.SampleShipment,DominoCardType.SampleCustomerApproval,DominoCardType.MiniPIPComplete };
+            asilist = new List<string>();
+            asilist.Add("NONE");
+            asilist.AddRange(ecocardtypelistarray);
+            ViewBag.ecocardtypelist = CreateSelectList(asilist, "");
+
+            ViewBag.HistoryInfos = DominoUserViewModels.RetrieveUserHistory(updater);
+            GetNoticeInfo();
+
             return View("ViewAll", vm);
         }
 
         public ActionResult ShowECOMiniPIP(string ECONum)
         {
-            GetAdminAuth();
+            var updater = GetAdminAuth();
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfoWithECONum(ECONum);
             var vm = new List<List<DominoVM>>();
             foreach (var item in baseinfos)
@@ -118,6 +308,17 @@ namespace Domino.Controllers
             asilist.Add("NONE");
             asilist.AddRange(alluser);
             ViewBag.FilterPEList = CreateSelectList(asilist, "");
+
+            var ecocardtypelistarray = new string[] { DominoCardType.ECOPending, DominoCardType.ECOSignoff1, DominoCardType.CustomerApprovalHold
+                                                        ,DominoCardType.ECOComplete,DominoCardType.SampleOrdering,DominoCardType.SampleBuilding
+                                                        ,DominoCardType.SampleShipment,DominoCardType.SampleCustomerApproval,DominoCardType.MiniPIPComplete };
+            asilist = new List<string>();
+            asilist.Add("NONE");
+            asilist.AddRange(ecocardtypelistarray);
+            ViewBag.ecocardtypelist = CreateSelectList(asilist, "");
+
+            ViewBag.HistoryInfos = DominoUserViewModels.RetrieveUserHistory(updater);
+            GetNoticeInfo();
 
             return View("ViewAll", vm);
         }
@@ -895,7 +1096,7 @@ namespace Domino.Controllers
                 asilist.AddRange(yesno);
                 ViewBag.MiniPVTCheckList = CreateSelectList(asilist, cardinfo.MiniPVTCheck);
 
-                var facats = new string[] {"NA",DominoFACategory.EEPROMFA, DominoFACategory.LABELFA, DominoFACategory.LABELEEPROMFA };
+                var facats = new string[] {"N/A",DominoFACategory.EEPROMFA, DominoFACategory.LABELFA, DominoFACategory.LABELEEPROMFA };
                 asilist = new List<string>();
                 asilist.AddRange(facats);
                 ViewBag.FACategoryList = CreateSelectList(asilist, cardinfo.FACategory);
@@ -1364,7 +1565,7 @@ namespace Domino.Controllers
                 asilist.AddRange(yesno);
                 ViewBag.MiniPVTCheckList = CreateSelectList(asilist, cardinfo.MiniPVTCheck);
 
-                var facats = new string[] { "NA",DominoFACategory.EEPROMFA, DominoFACategory.LABELFA, DominoFACategory.LABELEEPROMFA };
+                var facats = new string[] { "N/A",DominoFACategory.EEPROMFA, DominoFACategory.LABELFA, DominoFACategory.LABELEEPROMFA };
                 asilist = new List<string>();
                 asilist.AddRange(facats);
                 ViewBag.FACategoryList = CreateSelectList(asilist, cardinfo.FACategory);
@@ -3114,6 +3315,24 @@ namespace Domino.Controllers
                 DominoVM.StoreCardComment(CardKey, dbstr, updater, DateTime.Now.ToString());
             }
 
+        }
+
+        private static void logreportinfo(string filename, string info)
+        {
+            try
+            {
+                if (System.IO.File.Exists(filename))
+                {
+                    var content = System.IO.File.ReadAllText(filename);
+                    content = content + info;
+                    System.IO.File.WriteAllText(filename, content);
+                }
+                else
+                {
+                    System.IO.File.WriteAllText(filename, info);
+                }
+            }
+            catch (Exception ex) { }
         }
 
     }

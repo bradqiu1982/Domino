@@ -52,7 +52,7 @@
     <div class="row col-lg-12">
 
             <div class="col-lg-2">
-                <label class="control-label">ECONum Filter:</label>
+                <label class="control-label">ECO Num Filter:</label>
             </div>
             <div class="col-lg-3">
                 <input class="form-control text-box single-line" typeof="text" value="" id="ECONumFilter" name="ECONumFilter" />
@@ -89,6 +89,50 @@
                 if (document.getElementById("ECONumFilter").value)
                 {
                     window.location.href = '/Domino/MiniPIP/ShowECOMiniPIP?ECONum=' + document.getElementById("ECONumFilter").value;
+                }
+            }
+        </script>
+    </div>
+
+    <hr/>
+    
+    <div class="row col-lg-12">
+        @if (ViewBag.ecocardtypelist != null)
+        {
+            <div class="col-lg-2">
+                <label class="control-label" for="ecocardtypelist">ECO Filter:</label>
+            </div>
+                <div class="col-lg-4">
+                    @Html.DropDownList("ecocardtypelist", null, new { @id = "ecocardtypelist", @class = "form-control", @onchange = "ShowFilteredMiniPIP()" })
+                </div>
+        }
+        else
+        {
+            <div class="col-lg-6"></div>
+        }
+        <div class="col-lg-6">
+            @if(ViewBag.minipipsummaryurl != null)
+            {
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">MiniPIP Summary Data</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-lg-1"></div>
+                        <div class="col-lg-10">
+                            <a href="@ViewBag.minipipsummaryurl" target="_blank">MiniPIP Summary Data File</a>
+                        </div>
+                        <div class="col-lg-1"></div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <script type="text/javascript">
+            function ShowFilteredMiniPIP() {
+                if (document.getElementById("ecocardtypelist").value && document.getElementById("ecocardtypelist").value != 'NONE')
+                {
+                    window.location.href = '/Domino/MiniPIP/SummaryMiniPIP?CardType=' + document.getElementById("ecocardtypelist").value;
                 }
             }
         </script>
