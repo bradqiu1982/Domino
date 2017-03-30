@@ -999,7 +999,9 @@ namespace Domino.Models
             {
                 uddict.Add(ud.UserName, ud.Depart);
             }
-            logreportinfo(filename, "PE,Depart,ECONUM,PN,InitRevison,FinalRevison,OpsLogEntry,TLAAvailable,TestModification,ECOSubmit,ECOTRSignoff,ECOCCBSignoff,SampleShipDate\r\n");
+
+            logreportinfo(filename, "PE,Depart,ECONUM,PN,InitRevison,FinalRevison,OpsLogEntry,TLAAvailable,TestModification,ECOSubmit,ECOTRSignoff,ECOCCBSignoff,SampleShipDate");
+            logreportinfo(filename, ",MiniPIPApprovalAging,ChangeDelayAging,EngineeringAging,TechReviewAging,CCBSignoffAging,SampleShipAging\r\n");
 
             foreach (var cycle in cyclelist)
             {
@@ -1009,10 +1011,10 @@ namespace Domino.Models
                     depart = uddict[cycle.PE];
                 }
 
-                logreportinfo(filename, cycle.PE+","+ depart + "," + cycle.ECONUM + "," + cycle.PN
+                logreportinfo(filename, cycle.PE.Split(new string[] { "@"},StringSplitOptions.RemoveEmptyEntries)[0] +","+ depart + "," + cycle.ECONUM + "," + cycle.PN
                     + "," + cycle.InitRevison + "," + cycle.FinalRevison + "," + cycle.OpsEntry
                     + "," + cycle.TLAAvailable + "," + cycle.TestModification + "," + cycle.ECOSubmit
-                    + "," + cycle.ECOTRSignoff + "," + cycle.ECOCCBSignoff + "," + cycle.SampleShipDate+"\r\n");
+                    + "," + cycle.ECOTRSignoff + "," + cycle.ECOCCBSignoff + "," + cycle.SampleShipDate);
 
                 try
                 {
@@ -1020,16 +1022,19 @@ namespace Domino.Models
                     if (string.IsNullOrEmpty(cycle.OpsEntry))
                     {
                         cycle.MiniPIPApprovalAging = DOMINOCYCLETIMEVAL.DInvalidVAL;
+                        logreportinfo(filename, ",NA");
                     }
                     else
                     {
                         if (DateTime.Parse(cycle.OpsEntry) >= DateTime.Parse(cycle.FinalRevison))
                         {
                             cycle.MiniPIPApprovalAging = CountWorkDays(DateTime.Parse(cycle.FinalRevison), DateTime.Parse(cycle.OpsEntry)) - 1;
+                            logreportinfo(filename, ","+ cycle.MiniPIPApprovalAging.ToString());
                         }
                         else
                         {
                             cycle.MiniPIPApprovalAging = CountWorkDays(DateTime.Parse(cycle.InitRevison), DateTime.Parse(cycle.OpsEntry)) - 1;
+                            logreportinfo(filename, "," + cycle.MiniPIPApprovalAging.ToString());
                         }
                     }
                     
@@ -1037,16 +1042,19 @@ namespace Domino.Models
                     if (string.IsNullOrEmpty(cycle.FinalRevison))
                     {
                         cycle.ChangeDelayAging = DOMINOCYCLETIMEVAL.DInvalidVAL;
+                        logreportinfo(filename, ",NA");
                     }
                     else
                     {
                         cycle.ChangeDelayAging = CountWorkDays(DateTime.Parse(cycle.InitRevison), DateTime.Parse(cycle.FinalRevison)) - 1;
+                        logreportinfo(filename, "," + cycle.ChangeDelayAging.ToString());
                     }
 
 
                     if (string.IsNullOrEmpty(cycle.ECOSubmit))
                     {
                         cycle.EngineeringAging = DOMINOCYCLETIMEVAL.DInvalidVAL;
+                        logreportinfo(filename, ",NA");
                     }
                     else
                     {
@@ -1059,33 +1067,40 @@ namespace Domino.Models
 
                         var maxdate = MaxDate(datelist);
                         cycle.EngineeringAging = CountWorkDays(maxdate, DateTime.Parse(cycle.ECOSubmit)) - 1;
+                        logreportinfo(filename, "," + cycle.EngineeringAging.ToString());
                     }
 
                     if (string.IsNullOrEmpty(cycle.ECOTRSignoff))
                     {
                         cycle.TechReviewAging = DOMINOCYCLETIMEVAL.DInvalidVAL;
+                        logreportinfo(filename, ",NA");
                     }
                     else
                     {
                         cycle.TechReviewAging = CountWorkDays(DateTime.Parse(cycle.ECOSubmit), DateTime.Parse(cycle.ECOTRSignoff)) - 1;
+                        logreportinfo(filename, "," + cycle.TechReviewAging.ToString());
                     }
 
                     if (string.IsNullOrEmpty(cycle.ECOCCBSignoff))
                     {
                         cycle.CCBSignoffAging = DOMINOCYCLETIMEVAL.DInvalidVAL;
+                        logreportinfo(filename, ",NA");
                     }
                     else
                     {
                         cycle.CCBSignoffAging = CountWorkDays(DateTime.Parse(cycle.ECOTRSignoff), DateTime.Parse(cycle.ECOCCBSignoff)) - 1;
+                        logreportinfo(filename, "," + cycle.CCBSignoffAging.ToString());
                     }
 
                     if (string.IsNullOrEmpty(cycle.SampleShipDate))
                     {
                         cycle.SampleShipAging = DOMINOCYCLETIMEVAL.DInvalidVAL;
+                        logreportinfo(filename, ",NA\r\n");
                     }
                     else
                     {
                         cycle.SampleShipAging = CountWorkDays(DateTime.Parse(cycle.InitRevison), DateTime.Parse(cycle.SampleShipDate)) - 1;
+                        logreportinfo(filename, "," + cycle.SampleShipAging.ToString()+"\r\n");
                     }
 
                     calculatedlist.Add(cycle);
