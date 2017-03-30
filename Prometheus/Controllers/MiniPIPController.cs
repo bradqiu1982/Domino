@@ -103,13 +103,27 @@ namespace Domino.Controllers
             }
             var realpath = imgdir + fn;
             var realurl = "/userfiles/docs/" + datestring + "/" + fn;
-            logreportinfo(realpath, "Product requested,customer,type,RSM,PE\r\n");
+            logreportinfo(realpath, "Product requested,ECO NUM,customer,type,RSM,PE,Depart\r\n");
+
+            var udlist = DominoUserViewModels.RetrieveAllUserDepart();
+            var uddict = new Dictionary<string, string>();
+            foreach (var ud in udlist)
+            {
+                var name = ud.UserName.Split(new string[] { "@" }, StringSplitOptions.RemoveEmptyEntries)[0].ToUpper().Replace(".", "").Replace(" ", "");
+                uddict.Add(name, ud.Depart);
+            }
 
             var baseinfos = ECOBaseInfo.RetrieveAllWorkingECOBaseInfo();
             var vm = new List<List<DominoVM>>();
 
             foreach (var item in baseinfos)
             {
+                var depart = "";
+                if (uddict.ContainsKey(item.PE.Replace(".", "").Replace(" ", "")))
+                {
+                    depart = uddict[item.PE.Replace(".", "").Replace(" ", "")];
+                }
+
                 var templist = DominoVM.RetrieveECOCards(item);
                 if (string.Compare(item.MiniPIPStatus, DominoMiniPIPStatus.hold) == 0)
                 {
@@ -132,7 +146,7 @@ namespace Domino.Controllers
                                 if (string.Compare(CardType, DominoCardType.ECOPending) == 0)
                                 {
                                     vm.Add(templist);
-                                    logreportinfo(realpath, item.PNDesc+","+item.Customer+","+item.Complex+","+item.RSM+","+item.PE+ "\r\n");
+                                    logreportinfo(realpath, item.PNDesc + "," + item.ECONum + "," + item.Customer+","+item.Complex + "," + item.RSM+ "," +item.PE + "," + depart + "\r\n");
                                     ViewBag.minipipsummaryurl = realurl;
                                 }
                                 break;
@@ -145,7 +159,7 @@ namespace Domino.Controllers
                             if (string.Compare(CardType, DominoCardType.ECOSignoff1) == 0)
                             {
                                 vm.Add(templist);
-                                logreportinfo(realpath, item.PNDesc + "," + item.Customer + "," + item.Complex + "," + item.RSM + "," + item.PE + "\r\n");
+                                logreportinfo(realpath, item.PNDesc + "," + item.ECONum + "," + item.Customer + "," + item.Complex + "," + item.RSM + "," + item.PE + "," + depart + "\r\n");
                                 ViewBag.minipipsummaryurl = realurl;
                             }
 
@@ -160,7 +174,7 @@ namespace Domino.Controllers
                                 if (string.Compare(CardType, DominoCardType.CustomerApprovalHold) == 0)
                                 {
                                     vm.Add(templist);
-                                    logreportinfo(realpath, item.PNDesc + "," + item.Customer + "," + item.Complex + "," + item.RSM + "," + item.PE + "\r\n");
+                                    logreportinfo(realpath, item.PNDesc + "," + item.ECONum + "," + item.Customer + "," + item.Complex + "," + item.RSM + "," + item.PE + "," + depart + "\r\n");
                                     ViewBag.minipipsummaryurl = realurl;
                                 }
 
@@ -173,7 +187,7 @@ namespace Domino.Controllers
                             if (string.Compare(CardType, DominoCardType.ECOComplete) == 0)
                             {
                                 vm.Add(templist);
-                                logreportinfo(realpath, item.PNDesc + "," + item.Customer + "," + item.Complex + "," + item.RSM + "," + item.PE + "\r\n");
+                                logreportinfo(realpath, item.PNDesc + "," + item.ECONum + "," + item.Customer + "," + item.Complex + "," + item.RSM + "," + item.PE + "," + depart + "\r\n");
                                 ViewBag.minipipsummaryurl = realurl;
                             }
                             break;
@@ -184,7 +198,7 @@ namespace Domino.Controllers
                             if (string.Compare(CardType, DominoCardType.SampleOrdering) == 0)
                             {
                                 vm.Add(templist);
-                                logreportinfo(realpath, item.PNDesc + "," + item.Customer + "," + item.Complex + "," + item.RSM + "," + item.PE + "\r\n");
+                                logreportinfo(realpath, item.PNDesc + "," + item.ECONum + "," + item.Customer + "," + item.Complex + "," + item.RSM + "," + item.PE + "," + depart + "\r\n");
                                 ViewBag.minipipsummaryurl = realurl;
                             }
                             break;
@@ -195,7 +209,7 @@ namespace Domino.Controllers
                             if (string.Compare(CardType, DominoCardType.SampleBuilding) == 0)
                             {
                                 vm.Add(templist);
-                                logreportinfo(realpath, item.PNDesc + "," + item.Customer + "," + item.Complex + "," + item.RSM + "," + item.PE + "\r\n");
+                                logreportinfo(realpath, item.PNDesc + "," + item.ECONum + "," + item.Customer + "," + item.Complex + "," + item.RSM + "," + item.PE + "," + depart + "\r\n");
                                 ViewBag.minipipsummaryurl = realurl;
                             }
                             break;
@@ -206,7 +220,7 @@ namespace Domino.Controllers
                             if (string.Compare(CardType, DominoCardType.SampleShipment) == 0)
                             {
                                 vm.Add(templist);
-                                logreportinfo(realpath, item.PNDesc + "," + item.Customer + "," + item.Complex + "," + item.RSM + "," + item.PE + "\r\n");
+                                logreportinfo(realpath, item.PNDesc + "," + item.ECONum + "," + item.Customer + "," + item.Complex + "," + item.RSM + "," + item.PE + "," + depart + "\r\n");
                                 ViewBag.minipipsummaryurl = realurl;
                             }
                             break;
@@ -217,7 +231,7 @@ namespace Domino.Controllers
                             if (string.Compare(CardType, DominoCardType.SampleCustomerApproval) == 0)
                             {
                                 vm.Add(templist);
-                                logreportinfo(realpath, item.PNDesc + "," + item.Customer + "," + item.Complex + "," + item.RSM + "," + item.PE + "\r\n");
+                                logreportinfo(realpath, item.PNDesc + "," + item.ECONum + "," + item.Customer + "," + item.Complex + "," + item.RSM + "," + item.PE + "," + depart + "\r\n");
                                 ViewBag.minipipsummaryurl = realurl;
                             }
                             break;
@@ -228,7 +242,7 @@ namespace Domino.Controllers
                             if (string.Compare(CardType, DominoCardType.MiniPIPComplete) == 0)
                             {
                                 vm.Add(templist);
-                                logreportinfo(realpath, item.PNDesc + "," + item.Customer + "," + item.Complex + "," + item.RSM + "," + item.PE + "\r\n");
+                                logreportinfo(realpath, item.PNDesc + "," + item.ECONum + "," + item.Customer + "," + item.Complex + "," + item.RSM + "," + item.PE + "," + depart + "\r\n");
                                 ViewBag.minipipsummaryurl = realurl;
                             }
                             break;

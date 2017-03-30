@@ -58,13 +58,13 @@ namespace Domino.Controllers
             return View();
         }
 
-        private void DepartWorkLoad()
+        private void DepartWorkLoad(string filename)
         {
             var startdate = DateTime.Parse(Request.Form["StartDate"]);
             var enddate = DateTime.Parse(Request.Form["EndDate"]);
             var title = Request.Form["ChartTitle"];
 
-            var workloaddata = DominoRPVM.RetrieveDepartWorkLoadData(startdate, enddate);
+            var workloaddata = DominoRPVM.RetrieveDepartWorkLoadData(startdate, enddate,filename);
             if (workloaddata.Count == 0)
             {
                 return;
@@ -172,7 +172,7 @@ namespace Domino.Controllers
                 .Replace("#FinishYield#", FinishYield);
         }
 
-        private void DictWorkLoad(string charttype)
+        private void DictWorkLoad(string charttype,string filename)
         {
             var startdate = DateTime.Parse(Request.Form["StartDate"]);
             var enddate = DateTime.Parse(Request.Form["EndDate"]);
@@ -183,19 +183,19 @@ namespace Domino.Controllers
 
             if (string.Compare(charttype, DominoChartType.PE) == 0)
             {
-                workloaddata = DominoRPVM.RetrievePEWorkLoadData(startdate, enddate);
+                workloaddata = DominoRPVM.RetrievePEWorkLoadData(startdate, enddate,filename);
             }
             else if (string.Compare(charttype, DominoChartType.Customer) == 0)
             {
-                workloaddata = DominoRPVM.RetrieveCustomerWorkLoadData(startdate, enddate);
+                workloaddata = DominoRPVM.RetrieveCustomerWorkLoadData(startdate, enddate, filename);
             }
             else if (string.Compare(charttype, DominoChartType.Monthly) == 0)
             {
-                workloaddata = DominoRPVM.RetrieveMonthlyWorkLoadData(startdate, enddate);
+                workloaddata = DominoRPVM.RetrieveMonthlyWorkLoadData(startdate, enddate, filename);
             }
             else if (string.Compare(charttype, DominoChartType.Quarter) == 0)
             {
-                workloaddata = DominoRPVM.RetrieveQuartWorkLoadData(startdate, enddate);
+                workloaddata = DominoRPVM.RetrieveQuartWorkLoadData(startdate, enddate, filename);
             }
 
             if (workloaddata.Count == 0)
@@ -343,14 +343,24 @@ namespace Domino.Controllers
                 return View();
             }
 
+            var fn = "Workload-data" + "-" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".csv";
+            string datestring = DateTime.Now.ToString("yyyyMMdd");
+            string imgdir = Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
+            if (!Directory.Exists(imgdir))
+            {
+                Directory.CreateDirectory(imgdir);
+            }
+            var realpath = imgdir + fn;
+            ViewBag.workloadurl = "/userfiles/docs/" + datestring + "/" + fn;
+
             var charttype = Request.Form["charttypelist"].ToString();
             if (string.Compare(charttype, DominoChartType.Department) == 0)
             {
-                DepartWorkLoad();
+                DepartWorkLoad(realpath);
             }
             else
             {
-                DictWorkLoad(charttype);
+                DictWorkLoad(charttype, realpath);
             }
 
             return View();

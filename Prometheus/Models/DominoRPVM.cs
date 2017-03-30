@@ -20,6 +20,11 @@ namespace Domino.Models
         public string Customer { set; get; }
         public string Status { set; get; }
 
+        public string ECONUM { set; get; }
+        public string PN { set; get; }
+        public string Complex { set; get; }
+        public string RSM { set; get; }
+
 
         public DateTime InitReceiveDate { set; get; }
         public DateTime HoldStartDate { set; get; }
@@ -51,6 +56,8 @@ namespace Domino.Models
         public string PE { set; get; }
         public string Depart { set; get; }
         public string Customer { set; get; }
+        public string Complex { set; get; }
+        public string RSM { set; get; }
         //public string Quarter { set; get; }
         //public string Month { set; get; }
 
@@ -455,6 +462,13 @@ namespace Domino.Models
                         var tempworkload = new WorkLoadData();
                         tempworkload.ECOKey = eco.ECOKey;
                         tempworkload.Customer = eco.Customer;
+
+                        tempworkload.ECONUM = eco.ECONum;
+                        tempworkload.PN = eco.PNDesc;
+                        tempworkload.Complex = eco.Complex;
+                        tempworkload.RSM = eco.RSM;
+
+
                         if (!eco.PE.Contains("@"))
                         {
                             tempworkload.PE = (eco.PE.Trim().Replace(" ", ".") + "@finisar.com").ToUpper();
@@ -530,28 +544,32 @@ namespace Domino.Models
             return allworkload;
         }
 
-        private static List<WorkLoadData> RetrieveWorkLoadData(DateTime startdated, DateTime enddated)
+        private static string WkloadConvert(string stat)
         {
-            var startdate = DateTime.Parse(startdated.ToString("yyyy-MM-dd") + " 07:30:00");
-            var enddate = DateTime.Parse(enddated.ToString("yyyy-MM-dd") + " 07:30:00");
-
-            var allworkload = CollectAllWorkLoadTimePoint();
-
-            var filterworkload = new List<WorkLoadData>();
-            foreach (var wkload in allworkload)
+            if (string.Compare(stat, DominoCardType.ECOPending) == 0)
             {
-                var status = WorkLoadStatus(startdate, enddate, wkload);
-                if (string.Compare(status, DominoCardType.None) != 0)
-                {
-                    wkload.Status = status;
-                    filterworkload.Add(wkload);
-                }
-            }//end foreach
+                return "Operation";
+            }
 
-            return filterworkload;
+            if (string.Compare(stat, DominoCardType.Hold) == 0)
+            {
+                return "Hold";
+            }
+
+            if (string.Compare(stat, DominoCardType.ECOSignoff1) == 0)
+            {
+                return "SignOff";
+            }
+
+            if (string.Compare(stat, DominoCardType.ECOComplete) == 0)
+            {
+                return "Complete";
+            }
+
+            return string.Empty;
         }
 
-        public static Dictionary<string, WorkLoadField> RetrieveDepartWorkLoadData(DateTime startdate, DateTime enddate)
+        private static List<WorkLoadData> RetrieveWorkLoadData(DateTime startdated, DateTime enddated,string filename)
         {
             var udlist = DominoUserViewModels.RetrieveAllUserDepart();
             var uddict = new Dictionary<string, string>();
@@ -560,7 +578,48 @@ namespace Domino.Models
                 uddict.Add(ud.UserName, ud.Depart);
             }
 
-            var wkloads = RetrieveWorkLoadData(startdate, enddate);
+            var startdate = DateTime.Parse(startdated.ToString("yyyy-MM-dd") + " 07:30:00");
+            var enddate = DateTime.Parse(enddated.ToString("yyyy-MM-dd") + " 07:30:00");
+
+            var allworkload = CollectAllWorkLoadTimePoint();
+
+            logreportinfo(filename, "PN,ECONUM,Customer,type,RSM,PE,Depart,Status\r\n");
+
+            var filterworkload = new List<WorkLoadData>();
+            foreach (var wkload in allworkload)
+            {
+                var status = WorkLoadStatus(startdate, enddate, wkload);
+                if (string.Compare(status, DominoCardType.None) != 0)
+                {
+                    var depart = "";
+
+                    if (uddict.ContainsKey(wkload.PE))
+                    {
+                        depart = uddict[wkload.PE];
+                    }
+
+                    logreportinfo(filename, wkload.PN+","+wkload.ECONUM+","+wkload.Customer 
+                        + "," + wkload.Complex + "," + wkload.RSM + "," 
+                        + wkload.PE.Split(new string[] { "@" }, StringSplitOptions.RemoveEmptyEntries)[0] + ","+ depart + ","+ WkloadConvert(status) + "\r\n");
+
+                    wkload.Status = status;
+                    filterworkload.Add(wkload);
+                }
+            }//end foreach
+
+            return filterworkload;
+        }
+
+        public static Dictionary<string, WorkLoadField> RetrieveDepartWorkLoadData(DateTime startdate, DateTime enddate,string filename)
+        {
+            var udlist = DominoUserViewModels.RetrieveAllUserDepart();
+            var uddict = new Dictionary<string, string>();
+            foreach (var ud in udlist)
+            {
+                uddict.Add(ud.UserName, ud.Depart);
+            }
+
+            var wkloads = RetrieveWorkLoadData(startdate, enddate,filename);
 
             var departworkload = new List<WorkLoadData>();
             foreach (var wkl in wkloads)
@@ -597,9 +656,9 @@ namespace Domino.Models
             return ret;
         }
 
-        public static Dictionary<string, WorkLoadField> RetrievePEWorkLoadData(DateTime startdate, DateTime enddate)
+        public static Dictionary<string, WorkLoadField> RetrievePEWorkLoadData(DateTime startdate, DateTime enddate,string filename)
         {
-            var pewkloads = RetrieveWorkLoadData(startdate, enddate);
+            var pewkloads = RetrieveWorkLoadData(startdate, enddate,filename);
 
             var pedict = new Dictionary<string, bool>();
             foreach (var w in pewkloads)
@@ -635,9 +694,9 @@ namespace Domino.Models
             return ret;
         }
 
-        public static Dictionary<string, WorkLoadField> RetrieveCustomerWorkLoadData(DateTime startdate, DateTime enddate)
+        public static Dictionary<string, WorkLoadField> RetrieveCustomerWorkLoadData(DateTime startdate, DateTime enddate,string filename)
         {
-            var pewkloads = RetrieveWorkLoadData(startdate, enddate);
+            var pewkloads = RetrieveWorkLoadData(startdate, enddate,filename);
 
             var custdict = new Dictionary<string, bool>();
             foreach (var w in pewkloads)
@@ -800,14 +859,14 @@ namespace Domino.Models
         }
 
 
-        public static Dictionary<string, WorkLoadField> RetrieveMonthlyWorkLoadData(DateTime startdate, DateTime enddate)
+        public static Dictionary<string, WorkLoadField> RetrieveMonthlyWorkLoadData(DateTime startdate, DateTime enddate,string filename)
         {
             var ret = new Dictionary<string, WorkLoadField>();
 
             var ldate = RetrieveDateSpanByMonth(startdate.ToString(), enddate.ToString());
             for (int idx = 0; idx < ldate.Count - 1; idx++)
             {
-                var pewkloads = RetrieveWorkLoadData(ldate[idx], ldate[idx + 1]);
+                var pewkloads = RetrieveWorkLoadData(ldate[idx], ldate[idx + 1],filename);
                 foreach (var wkl in pewkloads)
                 {
                     if (ret.ContainsKey(ldate[idx].ToString("yy/MM")))
@@ -825,14 +884,14 @@ namespace Domino.Models
             return ret;
         }
 
-        public static Dictionary<string, WorkLoadField> RetrieveQuartWorkLoadData(DateTime startdate, DateTime enddate)
+        public static Dictionary<string, WorkLoadField> RetrieveQuartWorkLoadData(DateTime startdate, DateTime enddate,string filename)
         {
             var ret = new Dictionary<string, WorkLoadField>();
 
             var ldate = RetrieveDateSpanByQuart(startdate.ToString(), enddate.ToString());
             for (int idx = 0; idx < ldate.Count - 1; idx++)
             {
-                var pewkloads = RetrieveWorkLoadData(ldate[idx], ldate[idx + 1]);
+                var pewkloads = RetrieveWorkLoadData(ldate[idx], ldate[idx + 1],filename);
                 foreach (var wkl in pewkloads)
                 {
                     var key = QuartStr(ldate[idx]);
@@ -919,6 +978,9 @@ namespace Domino.Models
                     tempcycle.ECONUM = eco.ECONum;
                     tempcycle.PN = eco.PNDesc;
                     tempcycle.Customer = eco.Customer;
+                    tempcycle.Complex = eco.Complex;
+                    tempcycle.RSM = eco.RSM;
+                    
                     if (!eco.PE.Contains("@"))
                     {
                         tempcycle.PE = (eco.PE.Trim().Replace(" ", ".") + "@finisar.com").ToUpper();
@@ -1000,7 +1062,7 @@ namespace Domino.Models
                 uddict.Add(ud.UserName, ud.Depart);
             }
 
-            logreportinfo(filename, "PE,Depart,ECONUM,PN,InitRevison,FinalRevison,OpsLogEntry,TLAAvailable,TestModification,ECOSubmit,ECOTRSignoff,ECOCCBSignoff,SampleShipDate");
+            logreportinfo(filename, "PN,ECONUM,Customer,type,RSM,PE,Depart,InitRevison,FinalRevison,OpsLogEntry,TLAAvailable,TestModification,ECOSubmit,ECOTRSignoff,ECOCCBSignoff,SampleShipDate");
             logreportinfo(filename, ",MiniPIPApprovalAging,ChangeDelayAging,EngineeringAging,TechReviewAging,CCBSignoffAging,SampleShipAging\r\n");
 
             foreach (var cycle in cyclelist)
@@ -1011,7 +1073,8 @@ namespace Domino.Models
                     depart = uddict[cycle.PE];
                 }
 
-                logreportinfo(filename, cycle.PE.Split(new string[] { "@"},StringSplitOptions.RemoveEmptyEntries)[0] +","+ depart + "," + cycle.ECONUM + "," + cycle.PN
+                logreportinfo(filename, cycle.PN+","+ cycle.ECONUM + "," + cycle.Customer + "," + cycle.Complex + "," + cycle.RSM
+                    + "," +  cycle.PE.Split(new string[] { "@"},StringSplitOptions.RemoveEmptyEntries)[0]+ "," +  depart
                     + "," + cycle.InitRevison + "," + cycle.FinalRevison + "," + cycle.OpsEntry
                     + "," + cycle.TLAAvailable + "," + cycle.TestModification + "," + cycle.ECOSubmit
                     + "," + cycle.ECOTRSignoff + "," + cycle.ECOCCBSignoff + "," + cycle.SampleShipDate);
