@@ -96,6 +96,62 @@ namespace Domino.Models
             }
         }
 
+        public static List<List<object>> ExeSqlWithRes(SqlConnection conn, string sql)
+        {
+            var ret = new List<List<object>>();
+            SqlDataReader sqlreader = null;
+            try
+            {
+                if (conn == null)
+                    return ret;
+
+                var command = conn.CreateCommand();
+                command.CommandText = sql;
+                sqlreader = command.ExecuteReader();
+                if (sqlreader.HasRows)
+                {
+
+                    while (sqlreader.Read())
+                    {
+                        var newline = new List<object>();
+                        for (var i = 0; i < sqlreader.FieldCount; i++)
+                        {
+                            newline.Add(sqlreader.GetValue(i));
+                        }
+                        ret.Add(newline);
+                    }
+                }
+
+                sqlreader.Close();
+                CloseConnector(conn);
+                return ret;
+            }
+            catch (SqlException ex)
+            {
+                logthdinfo("execute exception: " + sql + "\r\n" + ex.Message + "\r\n");
+                if (sqlreader != null)
+                {
+                    sqlreader.Close();
+                }
+                CloseConnector(conn);
+                //System.Windows.MessageBox.Show(ex.ToString());
+                ret.Clear();
+                return ret;
+            }
+            catch (Exception ex)
+            {
+                logthdinfo("execute exception: " + sql + "\r\n" + ex.Message + "\r\n");
+                if (sqlreader != null)
+                {
+                    sqlreader.Close();
+                }
+                CloseConnector(conn);
+                //System.Windows.MessageBox.Show(ex.ToString());
+                ret.Clear();
+                return ret;
+            }
+        }
+
         public static void CloseConnector(SqlConnection conn)
         {
             if (conn == null)

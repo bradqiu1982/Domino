@@ -37,7 +37,7 @@ namespace Domino.Models
                 client.Timeout = 60000;
                 client.DeliveryMethod = SmtpDeliveryMethod.Network;
                 client.UseDefaultCredentials = false;
-                client.Credentials = new NetworkCredential("brad.qiu@finisar.com", "wangle@4321");
+                client.Credentials = new NetworkCredential("WXNPI.Trace@finisar.com", "abc@123");
 
                 ServicePointManager.ServerCertificateValidationCallback
                     = delegate (object s, X509Certificate certificate, X509Chain chain

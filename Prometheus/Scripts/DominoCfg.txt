@@ -47,4 +47,8 @@ LOCALSITEPORT:::8080
 SAVELOCATION:::d:\Agile
 SHAREFOLDERUSER:::brad.qiu
 SHAREFOLDERDOMIN:::china
-SHAREFOLDERPWD:::wangle@5321
+SHAREFOLDERPWD:::wangle@5322
+OAQASWITH:::FALSE
+OAQADBSTRING:::Server=CN-CSSQL;uid=SHG_Read;pwd=shgread;Database=InsiteDB;Connection Timeout=30;
+
+

@@ -1130,10 +1130,188 @@ namespace Domino.Models
 
         }
 
+        private static List<string> OAQAFileFolder(ECOBaseInfo baseinfo, Controller ctrl)
+        {
+            var ret = new List<string>();
+            var syscfgdict = GetSysConfig(ctrl);
+            if (syscfgdict.ContainsKey("OAQADBSTRING"))
+            {
+                var conn = DBUtility.GetConnector(syscfgdict["OAQADBSTRING"]);
+                if (conn != null)
+                {
+                    var sql = "";
+                    var dbret = DBUtility.ExeSqlWithRes(conn, sql);
+                    foreach (var line in dbret)
+                    {
+                        ret.Add(Convert.ToString(line[0]));
+                    }
+                }
+            }
+            return ret;
+        }
+
+        private static void OARefreshQAEEPROMFAI(ECOBaseInfo baseinfo, string CardKey, Controller ctrl)
+        {
+
+            var syscfgdict = GetSysConfig(ctrl);
+            var eepromfilter = syscfgdict["QAEEPROMCHECKLISTFILTER"];
+
+                var currentcard = DominoVM.RetrieveCard(CardKey);
+                if (currentcard.Count == 0)
+                    return;
+
+                var allattach = DominoVM.RetrieveCardExistedAttachment(currentcard[0].CardKey);
+
+                var destfolderlist = OAQAFileFolder(baseinfo,ctrl);
+                var destfiles = new List<string>();
+                foreach (var fd in destfolderlist)
+                {
+                    var qafiles = DirectoryEnumerateFiles(ctrl, fd);
+                    foreach (var qaf in qafiles)
+                    {
+                        if (Path.GetFileName(qaf).ToUpper().Contains(eepromfilter.ToUpper()))
+                        {
+                            destfiles.Add(qaf);
+                        }
+                    }
+                }
+
+                foreach (var desf in destfiles)
+                {
+                    var fn = Path.GetFileName(desf);
+                    fn = fn.Replace(" ", "_").Replace("#", "")
+                            .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
+
+
+                    var attfn = baseinfo.PNDesc.Replace(" ", "_").Replace("#", "")
+                            .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "") + "_" + fn;
+
+                    string datestring = DateTime.Now.ToString("yyyyMMdd");
+                    string imgdir = ctrl.Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
+                    if (!DirectoryExists(ctrl, imgdir))
+                        Directory.CreateDirectory(imgdir);
+
+                    var attpath = imgdir + attfn;
+                    var url = "/userfiles/docs/" + datestring + "/" + attfn;
+
+                    var attexist = false;
+                    foreach (var att in allattach)
+                    {
+                        if (att.Contains(attfn))
+                        {
+                            attexist = true;
+                            break;
+                        }
+                    }
+
+                    if (!attexist)
+                    {
+                        try
+                        {
+                            FileCopy(ctrl, desf, attpath, true);
+                            DominoVM.StoreCardAttachment(CardKey, url);
+
+                            var spcard = DominoVM.RetrieveCard(CardKey);
+                            if (spcard.Count > 0
+                                && string.Compare(spcard[0].CardStatus, DominoCardStatus.working) == 0)
+                            {
+                                DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.pending);
+                            }
+                        }
+                        catch (Exception ex) { }
+                    }
+
+                }//end foreach
+
+        }
+
+        private static void OARefreshQALabelFAI(ECOBaseInfo baseinfo, string CardKey, Controller ctrl)
+        {
+            var syscfgdict = GetSysConfig(ctrl);
+            var labelfilter = syscfgdict["QALABELFILTER"];
+
+                var currentcard = DominoVM.RetrieveCard(CardKey);
+                if (currentcard.Count == 0)
+                    return;
+
+                var allattach = DominoVM.RetrieveCardExistedAttachment(currentcard[0].CardKey);
+
+                var destfolderlist = OAQAFileFolder(baseinfo, ctrl);
+                var destfiles = new List<string>();
+                foreach (var fd in destfolderlist)
+                {
+                    var qafiles = DirectoryEnumerateFiles(ctrl, fd);
+                    foreach (var qaf in qafiles)
+                    {
+                        if (Path.GetFileName(qaf).ToUpper().Contains(labelfilter.ToUpper()))
+                        {
+                            destfiles.Add(qaf);
+                        }
+                    }
+                }
+
+                foreach (var desf in destfiles)
+                {
+                    var fn = Path.GetFileName(desf);
+                    fn = fn.Replace(" ", "_").Replace("#", "")
+                            .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
+
+
+                var attfn = baseinfo.PNDesc.Replace(" ", "_").Replace("#", "")
+                        .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "") + "_" + fn;
+
+                string datestring = DateTime.Now.ToString("yyyyMMdd");
+                    string imgdir = ctrl.Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
+                    if (!DirectoryExists(ctrl, imgdir))
+                        Directory.CreateDirectory(imgdir);
+
+                    var attpath = imgdir + attfn;
+                    var url = "/userfiles/docs/" + datestring + "/" + attfn;
+
+                    var attexist = false;
+                    foreach (var att in allattach)
+                    {
+                        if (att.Contains(attfn))
+                        {
+                            attexist = true;
+                            break;
+                        }
+                    }
+
+                    if (!attexist)
+                    {
+                        try
+                        {
+                            FileCopy(ctrl, desf, attpath, true);
+                            DominoVM.StoreCardAttachment(CardKey, url);
+
+                            var spcard = DominoVM.RetrieveCard(CardKey);
+                            if (spcard.Count > 0
+                                && string.Compare(spcard[0].CardStatus, DominoCardStatus.working) == 0)
+                            {
+                                DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.pending);
+                            }
+                        }
+                        catch (Exception ex) { }
+                    }
+                }//end foreach
+
+        }
+
         public static void RefreshQAFAI(ECOBaseInfo baseinfo, string CardKey, Controller ctrl)
         {
-            RefreshQAEEPROMFAI(baseinfo, CardKey, ctrl);
-            RefreshQALabelFAI(baseinfo, CardKey, ctrl);
+            var syscfgdict = GetSysConfig(ctrl);
+            if (syscfgdict.ContainsKey("OAQASWITH")
+                && string.Compare(syscfgdict["OAQASWITH"].Trim().ToUpper(), "TRUE") == 0)
+            {
+                OARefreshQAEEPROMFAI(baseinfo, CardKey, ctrl);
+                OARefreshQALabelFAI(baseinfo, CardKey, ctrl);
+            }
+            else
+            {
+                RefreshQAEEPROMFAI(baseinfo, CardKey, ctrl);
+                RefreshQALabelFAI(baseinfo, CardKey, ctrl);
+            }
         }
 
         private static void RefreshTunableQAFile(ECOBaseInfo baseinfo, string CardKey, Controller ctrl, string srcrootfolder, string eepromfilter)
