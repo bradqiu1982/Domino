@@ -1431,7 +1431,7 @@ namespace Domino.Models
 
         public static void StoreCardAttachment(string CardKey, string attachmenturl)
         {
-            var sql = "insert into ECOCardAttachment(CardKey,Attachment,UpdateTime) values('<CardKey>','<Attachment>','<UpdateTime>')";
+            var sql = "insert into ECOCardAttachment(CardKey,Attachment,UpdateTime) values('<CardKey>',N'<Attachment>','<UpdateTime>')";
             sql = sql.Replace("<CardKey>", CardKey).Replace("<Attachment>", attachmenturl).Replace("<UpdateTime>", DateTime.Now.ToString());
             DBUtility.ExeLocalSqlNoRes(sql);
         }

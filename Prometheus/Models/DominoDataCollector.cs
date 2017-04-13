@@ -1130,8 +1130,10 @@ namespace Domino.Models
 
         }
 
-        private static List<string> OAQAFileFolder(ECOBaseInfo baseinfo, Controller ctrl)
+        private static List<string> OAQAFilePath(ECOBaseInfo baseinfo, Controller ctrl)
         {
+            var existfiledict = new Dictionary<string, bool>();
+
             var ret = new List<string>();
             var syscfgdict = GetSysConfig(ctrl);
             if (syscfgdict.ContainsKey("OAQADBSTRING"))
@@ -1139,14 +1141,27 @@ namespace Domino.Models
                 var conn = DBUtility.GetConnector(syscfgdict["OAQADBSTRING"]);
                 if (conn != null)
                 {
-                    var sql = "";
+                    var sql = "select FileURL from View_OA_QA_FAI_File_List where ECO='<ECONum>' order by Updated_At Desc";
+                    sql = sql.Replace("<ECONum>", baseinfo.ECONum);
+
                     var dbret = DBUtility.ExeSqlWithRes(conn, sql);
                     foreach (var line in dbret)
                     {
-                        ret.Add(Convert.ToString(line[0]));
-                    }
-                }
-            }
+                        try
+                        {
+                            var url = Convert.ToString(line[0]);
+                            var filename = Path.GetFileName(url);
+                            if (!existfiledict.ContainsKey(filename))
+                            {
+                                existfiledict.Add(filename, true);
+                                ret.Add(url);
+                            }//end if
+                        }
+                        catch (Exception ex) { }
+                    }//end foreach
+                }//end if
+            }//end if
+
             return ret;
         }
 
@@ -1162,19 +1177,16 @@ namespace Domino.Models
 
                 var allattach = DominoVM.RetrieveCardExistedAttachment(currentcard[0].CardKey);
 
-                var destfolderlist = OAQAFileFolder(baseinfo,ctrl);
                 var destfiles = new List<string>();
-                foreach (var fd in destfolderlist)
-                {
-                    var qafiles = DirectoryEnumerateFiles(ctrl, fd);
-                    foreach (var qaf in qafiles)
+                var qafiles = OAQAFilePath(baseinfo, ctrl);
+                foreach (var qaf in qafiles)
                     {
                         if (Path.GetFileName(qaf).ToUpper().Contains(eepromfilter.ToUpper()))
                         {
                             destfiles.Add(qaf);
                         }
                     }
-                }
+
 
                 foreach (var desf in destfiles)
                 {
@@ -1183,7 +1195,7 @@ namespace Domino.Models
                             .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
 
 
-                    var attfn = baseinfo.PNDesc.Replace(" ", "_").Replace("#", "")
+                    var attfn = baseinfo.ECONum+"_"+baseinfo.PNDesc.Replace(" ", "_").Replace("#", "")
                             .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "") + "_" + fn;
 
                     string datestring = DateTime.Now.ToString("yyyyMMdd");
@@ -1236,19 +1248,17 @@ namespace Domino.Models
 
                 var allattach = DominoVM.RetrieveCardExistedAttachment(currentcard[0].CardKey);
 
-                var destfolderlist = OAQAFileFolder(baseinfo, ctrl);
+
                 var destfiles = new List<string>();
-                foreach (var fd in destfolderlist)
-                {
-                    var qafiles = DirectoryEnumerateFiles(ctrl, fd);
-                    foreach (var qaf in qafiles)
+                var qafiles = OAQAFilePath(baseinfo, ctrl);
+                foreach (var qaf in qafiles)
                     {
                         if (Path.GetFileName(qaf).ToUpper().Contains(labelfilter.ToUpper()))
                         {
                             destfiles.Add(qaf);
                         }
                     }
-                }
+
 
                 foreach (var desf in destfiles)
                 {
@@ -1257,8 +1267,8 @@ namespace Domino.Models
                             .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
 
 
-                var attfn = baseinfo.PNDesc.Replace(" ", "_").Replace("#", "")
-                        .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "") + "_" + fn;
+                var attfn = baseinfo.ECONum + "_" + baseinfo.PNDesc.Replace(" ", "_").Replace("#", "")
+                            .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "") + "_" + fn;
 
                 string datestring = DateTime.Now.ToString("yyyyMMdd");
                     string imgdir = ctrl.Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";

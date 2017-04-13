@@ -49,6 +49,6 @@ SHAREFOLDERUSER:::brad.qiu
 SHAREFOLDERDOMIN:::china
 SHAREFOLDERPWD:::wangle@5322
 OAQASWITH:::FALSE
-OAQADBSTRING:::Server=CN-CSSQL;uid=SHG_Read;pwd=shgread;Database=InsiteDB;Connection Timeout=30;
+OAQADBSTRING:::Server=wux-prod03\prod01;uid=OA_FAI_Reader;pwd=123_FAI_#;Database=OA;Connection Timeout=30;
 
 
