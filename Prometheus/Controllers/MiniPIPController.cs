@@ -3105,7 +3105,7 @@ namespace Domino.Controllers
                     if (fl != null && Request.Files[fl].ContentLength > 0)
                     {
                         string fn = Path.GetFileName(Request.Files[fl].FileName)
-                            .Replace(" ", "_").Replace("#", "")
+                            .Replace(" ", "_").Replace("#", "").Replace("'", "")
                             .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
 
                         string datestring = DateTime.Now.ToString("yyyyMMdd");
@@ -3140,7 +3140,7 @@ namespace Domino.Controllers
             {
                 var internalreportfile = Request.Form["attachmentupload"];
                 var originalname = Path.GetFileNameWithoutExtension(internalreportfile)
-                    .Replace(" ", "_").Replace("#", "")
+                    .Replace(" ", "_").Replace("#", "").Replace("'", "")
                     .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
 
                 var url = "";
@@ -3165,7 +3165,7 @@ namespace Domino.Controllers
                 {
                     var internalreportfile = Request.Form["qrfileupload"];
                     var originalname = Path.GetFileNameWithoutExtension(internalreportfile)
-                        .Replace(" ", "_").Replace("#", "")
+                        .Replace(" ", "_").Replace("#", "").Replace("'", "")
                         .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
 
                     var url = "";
@@ -3188,7 +3188,7 @@ namespace Domino.Controllers
                 {
                     var internalreportfile = Request.Form["peerfileupload"];
                     var originalname = Path.GetFileNameWithoutExtension(internalreportfile)
-                        .Replace(" ", "_").Replace("#", "")
+                        .Replace(" ", "_").Replace("#", "").Replace("'", "")
                         .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
 
                     var url = "";
@@ -3211,7 +3211,7 @@ namespace Domino.Controllers
                 {
                     var internalreportfile = Request.Form["traceviewfileupload"];
                     var originalname = Path.GetFileNameWithoutExtension(internalreportfile)
-                        .Replace(" ", "_").Replace("#", "")
+                        .Replace(" ", "_").Replace("#", "").Replace("'", "")
                         .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
 
                     var url = "";
@@ -3233,7 +3233,7 @@ namespace Domino.Controllers
                 {
                     var internalreportfile = Request.Form["speccomfileupload"];
                     var originalname = Path.GetFileNameWithoutExtension(internalreportfile)
-                        .Replace(" ", "_").Replace("#", "")
+                        .Replace(" ", "_").Replace("#", "").Replace("'", "")
                         .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
 
                     var url = "";
@@ -3256,7 +3256,7 @@ namespace Domino.Controllers
                 {
                     var internalreportfile = Request.Form["codefileupload"];
                     var originalname = Path.GetFileNameWithoutExtension(internalreportfile)
-                        .Replace(" ", "_").Replace("#", "")
+                        .Replace(" ", "_").Replace("#", "").Replace("'", "")
                         .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
 
                     var url = "";
@@ -3278,7 +3278,7 @@ namespace Domino.Controllers
                 {
                     var internalreportfile = Request.Form["specfileupload"];
                     var originalname = Path.GetFileNameWithoutExtension(internalreportfile)
-                        .Replace(" ", "_").Replace("#", "")
+                        .Replace(" ", "_").Replace("#", "").Replace("'", "")
                         .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
 
                     var url = "";
@@ -3301,7 +3301,7 @@ namespace Domino.Controllers
                 {
                     var internalreportfile = Request.Form["testingfileupload"];
                     var originalname = Path.GetFileNameWithoutExtension(internalreportfile)
-                        .Replace(" ", "_").Replace("#", "")
+                        .Replace(" ", "_").Replace("#", "").Replace("'", "")
                         .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
 
                     var url = "";

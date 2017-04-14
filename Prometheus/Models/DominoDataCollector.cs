@@ -636,7 +636,7 @@ namespace Domino.Models
                                             foreach (var minifile in minidocfiles)
                                             {
                                                 var fn = System.IO.Path.GetFileName(minifile);
-                                                fn = fn.Replace(" ", "_").Replace("#", "")
+                                                fn = fn.Replace(" ", "_").Replace("#", "").Replace("'", "")
                                                         .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
 
                                                 bool attachexist = false;
@@ -722,7 +722,7 @@ namespace Domino.Models
                                 foreach (var minifile in minidocfiles)
                                 {
                                     var fn = System.IO.Path.GetFileName(minifile);
-                                    fn = fn.Replace(" ", "_").Replace("#", "")
+                                    fn = fn.Replace(" ", "_").Replace("#", "").Replace("'", "")
                                             .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
                                     var desfile = localdir + fn;
 
@@ -841,7 +841,7 @@ namespace Domino.Models
                                 foreach (var minifile in minidocfiles)
                                 {
                                     var fn = System.IO.Path.GetFileName(minifile);
-                                    fn = fn.Replace(" ", "_").Replace("#", "")
+                                    fn = fn.Replace(" ", "_").Replace("#", "").Replace("'", "")
                                             .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
 
                                     bool attachexist = false;
@@ -957,7 +957,7 @@ namespace Domino.Models
                 foreach (var desf in destfiles)
                 {
                     var fn = Path.GetFileName(desf);
-                    fn = fn.Replace(" ", "_").Replace("#", "")
+                    fn = fn.Replace(" ", "_").Replace("#", "").Replace("'", "")
                             .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
 
                     var pathstrs = desf.Split(Path.DirectorySeparatorChar);
@@ -1081,7 +1081,7 @@ namespace Domino.Models
                 foreach (var desf in destfiles)
                 {
                     var fn = Path.GetFileName(desf);
-                    fn = fn.Replace(" ", "_").Replace("#", "")
+                    fn = fn.Replace(" ", "_").Replace("#", "").Replace("'", "")
                             .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
 
                     var pathstrs = desf.Split(Path.DirectorySeparatorChar);
@@ -1191,11 +1191,11 @@ namespace Domino.Models
                 foreach (var desf in destfiles)
                 {
                     var fn = Path.GetFileName(desf);
-                    fn = fn.Replace(" ", "_").Replace("#", "")
+                    fn = fn.Replace(" ", "_").Replace("#", "").Replace("'", "")
                             .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
 
 
-                    var attfn = baseinfo.ECONum+"_"+baseinfo.PNDesc.Replace(" ", "_").Replace("#", "")
+                    var attfn = baseinfo.ECONum+"_"+baseinfo.PNDesc.Replace(" ", "_").Replace("#", "").Replace("'", "")
                             .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "") + "_" + fn;
 
                     string datestring = DateTime.Now.ToString("yyyyMMdd");
@@ -1263,11 +1263,11 @@ namespace Domino.Models
                 foreach (var desf in destfiles)
                 {
                     var fn = Path.GetFileName(desf);
-                    fn = fn.Replace(" ", "_").Replace("#", "")
+                    fn = fn.Replace(" ", "_").Replace("#", "").Replace("'", "")
                             .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
 
 
-                var attfn = baseinfo.ECONum + "_" + baseinfo.PNDesc.Replace(" ", "_").Replace("#", "")
+                var attfn = baseinfo.ECONum + "_" + baseinfo.PNDesc.Replace(" ", "_").Replace("#", "").Replace("'", "")
                             .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "") + "_" + fn;
 
                 string datestring = DateTime.Now.ToString("yyyyMMdd");
@@ -1386,7 +1386,7 @@ namespace Domino.Models
                 foreach (var desf in destfiles)
                 {
                     var fn = Path.GetFileName(desf);
-                    fn = fn.Replace(" ", "_").Replace("#", "")
+                    fn = fn.Replace(" ", "_").Replace("#", "").Replace("'", "")
                             .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
 
                     var pathstrs = desf.Split(Path.DirectorySeparatorChar);
