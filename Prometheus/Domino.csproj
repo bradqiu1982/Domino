@@ -524,6 +524,22 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Content\images\FinisarBuilding.jpg" />
+    <Content Include="Content\images\FinisarLogo.jpg" />
+    <Content Include="Content\images\icon\Add.png" />
+    <Content Include="Content\images\icon\delete.png" />
+    <Content Include="Content\images\icon\delete2.png" />
+    <Content Include="Content\images\icon\edit.png" />
+    <Content Include="Content\images\icon\edit2.png" />
+    <Content Include="Content\images\icon\extend.png" />
+    <Content Include="Content\images\icon\extendup.png" />
+    <Content Include="Content\images\icon\LowYield.png" />
+    <Content Include="Content\images\icon\pageloadingicon.gif" />
+    <Content Include="Content\images\icon\Upload.png" />
+    <Content Include="Content\images\minipip\Default Vs Non-Sample.png" />
+    <Content Include="Content\images\minipip\Default Vs Sample.png" />
+    <Content Include="Content\images\minipip\Revise Vs Non-Sample.png" />
+    <Content Include="Content\images\minipip\Revise Vs Sample.png" />
     <Content Include="Content\themes\base\accordion.css" />
     <Content Include="Content\themes\base\all.css" />
     <Content Include="Content\themes\base\autocomplete.css" />
@@ -894,6 +910,7 @@
     <Content Include="Scripts\ParetoChart.xml" />
     <Content Include="Scripts\PieChart.xml" />
     <Content Include="Scripts\DominoQAFACheck.xml" />
+    <Content Include="Scripts\placeholders.min.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\SuperYield.xml" />

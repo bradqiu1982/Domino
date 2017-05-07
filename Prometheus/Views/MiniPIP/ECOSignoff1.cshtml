@@ -615,8 +615,8 @@
                                 </span>
                             </div>
                             <div class="col-lg-1"></div>
-                            <div class="col-lg-1"><button class="form-control" type="button" data-toggle="tooltip" title="Save User Info" onclick="SaveUserContent()"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span></button></div>
-                            <div class="col-lg-1"><button class="form-control" type="button" data-toggle="tooltip" title="Retrieve User Info" onclick="UserCacheContent()"><span class="glyphicon glyphicon-time" aria-hidden="true"></span></button></div>
+                            <div class="col-lg-1">@*<button class="form-control" type="button" data-toggle="tooltip" title="Save User Info" onclick="SaveUserContent()"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span></button>*@</div>
+                            <div class="col-lg-1">@*<button class="form-control" type="button" data-toggle="tooltip" title="Retrieve User Info" onclick="UserCacheContent()"><span class="glyphicon glyphicon-time" aria-hidden="true"></span></button>*@</div>
                             <div class="col-lg-5"></div>
                         </div>
                         <script type="text/javascript">
@@ -649,10 +649,7 @@
                                                 return false;
                                             }
 
-                                            function SaveUserContent() {
-                                                try { RealSaveUserContent(CKEDITOR.instances.commenteditor.getData()); } catch (ex) { }
-                                                return false;
-                                            }
+
                         </script>
                     </div>
                 </div>

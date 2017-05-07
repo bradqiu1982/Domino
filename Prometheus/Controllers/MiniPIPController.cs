@@ -51,10 +51,14 @@ namespace Domino.Controllers
             var vm = new List<List<DominoVM>>();
             foreach (var item in baseinfos)
             {
+                if (string.IsNullOrEmpty(item.ECONum))
+                    continue;
+
                 var loginer = updater.Split(new string[] { "@" }, StringSplitOptions.RemoveEmptyEntries)[0].Replace(".","").Replace(" ", "").ToUpper();
                 var pe = item.PE.Split(new string[] { "@" }, StringSplitOptions.RemoveEmptyEntries)[0].Replace(".", "").Replace(" ", "").ToUpper();
                 if (string.Compare(loginer, pe) != 0 && !ViewBag.badmin)
                     continue;
+
 
                 var templist = DominoVM.RetrieveECOCards(item);
 
@@ -786,22 +790,22 @@ namespace Domino.Controllers
                 baseinfos[0].FlowInfo = Request.Form["FlowInfoList"].ToString();
 
                 if (IsDigitsOnly(baseinfos[0].FirstArticleNeed)
-                    && string.Compare(baseinfos[0].FlowInfo, "Default", true) == 0)
+                    && string.Compare(baseinfos[0].FlowInfo, DominoFlowInfo.Default, true) == 0)
                 {
                     baseinfos[0].ECOType = DominoECOType.DVS;
                 }
                 else if (IsDigitsOnly(baseinfos[0].FirstArticleNeed)
-                    && string.Compare(baseinfos[0].FlowInfo, "Revise", true) == 0)
+                    && string.Compare(baseinfos[0].FlowInfo, DominoFlowInfo.Revise, true) == 0)
                 {
                     baseinfos[0].ECOType = DominoECOType.RVS;
                 }
                 else if (!IsDigitsOnly(baseinfos[0].FirstArticleNeed)
-                    && string.Compare(baseinfos[0].FlowInfo, "Default", true) == 0)
+                    && string.Compare(baseinfos[0].FlowInfo, DominoFlowInfo.Default, true) == 0)
                 {
                     baseinfos[0].ECOType = DominoECOType.DVNS;
                 }
                 else if (!IsDigitsOnly(baseinfos[0].FirstArticleNeed)
-                    && string.Compare(baseinfos[0].FlowInfo, "Revise", true) == 0)
+                    && string.Compare(baseinfos[0].FlowInfo, DominoFlowInfo.Revise, true) == 0)
                 {
                     baseinfos[0].ECOType = DominoECOType.RVNS;
                 }

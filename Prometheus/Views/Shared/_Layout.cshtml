@@ -7,8 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title</title>
 
-
-
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
     <link href="@Url.Content("~/Content/themes/base/jquery-ui.css")" rel="stylesheet" type="text/css" />
@@ -26,86 +24,204 @@
     <script src="~/Scripts/jquery.base64.js" type="text/javascript"></script>
     <script src="../../ckeditor/ckeditor.js"></script>
 
+    <style type="text/css">
+        .tableFloatingHeaderOriginal th {
+            background-color: #006DC0;
+            font-family: 'Arial Narrow';
+            font-size: 15px;
+        }
+
+        .modal {
+            text-align: center;
+            padding: 0 !important;
+        }
+
+            .modal:before {
+                content: '';
+                display: inline-block;
+                height: 100%;
+                vertical-align: middle;
+                margin-right: -4px;
+            }
+
+        .modal-dialog {
+            display: inline-block;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        .panel-default > .panel-heading-open {
+            background: #E41B17;
+        }
+
+        input[type="text"] {
+            border: 1px;
+            border-style: solid;
+            border-color: #006DC0;
+            font-family: 'Arial Narrow';
+        }
+
+        textarea.form-control {
+            border: 1px;
+            border-style: solid;
+            border-color: #006DC0;
+            font-family: 'Arial Narrow';
+            overflow-y: auto !important;
+            overflow-x: auto !important;
+        }
+
+        select.form-control {
+            border: 1px;
+            border-style: solid;
+            border-color: #006DC0;
+            font-family: 'Arial Narrow';
+        }
+
+
+        img[MYTP="BT"]:hover {
+            background-color: lightgrey;
+        }
+
+        thead {
+            background-color: #006DC0;
+            font-family: 'Arial Narrow';
+        }
+
+        tbody {
+            font-family: 'Arial Narrow';
+        }
+
+        table.dataTable tbody td {
+            padding: 4px 10px;
+        }
+
+        label {
+            font-family: 'Arial Narrow';
+        }
+
+        div[MYTP="HOVER"]:hover {
+            background-color: #ECECEC;
+        }
+
+        input[readonly], select.form-control[readonly], input[disabled], select.form-control[disabled], textarea.form-control[disabled] {
+            background-color: #DEEBF7 !important;
+        }
+
+        .no-js #loader {
+            display: none;
+        }
+
+        .js #loader {
+            display: block;
+            position: absolute;
+            left: 100px;
+            top: 0;
+        }
+
+        .se-pre-con {
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: url('/Content/images/icon/pageloadingicon.gif') center no-repeat transparent !important;
+        }
+
+        .borderless td, .borderless th {
+                border: none !important;padding:2px !important;
+            }
+    </style>
+
 </head>
 
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="se-pre-con"></div>
+    <div class="navbar navbar-default navbar-fixed-top" style="background-color:white;border-color:#5B9BD5">
+        <nav class="navbar navbar-default navbar-fixed-top" style="background-color:white;border-color:#5B9BD5">
             <div class="container">
 
-                <div class="navbar-header">
-                    <button type = "button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                        @Html.ActionLink("MiniPIP", "ViewAll", "MiniPIP", null, new { @class = "navbar-brand" })
-                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <div class="navbar-header" style="margin-left:20px">
+                            <a class="navbar-brand" href="#">
+                                <img alt="Brand" src="~/Content/images/FinisarLogo.jpg" style="height:54px; width:334px">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="row" style="margin-bottom:-8px">
+                            <ul class="nav navbar-nav"><li>&nbsp;</li></ul>
+                            <ul class="nav navbar-nav navbar-right"><li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li></ul>
 
-                <div id = "navbar" class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav">
-                        <li class="dropdown">
-                            <a href = "#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">MiniPIP<span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    @Html.ActionLink("View All MiniPIP", "ViewAll", "MiniPIP")
-                                </li>
-                                @*<li>
-                                    @Html.ActionLink("Create MiniPIP", "CreateMiniPIP", "MiniPIP")
-                                </li>*@
-                            </ul>
-                        </li>
-                    </ul>
+                        </div>
+                        <div class="row" style="margin-top:-8px">
+                            <div id="navbar" class="navbar-collapse collapse">
+                                <ul class="nav navbar-nav">
+                                    <li class="dropdown">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">MiniPIP<span class="caret"></span></a>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                @Html.ActionLink("View All MiniPIP", "ViewAll", "MiniPIP")
+                                            </li>
+                                            @*<li>
+                                                @Html.ActionLink("Create MiniPIP", "CreateMiniPIP", "MiniPIP")
+                                            </li>*@
+                                        </ul>
+                                    </li>
+                                </ul>
 
-                @if (ViewBag.badmin != null && ViewBag.badmin)
-                {
-                    <ul class="nav navbar-nav">
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Report<span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    @Html.ActionLink("WorkLoad", "WorkLoad", "DominoReport")
-                                </li>
-                                <li>
-                                    @Html.ActionLink("Cycle Time", "CycleTime", "DominoReport")
-                                </li>
-                                <li>
-                                    @Html.ActionLink("Type", "Complex", "DominoReport")
-                                </li>
-                                <li>
-                                    @Html.ActionLink("FA Building Time", "FABuilding", "DominoReport")
-                                </li>
-                                <li>
-                                    @Html.ActionLink("QA FA Check", "QAFACheck", "DominoReport")
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                }
-                    
-                    <ul class="nav navbar-nav">
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">User<span class="caret"></span></a>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    @Html.ActionLink("User Center", "UserCenter", "DominoUser")
-                                </li>
                                 @if (ViewBag.badmin != null && ViewBag.badmin)
                                 {
-                                    <li>
-                                        @Html.ActionLink("User Matrix", "CommitUserMatrix", "ExtenalData")
-                                    </li>
+                                    <ul class="nav navbar-nav">
+                                        <li class="dropdown">
+                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" >Report<span class="caret"></span></a>
+                                            <ul class="dropdown-menu">
+                                                <li>
+                                                    @Html.ActionLink("WorkLoad", "WorkLoad", "DominoReport")
+                                                </li>
+                                                <li>
+                                                    @Html.ActionLink("Cycle Time", "CycleTime", "DominoReport")
+                                                </li>
+                                                <li>
+                                                    @Html.ActionLink("Type", "Complex", "DominoReport")
+                                                </li>
+                                                <li>
+                                                    @Html.ActionLink("FA Building Time", "FABuilding", "DominoReport")
+                                                </li>
+                                                <li>
+                                                    @Html.ActionLink("QA FA Check", "QAFACheck", "DominoReport")
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
                                 }
-                            </ul>
-                        </li>
-                    </ul>
 
-                    @Html.Partial("_LoginPartial")
+                                <ul class="nav navbar-nav">
+                                    <li class="dropdown">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">User<span class="caret"></span></a>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                @Html.ActionLink("User Center", "UserCenter", "DominoUser")
+                                            </li>
+                                            @if (ViewBag.badmin != null && ViewBag.badmin)
+                                            {
+                                                <li>
+                                                    @Html.ActionLink("User Matrix", "CommitUserMatrix", "ExtenalData")
+                                                </li>
+                                            }
+                                        </ul>
+                                    </li>
+                                </ul>
+
+                                @Html.Partial("_LoginPartial")
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-           </div>
-        </nav>
+            </div>
+</nav>
     </div>
     <div class="container body-content">
         @RenderBody()
@@ -113,8 +229,12 @@
         <footer>
             <p>&copy; @DateTime.Now.Year - MiniPIP Trace System</p>
         </footer>
-
+        <script src="~/Scripts/placeholders.min.js"></script>
         <script type="text/javascript">
+            $(window).load(function () {
+                $(".se-pre-con").fadeOut("slow");
+            });
+
                         function RealSaveUserContent(myval)
                         {
                             if (myval)

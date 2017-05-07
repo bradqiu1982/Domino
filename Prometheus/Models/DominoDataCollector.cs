@@ -377,7 +377,7 @@ namespace Domino.Models
                 if (string.Compare(line.StatusCode, "Current Process", true) == 0)
                 {
                     ret.CurrentProcess = line.WorkFlowStatus;
-                    if (line.WorkFlow.ToUpper().Contains("REVISE"))
+                    if (line.WorkFlow.ToUpper().Contains(DominoFlowInfo.Revise.ToUpper()))
                     {
                         ret.WorkFlowType = DominoFlowInfo.Revise;
                     }
