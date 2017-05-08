@@ -6,11 +6,28 @@
 }
 
 <div class="row">
+    <div class="col-lg-12">&nbsp;</div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">&nbsp;</div>
+</div>
+
+<div class="row">
     <div class="col-lg-3">
-            <h2>Current ECO</h2>
+        <div class="row">
+            <div class="col-lg-12">&nbsp;</div>
+        </div>
+        <div class="row">
+            <ol class="breadcrumb" style="font-size:18px">
+                <li><a data-toggle="tooltip" title="Goto ViewAll" href="/Domino/MiniPIP/ViewAll">Working MiniPIP</a></li>
+                <li class="active">Current ECO</li>
+            </ol>
+        </div>
     </div>
+
     <div class="col-lg-1">
-        <h2><a data-toggle="tooltip" title="Goto ViewAll" href="/Domino/MiniPIP/ViewAll"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></a></h2>
+
     </div>
     <div class="col-lg-1">
         <h2><button data-toggle="tooltip" title="Refresh Card Content" type="button" class="btn btn-default" onclick="RefreshCard()"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button></h2>
@@ -24,202 +41,183 @@
     <div class="col-lg-2">
         @if (ViewBag.badmin != null && ViewBag.badmin)
         { <h2><button class="form-control" data-toggle="tooltip" title="Download Attachment Name" type="button" value="@ViewBag.CardKey" onclick="AgileAttachNameDownload(this)">Agile Attach Name</button></h2>}
-        
+
     </div>
     <div class="col-lg-2">
         @if (ViewBag.badmin != null && ViewBag.badmin)
         { <h2><button class="form-control" data-toggle="tooltip" title="Download Real Attachment" type="button" value="@ViewBag.CardKey" onclick="AgileFileDownload(this)"><span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span> Agile Attach</button></h2>}
-        
+
     </div>
     <div class="col-lg-2">
         @if (ViewBag.badmin != null && ViewBag.badmin)
         { <h2><button class="form-control" data-toggle="tooltip" title="Download WorkFlow Information" type="button" value="@ViewBag.CardKey" onclick="AgileWorkFlowDownload(this)">Agile WorkFlow</button></h2>}
-        
+
     </div>
 
     <script type="text/javascript">
-                        function AgileAttachNameDownload(oBT)
-                        {
-                            window.alert("Info: the download action will be spent 5 mins.\n After that re-click card to get downloaded information.");
-                            window.location.href = '/Domino/MiniPIP/AgileFileNameDownload?CardKey=' + oBT.value;
-                        }
-
-                        function AgileFileDownload(oBT)
-                        {
-                            if (confirm("Warning: You are not suggested to use this function.\n If you just want to check file exist,please use the Agile Attach Name.\n Do you really want download real agile attachment?"))
-                            {
-                                window.location.href = '/Domino/MiniPIP/AgileFileDownload?CardKey=' + oBT.value;
-                            }
-                        }
-
-                        function AgileWorkFlowDownload(oBT) {
-                            window.alert("Info: the download action will be spent 5 mins.\n After that re-click card to get downloaded information.");
-                            window.location.href = '/Domino/MiniPIP/AgileWorkFlowDownload?CardKey=' + oBT.value;
-                        }
-
-                        function RenewCard(oBT)
-                        {
-                            if (confirm("Warning: Do you really want to re-initial this card?")) {
-                                window.location.href = '/Domino/MiniPIP/ReNewCard?CardKey=' + oBT.value;
-                            }
-                        }
-    </script>
-</div>
-<hr/>
-
-@if (Model != null)
-{
-    foreach (var item in Model)
-    {
-        if (item.Count() > 0)
-        {
-            var keyvals = Domino.Models.ECOBaseInfo.RetrieveBaseInfoKV(item.ElementAt(0).EBaseInfo);
-            <div class="row">
-                <div class="col-lg-12">
-                    @foreach (var kvp in keyvals)
-                    {
-                            <div class="col-lg-2">
-                                <div class="col-lg-11">
-                                    <div class="panel panel-default" style="height:60px;width:180px;">
-                                        <div class="panel-heading  panel-heading-info" style="height:28px;">
-                                            <div class="text-center" style="font-size:10px">
-                                                <strong>
-                                                    @kvp.Key
-                                                </strong>
-                                            </div>
-                                        </div>
-
-                                        <div class="panel-body panel-body-info" style="height:32px;">
-                                            <div class="text-center" style="font-size:11px">
-                                                @if (string.Compare(kvp.Key.ToUpper(), "ECO STATUS") == 0)
-                                                {
-                                                    <font color="red"><strong>@kvp.Value.ToUpper()</strong></font>
-                                                }
-                                                else
-                                                {
-                                                    <strong>@kvp.Value</strong>
-                                                }
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-1"></div>
-                            </div>
-                    }
-                </div>
-            </div>
+        function AgileAttachNameDownload(oBT) {
+            window.alert("Info: the download action will be spent 5 mins.\n After that re-click card to get downloaded information.");
+            window.location.href = '/Domino/MiniPIP/AgileFileNameDownload?CardKey=' + oBT.value;
         }
 
-        <div class="row">
-            <div class="col-lg-12">
-                @foreach (var card in item)
-                    {
-                    <div class="col-lg-1 divclickable" CardType="@card.CardType" ECOKey="@card.ECOKey" CardKey="@card.CardKey">
-                        <div class="col-lg-11">
-                            <div class="panel panel-default" style="height:100px;width:90px;">
-                                <div class="panel-heading  panel-heading-@card.CardStatus" style="height:30px;">
-                                    <div class="text-right">
-                                        @card.CardNo
-                                    </div>
-                                </div>
+        function AgileFileDownload(oBT) {
+            if (confirm("Warning: You are not suggested to use this function.\n If you just want to check file exist,please use the Agile Attach Name.\n Do you really want download real agile attachment?")) {
+                window.location.href = '/Domino/MiniPIP/AgileFileDownload?CardKey=' + oBT.value;
+            }
+        }
 
-                                <div class="panel-body panel-body-@card.CardStatus" style="height:70px;">
-                                    <div class="row col-lg-12 text-center" style="font-size:11px">
-                                        <strong>
-                                            @card.CardContent
-                                        </strong>
-                                    </div>
-                                </div>
+        function AgileWorkFlowDownload(oBT) {
+            window.alert("Info: the download action will be spent 5 mins.\n After that re-click card to get downloaded information.");
+            window.location.href = '/Domino/MiniPIP/AgileWorkFlowDownload?CardKey=' + oBT.value;
+        }
+
+        function RenewCard(oBT) {
+            if (confirm("Warning: Do you really want to re-initial this card?")) {
+                window.location.href = '/Domino/MiniPIP/ReNewCard?CardKey=' + oBT.value;
+            }
+        }
+    </script>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">&nbsp;</div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        @if (Model != null)
+        {
+            foreach (var item in Model)
+            {
+                if (item.Count() > 0)
+                {
+                    var keyvals = Domino.Models.ECOBaseInfo.RetrieveBaseInfoKV(item.ElementAt(0).EBaseInfo);
+                    var idx = 0;
+
+                    <div class="row" style="padding:4px;">
+                        <div class="col-lg-3" style="padding:4px;">
+                            <div class="well" style="margin-bottom:8px;background-color:transparent !important;border-left-color:#006DC0;border-top-color:transparent !important;border-right-color:transparent !important;border-bottom-color:transparent !important;border-top-left-radius:0px;border-bottom-left-radius:0px;padding-top:4px;padding-bottom:4px">
+                                <table class="table table-hover borderless">
+                                    <tbody>
+                                        @foreach (var kvp in keyvals)
+                                        {
+                                            <tr>
+                                                <td><strong>@kvp.Key</strong></td>
+                                                <td>
+                                                    @if (string.Compare(kvp.Key.ToUpper(), "ECO STATUS") == 0)
+                                                    {
+                                                        <font color="red"><strong>@kvp.Value.ToUpper()</strong></font>
+                                                    }
+                                                    else
+                                                    {
+                                                        <strong>@kvp.Value</strong>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
-                        <div class="col-lg-1"></div>
-                    </div>
-                }
-            </div>
-        </div>
-       <hr />
-    }
-}
 
-@if (ViewBag.DominoNoticeInfo != null)
-{
-<div class="modal" id="noticmodal" tabindex="-1" role="dialog" aria-labelledby="noticmodalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="noticmodalLabel">Notic</h4>
-            </div>
-            <div class="row text-center">
-               <strong> @ViewBag.DominoNoticeInfo</strong>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
-            </div>
-        </div>
-    </div>
-</div>
-}
-
-@if (ViewBag.CardDetailPage != null)
-{
-    string partialpagename = ViewBag.CardDetailPage;
-    @Html.Partial(partialpagename);
-}
-
-@if (ViewBag.DominoNoticeInfo != null)
-{
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('#noticmodal').modal();
-    });
-   </script>
-}
-
-<script type="text/javascript">
-
-                $(document).ready(function () {
-                    $('.divclickable').click(function () {
-
-                        var cardtype = this.getAttribute("CardType");
-                        var ecokey = this.getAttribute("ECOKey");
-                        var cardkey = this.getAttribute("CardKey");
-
-                        if (cardtype && cardkey && ecokey) {
-                            window.location.href = '/Domino/MiniPIP/' + cardtype + '?ECOKey=' + ecokey + '&CardKey=' + cardkey;
-                        }
-                    });
-                });
-
-                function DeleteCardAttachment(oBT) {
-                    if (confirm("Do you real want to delete this attachment?")) {
-                        window.location.href = '/Domino/MiniPIP/DeleteCardAttachment?CardKey=' + document.getElementById("CardKey").value + '&FileName=' + oBT.value;
-                    }
-                }
-
-                function RefreshCard()
-                {
-                    window.location.href = '/Domino/MiniPIP/RefreshCard?CardKey=' + document.getElementById("CardKey").value;
-                }
-
-                function RollBack2ThisCard()
-                {
-                    if (confirm("Do you real want to roll whole MiniPIP to step: " + document.getElementById("modalname").value + " ?")) {
-                        window.location.href = '/Domino/MiniPIP/RollBack2ThisCard?CardKey=' + document.getElementById("CardKey").value + '&ECOKey=' + document.getElementById("ECOKey").value;
-                    }
-                }
-
-                function DeleteSPCardComment(oBT) {
-                        if (oBT.value) {
-                            if (confirm("Do you really want to delete this comment?")) {
-                                window.location.href = "/Domino/MiniPIP/DeleteSPCardComment?" + oBT.value;
+                        <div class="col-lg-9" style="padding:4px;">
+                            @{
+                                <div class="col-lg-1"></div>
+                                idx = idx + 1;
                             }
-                        }
+                            @foreach (var card in item)
+                            {
+                                <div class="col-lg-1"><img MYTP="HOVER" src="~/Content/images/@(card.EBaseInfo.ECOType)/@(card.EBaseInfo.ECOType)-@(card.CardType)-@(card.CardStatus).png" onclick="GotoSpecialCard('/Domino/MiniPIP/@(card.CardType)?ECOKey=@(card.ECOKey)&CardKey=@(card.CardKey)')" style="height:300px; width:72px;"></div>
+                                idx = idx + 1;
+                            }
+                            @if (string.Compare(item.ElementAt(0).EBaseInfo.FlowInfo, Domino.Models.DominoFlowInfo.Default) == 0)
+                            {
+                                <div class="col-lg-1"><img src="~/Content/images/minipip/DefaultComplete.png" style="height:300px; width:72px;"></div>
+                                idx = idx + 1;
+                            }
+                            @for (; idx < 12;)
+                            {
+                                <div class="col-lg-1"></div>
+                                idx = idx + 1;
+                            }
+                        </div>
+                    </div>
+                    <hr style="border-color:#ECECEC;margin-top:4px;margin-bottom:4px;" />
                 }
+            }
 
-                function ModifyCardComment(oBT) {
-                    if (oBT.value) {
-                        window.location.href = "/Domino/MiniPIP/ModifyCardComment?" + oBT.value;
+            if (ViewBag.DominoNoticeInfo != null)
+            {
+            <div class="modal" id="noticmodal" tabindex="-1" role="dialog" aria-labelledby="noticmodalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="noticmodalLabel">Notic</h4>
+                        </div>
+                        <div class="row text-center">
+                            <strong> @ViewBag.DominoNoticeInfo</strong>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            }
+
+            if (ViewBag.CardDetailPage != null)
+            {
+                string partialpagename = ViewBag.CardDetailPage;
+            @Html.Partial(partialpagename);
+            }
+
+            if (ViewBag.DominoNoticeInfo != null)
+            {
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    $('#noticmodal').modal();
+                });
+            </script>
+            }
+
+        <script type="text/javascript">
+
+            function GotoSpecialCard(val) {
+                if (val) {
+                    window.location.href = val;
+                }
+            }
+
+            function DeleteCardAttachment(oBT) {
+                if (confirm("Do you real want to delete this attachment?")) {
+                    window.location.href = '/Domino/MiniPIP/DeleteCardAttachment?CardKey=' + document.getElementById("CardKey").value + '&FileName=' + oBT.value;
+                }
+            }
+
+            function RefreshCard() {
+                window.location.href = '/Domino/MiniPIP/RefreshCard?CardKey=' + document.getElementById("CardKey").value;
+            }
+
+            function RollBack2ThisCard() {
+                if (confirm("Do you real want to roll whole MiniPIP to step: " + document.getElementById("modalname").value + " ?")) {
+                    window.location.href = '/Domino/MiniPIP/RollBack2ThisCard?CardKey=' + document.getElementById("CardKey").value + '&ECOKey=' + document.getElementById("ECOKey").value;
+                }
+            }
+
+            function DeleteSPCardComment(oBT) {
+                if (oBT.value) {
+                    if (confirm("Do you really want to delete this comment?")) {
+                        window.location.href = "/Domino/MiniPIP/DeleteSPCardComment?" + oBT.value;
                     }
                 }
-</script>
+            }
 
+            function ModifyCardComment(oBT) {
+                if (oBT.value) {
+                    window.location.href = "/Domino/MiniPIP/ModifyCardComment?" + oBT.value;
+                }
+            }
+        </script>
+        }
+        </div>
+</div>

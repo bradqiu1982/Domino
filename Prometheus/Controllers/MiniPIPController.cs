@@ -14,6 +14,49 @@ namespace Domino.Controllers
 {
     public class MiniPIPController : Controller
     {
+
+        private void RepairDefaultCards(int cardcount, ECOBaseInfo baseinfo)
+        {
+            if (cardcount == 0)
+                return;
+
+            if (cardcount < 2)
+            {
+                new System.Threading.ManualResetEvent(false).WaitOne(2000);
+                DominoVM.CreateCard(baseinfo.ECOKey, DominoVM.GetUniqKey(), DominoCardType.ECOSignoff1);
+            }
+            if (cardcount < 3)
+            {
+                new System.Threading.ManualResetEvent(false).WaitOne(2000);
+                DominoVM.CreateCard(baseinfo.ECOKey, DominoVM.GetUniqKey(), DominoCardType.ECOComplete);
+            }
+            if (cardcount < 4)
+            {
+                new System.Threading.ManualResetEvent(false).WaitOne(2000);
+                DominoVM.CreateCard(baseinfo.ECOKey, DominoVM.GetUniqKey(), DominoCardType.SampleOrdering);
+            }
+            if (cardcount < 5)
+            {
+                new System.Threading.ManualResetEvent(false).WaitOne(2000);
+                DominoVM.CreateCard(baseinfo.ECOKey, DominoVM.GetUniqKey(), DominoCardType.SampleBuilding);
+            }
+            if (cardcount < 6)
+            {
+                new System.Threading.ManualResetEvent(false).WaitOne(2000);
+                DominoVM.CreateCard(baseinfo.ECOKey, DominoVM.GetUniqKey(), DominoCardType.SampleShipment);
+            }
+            if (cardcount < 7)
+            {
+                new System.Threading.ManualResetEvent(false).WaitOne(2000);
+                DominoVM.CreateCard(baseinfo.ECOKey, DominoVM.GetUniqKey(), DominoCardType.SampleCustomerApproval);
+            }
+            if (cardcount < 8)
+            {
+                new System.Threading.ManualResetEvent(false).WaitOne(2000);
+                DominoVM.CreateCard(baseinfo.ECOKey, DominoVM.GetUniqKey(), DominoCardType.MiniPIPComplete);
+            }
+        }
+
         // GET: MiniPIPs
         public ActionResult ViewAll()
         {
@@ -61,12 +104,17 @@ namespace Domino.Controllers
 
 
                 var templist = DominoVM.RetrieveECOCards(item);
+                if (templist.Count > 0 && string.Compare(item.FlowInfo, DominoFlowInfo.Default) == 0)
+                {
+                    RepairDefaultCards(templist.Count, item);
+                    templist = DominoVM.RetrieveECOCards(item);
+                }
 
                 if (string.Compare(item.MiniPIPStatus, DominoMiniPIPStatus.hold) == 0)
                 {
                     foreach (var card in templist)
                     {
-                        card.CardStatus = DominoCardStatus.info;
+                        card.CardStatus = DominoCardStatus.working;
                     }
                 }
 
@@ -355,6 +403,12 @@ namespace Domino.Controllers
                     continue;
 
                 var templist = DominoVM.RetrieveECOCards(item);
+                if (templist.Count > 0 && string.Compare(item.FlowInfo, DominoFlowInfo.Default) == 0)
+                {
+                    RepairDefaultCards(templist.Count, item);
+                    templist = DominoVM.RetrieveECOCards(item);
+                }
+
                 vm.Add(templist);
             }
 
@@ -889,6 +943,25 @@ namespace Domino.Controllers
                     var dict = new RouteValueDictionary();
                     dict.Add("ECOKey", ECOKey);
                     dict.Add("CardKey", realcardkey);
+
+                    new System.Threading.ManualResetEvent(false).WaitOne(2000);
+                    DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.ECOComplete);
+
+                    new System.Threading.ManualResetEvent(false).WaitOne(2000);
+                    DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.SampleOrdering);
+
+                    new System.Threading.ManualResetEvent(false).WaitOne(2000);
+                    DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.SampleBuilding);
+
+                    new System.Threading.ManualResetEvent(false).WaitOne(2000);
+                    DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.SampleShipment);
+
+                    new System.Threading.ManualResetEvent(false).WaitOne(2000);
+                    DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.SampleCustomerApproval);
+
+                    new System.Threading.ManualResetEvent(false).WaitOne(2000);
+                    DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.MiniPIPComplete);
+
                     return RedirectToAction(DominoCardType.ECOSignoff1, "MiniPIP", dict);
                 }
                 else if (string.Compare(baseinfos[0].ECOType, DominoECOType.RVS) == 0)
@@ -898,25 +971,25 @@ namespace Domino.Controllers
                     dict.Add("ECOKey", ECOKey);
                     dict.Add("CardKey", realcardkey);
 
-                    new System.Threading.ManualResetEvent(false).WaitOne(1200);
+                    new System.Threading.ManualResetEvent(false).WaitOne(2000);
                     DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.CustomerApprovalHold);
 
-                    new System.Threading.ManualResetEvent(false).WaitOne(1200);
+                    new System.Threading.ManualResetEvent(false).WaitOne(2000);
                     DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.SampleOrdering);
 
-                    new System.Threading.ManualResetEvent(false).WaitOne(1200);
+                    new System.Threading.ManualResetEvent(false).WaitOne(2000);
                     DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.SampleBuilding);
 
-                    new System.Threading.ManualResetEvent(false).WaitOne(1200);
+                    new System.Threading.ManualResetEvent(false).WaitOne(2000);
                     DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.SampleShipment);
 
-                    new System.Threading.ManualResetEvent(false).WaitOne(1200);
+                    new System.Threading.ManualResetEvent(false).WaitOne(2000);
                     DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.SampleCustomerApproval);
 
-                    new System.Threading.ManualResetEvent(false).WaitOne(1200);
+                    new System.Threading.ManualResetEvent(false).WaitOne(2000);
                     DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.ECOComplete);
 
-                    new System.Threading.ManualResetEvent(false).WaitOne(1200);
+                    new System.Threading.ManualResetEvent(false).WaitOne(2000);
                     DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.MiniPIPComplete);
 
                     return RedirectToAction(DominoCardType.ECOSignoff2, "MiniPIP", dict);
@@ -928,25 +1001,25 @@ namespace Domino.Controllers
                     dict.Add("ECOKey", ECOKey);
                     dict.Add("CardKey", realcardkey);
 
-                    new System.Threading.ManualResetEvent(false).WaitOne(1200);
+                    new System.Threading.ManualResetEvent(false).WaitOne(2000);
                     DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.CustomerApprovalHold);
 
-                    new System.Threading.ManualResetEvent(false).WaitOne(1200);
+                    new System.Threading.ManualResetEvent(false).WaitOne(2000);
                     DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.ECOComplete);
 
-                    new System.Threading.ManualResetEvent(false).WaitOne(1200);
+                    new System.Threading.ManualResetEvent(false).WaitOne(2000);
                     DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.SampleOrdering);
 
-                    new System.Threading.ManualResetEvent(false).WaitOne(1200);
+                    new System.Threading.ManualResetEvent(false).WaitOne(2000);
                     DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.SampleBuilding);
 
-                    new System.Threading.ManualResetEvent(false).WaitOne(1200);
+                    new System.Threading.ManualResetEvent(false).WaitOne(2000);
                     DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.SampleShipment);
 
-                    new System.Threading.ManualResetEvent(false).WaitOne(1200);
+                    new System.Threading.ManualResetEvent(false).WaitOne(2000);
                     DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.SampleCustomerApproval);
 
-                    new System.Threading.ManualResetEvent(false).WaitOne(1200);
+                    new System.Threading.ManualResetEvent(false).WaitOne(2000);
                     DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.MiniPIPComplete);
 
                     return RedirectToAction(DominoCardType.ECOSignoff2, "MiniPIP", dict);
@@ -2684,28 +2757,28 @@ namespace Domino.Controllers
         {
             var realcardkey = string.Empty;
 
-            new System.Threading.ManualResetEvent(false).WaitOne(1200);
+            new System.Threading.ManualResetEvent(false).WaitOne(2000);
             realcardkey = DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.ECOSignoff2);
 
-            new System.Threading.ManualResetEvent(false).WaitOne(1200);
+            new System.Threading.ManualResetEvent(false).WaitOne(2000);
             realcardkey = DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.CustomerApprovalHold);
 
-            new System.Threading.ManualResetEvent(false).WaitOne(1200);
+            new System.Threading.ManualResetEvent(false).WaitOne(2000);
             realcardkey = DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.SampleOrdering);
 
-            new System.Threading.ManualResetEvent(false).WaitOne(1200);
+            new System.Threading.ManualResetEvent(false).WaitOne(2000);
             realcardkey = DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.SampleBuilding);
 
-            new System.Threading.ManualResetEvent(false).WaitOne(1200);
+            new System.Threading.ManualResetEvent(false).WaitOne(2000);
             realcardkey = DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.SampleShipment);
 
-            new System.Threading.ManualResetEvent(false).WaitOne(1200);
+            new System.Threading.ManualResetEvent(false).WaitOne(2000);
             realcardkey = DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.SampleCustomerApproval);
 
-            new System.Threading.ManualResetEvent(false).WaitOne(1200);
+            new System.Threading.ManualResetEvent(false).WaitOne(2000);
             realcardkey = DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.ECOComplete);
 
-            new System.Threading.ManualResetEvent(false).WaitOne(1200);
+            new System.Threading.ManualResetEvent(false).WaitOne(2000);
             realcardkey = DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.MiniPIPComplete);
 
         }
@@ -2714,28 +2787,28 @@ namespace Domino.Controllers
         {
             var realcardkey = string.Empty;
 
-            new System.Threading.ManualResetEvent(false).WaitOne(1200);
+            new System.Threading.ManualResetEvent(false).WaitOne(2000);
             realcardkey = DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.ECOSignoff2);
 
-            new System.Threading.ManualResetEvent(false).WaitOne(1200);
+            new System.Threading.ManualResetEvent(false).WaitOne(2000);
             realcardkey = DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.CustomerApprovalHold);
 
-            new System.Threading.ManualResetEvent(false).WaitOne(1200);
+            new System.Threading.ManualResetEvent(false).WaitOne(2000);
             realcardkey = DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.ECOComplete);
 
-            new System.Threading.ManualResetEvent(false).WaitOne(1200);
+            new System.Threading.ManualResetEvent(false).WaitOne(2000);
             realcardkey = DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.SampleOrdering);
 
-            new System.Threading.ManualResetEvent(false).WaitOne(1200);
+            new System.Threading.ManualResetEvent(false).WaitOne(2000);
             realcardkey = DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.SampleBuilding);
 
-            new System.Threading.ManualResetEvent(false).WaitOne(1200);
+            new System.Threading.ManualResetEvent(false).WaitOne(2000);
             realcardkey = DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.SampleShipment);
 
-            new System.Threading.ManualResetEvent(false).WaitOne(1200);
+            new System.Threading.ManualResetEvent(false).WaitOne(2000);
             realcardkey = DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.SampleCustomerApproval);
 
-            new System.Threading.ManualResetEvent(false).WaitOne(1200);
+            new System.Threading.ManualResetEvent(false).WaitOne(2000);
             realcardkey = DominoVM.CreateCard(ECOKey, DominoVM.GetUniqKey(), DominoCardType.MiniPIPComplete);
 
         }
