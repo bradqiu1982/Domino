@@ -5,14 +5,29 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-
 <div class="row">
-    <div class="col-lg-3"><h2>Update Card Comment</h2></div>
-    <div class="col-lg-1"><h2><a data-toggle="tooltip" title="Back To Card" href="/Domino/MiniPIP/GoBackToCardByCardKey?CardKey=@(Model.CardKey)"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></a></h2></div>
-    <div class="col-lg-8"></div>
+    <div class="col-lg-12">&nbsp;</div>
 </div>
 
-<hr />
+<div class="row">
+    <div class="col-lg-12">&nbsp;</div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="row">
+            <ol class="breadcrumb" style="font-size:18px">
+                <li><a data-toggle="tooltip" title="Goto ViewAll" href="/Domino/MiniPIP/ViewAll">Working MiniPIP</a></li>
+                <li><a data-toggle="tooltip" title="Back To Card" href="/Domino/MiniPIP/GoBackToCardByCardKey?CardKey=@(Model.CardKey)">MiniPIP Card</a></li>
+                <li class="active">Update Card Comment</li>
+            </ol>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">&nbsp;</div>
+</div>
 
 <script src="../../ckeditor/ckeditor.js"></script>
 
@@ -31,7 +46,7 @@
                 <div>
                     <textarea name="commenteditor" id="commenteditor" rows="10" cols="80">@Model.Comment</textarea>
                     <script>
-                        CKEDITOR.replace('commenteditor', { htmlEncodeOutput: true, filebrowserImageUploadUrl: '/userfiles/Upload.ashx' });
+                        CKEDITOR.replace('commenteditor', { htmlEncodeOutput: true, filebrowserImageUploadUrl: '/userfiles/Upload.ashx', skin: 'moono-lisa' });
                     </script>
                 </div>
             </div>

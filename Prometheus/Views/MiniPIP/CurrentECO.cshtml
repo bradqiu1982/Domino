@@ -194,6 +194,12 @@
                 }
             }
 
+            function DeleteCardAttachment1(oBT) {
+                if (confirm("Do you real want to delete this attachment?")) {
+                    window.location.href = '/Domino/MiniPIP/DeleteCardAttachment?CardKey=' + document.getElementById("CardKey").value + '&FileName=' + oBT;
+                }
+            }
+
             function RefreshCard() {
                 window.location.href = '/Domino/MiniPIP/RefreshCard?CardKey=' + document.getElementById("CardKey").value;
             }
@@ -215,6 +221,12 @@
             function ModifyCardComment(oBT) {
                 if (oBT.value) {
                     window.location.href = "/Domino/MiniPIP/ModifyCardComment?" + oBT.value;
+                }
+            }
+
+            function ModifyCardComment1(oBT) {
+                if (oBT) {
+                    window.location.href = "/Domino/MiniPIP/ModifyCardComment?" + oBT;
                 }
             }
         </script>
