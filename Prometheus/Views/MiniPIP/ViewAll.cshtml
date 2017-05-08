@@ -3,6 +3,7 @@
 @{
     ViewBag.Title = "ViewAll";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
 }
 
 <div class="row">
@@ -204,11 +205,12 @@
                     <div class="panel-body">
                         @foreach (var item in defaultlist)
                         {
+                            var idx = 0;
 
                             var keyvals = Domino.Models.ECOBaseInfo.RetrieveBaseInfoKV4ViewAll(item[0].EBaseInfo);
 
-                            <div class="row">
-                                <div class="col-lg-4">
+                            <div class="row" style="padding:4px;">
+                                <div class="col-lg-4" style="padding:4px;">
                                     <div class="well" style="margin-bottom:8px;background-color:transparent !important;border-left-color:#006DC0;border-top-color:transparent !important;border-right-color:transparent !important;border-bottom-color:transparent !important;border-top-left-radius:0px;border-bottom-left-radius:0px;padding-top:4px;padding-bottom:4px">
                                         <table class="table table-hover borderless">
                                             <tbody>
@@ -233,8 +235,18 @@
                                     </div>
                                 </div>
 
-                                <div class="col-lg-8">
-                                    <img src="~/Content/images/minipip/@(item[0].EBaseInfo.ECOType).png"  style="height:180px; width:560px">
+                                <div class="col-lg-8" style="padding:4px;">
+                                    @foreach (var card in item)
+                                    {
+                                        <div class="col-lg-1"><img MYTP="HOVER" src="~/Content/images/@(card.EBaseInfo.ECOType)/@(card.EBaseInfo.ECOType)-@(card.CardType)-@(card.CardStatus).png" style="height:200px; width:62px;"></div>
+                                        idx = idx + 1;
+                                    }
+
+                                    @for (; idx < 12;)
+                                    {
+                                        <div class="col-lg-1"></div>
+                                        idx = idx + 1;
+                                    }
                                 </div>
 
                                 @*<div class="col-lg-8">
@@ -313,7 +325,7 @@
 
                         <div class="col-lg-8">
                             <div class="col-lg-8">
-                                <img src="~/Content/images/minipip/@(item[0].EBaseInfo.ECOType).png" style="height:180px; width:560px">
+                                <img src="~/Content/images/minipip/@(item[0].EBaseInfo.ECOType).png" style="height:200px; width:600px">
                             </div>
                         </div>
                         @*<div class="col-lg-8">
@@ -393,7 +405,7 @@
                            </div>
                         <div class="col-lg-8">
                             <div class="col-lg-8">
-                                <img src="~/Content/images/minipip/Default Vs Non-Sample.png" style="height:180px; width:560px">
+                                <img src="~/Content/images/minipip/Default Vs Non-Sample.png" style="height:200px; width:600px">
                             </div>
                         </div>
 
