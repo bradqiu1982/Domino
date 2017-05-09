@@ -6,337 +6,470 @@
 
         <script src="../../ckeditor/ckeditor.js"></script>
 
-        <div class="form-horizontal">
-            <div class="form-group">
-                <div class="row col-lg-6">
-                    <label class="control-label col-lg-2">Page Name</label>
-                    <div class="col-lg-10">
-                        <input class="form-control text-box single-line" value="@ViewBag.CardDetailPage" readonly="readonly" id="modalname" name="modalname" type="text" />
-                    </div>
-                </div>
-                <div class="row col-lg-6">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <div class="row col-lg-6">
-                    <label class="control-label col-lg-2">QA EEPROM Check</label>
-                    <div class="col-lg-10">
-                        @Html.DropDownList("QAEEPROMCheckList", null, new { @id = "QAEEPROMCheckList", @class = "form-control" })
-                    </div>
-                </div>
-                <div class="row col-lg-6">
-                    <label class="control-label col-lg-2">QA Label Check</label>
-                    <div class="col-lg-10">
-                        @Html.DropDownList("QALabelCheckList", null, new { @id = "QALabelCheckList", @class = "form-control" })
-                    </div>
-                </div>
-            </div>
-            <hr />
-            <div class="form-group">
-                <div class="row col-lg-6">
-                    <label class="control-label col-lg-2">Peer Review Engineer</label>
-                    <div class="col-lg-10">
-                        @Html.DropDownList("PeerReviewEngineerList", null, new { @id = "PeerReviewEngineerList", @class = "form-control" })
-                    </div>
-                </div>
-                <div class="row col-lg-6">
-                    <label class="control-label col-lg-2">Peer Reviewed</label>
-                    <div class="col-lg-10">
-                        @Html.DropDownList("PeerReviewList", null, new { @id = "PeerReviewList", @class = "form-control" })
-                    </div>
-                </div>
-            </div>
-            <hr />
-            <div class="form-group">
-                <div class="row col-lg-6">
-                    <label class="control-label col-lg-2">ECO Attachment Check</label>
-                    <div class="col-lg-10">
-                        @Html.DropDownList("ECOAttachmentCheckList", null, new { @id = "ECOAttachmentCheckList", @class = "form-control" })
-                    </div>
-                </div>
-                <div class="row col-lg-6">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <div class="row col-lg-12">
-                    <div class="col-lg-2 text-left">
-                        <label class="control-label text-left">ECO QR File</label>
-                    </div>
-                    
-                    @if (!string.IsNullOrEmpty(ViewBag.CurrentCard.ECOQRFile))
-                    {
-                        var fns = ViewBag.CurrentCard.ECOQRFile.Split(new string[] { ":::" }, StringSplitOptions.RemoveEmptyEntries);
-                        <div class="col-lg-10 text-left">
-                            <table>
-                                <tbody>
-                                    @foreach (var fn in fns)
-                                    {
-                                        var realname = fn.Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
-                                        <tr>
-                                            <td>
-                                                <a href="@fn" target="_blank">@(realname[realname.Length - 1])</a>
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
+        <div class="row">
+            <div class="col-lg-2" style="font-family:'Arial Narrow';font-size:18px"><strong>&nbsp;&nbsp;Information</strong></div>
+            <div class="col-lg-10">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <label class="control-label col-lg-2">Page Name</label>
+                            <div class="col-lg-10">
+                                <input class="form-control text-box single-line" value="@ViewBag.CardDetailPage" readonly="readonly" id="modalname" name="modalname" type="text" />
+                            </div>
                         </div>
-                    }
-                    else
-                    {
-                        <label class="control-label col-lg-11 text-left"></label>
-                    }
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="row col-lg-12">
-                    <div class="col-lg-2 text-left">
-                        <label class="control-label text-left">EEPROM Peer Review</label>
-                    </div>
-                    @if (!string.IsNullOrEmpty(ViewBag.CurrentCard.EEPROMPeerReview))
-                    {
-                        var fns = ViewBag.CurrentCard.EEPROMPeerReview.Split(new string[] { ":::" }, StringSplitOptions.RemoveEmptyEntries);
-                        <div class="col-lg-10 text-left">
-                            <table>
-                                <tbody>
-                                    @foreach (var fn in fns)
-                                    {
-                                        var realname = fn.Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
-                                        <tr>
-                                            <td>
-                                                <a href="@fn" target="_blank">@(realname[realname.Length - 1])</a>
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
+                        <div class="col-lg-6">
                         </div>
-                    }
-                    else
-                    {
-                    <label class="control-label col-lg-11 text-left"></label>
-                    }
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="row col-lg-12">
-                    <div class="col-lg-2 text-left">
-                        <label class="control-label text-left">ECO Traceview</label>
                     </div>
-                    @if (!string.IsNullOrEmpty(ViewBag.CurrentCard.ECOTraceview))
-                    {
-                        var fns = ViewBag.CurrentCard.ECOTraceview.Split(new string[] { ":::" }, StringSplitOptions.RemoveEmptyEntries);
-                        <div class="col-lg-10 text-left">
-                            <table>
-                                <tbody>
-                                    @foreach (var fn in fns)
-                                    {
-                                        var realname = fn.Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
-                                        <tr>
-                                            <td>
-                                                <a href="@fn" target="_blank">@(realname[realname.Length - 1])</a>
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <label class="control-label col-lg-2">QA EEPROM Check</label>
+                            <div class="col-lg-10">
+                                @Html.DropDownList("QAEEPROMCheckList", null, new { @id = "QAEEPROMCheckList", @class = "form-control" })
+                            </div>
                         </div>
-                    }
-                    else
-                    {
-                        <label class="control-label col-lg-11 text-left"></label>
-                    }
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="row col-lg-12">
-                    <div class="col-lg-2 text-left">
-                        <label class="control-label text-left">Spec Compresuite</label>
-                    </div>
-                    @if (!string.IsNullOrEmpty(ViewBag.CurrentCard.SpecCompresuite))
-                    {
-                        var fns = ViewBag.CurrentCard.SpecCompresuite.Split(new string[] { ":::" }, StringSplitOptions.RemoveEmptyEntries);
-                        <div class="col-lg-10 text-left">
-                            <table>
-                                <tbody>
-                                    @foreach (var fn in fns)
-                                    {
-                                        var realname = fn.Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
-                                        <tr>
-                                            <td>
-                                                <a href="@fn" target="_blank">@(realname[realname.Length - 1])</a>
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
+                        <div class="col-lg-6">
+                            <label class="control-label col-lg-2">QA Label Check</label>
+                            <div class="col-lg-10">
+                                @Html.DropDownList("QALabelCheckList", null, new { @id = "QALabelCheckList", @class = "form-control" })
+                            </div>
                         </div>
-                    }
-                    else
-                    {
-                        <label class="control-label col-lg-11 text-left"></label>
-                    }
-                </div>
-            </div>
-
-            <hr />
-
-            <div class="form-group">
-                <div class="row col-lg-12">
-                    <label class="control-label col-lg-1">ECO TR Approver</label>
-                    <div class="col-lg-11">
-                        <textarea class="form-control col-md-12" id="ECOTRApprover" name="ECOTRApprover" style="height:36px;min-width:800px;">@(ViewBag.CurrentCard.ECOTRApprover)</textarea>
                     </div>
                 </div>
-            </div>
-
-            <div class="form-group">
-                <div class="row col-lg-12">
-                    <label class="control-label col-lg-1">ECO MD Approver</label>
-                    <div class="col-lg-11">
-                        <textarea class="form-control col-md-12" id="ECOMDApprover" name="ECOMDApprover" style="height:36px;min-width:800px;">@(ViewBag.CurrentCard.ECOMDApprover)</textarea>
-                    </div>
-                </div>
-            </div>
-
-            <hr />
-
-            <div class="form-group">
-                <div class="row col-lg-6">
-                    <label class="control-label col-lg-2">Mini PVT Check</label>
-                    <div class="col-lg-10">
-                        @Html.DropDownList("MiniPVTCheckList", null, new { @id = "MiniPVTCheckList", @class = "form-control" })
-                    </div>
-                </div>
-                <div class="row col-lg-6">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <div class="row col-lg-12">
-                    <label class="control-label col-lg-1 text-left">Agile Code File</label>
-                    @if (!string.IsNullOrEmpty(ViewBag.CurrentCard.AgileCodeFile))
-                    {
-                        var fns = ViewBag.CurrentCard.AgileCodeFile.Split(new char[] { '/' });
-                        var fn = fns[fns.Length - 1];
-                        <div class="col-lg-11 text-left">
-                            <a href="@ViewBag.CurrentCard.AgileCodeFile" target="_blank">@fn</a>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="row col-lg-6">
+                            <label class="control-label col-lg-2">Peer Review Engineer</label>
+                            <div class="col-lg-10">
+                                @Html.DropDownList("PeerReviewEngineerList", null, new { @id = "PeerReviewEngineerList", @class = "form-control" })
+                            </div>
                         </div>
-                    }
-                    else
-                    {
-                        <label class="control-label col-lg-11 text-left"></label>
-                    }
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="row col-lg-12">
-                    <label class="control-label col-lg-1 text-left">Agile Spec File</label>
-                    @if (!string.IsNullOrEmpty(ViewBag.CurrentCard.AgileSpecFile))
-                    {
-                        var fns = ViewBag.CurrentCard.AgileSpecFile.Split(new char[] { '/' });
-                        var fn = fns[fns.Length - 1];
-                        <div class="col-lg-11 text-left">
-                            <a href="@ViewBag.CurrentCard.AgileSpecFile" target="_blank">@fn</a>
+                        <div class="row col-lg-6">
+                            <label class="control-label col-lg-2">Peer Reviewed</label>
+                            <div class="col-lg-10">
+                                @Html.DropDownList("PeerReviewList", null, new { @id = "PeerReviewList", @class = "form-control" })
+                            </div>
                         </div>
-                    }
-                    else
-                    {
-                        <label class="control-label col-lg-11 text-left"></label>
-                    }
+                    </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <div class="row col-lg-12">
-                    <label class="control-label col-lg-1 text-left">Agile Testing File</label>
-                    @if (!string.IsNullOrEmpty(ViewBag.CurrentCard.AgileTestFile))
-                    {
-                        var fns = ViewBag.CurrentCard.AgileTestFile.Split(new char[] { '/' });
-                        var fn = fns[fns.Length - 1];
-                        <div class="col-lg-11 text-left">
-                            <a href="@ViewBag.CurrentCard.AgileTestFile" target="_blank">@fn</a>
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-lg-6">
+                                <input class="form-control text-box single-line" id="ECOCustomerHoldDate" name="ECOCustomerHoldDate" type="hidden" value="@ViewBag.CurrentCard.ECOCustomerHoldDate" />
                         </div>
-                    }
-                    else
-                    {
-                        <label class="control-label col-lg-11 text-left"></label>
-                    }
-                </div>
-            </div>
-
-
-            <div class="form-group">
-                <div class="row col-lg-6">
-                    <input class="form-control text-box single-line" value="@ViewBag.ECOKey" type="hidden" id="ECOKey" name="ECOKey" />
-                </div>
-                <div class="row col-lg-6">
-                    <input class="form-control text-box single-line" value="@ViewBag.CardKey" type="hidden" id="CardKey" name="CardKey" />
-                </div>
-            </div>
-
-            <hr />
-
-            <div class="form-group">
-                <div class="row col-lg-6">
-                    <label class="control-label col-lg-2">FA Category</label>
-                    <div class="col-lg-10">
-                        @Html.DropDownList("FACategoryList", null, new { @id = "FACategoryList", @class = "form-control" })
-                    </div>
-                </div>
-                <div class="row col-lg-6">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <div class="row col-lg-6">
-                    <label class="control-label col-lg-2">FAI Send To RSM Date</label>
-                    <div class="col-lg-10">
-                        <input class="form-control text-box single-line" id="RSMSendDate" name="RSMSendDate" type="text" value="@ViewBag.CurrentCard.RSMSendDate" />
+                        <div class="col-lg-6">
+                        </div>
                     </div>
                 </div>
 
-                <div class="row col-lg-6">
-                    <label class="control-label col-lg-2">FAI Approve Date</label>
-                    <div class="col-lg-10">
-                        <input class="form-control text-box single-line" id="RSMApproveDate" name="RSMApproveDate" type="text" value="@ViewBag.CurrentCard.RSMApproveDate" />
-                    </div>
-                </div>
-                <script type="text/javascript">
-                    $(document).ready(function () {
-                        $("#RSMSendDate").datepicker({
-                            changeMonth: true,
-                            changeYear: true,
-                            dateFormat: 'yy-mm-dd'
-                        });
-                        $("#RSMApproveDate").datepicker({
-                            changeMonth: true,
-                            changeYear: true,
-                            dateFormat: 'yy-mm-dd'
-                        });
-                    });
-                </script>
             </div>
+        </div>
 
-            <div class="form-group">
-                <div class="row col-lg-6">
-                    <div class="col-lg-10">
-                        <input class="form-control text-box single-line" id="ECOCustomerHoldDate" name="ECOCustomerHoldDate" type="hidden" value="@ViewBag.CurrentCard.ECOCustomerHoldDate" />
-                    </div>
-                </div>
-                <div class="row col-lg-6">
-                </div>
-            </div>
+        <div class="row">
+            <div class="col-lg-12">&nbsp;</div>
+        </div>
 
-            <div class="form-group">
+        <div class="row">
+            <div class="row" style="margin-left:3px">
                 <div class="col-lg-12">
-                    <div class="col-lg-4">
-                        <span class="btn btn-default btn-file" id="choosefile3">
-                            Attachment <input type="file" name="file3" id="file3" runat="server" onchange="ShowFileNames3(this)" />
+                    <a data-toggle="collapse" href="#ecoattachcheck" aria-expanded="false" aria-controls="collapseExample" style="font-size:18px;font-family:'Arial Narrow';">
+                        <font color="black"><strong>&nbsp;&nbsp;ECO Attachment Check</strong></font>&nbsp;&nbsp;&nbsp;&nbsp;<img src="~/Content/images/icon/extend.png" style="height:25px; width:14px">
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">&nbsp;</div>
+            </div>
+            <div class="row" style="margin-left:10px">
+                <div class="collapse" id="ecoattachcheck">
+                    <div class="col-lg-1"></div>
+                    <div class="col-lg-11">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label class="control-label col-lg-2">Checked</label>
+                                    <div class="col-lg-10">
+                                        @Html.DropDownList("ECOAttachmentCheckList", null, new { @id = "ECOAttachmentCheckList", @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="col-lg-2 text-left">
+                                        <label class="control-label text-left">ECO QR File</label>
+                                    </div>
+
+                                    @if (!string.IsNullOrEmpty(ViewBag.CurrentCard.ECOQRFile))
+                                    {
+                                        var fns = ViewBag.CurrentCard.ECOQRFile.Split(new string[] { ":::" }, StringSplitOptions.RemoveEmptyEntries);
+                                        <div class="col-lg-10 text-left">
+                                            <table>
+                                                <tbody>
+                                                    @foreach (var fn in fns)
+                                                    {
+                                                        var realname = fn.Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
+                                                        <tr>
+                                                            <td>
+                                                                <a href="@fn" target="_blank">@(realname[realname.Length - 1])</a>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <label class="control-label col-lg-11 text-left"></label>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="col-lg-2 text-left">
+                                        <label class="control-label text-left">EEPROM Peer Review</label>
+                                    </div>
+                                    @if (!string.IsNullOrEmpty(ViewBag.CurrentCard.EEPROMPeerReview))
+                                    {
+                                        var fns = ViewBag.CurrentCard.EEPROMPeerReview.Split(new string[] { ":::" }, StringSplitOptions.RemoveEmptyEntries);
+                                        <div class="col-lg-10 text-left">
+                                            <table>
+                                                <tbody>
+                                                    @foreach (var fn in fns)
+                                                    {
+                                                        var realname = fn.Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
+                                                        <tr>
+                                                            <td>
+                                                                <a href="@fn" target="_blank">@(realname[realname.Length - 1])</a>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <label class="control-label col-lg-11 text-left"></label>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="col-lg-2 text-left">
+                                        <label class="control-label text-left">ECO Traceview</label>
+                                    </div>
+                                    @if (!string.IsNullOrEmpty(ViewBag.CurrentCard.ECOTraceview))
+                                    {
+                                        var fns = ViewBag.CurrentCard.ECOTraceview.Split(new string[] { ":::" }, StringSplitOptions.RemoveEmptyEntries);
+                                        <div class="col-lg-10 text-left">
+                                            <table>
+                                                <tbody>
+                                                    @foreach (var fn in fns)
+                                                    {
+                                                        var realname = fn.Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
+                                                        <tr>
+                                                            <td>
+                                                                <a href="@fn" target="_blank">@(realname[realname.Length - 1])</a>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <label class="control-label col-lg-11 text-left"></label>
+                                    }
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="col-lg-2 text-left">
+                                        <label class="control-label text-left">Spec Compresuite</label>
+                                    </div>
+                                    @if (!string.IsNullOrEmpty(ViewBag.CurrentCard.SpecCompresuite))
+                                    {
+                                        var fns = ViewBag.CurrentCard.SpecCompresuite.Split(new string[] { ":::" }, StringSplitOptions.RemoveEmptyEntries);
+                                        <div class="col-lg-10 text-left">
+                                            <table>
+                                                <tbody>
+                                                    @foreach (var fn in fns)
+                                                    {
+                                                        var realname = fn.Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
+                                                        <tr>
+                                                            <td>
+                                                                <a href="@fn" target="_blank">@(realname[realname.Length - 1])</a>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <label class="control-label col-lg-11 text-left"></label>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">&nbsp;</div>
+        </div>
+
+        <div class="row">
+            <div class="row" style="margin-left:3px">
+                <div class="col-lg-12">
+                    <a data-toggle="collapse" href="#ecoapprover" aria-expanded="false" aria-controls="collapseExample" style="font-size:18px;font-family:'Arial Narrow';">
+                        <font color="black"><strong>&nbsp;&nbsp;ECO Approver</strong></font>&nbsp;&nbsp;&nbsp;&nbsp;<img src="~/Content/images/icon/extend.png" style="height:25px; width:14px">
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">&nbsp;</div>
+            </div>
+            <div class="row" style="margin-left:10px">
+                <div class="collapse" id="ecoapprover">
+                    <div class="col-lg-1"></div>
+                    <div class="col-lg-11">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <label class="control-label col-lg-1">ECO TR Approver</label>
+                                    <div class="col-lg-11">
+                                        <textarea class="form-control col-md-12" id="ECOTRApprover" name="ECOTRApprover" style="height:36px;min-width:800px;">@(ViewBag.CurrentCard.ECOTRApprover)</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <label class="control-label col-lg-1">ECO MD Approver</label>
+                                    <div class="col-lg-11">
+                                        <textarea class="form-control col-md-12" id="ECOMDApprover" name="ECOMDApprover" style="height:36px;min-width:800px;">@(ViewBag.CurrentCard.ECOMDApprover)</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">&nbsp;</div>
+        </div>
+
+        <div class="row">
+            <div class="row" style="margin-left:3px">
+                <div class="col-lg-12">
+                    <a data-toggle="collapse" href="#minipvtcheck" aria-expanded="false" aria-controls="collapseExample" style="font-size:18px;font-family:'Arial Narrow';">
+                        <font color="black"><strong>&nbsp;&nbsp;Mini PVT Check</strong></font>&nbsp;&nbsp;&nbsp;&nbsp;<img src="~/Content/images/icon/extend.png" style="height:25px; width:14px">
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">&nbsp;</div>
+            </div>
+            <div class="row" style="margin-left:10px">
+                <div class="collapse" id="minipvtcheck">
+                    <div class="col-lg-1"></div>
+                    <div class="col-lg-11">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="row col-lg-6">
+                                    <label class="control-label col-lg-2">Checked</label>
+                                    <div class="col-lg-10">
+                                        @Html.DropDownList("MiniPVTCheckList", null, new { @id = "MiniPVTCheckList", @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="row col-lg-6">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <label class="control-label col-lg-1 text-left">Agile Code File</label>
+                                    @if (!string.IsNullOrEmpty(ViewBag.CurrentCard.AgileCodeFile))
+                                    {
+                                        var fns = ViewBag.CurrentCard.AgileCodeFile.Split(new char[] { '/' });
+                                        var fn = fns[fns.Length - 1];
+                                        <div class="col-lg-11 text-left">
+                                            <a href="@ViewBag.CurrentCard.AgileCodeFile" target="_blank">@fn</a>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <label class="control-label col-lg-11 text-left"></label>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <label class="control-label col-lg-1 text-left">Agile Spec File</label>
+                                    @if (!string.IsNullOrEmpty(ViewBag.CurrentCard.AgileSpecFile))
+                                    {
+                                        var fns = ViewBag.CurrentCard.AgileSpecFile.Split(new char[] { '/' });
+                                        var fn = fns[fns.Length - 1];
+                                        <div class="col-lg-11 text-left">
+                                            <a href="@ViewBag.CurrentCard.AgileSpecFile" target="_blank">@fn</a>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <label class="control-label col-lg-11 text-left"></label>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <label class="control-label col-lg-1 text-left">Agile Testing File</label>
+                                    @if (!string.IsNullOrEmpty(ViewBag.CurrentCard.AgileTestFile))
+                                    {
+                                        var fns = ViewBag.CurrentCard.AgileTestFile.Split(new char[] { '/' });
+                                        var fn = fns[fns.Length - 1];
+                                        <div class="col-lg-11 text-left">
+                                            <a href="@ViewBag.CurrentCard.AgileTestFile" target="_blank">@fn</a>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <label class="control-label col-lg-11 text-left"></label>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">&nbsp;</div>
+        </div>
+
+        <div class="row">
+            <div class="row" style="margin-left:3px">
+                <div class="col-lg-12">
+                    <a data-toggle="collapse" href="#facheck" aria-expanded="false" aria-controls="collapseExample" style="font-size:18px;font-family:'Arial Narrow';">
+                        <font color="black"><strong>&nbsp;&nbsp;FA Information</strong></font>&nbsp;&nbsp;&nbsp;&nbsp;<img src="~/Content/images/icon/extend.png" style="height:25px; width:14px">
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">&nbsp;</div>
+            </div>
+            <div class="row" style="margin-left:10px">
+                <div class="collapse" id="facheck">
+                    <div class="col-lg-1"></div>
+                    <div class="col-lg-11">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <input class="form-control text-box single-line" value="@ViewBag.ECOKey" type="hidden" id="ECOKey" name="ECOKey" />
+                                </div>
+                                <div class="col-lg-6">
+                                    <input class="form-control text-box single-line" value="@ViewBag.CardKey" type="hidden" id="CardKey" name="CardKey" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label class="control-label col-lg-2">FA Category</label>
+                                    <div class="col-lg-10">
+                                        @Html.DropDownList("FACategoryList", null, new { @id = "FACategoryList", @class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label class="control-label col-lg-2">FAI Send To RSM Date</label>
+                                    <div class="col-lg-10">
+                                        <input class="form-control text-box single-line" id="RSMSendDate" name="RSMSendDate" type="text" value="@ViewBag.CurrentCard.RSMSendDate" />
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <label class="control-label col-lg-2">FAI Approve Date</label>
+                                    <div class="col-lg-10">
+                                        <input class="form-control text-box single-line" id="RSMApproveDate" name="RSMApproveDate" type="text" value="@ViewBag.CurrentCard.RSMApproveDate" />
+                                    </div>
+                                </div>
+                                <script type="text/javascript">
+                                    $(document).ready(function () {
+                                        $("#RSMSendDate").datepicker({
+                                            changeMonth: true,
+                                            changeYear: true,
+                                            dateFormat: 'yy-mm-dd'
+                                        });
+                                        $("#RSMApproveDate").datepicker({
+                                            changeMonth: true,
+                                            changeYear: true,
+                                            dateFormat: 'yy-mm-dd'
+                                        });
+                                    });
+                                </script>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">&nbsp;</div>
+        </div>
+
+        <div class="row">
+            <div class="row" style="margin-left:3px">
+                <div class="col-lg-2">
+                    <a data-toggle="collapse" href="#attachwell" aria-expanded="false" aria-controls="collapseExample" style="font-size:18px;font-family:'Arial Narrow';">
+                        <font color="black"><strong>&nbsp;&nbsp;@(ViewBag.CurrentCard.AttachList.Count) Attachements</strong></font>&nbsp;&nbsp;&nbsp;&nbsp;<img src="~/Content/images/icon/extend.png" style="height:25px; width:14px">
+                    </a>
+                </div>
+                <div class="col-lg-10">
+                    <div class="col-lg-3">
+                        <span class="btn btn-default btn-file" id="choosefile3" style="padding:0px;background-color:transparent !important;border-color:transparent !important;">
+                            <img src="~/Content/images/icon/Upload.png" MYTP="HOVER" style="height:20px; width:34px"><input type="file" name="file3" id="file3" runat="server" onchange="ShowFileNames3(this)" />
                         </span>
                     </div>
-                    <div class="col-lg-8">
+                    <div class="col-lg-9">
                         <div class="col-lg-11">
                             <label class="control-label" id="showfile3" name="showfile3"></label>
                         </div>
@@ -346,193 +479,23 @@
                     </div>
                 </div>
                 <script type="text/javascript">
-                                function ShowFileNames3(oFile) {
-                                    $('#showfile3').text(oFile.value);
-                                    document.getElementById("attachmentupload").value = oFile.value;
-                                }
+                    function ShowFileNames3(oFile) {
+                        $('#showfile3').text(oFile.value);
+                        document.getElementById("attachmentupload").value = oFile.value;
+                    }
                 </script>
             </div>
 
-
-            <div class="form-group">
-                <div class="col-lg-12">
-                    <div class="col-lg-4">
-                        <span class="btn btn-default btn-file" id="choosefile4">
-                            QR File <input type="file" name="file4" id="file4" runat="server" onchange="ShowFileNames4(this)" />
-                        </span>
-                    </div>
-                    <div class="col-lg-8">
-                        <div class="col-lg-11">
-                            <label class="control-label" id="showfile4" name="showfile4"></label>
-                        </div>
-                        <div class="col-lg-1">
-                            <input class="form-control text-box single-line" value="" id="qrfileupload" name="qrfileupload" type="hidden" />
-                        </div>
-                    </div>
-                </div>
-                <script type="text/javascript">
-                                function ShowFileNames4(oFile) {
-                                    $('#showfile4').text(oFile.value);
-                                    document.getElementById("qrfileupload").value = oFile.value;
-                                }
-                </script>
+            <div class="row">
+                <div class="col-lg-12">&nbsp;</div>
             </div>
 
-            <div class="form-group">
-                <div class="col-lg-12">
-                    <div class="col-lg-4">
-                        <span class="btn btn-default btn-file" id="choosefile5">
-                            Peer Review File <input type="file" name="file5" id="file5" runat="server" onchange="ShowFileNames5(this)" />
-                        </span>
-                    </div>
-                    <div class="col-lg-8">
-                        <div class="col-lg-11">
-                            <label class="control-label" id="showfile5" name="showfile5"></label>
-                        </div>
-                        <div class="col-lg-1">
-                            <input class="form-control text-box single-line" value="" id="peerfileupload" name="peerfileupload" type="hidden" />
-                        </div>
-                    </div>
-                </div>
-                <script type="text/javascript">
-                                function ShowFileNames5(oFile) {
-                                    $('#showfile5').text(oFile.value);
-                                    document.getElementById("peerfileupload").value = oFile.value;
-                                }
-                </script>
-            </div>
-
-            <div class="form-group">
-                <div class="col-lg-12">
-                    <div class="col-lg-4">
-                        <span class="btn btn-default btn-file" id="choosefile6">
-                            Traceview File <input type="file" name="file6" id="file6" runat="server" onchange="ShowFileNames6(this)" />
-                        </span>
-                    </div>
-                    <div class="col-lg-8">
-                        <div class="col-lg-11">
-                            <label class="control-label" id="showfile6" name="showfile6"></label>
-                        </div>
-                        <div class="col-lg-1">
-                            <input class="form-control text-box single-line" value="" id="traceviewfileupload" name="traceviewfileupload" type="hidden" />
-                        </div>
-                    </div>
-                </div>
-                <script type="text/javascript">
-                                function ShowFileNames6(oFile) {
-                                    $('#showfile6').text(oFile.value);
-                                    document.getElementById("traceviewfileupload").value = oFile.value;
-                                }
-                </script>
-            </div>
-
-            <div class="form-group">
-                <div class="col-lg-12">
-                    <div class="col-lg-4">
-                        <span class="btn btn-default btn-file" id="choosefile7">
-                            Spec comapresuite File <input type="file" name="file7" id="file7" runat="server" onchange="ShowFileNames7(this)" />
-                        </span>
-                    </div>
-                    <div class="col-lg-8">
-                        <div class="col-lg-11">
-                            <label class="control-label" id="showfile7" name="showfile7"></label>
-                        </div>
-                        <div class="col-lg-1">
-                            <input class="form-control text-box single-line" value="" id="speccomfileupload" name="speccomfileupload" type="hidden" />
-                        </div>
-                    </div>
-                </div>
-                <script type="text/javascript">
-                                function ShowFileNames7(oFile) {
-                                    $('#showfile7').text(oFile.value);
-                                    document.getElementById("speccomfileupload").value = oFile.value;
-                                }
-                </script>
-            </div>
-
-            <div class="form-group">
-                <div class="col-lg-12">
-                    <div class="col-lg-4">
-                        <span class="btn btn-default btn-file" id="choosefile2">
-                            Code File <input type="file" name="file2" id="file2" runat="server" onchange="ShowFileNames2(this)" />
-                        </span>
-                    </div>
-                    <div class="col-lg-8">
-                        <div class="col-lg-11">
-                            <label class="control-label" id="showfile2" name="showfile2"></label>
-                        </div>
-                        <div class="col-lg-1">
-                            <input class="form-control text-box single-line" value="" id="codefileupload" name="codefileupload" type="hidden" />
-                        </div>
-                    </div>
-                </div>
-                <script type="text/javascript">
-                                function ShowFileNames2(oFile) {
-                                    $('#showfile2').text(oFile.value);
-                                    document.getElementById("codefileupload").value = oFile.value;
-                                }
-                </script>
-            </div>
-
-            <div class="form-group">
-                <div class="col-lg-12">
-                    <div class="col-lg-4">
-                        <span class="btn btn-default btn-file" id="choosefile1">
-                            Spec File <input type="file" name="file1" id="file1" runat="server" onchange="ShowFileNames1(this)" />
-                        </span>
-                    </div>
-                    <div class="col-lg-8">
-                        <div class="col-lg-11">
-                            <label class="control-label" id="showfile1" name="showfile1"></label>
-                        </div>
-                        <div class="col-lg-1">
-                            <input class="form-control text-box single-line" value="" id="specfileupload" name="specfileupload" type="hidden" />
-                        </div>
-                    </div>
-                </div>
-                <script type="text/javascript">
-                                function ShowFileNames1(oFile) {
-                                    $('#showfile1').text(oFile.value);
-                                    document.getElementById("specfileupload").value = oFile.value;
-                                }
-                </script>
-            </div>
-
-            <div class="form-group">
-                <div class="col-lg-12">
-                    <div class="col-lg-4">
-                        <span class="btn btn-default btn-file" id="choosefile0">
-                            Testing File <input type="file" name="file0" id="file0" runat="server" onchange="ShowFileNames0(this)" />
-                        </span>
-                    </div>
-                    <div class="col-lg-8">
-                        <div class="col-lg-11">
-                            <label class="control-label" id="showfile0" name="showfile0"></label>
-                        </div>
-                        <div class="col-lg-1">
-                            <input class="form-control text-box single-line" value="" id="testingfileupload" name="testingfileupload" type="hidden" />
-                        </div>
-                    </div>
-                </div>
-                <script type="text/javascript">
-                                function ShowFileNames0(oFile) {
-                                    $('#showfile0').text(oFile.value);
-                                    document.getElementById("testingfileupload").value = oFile.value;
-                                }
-                </script>
-            </div>
-
-            <hr />
-
-            @if (ViewBag.CurrentCard.AttachList.Count > 0)
-            {
-                <div class="form-group">
-                    <div class="col-lg-12">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">Attachments</h3>
-                            </div>
-                            <div class="panel-body">
+            <div class="row" style="margin-left:10px">
+                <div class="collapse" id="attachwell">
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-lg-1"></div>
+                            <div class="col-lg-10">
                                 @foreach (var item in ViewBag.CurrentCard.AttachList)
                                 {
                                     var fns = item.Split(new char[] { '/' });
@@ -546,132 +509,365 @@
                                         <div class="col-lg-1">
                                             @if (ViewBag.badmin != null && ViewBag.badmin)
                                             {
-                                            <button class="form-control" value="@fn" onclick="DeleteCardAttachment(this)" type="button">
-                                                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                                            </button>
+                                                <img src="~/Content/images/icon/delete2.png" MYTP="HOVER" style="height:30px; width:18px" onclick="DeleteCardAttachment1('@fn')">
                                             }
                                         </div>
                                     </div>
                                 }
+
                             </div>
-                        </div>
-                    </div>
-                </div>
-                <hr />
-            }
-
-            @foreach (var item in ViewBag.CurrentCard.CommentList)
-            {
-                <div class="form-group">
-                    <div class="col-lg-12">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <div class="row">
-                                    <div class="col-lg-2"><h3 class="panel-title">Comment</h3></div>
-                                    <div class="col-lg-7"></div>
-                                    <div class="col-lg-1">
-                                        @if (ViewBag.badmin != null && ViewBag.badmin)
-                                        {
-                                            <button class="form-control" type="button" value="CardKey=@(item.CardKey)&Date=@(item.CommentDate.ToString())" onclick="ModifyCardComment(this)">
-                                                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-                                            </button>
-                                        }
-                                    </div>
-                                    <div class="col-lg-1"></div>
-                                    <div class="col-lg-1">
-                                        @if (ViewBag.badmin != null && ViewBag.badmin)
-                                        {
-                                            <button class="form-control" type="button" value="CardKey=@(item.CardKey)&Date=@(item.CommentDate.ToString())" onclick="DeleteSPCardComment(this)">
-                                                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                                            </button>
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="panel-body" style="overflow-y: scroll;overflow-x: scroll;">
-                                @Html.Raw(item.Comment)
-                            </div>
-                            <div class="panel-footer text-right">
-                                Reporter: <a href="/User/UserCenter?username=@item.Reporter">@item.Reporter.Split(new char[] { '@' })[0]</a> @item.CommentDate.ToString("yyyy-MM-dd hh:mm:ss")
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <hr />
-            }
-
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="form-group">
-                        Comment
-                    </div>
-
-                    <div class="form-group">
-                        <div>
-                            <textarea name="commenteditor" id="commenteditor" rows="10" cols="80"></textarea>
-                            <script>
-                                            CKEDITOR.replace('commenteditor', { htmlEncodeOutput: true, filebrowserImageUploadUrl: '/userfiles/Upload.ashx', skin: 'moono-lisa' });
-                            </script>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <div class="col-lg-4">
-                                    <span class="btn btn-default btn-file" id="choosefile6">
-                                        Editor Attachment <input type="file" name="file6" id="file6" runat="server" onchange="ShowFileNames6(this)" />
-                                    </span>
-                                </div>
-                                <div class="col-lg-1"></div>
-                                <div class="col-lg-1">@*<button class="form-control" type="button" data-toggle="tooltip" title="Save User Info" onclick="SaveUserContent()"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span></button>*@</div>
-                                <div class="col-lg-1">@*<button class="form-control" type="button" data-toggle="tooltip" title="Retrieve User Info" onclick="UserCacheContent()"><span class="glyphicon glyphicon-time" aria-hidden="true"></span></button>*@</div>
-                                <div class="col-lg-5"></div>
-                            </div>
-                            <script type="text/javascript">
-                                            function ShowFileNames6(oFile) {
-                                                ajaxFileUpload();
-                                            }
-                                            function ajaxFileUpload() {
-                                                $.ajaxFileUpload
-                                                (
-                                                    {
-                                                        url: '/userfiles/ImageUpload.ashx',
-                                                        secureuri: false,
-                                                        fileElementId: 'file6',
-                                                        dataType: 'HTML',
-                                                        success: function (data, status)
-                                                        {
-                                                            try {
-                                                                var wholeval = CKEDITOR.instances.commenteditor.getData() + data;
-                                                                CKEDITOR.instances.commenteditor.setData(wholeval);
-                                                            } catch (ex) { }
-                                                            
-                                                        },
-                                                        error: function (e)
-                                                        {
-                                                            alert(e);
-                                                        }
-                                                    }
-                                                )
-                                                return false;
-                                            }
-
-
-                            </script>
+                            <div class="col-lg-1"></div>
                         </div>
                     </div>
 
                 </div>
             </div>
-            <hr />
-            <div class="row">
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">&nbsp;</div>
+        </div>
+
+        <div class="row">
+            <div class="row" style="margin-left:3px">
                 <div class="col-lg-12">
+                    <a data-toggle="collapse" href="#specialattach" aria-expanded="false" aria-controls="collapseExample" style="font-size:18px;font-family:'Arial Narrow';">
+                        <font color="black"><strong>&nbsp;&nbsp;Special Attachement</strong></font>&nbsp;&nbsp;&nbsp;&nbsp;<img src="~/Content/images/icon/extend.png" style="height:25px; width:14px">
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">&nbsp;</div>
+            </div>
+            <div class="row" style="margin-left:10px">
+                <div class="collapse" id="specialattach">
+                    <div class="col-lg-1"></div>
+                    <div class="col-lg-11">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="col-lg-4">
+                                        <span class="btn btn-default btn-file" id="choosefile4">
+                                            QR File <input type="file" name="file4" id="file4" runat="server" onchange="ShowFileNames4(this)" />
+                                        </span>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <div class="col-lg-11">
+                                            <label class="control-label" id="showfile4" name="showfile4"></label>
+                                        </div>
+                                        <div class="col-lg-1">
+                                            <input class="form-control text-box single-line" value="" id="qrfileupload" name="qrfileupload" type="hidden" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <script type="text/javascript">
+                                            function ShowFileNames4(oFile) {
+                                                $('#showfile4').text(oFile.value);
+                                                document.getElementById("qrfileupload").value = oFile.value;
+                                            }
+                                </script>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="col-lg-4">
+                                        <span class="btn btn-default btn-file" id="choosefile5">
+                                            Peer Review File <input type="file" name="file5" id="file5" runat="server" onchange="ShowFileNames5(this)" />
+                                        </span>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <div class="col-lg-11">
+                                            <label class="control-label" id="showfile5" name="showfile5"></label>
+                                        </div>
+                                        <div class="col-lg-1">
+                                            <input class="form-control text-box single-line" value="" id="peerfileupload" name="peerfileupload" type="hidden" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <script type="text/javascript">
+                                            function ShowFileNames5(oFile) {
+                                                $('#showfile5').text(oFile.value);
+                                                document.getElementById("peerfileupload").value = oFile.value;
+                                            }
+                                </script>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="col-lg-4">
+                                        <span class="btn btn-default btn-file" id="choosefile6">
+                                            Traceview File <input type="file" name="file16" id="file16" runat="server" onchange="ShowFileNames6(this)" />
+                                        </span>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <div class="col-lg-11">
+                                            <label class="control-label" id="showfile6" name="showfile6"></label>
+                                        </div>
+                                        <div class="col-lg-1">
+                                            <input class="form-control text-box single-line" value="" id="traceviewfileupload" name="traceviewfileupload" type="hidden" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <script type="text/javascript">
+                                            function ShowFileNames6(oFile) {
+                                                $('#showfile6').text(oFile.value);
+                                                document.getElementById("traceviewfileupload").value = oFile.value;
+                                            }
+                                </script>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="col-lg-4">
+                                        <span class="btn btn-default btn-file" id="choosefile7">
+                                            Spec comapresuite File <input type="file" name="file7" id="file7" runat="server" onchange="ShowFileNames7(this)" />
+                                        </span>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <div class="col-lg-11">
+                                            <label class="control-label" id="showfile7" name="showfile7"></label>
+                                        </div>
+                                        <div class="col-lg-1">
+                                            <input class="form-control text-box single-line" value="" id="speccomfileupload" name="speccomfileupload" type="hidden" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <script type="text/javascript">
+                                            function ShowFileNames7(oFile) {
+                                                $('#showfile7').text(oFile.value);
+                                                document.getElementById("speccomfileupload").value = oFile.value;
+                                            }
+                                </script>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="col-lg-4">
+                                        <span class="btn btn-default btn-file" id="choosefile2">
+                                            Code File <input type="file" name="file2" id="file2" runat="server" onchange="ShowFileNames2(this)" />
+                                        </span>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <div class="col-lg-11">
+                                            <label class="control-label" id="showfile2" name="showfile2"></label>
+                                        </div>
+                                        <div class="col-lg-1">
+                                            <input class="form-control text-box single-line" value="" id="codefileupload" name="codefileupload" type="hidden" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <script type="text/javascript">
+                                            function ShowFileNames2(oFile) {
+                                                $('#showfile2').text(oFile.value);
+                                                document.getElementById("codefileupload").value = oFile.value;
+                                            }
+                                </script>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="col-lg-4">
+                                        <span class="btn btn-default btn-file" id="choosefile1">
+                                            Spec File <input type="file" name="file1" id="file1" runat="server" onchange="ShowFileNames1(this)" />
+                                        </span>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <div class="col-lg-11">
+                                            <label class="control-label" id="showfile1" name="showfile1"></label>
+                                        </div>
+                                        <div class="col-lg-1">
+                                            <input class="form-control text-box single-line" value="" id="specfileupload" name="specfileupload" type="hidden" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <script type="text/javascript">
+                                            function ShowFileNames1(oFile) {
+                                                $('#showfile1').text(oFile.value);
+                                                document.getElementById("specfileupload").value = oFile.value;
+                                            }
+                                </script>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="col-lg-4">
+                                        <span class="btn btn-default btn-file" id="choosefile0">
+                                            Testing File <input type="file" name="file0" id="file0" runat="server" onchange="ShowFileNames0(this)" />
+                                        </span>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <div class="col-lg-11">
+                                            <label class="control-label" id="showfile0" name="showfile0"></label>
+                                        </div>
+                                        <div class="col-lg-1">
+                                            <input class="form-control text-box single-line" value="" id="testingfileupload" name="testingfileupload" type="hidden" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <script type="text/javascript">
+                                            function ShowFileNames0(oFile) {
+                                                $('#showfile0').text(oFile.value);
+                                                document.getElementById("testingfileupload").value = oFile.value;
+                                            }
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+            <div class="row">
+                <div class="col-lg-12">&nbsp;</div>
+            </div>
+
+            <div class="row">
+                <div class="row" style="margin-left:3px">
+                    <div class="col-lg-12">
+                        <a data-toggle="collapse" href="#generalcomment" aria-expanded="false" aria-controls="collapseExample" style="font-size:18px;font-family:'Arial Narrow';">
+                            <font color="black"><strong>&nbsp;&nbsp;@(ViewBag.CurrentCard.CommentList.Count) Comments</strong></font>&nbsp;&nbsp;&nbsp;&nbsp;<img src="~/Content/images/icon/extend.png" style="height:25px; width:14px">
+                        </a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">&nbsp;</div>
+                </div>
+                <div class="row" style="margin-left:10px">
+                    <div class="collapse" id="generalcomment">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-lg-1"></div>
+                                <div class="col-lg-11">
+                                    @foreach (var item in ViewBag.CurrentCard.CommentList)
+                                    {
+                                        <div class="well" MYTP="HOVER" style="margin-bottom:2px;padding-bottom:2px;margin-top:2px;padding-top:2px;background-color:transparent !important;border-left-color:#006DC0;border-top-color:transparent !important;border-right-color:transparent !important;border-bottom-color:transparent !important;border-top-left-radius:0px;border-bottom-left-radius:0px;border-top-width:0px">
+                                            <div class="row" MYTP="HOVER" style="margin-top:2px;margin-bottom:2px;padding-top:2px;padding-bottom:2px;">
+                                                <div class="row" style="margin-top:2px;margin-bottom:2px;padding-top:2px;padding-bottom:2px;">
+                                                    <div class="col-lg-6">
+                                                        <div class="col-lg-7">@(item.Reporter.Split(new char[] { '@' })[0])&nbsp;&nbsp;@item.CommentDate.ToString("yyyy-MM-dd hh:mm:ss")</div>
+                                                        <div class="col-lg-2">
+                                                            @if (ViewBag.badmin != null && ViewBag.badmin)
+                                                            {
+                                                                <img src="~/Content/images/icon/edit2.png" MYTP="HOVER" style="height:34px; width:24px" onclick="ModifyCardComment1('CardKey=@(item.CardKey)&Date=@(item.CommentDate.ToString())')">
+                                                            }
+                                                        </div>
+                                                        <div class="col-lg-3"></div>
+                                                    </div>
+                                                    <div class="col-lg-6"></div>
+                                                </div>
+                                                <div class="row" style="margin-top:2px;margin-bottom:2px;padding-top:2px;padding-bottom:2px;">
+                                                    <div class="col-lg-1"></div>
+                                                    <div class="col-lg-11">@Html.Raw(item.Comment)</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">&nbsp;</div>
+            </div>
+
+            <div class="row">
+                <div class="row" style="margin-left:3px">
+                    <div class="col-lg-12">
+                        <a data-toggle="collapse" href="#commentinput" aria-expanded="false" aria-controls="collapseExample" style="font-size:18px;font-family:'Arial Narrow';">
+                            <font color="black"><strong>&nbsp;&nbsp;Comment Input</strong></font>&nbsp;&nbsp;&nbsp;&nbsp;<img src="~/Content/images/icon/extend.png" style="height:25px; width:14px">
+                        </a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">&nbsp;</div>
+                </div>
+                <div class="row" style="margin-left:10px">
+                    <div class="collapse" id="commentinput">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-lg-1"></div>
+                                <div class="col-lg-10">
+                                    <div class="form-group">
+                                        <div>
+                                            <textarea name="commenteditor" id="commenteditor" rows="10" cols="80"></textarea>
+                                            <script>
+                                                    CKEDITOR.replace('commenteditor', { htmlEncodeOutput: true, filebrowserImageUploadUrl: '/userfiles/Upload.ashx', skin: 'moono-lisa' });
+                                            </script>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="col-lg-4">
+                                                    <span class="btn btn-default btn-file" id="choosefile6">
+                                                        Editor Attachment <input type="file" name="file6" id="file6" runat="server" onchange="ShowFileNames6(this)" />
+                                                    </span>
+                                                </div>
+                                                <div class="col-lg-1"></div>
+                                                <div class="col-lg-1">@*<button class="form-control" type="button" data-toggle="tooltip" title="Save User Info" onclick="SaveUserContent()"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span></button>*@</div>
+                                                <div class="col-lg-1">@*<button class="form-control" type="button" data-toggle="tooltip" title="Retrieve User Info" onclick="UserCacheContent()"><span class="glyphicon glyphicon-time" aria-hidden="true"></span></button>*@</div>
+                                                <div class="col-lg-5"></div>
+                                            </div>
+                                            <script type="text/javascript">
+                                                    function ShowFileNames6(oFile) {
+                                                        ajaxFileUpload();
+                                                    }
+                                                    function ajaxFileUpload() {
+                                                        $.ajaxFileUpload
+                                                        (
+                                                            {
+                                                                url: '/userfiles/ImageUpload.ashx',
+                                                                secureuri: false,
+                                                                fileElementId: 'file6',
+                                                                dataType: 'HTML',
+                                                                success: function (data, status) {
+                                                                    try {
+                                                                        var wholeval = CKEDITOR.instances.commenteditor.getData() + data;
+                                                                        CKEDITOR.instances.commenteditor.setData(wholeval);
+                                                                    } catch (ex) { }
+
+                                                                },
+                                                                error: function (e) {
+                                                                    alert(e);
+                                                                }
+                                                            }
+                                                        )
+                                                        return false;
+                                                    }
+
+
+                                            </script>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-1"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">&nbsp;</div>
+            </div>
+
+            <div class="form-horizontal">
+
+                <div class="row col-lg-12">
                     <div class="form-group">
-                        <div class="col-lg-3">
+                        <div class="row col-lg-3">
                             @if (ViewBag.badmin != null && ViewBag.badmin)
                             { <button data-toggle="tooltip" title="Roll Back To This Card" type="button" class="btn btn-default" onclick="RollBack2ThisCard()"><span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span> RollBack2This</button>}
-                            
+
                         </div>
                         <div class="row col-lg-2">
                             <input type="submit" value="Commit Info" id="commitinfo" name="commitinfo" class="btn btn-default" />
@@ -687,9 +883,9 @@
                         </div>
                     </div>
                 </div>
+
             </div>
 
-        </div>
     }
 }
 
