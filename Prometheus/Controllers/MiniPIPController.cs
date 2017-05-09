@@ -15,7 +15,7 @@ namespace Domino.Controllers
     public class MiniPIPController : Controller
     {
 
-        private void RepairDefaultCards(int cardcount, ECOBaseInfo baseinfo)
+        private void CreateAllDefaultCards(int cardcount, ECOBaseInfo baseinfo)
         {
             if (cardcount == 0)
                 return;
@@ -106,7 +106,7 @@ namespace Domino.Controllers
                 var templist = DominoVM.RetrieveECOCards(item);
                 if (templist.Count > 0 && string.Compare(item.FlowInfo, DominoFlowInfo.Default) == 0)
                 {
-                    RepairDefaultCards(templist.Count, item);
+                    CreateAllDefaultCards(templist.Count, item);
                     templist = DominoVM.RetrieveECOCards(item);
                 }
 
@@ -405,7 +405,7 @@ namespace Domino.Controllers
                 var templist = DominoVM.RetrieveECOCards(item);
                 if (templist.Count > 0 && string.Compare(item.FlowInfo, DominoFlowInfo.Default) == 0)
                 {
-                    RepairDefaultCards(templist.Count, item);
+                    CreateAllDefaultCards(templist.Count, item);
                     templist = DominoVM.RetrieveECOCards(item);
                 }
 
@@ -2855,6 +2855,17 @@ namespace Domino.Controllers
                 var dict = new RouteValueDictionary();
                 dict.Add("ECOKey", vm[0].ECOKey);
                 dict.Add("CardKey", newcardkey);
+
+                if (string.Compare(baseinfos[0].ECOType, DominoECOType.DVNS) == 0
+                    || string.Compare(baseinfos[0].ECOType, DominoECOType.DVS) == 0)
+                {
+                    var templist = DominoVM.RetrieveECOCards(baseinfos[0]);
+                    if (templist.Count > 0)
+                    {
+                        CreateAllDefaultCards(templist.Count, baseinfos[0]);
+                    }
+                }
+
                 return RedirectToAction(vm[0].CardType, "MiniPIP", dict);
             }
             
