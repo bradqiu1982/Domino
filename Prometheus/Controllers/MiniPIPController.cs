@@ -118,7 +118,19 @@ namespace Domino.Controllers
                     }
                 }
 
-                vm.Add(templist);
+                bool forpereview = false;
+                foreach (var card in templist)
+                {
+                    if (string.Compare(card.CardStatus, DominoCardStatus.pending) == 0)
+                    {
+                        forpereview = true;
+                    }
+                }
+
+                if (forpereview)
+                {
+                    vm.Add(templist);
+                }
             }
 
             var alluser = ECOBaseInfo.RetrieveAllPE();
@@ -141,6 +153,89 @@ namespace Domino.Controllers
 
             return View(vm);
         }
+
+        public ActionResult AllPendingWorkingMiniPIP()
+        {
+
+            var ckdict = CookieUtility.UnpackCookie(this);
+            if (ckdict.ContainsKey("logonuser") && !string.IsNullOrEmpty(ckdict["logonuser"]))
+            {
+
+            }
+            else
+            {
+                var ck = new Dictionary<string, string>();
+                ck.Add("logonredirectctrl", "MiniPIP");
+                ck.Add("logonredirectact", "ViewAll");
+                CookieUtility.SetCookie(this, ck);
+                return RedirectToAction("LoginUser", "DominoUser");
+            }
+
+            var updater = GetAdminAuth();
+
+            var baseinfos = ECOBaseInfo.RetrieveAllWorkingECOBaseInfo();
+            var vm = new List<List<DominoVM>>();
+            foreach (var item in baseinfos)
+            {
+                var loginer = updater.Split(new string[] { "@" }, StringSplitOptions.RemoveEmptyEntries)[0].Replace(".", "").Replace(" ", "").ToUpper();
+                var pe = item.PE.Split(new string[] { "@" }, StringSplitOptions.RemoveEmptyEntries)[0].Replace(".", "").Replace(" ", "").ToUpper();
+                if (string.Compare(loginer, pe) != 0 && !ViewBag.badmin)
+                    continue;
+
+                var templist = DominoVM.RetrieveECOCards(item);
+                if (templist.Count > 0 && string.Compare(item.FlowInfo, DominoFlowInfo.Default) == 0)
+                {
+                    CreateAllDefaultCards(templist.Count, item);
+                    templist = DominoVM.RetrieveECOCards(item);
+                }
+
+                if (string.Compare(item.FlowInfo, DominoFlowInfo.Revise) == 0)
+                {
+                    if (templist.Count == 1 && string.Compare(item.ECOType, DominoECOType.RVNS) == 0)
+                    {
+                        CreateRVNSCards(item.ECOKey);
+                        templist = DominoVM.RetrieveECOCards(item);
+                    }
+                    else if (templist.Count == 1 && string.Compare(item.ECOType, DominoECOType.RVS) == 0)
+                    {
+                        CreateRVSCards(item.ECOKey);
+                        templist = DominoVM.RetrieveECOCards(item);
+                    }
+                }
+
+
+                if (string.Compare(item.MiniPIPStatus, DominoMiniPIPStatus.hold) == 0)
+                {
+                    foreach (var card in templist)
+                    {
+                        card.CardStatus = DominoCardStatus.working;
+                    }
+                }
+
+                vm.Add(templist);
+            }
+
+            var alluser = ECOBaseInfo.RetrieveAllPE();
+            var asilist = new List<string>();
+            asilist.Add("NONE");
+            asilist.AddRange(alluser);
+            ViewBag.FilterPEList = CreateSelectList(asilist, "");
+
+            var ecocardtypelistarray = new string[] { DominoCardType.ECOPending, DominoCardType.ECOSignoff1, DominoCardType.CustomerApprovalHold
+                                                        ,DominoCardType.ECOComplete,DominoCardType.SampleOrdering,DominoCardType.SampleBuilding
+                                                        ,DominoCardType.SampleShipment,DominoCardType.SampleCustomerApproval,DominoCardType.MiniPIPComplete };
+            asilist = new List<string>();
+            asilist.Add("NONE");
+            asilist.AddRange(ecocardtypelistarray);
+            ViewBag.ecocardtypelist = CreateSelectList(asilist, "");
+
+            ViewBag.HistoryInfos = DominoUserViewModels.RetrieveUserHistory(updater);
+
+            GetNoticeInfo();
+
+            return View("ViewAll", vm);
+        }
+
 
         public ActionResult SummaryMiniPIP(string CardType)
         {

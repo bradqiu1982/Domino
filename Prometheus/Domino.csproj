@@ -587,6 +587,8 @@
     <Content Include="Content\images\minipip\Default Vs Non-Sample.png" />
     <Content Include="Content\images\minipip\Default Vs Sample.png" />
     <Content Include="Content\images\minipip\DefaultComplete.png" />
+    <Content Include="Content\images\minipip\ECOPendingOnlypending.png" />
+    <Content Include="Content\images\minipip\ECOPendingOnlyworking.png" />
     <Content Include="Content\images\minipip\Revise Vs Non-Sample.png" />
     <Content Include="Content\images\minipip\Revise Vs Sample.png" />
     <Content Include="Content\images\Revise Vs Non-Sample\Revise Vs Non-Sample-CustomerApprovalHold-done.png" />

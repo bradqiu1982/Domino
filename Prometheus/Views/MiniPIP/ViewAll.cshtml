@@ -18,7 +18,7 @@
 <div class="row">
     <div class="col-lg-3">
         <ol class="breadcrumb" style="font-size:18px">
-            <li class="active">Working MiniPIP Board</li>
+            <li><a href="/Domino/MiniPIP/ViewAll">Working MiniPIP Board</a></li>
         </ol>
     </div>
     <div class="col-lg-1">
@@ -28,7 +28,7 @@
         <button data-toggle="tooltip" title="Operation History" type="button" onclick="OperationHistory()" class="btn btn-default" style="height:3em;width:100%;"><span class="glyphicon glyphicon-time" aria-hidden="true"></span></button>
     </div>
     <div class="col-lg-3">
-        <button data-toggle="tooltip" title="Completed MiniPIP" type="button" onclick="CompletedMiniPIP()" class="btn btn-default" style="height:3em; width:100%;">Completed MiniPIP</button>
+        <button  MYTP="BT"  data-toggle="tooltip" title="Completed MiniPIP" type="button" onclick="CompletedMiniPIP()" class="btn btn-default" style="width:10.5em;">Completed MiniPIP</button>
     </div>
     <div class="col-lg-4">
     </div>
@@ -93,7 +93,7 @@
                                     <label class="control-label">ECO Num Filter:</label>
                                 </div>
                                 <div class="col-lg-3">
-                                    <input class="form-control text-box single-line" typeof="text" value="" id="ECONumFilter" name="ECONumFilter" />
+                                    <input class="form-control text-box single-line" type="text" value="" id="ECONumFilter" name="ECONumFilter" />
                                 </div>
                                 <div class="col-lg-1">
                                     <button data-toggle="tooltip" title="ECO Num Filter" type="button" class="btn btn-default" onclick="FilterECONum()"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
@@ -146,11 +146,15 @@
                                 {
                                     <div class="col-lg-6"></div>
                                 }
-                                <div class="col-lg-6">
+                                <div class="col-lg-4">
                                     @if (ViewBag.minipipsummaryurl != null)
                                     {
                                       <a href="@ViewBag.minipipsummaryurl" target="_blank">MiniPIP Summary Data File</a>
                                     }
+                                </div>
+
+                                <div class="col-lg-2">
+                                    <button MYTP="BT" data-toggle="tooltip" title="All MiniPIP" type="button" onclick="AllMiniPIP()" class="btn btn-default" style="width:8em;">All MiniPIP</button>
                                 </div>
 
                                 <script type="text/javascript">
@@ -158,6 +162,11 @@
                                 if (document.getElementById("ecocardtypelist").value && document.getElementById("ecocardtypelist").value != 'NONE') {
                                     window.location.href = '/Domino/MiniPIP/SummaryMiniPIP?CardType=' + document.getElementById("ecocardtypelist").value;
                                 }
+                            }
+
+                            function AllMiniPIP()
+                            {
+                                window.location.href = '/Domino/MiniPIP/AllPendingWorkingMiniPIP';
                             }
                                 </script>
                             </div>
@@ -200,13 +209,13 @@
     <div class="panel-group" id="accordion">
         @if (defaultlist.Count > 0)
         {
-            <div class="panel panel-default" id="paneldefault" style="border-left-color:white;border-right-color:white;border-bottom-color:white;border-bottom-width:0px">
-                <div class="panel-heading" style="background-color:#00A4BB;">
+            <div class="panel panel-default" id="paneldefault" style="border-left-color:white;border-right-color:white;border-bottom-color:white;border-bottom-width:0px;margin-top:0px !important;margin-bottom:0px !important;">
+                <div class="panel-heading" style="background-color:#00A4BB;border-left-color:white;border-right-color:white;border-bottom-color:white;border-bottom-width:0px;margin-top:0px !important;margin-bottom:0px !important;">
                     <h4 class="panel-title">
                         <a data-toggle="collapse" data-target="#collapsedefault" href="#collapsedefault" class="collapsed" style="font-family:'Arial Narrow'"><font color="white">Default&nbsp;&nbsp;&nbsp;@(defaultlist.Count)</font></a>
                     </h4>
                 </div>
-                <div id="collapsedefault" class="panel-collapse collapse" style="border-left-color:white;border-right-color:white;border-bottom-color:white;border-bottom-width:0px">
+                <div id="collapsedefault" class="panel-collapse collapse" style="border-left-color:white;border-right-color:white;border-bottom-color:white;border-bottom-width:0px;margin-top:0px !important;margin-bottom:0px !important;">
                     <div class="panel-body" style="border-left-color:white;border-right-color:white;border-bottom-color:white;border-bottom-width:0px">
                         @foreach (var item in defaultlist)
                         {
@@ -246,7 +255,9 @@
                                         <div class="col-lg-1"><img MYTP="HOVER" src="~/Content/images/@(card.EBaseInfo.ECOType)/@(card.EBaseInfo.ECOType)-@(card.CardType)-@(card.CardStatus).png" onclick="GotoSpecialCard('/Domino/MiniPIP/@(card.CardType)?ECOKey=@(card.ECOKey)&CardKey=@(card.CardKey)')" style="height:200px; width:62px;" ></div>
                                         idx = idx + 1;
                                     }
-                                    @{
+
+                                    @if(item.Count() > 1)
+                                    {
                                         <div class="col-lg-1"><img src="~/Content/images/minipip/DefaultComplete.png" style="height:200px; width:62px;"></div>
                                         idx = idx+1;
                                     }
@@ -258,17 +269,20 @@
                                 </div>
 
                             </div>
-                            <hr style="border-color:#ECECEC;margin-top:4px;margin-bottom:4px;" />
+                            <hr style="border-color:#ECECEC;margin-top:0px !important;margin-bottom:0px !important;" />
                         }
                     </div>
                 </div>
             </div>
         }
 
+        <div class="row">
+            <div class="col-lg-12" style="height:1em;">&nbsp;</div>
+        </div>
 
         @if (reviselist.Count > 0)
         {
-        <div class="panel panel-default" id="panelrevise" style="border-left-color:white;border-right-color:white;border-bottom-color:white;border-bottom-width:0px">
+        <div class="panel panel-default" id="panelrevise" style="border-left-color:white;border-right-color:white;border-bottom-color:white;border-bottom-width:0px;margin-top:0px !important;">
             <div class="panel-heading" style="background-color:#006DC0;">
                 <h4 class="panel-title">
                     <a data-toggle="collapse" data-target="#collapserevise" href="#collapserevise" class="collapsed" style="font-family:'Arial Narrow'"><font color="white">Revise&nbsp;&nbsp;&nbsp;@(reviselist.Count)</font></a>
@@ -322,7 +336,7 @@
 
                     </div>
 
-                    <hr style="border-color:#ECECEC;margin-top:4px;margin-bottom:4px;" />
+                    <hr style="border-color:#ECECEC;margin-top:0px !important;margin-bottom:0px !important;" />
                     }
                    
                 </div>
@@ -330,13 +344,16 @@
         </div>
         }
 
+        <div class="row">
+            <div class="col-lg-12" style="height:1em;">&nbsp;</div>
+        </div>
 
-            @if (otherlist.Count > 0)
-            {
-        <div class="panel panel-default" id="panelother" style="border-left-color:white;border-right-color:white;border-bottom-color:white;border-bottom-width:0px">
+        @if (otherlist.Count > 0)
+        {
+        <div class="panel panel-default" id="panelother" style="border-left-color:white;border-right-color:white;border-bottom-color:white;border-bottom-width:0px;margin-top:0px !important;">
             <div class="panel-heading" style="background-color:#00C28D;">
                 <h4 class="panel-title">
-                    <a data-toggle="collapse" data-target="#collapseother" href="#collapseother" class="collapsed" style="font-family:'Arial Narrow'"><font color="white">Other&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@(otherlist.Count)</font></a>
+                    <a data-toggle="collapse" data-target="#collapseother" href="#collapseother" class="collapsed" style="font-family:'Arial Narrow'"><font color="white">Other&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@(otherlist.Count)</font></a>
                 </h4>
             </div>
             <div id="collapseother" class="panel-collapse collapse" style="border-left-color:white;border-right-color:white;border-bottom-color:white;border-bottom-width:0px">
@@ -373,33 +390,27 @@
                            </div>
                         <div class="col-lg-8">
                             <div class="col-lg-8">
-                                @foreach (var card in item)
+                                @if (string.IsNullOrEmpty(item.ElementAt(0).EBaseInfo.ECONum))
                                 {
-                                    <div class="col-lg-1"><img MYTP="HOVER" src="~/Content/images/@(card.EBaseInfo.ECOType)/@(card.EBaseInfo.ECOType)-@(card.CardType)-@(card.CardStatus).png" onclick="GotoSpecialCard('/Domino/MiniPIP/@(card.CardType)?ECOKey=@(card.ECOKey)&CardKey=@(card.CardKey)')" style="height:200px; width:62px;"></div>
-                                    idx = idx + 1;
+                                    <img MYTP="HOVER" src="~/Content/images/minipip/ECOPendingOnlyworking.png" onclick="GotoSpecialCard('/Domino/MiniPIP/ECOPending?ECOKey=@(item.ElementAt(0).ECOKey)&CardKey=@(item.ElementAt(0).CardKey)')" style="height:200px; width:80px;">
                                 }
-                                @if (string.Compare(item.ElementAt(0).EBaseInfo.FlowInfo, Domino.Models.DominoFlowInfo.Default) == 0)
+                                else
                                 {
-                                    <div class="col-lg-1"><img src="~/Content/images/minipip/DefaultComplete.png" style="height:200px; width:62px;"></div>
-                                    idx = idx + 1;
+                                    <img MYTP="HOVER" src="~/Content/images/minipip/ECOPendingOnlypending.png" onclick="GotoSpecialCard('/Domino/MiniPIP/ECOPending?ECOKey=@(item.ElementAt(0).ECOKey)&CardKey=@(item.ElementAt(0).CardKey)')" style="height:200px; width:80px;">
                                 }
-                                @for (; idx < 12;)
-                                {
-                                    <div class="col-lg-1"></div>
-                                    idx = idx + 1;
-                                }
+                                
                             </div>
                         </div>
 
                     </div>
 
-                    <hr style="border-color:#ECECEC;margin-top:4px;margin-bottom:4px;" />
+                    <hr style="border-color:#ECECEC;margin-top:0px !important;margin-bottom:0px !important;" />
                     }
 
                 </div>
             </div>
         </div>
-            }
+        }
      </div>
 
 

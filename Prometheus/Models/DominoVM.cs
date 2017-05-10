@@ -1187,6 +1187,12 @@ namespace Domino.Models
                 tempitem.CommentList = RetrieveCardComments(tempitem.CardKey);
                 tempitem.AttachList = RetrieveCardAttachment(tempitem.CardKey);
 
+                if (!string.IsNullOrEmpty(baseinfo.MiniPIPStatus)
+                    && string.Compare(baseinfo.MiniPIPStatus, DominoMiniPIPStatus.done) == 0)
+                {
+                    tempitem.CardStatus = DominoCardStatus.done;
+                }
+
                 ret.Add(tempitem);
 
                 idx = idx + 1;

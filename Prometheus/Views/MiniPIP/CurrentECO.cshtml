@@ -121,25 +121,53 @@
                         </div>
 
                         <div class="col-lg-9" style="padding:4px;">
-                            @{
-                                <div class="col-lg-1"></div>
-                                idx = idx + 1;
-                            }
-                            @foreach (var card in item)
+                            @if (string.IsNullOrEmpty(item.ElementAt(0).EBaseInfo.FlowInfo))
                             {
-                                <div class="col-lg-1"><img MYTP="HOVER" src="~/Content/images/@(card.EBaseInfo.ECOType)/@(card.EBaseInfo.ECOType)-@(card.CardType)-@(card.CardStatus).png" onclick="GotoSpecialCard('/Domino/MiniPIP/@(card.CardType)?ECOKey=@(card.ECOKey)&CardKey=@(card.CardKey)')" style="height:300px; width:72px;"></div>
-                                idx = idx + 1;
+                                {
+                                    <div class="col-lg-1"></div>
+                                    idx = idx + 1;
+                                }
+                                {
+                                    if (string.IsNullOrEmpty(item.ElementAt(0).EBaseInfo.ECONum))
+                                    {
+                                        <div class="col-lg-1"><img MYTP="HOVER" src="~/Content/images/minipip/ECOPendingOnlyworking.png" style="height:300px; width:120px;"></div>
+                                    }
+                                    else
+                                    {
+                                        <div class="col-lg-1"><img MYTP="HOVER" src="~/Content/images/minipip/ECOPendingOnlypending.png" style="height:300px; width:120px;"></div>
+                                    }
+
+                                    idx = idx + 1;
+                                }
+                                for (; idx < 12;)
+                                {
+                                    <div class="col-lg-1"></div>
+                                    idx = idx + 1;
+                                }
                             }
-                            @if (string.Compare(item.ElementAt(0).EBaseInfo.FlowInfo, Domino.Models.DominoFlowInfo.Default) == 0)
+                            else
                             {
-                                <div class="col-lg-1"><img src="~/Content/images/minipip/DefaultComplete.png" style="height:300px; width:72px;"></div>
-                                idx = idx + 1;
+                                    {
+                                        <div class="col-lg-1"></div>
+                                        idx = idx + 1;
+                                    }
+                                    foreach (var card in item)
+                                    {
+                                        <div class="col-lg-1"><img MYTP="HOVER" src="~/Content/images/@(card.EBaseInfo.ECOType)/@(card.EBaseInfo.ECOType)-@(card.CardType)-@(card.CardStatus).png" onclick="GotoSpecialCard('/Domino/MiniPIP/@(card.CardType)?ECOKey=@(card.ECOKey)&CardKey=@(card.CardKey)')" style="height:300px; width:72px;"></div>
+                                        idx = idx + 1;
+                                    }
+                                    if (string.Compare(item.ElementAt(0).EBaseInfo.FlowInfo, Domino.Models.DominoFlowInfo.Default) == 0 && item.Count() > 1)
+                                    {
+                                        <div class="col-lg-1"><img src="~/Content/images/minipip/DefaultComplete.png" style="height:300px; width:72px;"></div>
+                                        idx = idx + 1;
+                                    }
+                                    for (; idx < 12;)
+                                    {
+                                        <div class="col-lg-1"></div>
+                                        idx = idx + 1;
+                                    }
                             }
-                            @for (; idx < 12;)
-                            {
-                                <div class="col-lg-1"></div>
-                                idx = idx + 1;
-                            }
+
                         </div>
                     </div>
                     <hr style="border-color:#ECECEC;margin-top:4px;margin-bottom:4px;" />
