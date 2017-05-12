@@ -679,7 +679,10 @@ namespace Domino.Models
 
                         if (string.IsNullOrEmpty(baseinfo.ECONum))
                         {
-                            DominoVM.CreateCard(baseinfo.ECOKey, CardKey, DominoCardType.ECOPending, DominoCardStatus.working);
+                            new System.Threading.ManualResetEvent(false).WaitOne(1000);
+                            var currenttime = DateTime.Now;
+                            currenttime = currenttime.AddMinutes(1);
+                            DominoVM.CreateCard(baseinfo.ECOKey, CardKey, DominoCardType.ECOPending,currenttime.ToString(), DominoCardStatus.working);
 
                             var PendingDays = "0";
                             if (!string.IsNullOrEmpty(baseinfo.FinalRevison))
@@ -695,7 +698,11 @@ namespace Domino.Models
                         }
                         else
                         {
-                            DominoVM.CreateCard(baseinfo.ECOKey, CardKey, DominoCardType.ECOPending, DominoCardStatus.pending);
+                            new System.Threading.ManualResetEvent(false).WaitOne(1000);
+                            var currenttime = DateTime.Now;
+                            currenttime = currenttime.AddMinutes(1);
+
+                            DominoVM.CreateCard(baseinfo.ECOKey, CardKey, DominoCardType.ECOPending,currenttime.ToString(), DominoCardStatus.pending);
                         }
 
                         var customerfold = new List<string>();

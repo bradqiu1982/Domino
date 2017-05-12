@@ -1148,13 +1148,13 @@ namespace Domino.Models
         }
 
 
-        public static string CreateCard(string ECOKey,string NewCardKey,string CardType,string CardStatus= "working")
+        public static string CreateCard(string ECOKey,string NewCardKey,string CardType,string createtime,string CardStatus= "working")
         {
             var cardexist = DominoVM.RetrieveSpecialCard(ECOKey, CardType);
             if (cardexist.Count == 0)
             {
                 var sql = "insert into ECOCard(ECOKey,CardKey,CardType,CardStatus,CardCreateTime) values('<ECOKey>','<CardKey>','<CardType>','<CardStatus>','<CardCreateTime>')";
-                sql = sql.Replace("<ECOKey>", ECOKey).Replace("<CardKey>", NewCardKey).Replace("<CardType>", CardType).Replace("<CardStatus>", CardStatus).Replace("<CardCreateTime>", DateTime.Now.ToString());
+                sql = sql.Replace("<ECOKey>", ECOKey).Replace("<CardKey>", NewCardKey).Replace("<CardType>", CardType).Replace("<CardStatus>", CardStatus).Replace("<CardCreateTime>", createtime);
                 DBUtility.ExeLocalSqlNoRes(sql);
                 return NewCardKey;
             }
