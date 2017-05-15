@@ -679,7 +679,7 @@ namespace Domino.Models
 
                         if (string.IsNullOrEmpty(baseinfo.ECONum))
                         {
-                            new System.Threading.ManualResetEvent(false).WaitOne(1000);
+                            new System.Threading.ManualResetEvent(false).WaitOne(2000);
                             var currenttime = DateTime.Now;
                             currenttime = currenttime.AddMinutes(1);
                             DominoVM.CreateCard(baseinfo.ECOKey, CardKey, DominoCardType.ECOPending,currenttime.ToString(), DominoCardStatus.working);
@@ -698,7 +698,7 @@ namespace Domino.Models
                         }
                         else
                         {
-                            new System.Threading.ManualResetEvent(false).WaitOne(1000);
+                            new System.Threading.ManualResetEvent(false).WaitOne(2000);
                             var currenttime = DateTime.Now;
                             currenttime = currenttime.AddMinutes(1);
 

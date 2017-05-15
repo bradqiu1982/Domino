@@ -1050,7 +1050,7 @@ namespace Domino.Controllers
                 if (string.Compare(baseinfos[0].ECOType, DominoECOType.DVS) == 0
                     || string.Compare(baseinfos[0].ECOType, DominoECOType.DVNS) == 0)
                 {
-                    new System.Threading.ManualResetEvent(false).WaitOne(1000);
+                    new System.Threading.ManualResetEvent(false).WaitOne(2000);
                     var currenttime = DateTime.Now;
 
                     currenttime = currenttime.AddMinutes(1);
@@ -1081,7 +1081,7 @@ namespace Domino.Controllers
                 }
                 else if (string.Compare(baseinfos[0].ECOType, DominoECOType.RVS) == 0)
                 {
-                    new System.Threading.ManualResetEvent(false).WaitOne(1000);
+                    new System.Threading.ManualResetEvent(false).WaitOne(2000);
                     var currenttime = DateTime.Now;
 
                     currenttime = currenttime.AddMinutes(1);
@@ -1115,7 +1115,7 @@ namespace Domino.Controllers
                 }
                 else if (string.Compare(baseinfos[0].ECOType, DominoECOType.RVNS) == 0)
                 {
-                    new System.Threading.ManualResetEvent(false).WaitOne(1000);
+                    new System.Threading.ManualResetEvent(false).WaitOne(2000);
                     var currenttime = DateTime.Now;
 
                     currenttime = currenttime.AddMinutes(1);
@@ -1148,18 +1148,22 @@ namespace Domino.Controllers
 
                     return RedirectToAction(DominoCardType.ECOSignoff2, "MiniPIP", dict);
                 }
-                else
-                {
-                    new System.Threading.ManualResetEvent(false).WaitOne(1000);
-                    var currenttime = DateTime.Now;
-                    currenttime = currenttime.AddMinutes(1);
+                //else
+                //{
+                //    new System.Threading.ManualResetEvent(false).WaitOne(1000);
+                //    var currenttime = DateTime.Now;
+                //    currenttime = currenttime.AddMinutes(1);
 
-                    var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.ECOSignoff1,currenttime.ToString());
-                    var dict = new RouteValueDictionary();
-                    dict.Add("ECOKey", ECOKey);
-                    dict.Add("CardKey", realcardkey);
-                    return RedirectToAction(DominoCardType.ECOSignoff1, "MiniPIP", dict);
-                }
+                //    var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.ECOSignoff1,currenttime.ToString());
+                //    var dict = new RouteValueDictionary();
+                //    dict.Add("ECOKey", ECOKey);
+                //    dict.Add("CardKey", realcardkey);
+                //    return RedirectToAction(DominoCardType.ECOSignoff1, "MiniPIP", dict);
+                //}
+                var dict1 = new RouteValueDictionary();
+                dict1.Add("ECOKey", ECOKey);
+                dict1.Add("CardKey", CardKey);
+                return RedirectToAction(DominoCardType.ECOPending, "MiniPIP", dict1);
             }
             else
             {
@@ -1426,7 +1430,7 @@ namespace Domino.Controllers
 
                 var newcardkey = DominoVM.GetUniqKey();
 
-                new System.Threading.ManualResetEvent(false).WaitOne(1000);
+                new System.Threading.ManualResetEvent(false).WaitOne(2000);
                 var currenttime = DateTime.Now;
                 currenttime = currenttime.AddMinutes(1);
                 var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.ECOComplete,currenttime.ToString());
@@ -1597,7 +1601,7 @@ namespace Domino.Controllers
 
                 DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
 
-                new System.Threading.ManualResetEvent(false).WaitOne(1000);
+                new System.Threading.ManualResetEvent(false).WaitOne(2000);
                 var currenttime = DateTime.Now;
                 currenttime = currenttime.AddMinutes(1);
 
@@ -1907,7 +1911,7 @@ namespace Domino.Controllers
                 DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
 
                 var newcardkey = DominoVM.GetUniqKey();
-                new System.Threading.ManualResetEvent(false).WaitOne(1000);
+                new System.Threading.ManualResetEvent(false).WaitOne(2000);
                 var currenttime = DateTime.Now;
                 currenttime = currenttime.AddMinutes(1);
 
@@ -2096,7 +2100,7 @@ namespace Domino.Controllers
                 DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
 
                 var newcardkey = DominoVM.GetUniqKey();
-                new System.Threading.ManualResetEvent(false).WaitOne(1000);
+                new System.Threading.ManualResetEvent(false).WaitOne(2000);
                 var currenttime = DateTime.Now;
                 currenttime = currenttime.AddMinutes(1);
 
@@ -2233,7 +2237,7 @@ namespace Domino.Controllers
 
                 DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
 
-                new System.Threading.ManualResetEvent(false).WaitOne(1000);
+                new System.Threading.ManualResetEvent(false).WaitOne(2000);
                 var currenttime = DateTime.Now;
                 currenttime = currenttime.AddMinutes(1);
                 var newcardkey = DominoVM.GetUniqKey();
@@ -2378,7 +2382,7 @@ namespace Domino.Controllers
                 DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
 
                 var newcardkey = DominoVM.GetUniqKey();
-                new System.Threading.ManualResetEvent(false).WaitOne(1000);
+                new System.Threading.ManualResetEvent(false).WaitOne(2000);
                 var currenttime = DateTime.Now;
                 currenttime = currenttime.AddMinutes(1);
                 var realcardkey = DominoVM.CreateCard(ECOKey, newcardkey, DominoCardType.SampleShipment, currenttime.ToString());
@@ -2496,7 +2500,7 @@ namespace Domino.Controllers
                 DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
 
                 var newcardkey = DominoVM.GetUniqKey();
-                new System.Threading.ManualResetEvent(false).WaitOne(1000);
+                new System.Threading.ManualResetEvent(false).WaitOne(2000);
                 var currenttime = DateTime.Now;
                 currenttime = currenttime.AddMinutes(1);
 
@@ -2618,7 +2622,7 @@ namespace Domino.Controllers
                 DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.done);
 
                 var newcardkey = DominoVM.GetUniqKey();
-                new System.Threading.ManualResetEvent(false).WaitOne(1000);
+                new System.Threading.ManualResetEvent(false).WaitOne(2000);
                 var currenttime = DateTime.Now;
                 currenttime = currenttime.AddMinutes(1);
 
@@ -2912,7 +2916,7 @@ namespace Domino.Controllers
         {
             var realcardkey = string.Empty;
 
-            new System.Threading.ManualResetEvent(false).WaitOne(1000);
+            new System.Threading.ManualResetEvent(false).WaitOne(2000);
             var currenttime = DateTime.Now;
 
             currenttime = currenttime.AddMinutes(1);
@@ -2945,7 +2949,7 @@ namespace Domino.Controllers
         {
             var realcardkey = string.Empty;
 
-            new System.Threading.ManualResetEvent(false).WaitOne(1000);
+            new System.Threading.ManualResetEvent(false).WaitOne(2000);
             var currenttime = DateTime.Now;
 
             currenttime = currenttime.AddMinutes(1);
@@ -2982,7 +2986,7 @@ namespace Domino.Controllers
 
             DominoVM.RollBack2This(ECOKey, CardKey);
 
-            new System.Threading.ManualResetEvent(false).WaitOne(1000);
+            new System.Threading.ManualResetEvent(false).WaitOne(2000);
             var currenttime = DateTime.Now;
             currenttime = currenttime.AddMinutes(1);
 
