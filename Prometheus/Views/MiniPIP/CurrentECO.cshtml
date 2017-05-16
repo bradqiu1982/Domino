@@ -43,15 +43,15 @@
         { <h2><button class="form-control" data-toggle="tooltip" title="Download Attachment Name" type="button" value="@ViewBag.CardKey" onclick="AgileAttachNameDownload(this)">Agile Attach Name</button></h2>}
 
     </div>
-    <div class="col-lg-2">
-        @if (ViewBag.badmin != null && ViewBag.badmin)
-        { <h2><button class="form-control" data-toggle="tooltip" title="Download Real Attachment" type="button" value="@ViewBag.CardKey" onclick="AgileFileDownload(this)"><span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span> Agile Attach</button></h2>}
 
-    </div>
     <div class="col-lg-2">
         @if (ViewBag.badmin != null && ViewBag.badmin)
         { <h2><button class="form-control" data-toggle="tooltip" title="Download WorkFlow Information" type="button" value="@ViewBag.CardKey" onclick="AgileWorkFlowDownload(this)">Agile WorkFlow</button></h2>}
+    </div>
 
+    <div class="col-lg-2">
+        @*@if (ViewBag.badmin != null && ViewBag.badmin)
+        { <h2><button class="form-control" data-toggle="tooltip" title="Download Real Attachment" type="button" value="@ViewBag.CardKey" onclick="AgileFileDownload(this)"><span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span> Agile Attach</button></h2>}*@
     </div>
 
     <script type="text/javascript">
