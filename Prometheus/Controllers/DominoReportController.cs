@@ -43,6 +43,7 @@ namespace Domino.Controllers
             if (ckdict.ContainsKey("logonuser"))
             {
                 ViewBag.badmin = DominoUserViewModels.IsAdmin(ckdict["logonuser"].Split(new char[] { '|' })[0]);
+                ViewBag.demo = DominoUserViewModels.IsDemo(ckdict["logonuser"].Split(new char[] { '|' })[0]);
             }
         }
 

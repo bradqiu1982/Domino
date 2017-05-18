@@ -185,6 +185,28 @@ namespace Domino.Models
             }
         }
 
+        public static bool IsDemo(string username)
+        {
+            var sql = "select APVal1,APVal2,APVal3 from UserMatrix where APVal1 = '<APVal1>'";
+            sql = sql.Replace("<APVal1>", username.ToUpper());
+            var dbret = DBUtility.ExeLocalSqlWithRes(sql);
+            if (dbret.Count > 0)
+            {
+                if (string.Compare(Convert.ToString(dbret[0][2]).ToUpper(), "DEMO") == 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public static bool UserExist(string username)
         {
             var sql = "select APVal1,APVal2,APVal3 from UserMatrix where APVal1 = '<APVal1>'";

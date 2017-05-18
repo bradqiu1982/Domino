@@ -115,8 +115,17 @@ namespace Domino.Controllers
 
                 var loginer = updater.Split(new string[] { "@" }, StringSplitOptions.RemoveEmptyEntries)[0].Replace(".","").Replace(" ", "").ToUpper();
                 var pe = item.PE.Split(new string[] { "@" }, StringSplitOptions.RemoveEmptyEntries)[0].Replace(".", "").Replace(" ", "").ToUpper();
-                if (string.Compare(loginer, pe) != 0 && !ViewBag.badmin)
+                if (string.Compare(loginer, pe) != 0 && !(ViewBag.badmin || ViewBag.demo))
                     continue;
+
+                if (ViewBag.demo)
+                {
+                    if (!ViewBag.demoecodict.ContainsKey(item.ECONum))
+                    {
+                        continue;
+                    }
+                }
+
 
 
                 var templist = DominoVM.RetrieveECOCards(item);
@@ -195,8 +204,16 @@ namespace Domino.Controllers
             {
                 var loginer = updater.Split(new string[] { "@" }, StringSplitOptions.RemoveEmptyEntries)[0].Replace(".", "").Replace(" ", "").ToUpper();
                 var pe = item.PE.Split(new string[] { "@" }, StringSplitOptions.RemoveEmptyEntries)[0].Replace(".", "").Replace(" ", "").ToUpper();
-                if (string.Compare(loginer, pe) != 0 && !ViewBag.badmin)
+                if (string.Compare(loginer, pe) != 0 && !(ViewBag.badmin || ViewBag.demo))
                     continue;
+
+                if (ViewBag.demo)
+                {
+                    if (!ViewBag.demoecodict.ContainsKey(item.ECONum))
+                    {
+                        continue;
+                    }
+                }
 
                 var templist = DominoVM.RetrieveECOCards(item);
                 if (templist.Count > 0 && string.Compare(item.FlowInfo, DominoFlowInfo.Default) == 0)
@@ -510,8 +527,16 @@ namespace Domino.Controllers
             {
                 var loginer = updater.Split(new string[] { "@" }, StringSplitOptions.RemoveEmptyEntries)[0].Replace(".", "").Replace(" ", "").ToUpper();
                 var pe = item.PE.Split(new string[] { "@" }, StringSplitOptions.RemoveEmptyEntries)[0].Replace(".", "").Replace(" ", "").ToUpper();
-                if (string.Compare(loginer, pe) != 0 && !ViewBag.badmin)
+                if (string.Compare(loginer, pe) != 0 && !(ViewBag.badmin || ViewBag.demo))
                     continue;
+
+                if (ViewBag.demo)
+                {
+                    if (!ViewBag.demoecodict.ContainsKey(item.ECONum))
+                    {
+                        continue;
+                    }
+                }
 
                 var templist = DominoVM.RetrieveECOCards(item);
                 if (templist.Count > 0 && string.Compare(item.FlowInfo, DominoFlowInfo.Default) == 0)
@@ -751,6 +776,17 @@ namespace Domino.Controllers
             if (ckdict.ContainsKey("logonuser"))
             {
                 ViewBag.badmin = DominoUserViewModels.IsAdmin(ckdict["logonuser"].Split(new char[] { '|' })[0]);
+                ViewBag.demo = DominoUserViewModels.IsDemo(ckdict["logonuser"].Split(new char[] { '|' })[0]);
+
+                var syscfgdict = DominoDataCollector.GetSysConfig(this);
+                var demoecolist = syscfgdict["DEMOECONUM"].Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+                var demoecodict = new Dictionary<string, bool>();
+                foreach (var demo in demoecolist)
+                {
+                    demoecodict.Add(demo.Trim(), true);
+                }
+                ViewBag.demoecodict = demoecodict;
+
                 return ckdict["logonuser"].Split(new char[] { '|' })[0];
             }
 
