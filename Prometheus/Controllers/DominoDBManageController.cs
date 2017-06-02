@@ -51,17 +51,34 @@ namespace Domino.Controllers
 
         public ActionResult MoveDataBase()
         {
-            var targetdb = "Server=wux-parallel;uid=NPI;pwd=NPI@IPN;Database=NPITrace;Connection Timeout=30;";
-            
+            var sourcedb = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=" + System.IO.Path.Combine(HttpRuntime.AppDomainAppPath, "App_Data\\Domino.mdf") + ";Integrated Security=True;";
+            var targetdb = "Server=wuxinpi;User ID=DominoNPI;Password=abc@123;Database=DominoTrace;Connection Timeout=30;";
+
             var tablelist = new List<string>();
             tablelist.Add("UserTable");
-            tablelist.Add("BITestDataField");
+            tablelist.Add("UserRank");
+            tablelist.Add("UserMatrix");
+            tablelist.Add("ECOPendingUpdate");
+
+            tablelist.Add("ECOJOOrderInfo");
+            tablelist.Add("ECOJOCheckInfo");
+            tablelist.Add("ECOCardContent");
+            tablelist.Add("ECOCardComment");
+
+            tablelist.Add("ECOCardAttachment");
+            tablelist.Add("ECOCard");
+            tablelist.Add("ECOBaseInfo");
+
 
             foreach (var tab in tablelist)
             {
+                SqlConnection sourcecon = null;
                 SqlConnection targetcon = null;
+
                 try
                 {
+                    sourcecon = DBUtility.GetConnector(sourcedb);
+
                     targetcon = DBUtility.GetConnector(targetdb);
                     var tempsql = "delete from " + tab;
                     DBUtility.ExeSqlNoRes(targetcon, tempsql);
@@ -72,7 +89,7 @@ namespace Domino.Controllers
 
                             //load data to memory
                             var sql = "select * from(select ROW_NUMBER() OVER(order by(select null)) as mycount, * from " + tab + ") s1 where s1.mycount > "+ idx.ToString() +" and s1.mycount <= "+endidx.ToString();
-                            var dt = DBUtility.ExecuteLocalQueryReturnTable(sql);
+                            var dt = DBUtility.ExecuteSqlReturnTable(sourcecon,sql);
                         if (dt.Rows.Count == 0)
                         {
                             break;
@@ -106,11 +123,22 @@ namespace Domino.Controllers
                         DBUtility.CloseConnector(targetcon);
                         targetcon = null;
                     }
+
+                    if (sourcecon != null)
+                    {
+                        DBUtility.CloseConnector(sourcecon);
+                        sourcecon = null;
+                    }
                 }
 
                 if (targetcon != null)
                 {
                     DBUtility.CloseConnector(targetcon);
+                }
+
+                if (sourcecon != null)
+                {
+                    DBUtility.CloseConnector(sourcecon);
                 }
             }
             return View();

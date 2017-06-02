@@ -1012,6 +1012,7 @@
     <Content Include="Scripts\agiledownloadwraper\jre\lib\tzdb.dat" />
     <Content Include="Scripts\agiledownloadwraper\jre\lib\tzmappings" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\Domino-db-script.txt" />
     <Content Include="Scripts\DominoCfg.txt" />
     <Content Include="Scripts\DominoComplex.xml" />
     <Content Include="Scripts\DominoCycleTime.xml" />

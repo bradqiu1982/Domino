@@ -31,6 +31,7 @@ namespace Domino.Models
             var conn = new SqlConnection();
             try
             {
+                //var targetdb = "Server=wuxinpi;User ID=DominoNPI;Password=abc@123;Database=DominoTrace;Connection Timeout=30;";
                 //conn.ConnectionString = "Data Source = (LocalDb)\\MSSQLLocalDB; AttachDbFilename = ~\\App_Data\\Domino.mdf; Integrated Security = True";
                 conn.ConnectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=" + Path.Combine(HttpRuntime.AppDomainAppPath, "App_Data\\Domino.mdf") + ";Integrated Security=True;";
                 conn.Open();
@@ -149,6 +150,29 @@ namespace Domino.Models
                 //System.Windows.MessageBox.Show(ex.ToString());
                 ret.Clear();
                 return ret;
+            }
+        }
+        public static DataTable ExecuteSqlReturnTable(SqlConnection conn, string sql)
+        {
+            try
+            {
+                var dt = new DataTable();
+                SqlDataAdapter myAd = new SqlDataAdapter(sql, conn);
+                myAd.SelectCommand.CommandTimeout = 0;
+                myAd.Fill(dt);
+                return dt;
+            }
+            catch (SqlException ex)
+            {
+                CloseConnector(conn);
+                //System.Windows.MessageBox.Show(ex.ToString());
+                return null;
+            }
+            catch (Exception ex)
+            {
+                CloseConnector(conn);
+                //System.Windows.MessageBox.Show(ex.ToString());
+                return null;
             }
         }
 

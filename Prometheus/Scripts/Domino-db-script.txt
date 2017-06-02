@@ -1,0 +1,186 @@
+﻿
+CREATE TABLE [dbo].[ECOBaseInfo] (
+    [ECOKey]             NVARCHAR (100) NOT NULL,
+    [ECONum]             NVARCHAR (100) DEFAULT ('') NOT NULL,
+    [ECOType]            NVARCHAR (100) DEFAULT ('') NOT NULL,
+    [PNDesc]             NVARCHAR (100) DEFAULT ('') NOT NULL,
+    [Customer]           NVARCHAR (100) DEFAULT ('') NOT NULL,
+    [Complex]            NVARCHAR (50)  DEFAULT ('') NOT NULL,
+    [RSM]                NVARCHAR (100) DEFAULT ('') NOT NULL,
+    [PE]                 NVARCHAR (100) DEFAULT ('') NOT NULL,
+    [RiskBuild]          NVARCHAR (100) DEFAULT ('') NOT NULL,
+    [InitRevison]        DATETIME       DEFAULT ('1982-05-06 10:00:00') NOT NULL,
+    [FinalRevison]       DATETIME       DEFAULT ('1982-05-06 10:00:00') NOT NULL,
+    [TLAAvailable]       DATETIME       DEFAULT ('1982-05-06 10:00:00') NOT NULL,
+    [OpsEntry]           DATETIME       DEFAULT ('1982-05-06 10:00:00') NOT NULL,
+    [TestModification]   DATETIME       DEFAULT ('1982-05-06 10:00:00') NOT NULL,
+    [ECOSubmit]          DATETIME       DEFAULT ('1982-05-06 10:00:00') NOT NULL,
+    [ECOReviewSignoff]   DATETIME       DEFAULT ('1982-05-06 10:00:00') NOT NULL,
+    [ECOCCBSignoff]      DATETIME       DEFAULT ('1982-05-06 10:00:00') NOT NULL,
+    [QTRInit]            NVARCHAR (50)  DEFAULT ('') NOT NULL,
+    [MCOIssued]          NVARCHAR (100) DEFAULT ('') NOT NULL,
+    [FirstArticleNeed]   NVARCHAR (50)  DEFAULT ('') NOT NULL,
+    [FlowInfo]           NVARCHAR (50)  DEFAULT ('') NOT NULL,
+    [PNImplement]        NVARCHAR (100) DEFAULT ('') NOT NULL,
+    [FACustomerApproval] NVARCHAR (100) DEFAULT ('') NOT NULL,
+    [MiniPIPStatus]      NVARCHAR (50)  DEFAULT ('') NOT NULL,
+    [ECOHoldStartDate]   DATETIME       DEFAULT ('1982-05-06 07:30:00') NOT NULL,
+    [ECOHoldEndDate]     DATETIME       DEFAULT ('1982-05-06 07:30:00') NOT NULL,
+    [CurrentECOProcess]  NVARCHAR (100) DEFAULT ('') NOT NULL,
+    [CurrentFlowType]    NVARCHAR (100) DEFAULT ('') NOT NULL,
+    [APVal1]             NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal2]             NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal3]             NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal4]             NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal5]             DATETIME       DEFAULT ('1982-05-06 10:00:00') NOT NULL,
+    [APVal6]             DATETIME       DEFAULT ('1982-05-06 10:00:00') NOT NULL
+);
+
+CREATE TABLE [dbo].[ECOCard] (
+    [ECOKey]         NVARCHAR (100) NOT NULL,
+    [CardKey]        NVARCHAR (100) NOT NULL,
+    [CardType]       NVARCHAR (100) NOT NULL,
+    [CardStatus]     NVARCHAR (50)  NOT NULL,
+    [CardCreateTime] DATETIME       NOT NULL,
+    [DeleteMark]     NVARCHAR (50)  DEFAULT ('') NOT NULL,
+    [APVal1]         NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal2]         NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal3]         NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal4]         NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal5]         DATETIME       DEFAULT ('1982-05-06 10:00:00') NOT NULL,
+    [APVal6]         DATETIME       DEFAULT ('1982-05-06 10:00:00') NOT NULL
+);
+
+CREATE TABLE [dbo].[ECOCardAttachment] (
+    [CardKey]    NVARCHAR (100) NOT NULL,
+    [Attachment] NVARCHAR (MAX) NOT NULL,
+    [UpdateTime] DATETIME       NOT NULL,
+    [DeleteMark] NVARCHAR (50)  DEFAULT ('') NOT NULL,
+    [APVal2]     NVARCHAR (50)  DEFAULT ('') NOT NULL,
+    [APVal3]     DATETIME       DEFAULT ('1982-05-06 10:00:00') NOT NULL
+);
+
+CREATE TABLE [dbo].[ECOCardComment] (
+    [CardKey]     NVARCHAR (100) NOT NULL,
+    [Comment]     NVARCHAR (MAX) NOT NULL,
+    [Reporter]    NVARCHAR (200) NOT NULL,
+    [CommentDate] DATETIME       NOT NULL,
+    [CommentType] NVARCHAR (200) DEFAULT ('') NOT NULL,
+    [DeleteMark]  NVARCHAR (50)  DEFAULT ('') NOT NULL,
+    [APVal2]      NVARCHAR (200) DEFAULT ('') NOT NULL,
+    [APVal3]      DATETIME       DEFAULT ('1982-05-06 10:00:00') NOT NULL
+);
+
+CREATE TABLE [dbo].[ECOCardContent] (
+    [CardKey] NVARCHAR (100) NOT NULL,
+    [APVal1]  NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal2]  NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal3]  NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal4]  NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal5]  NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal6]  NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal7]  NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal8]  NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal9]  NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal10] NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal11] NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal12] NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal13] NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal14] NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal15] NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal16] NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal17] NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal18] NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal19] NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal20] NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal21] NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal22] NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal23] NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal24] NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal25] NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal26] NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal27] NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal28] NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal29] NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal30] NVARCHAR (MAX) DEFAULT ('') NOT NULL
+);
+
+CREATE TABLE [dbo].[ECOJOCheckInfo] (
+    [CardKey] NVARCHAR (100) NOT NULL,
+    [APVal1]  NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal2]  NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal3]  NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal4]  NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal5]  NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal6]  NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal7]  NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal8]  NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal9]  NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal10] NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal11] NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal12] NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal13] NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal14] NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal15] NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal16] NVARCHAR (20)  DEFAULT ('') NOT NULL
+);
+
+CREATE TABLE [dbo].[ECOJOOrderInfo] (
+    [CardKey] NVARCHAR (100) NOT NULL,
+    [APVal1]  NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal2]  NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal3]  NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal4]  NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal5]  NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal6]  NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal7]  NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal8]  NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal9]  NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal10] NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal11] NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal12] NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal13] NVARCHAR (MAX) DEFAULT ('') NOT NULL
+);
+
+CREATE TABLE [dbo].[ECOPendingUpdate] (
+    [CardKey]    NVARCHAR (100) NOT NULL,
+    [History]    NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [UpdateTime] DATETIME       DEFAULT ('1982-05-06 10:00:00') NOT NULL,
+    [APVal1]     NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal2]     NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal3]     NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal4]     NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal5]     DATETIME       DEFAULT ('1982-05-06 10:00:00') NOT NULL
+);
+
+CREATE TABLE [dbo].[UserMatrix] (
+    [APVal1] NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal2] NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal3] NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal4] NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal5] NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal6] DATETIME       DEFAULT ('1982-05-06 10:00:00') NOT NULL
+);
+
+CREATE TABLE [dbo].[UserRank] (
+    [UserName]   NVARCHAR (200) NOT NULL,
+    [UpdateDate] DATETIME       NOT NULL,
+    [Rank]       NVARCHAR (50)  DEFAULT ('0') NOT NULL,
+    [APVal1]     NVARCHAR (50)  DEFAULT ('') NOT NULL,
+    [APVal2]     NVARCHAR (50)  DEFAULT ('') NOT NULL,
+    [APVal3]     DATETIME       DEFAULT ('1982-05-06 10:00:00') NOT NULL
+);
+
+CREATE TABLE [dbo].[UserTable] (
+    [UserName]   NVARCHAR (200) NOT NULL,
+    [PassWD]     NVARCHAR (200) NOT NULL,
+    [Validated]  INT            DEFAULT ((0)) NOT NULL,
+    [Priority]   INT            DEFAULT ((1)) NOT NULL,
+    [UpdateDate] DATETIME       NOT NULL,
+    [TotalRank]  NVARCHAR (50)  DEFAULT ('0') NOT NULL,
+    [DocTag]     NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal1]     NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal2]     NVARCHAR (MAX) DEFAULT ('') NOT NULL,
+    [APVal3]     DATETIME       DEFAULT ('1982-05-06 10:00:00') NOT NULL
+);
+
