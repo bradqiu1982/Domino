@@ -993,21 +993,41 @@ namespace Domino.Controllers
                 if (IsDigitsOnly(baseinfos[0].FirstArticleNeed)
                     && string.Compare(baseinfos[0].FlowInfo, DominoFlowInfo.Default, true) == 0)
                 {
+                    if (!string.IsNullOrEmpty(baseinfos[0].ECOType) 
+                        && string.Compare(baseinfos[0].ECOType, DominoECOType.DVS,true) != 0)
+                    {
+                        DominoVM.RollBack2NextCard(ECOKey, CardKey);
+                    }
                     baseinfos[0].ECOType = DominoECOType.DVS;
                 }
                 else if (IsDigitsOnly(baseinfos[0].FirstArticleNeed)
                     && string.Compare(baseinfos[0].FlowInfo, DominoFlowInfo.Revise, true) == 0)
                 {
+                    if (!string.IsNullOrEmpty(baseinfos[0].ECOType)
+                        && string.Compare(baseinfos[0].ECOType, DominoECOType.RVS, true) != 0)
+                    {
+                        DominoVM.RollBack2NextCard(ECOKey, CardKey);
+                    }
                     baseinfos[0].ECOType = DominoECOType.RVS;
                 }
                 else if (!IsDigitsOnly(baseinfos[0].FirstArticleNeed)
                     && string.Compare(baseinfos[0].FlowInfo, DominoFlowInfo.Default, true) == 0)
                 {
+                    if (!string.IsNullOrEmpty(baseinfos[0].ECOType)
+                        && string.Compare(baseinfos[0].ECOType, DominoECOType.DVNS, true) != 0)
+                    {
+                        DominoVM.RollBack2NextCard(ECOKey, CardKey);
+                    }
                     baseinfos[0].ECOType = DominoECOType.DVNS;
                 }
                 else if (!IsDigitsOnly(baseinfos[0].FirstArticleNeed)
                     && string.Compare(baseinfos[0].FlowInfo, DominoFlowInfo.Revise, true) == 0)
                 {
+                    if (!string.IsNullOrEmpty(baseinfos[0].ECOType)
+                        && string.Compare(baseinfos[0].ECOType, DominoECOType.RVNS, true) != 0)
+                    {
+                        DominoVM.RollBack2NextCard(ECOKey, CardKey);
+                    }
                     baseinfos[0].ECOType = DominoECOType.RVNS;
                 }
 

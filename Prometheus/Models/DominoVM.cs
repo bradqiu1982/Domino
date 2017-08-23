@@ -1368,6 +1368,20 @@ namespace Domino.Models
             }
         }
 
+        public static void RollBack2NextCard(string ECOKey, string CardKey)
+        {
+            var sql = "select CardCreateTime from ECOCard where ECOKey = '<ECOKey>' and CardKey = '<CardKey>'";
+            sql = sql.Replace("<ECOKey>", ECOKey).Replace("<CardKey>", CardKey);
+
+            var dbret = DBUtility.ExeLocalSqlWithRes(sql);
+            if (dbret.Count > 0)
+            {
+                sql = "update ECOCard set DeleteMark = 'true' where ECOKey = '<ECOKey>' and CardCreateTime > '<CardCreateTime>'";
+                sql = sql.Replace("<ECOKey>", ECOKey).Replace("<CardCreateTime>", Convert.ToString(dbret[0][0]));
+                DBUtility.ExeLocalSqlNoRes(sql);
+            }
+        }
+
         public static void UpdateCardStatus(string CardKey, string CardStatus)
         {
             var sql = "update ECOCard set CardStatus = '<CardStatus>' where CardKey='<CardKey>'";
