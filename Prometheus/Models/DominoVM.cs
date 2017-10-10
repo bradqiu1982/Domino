@@ -550,6 +550,19 @@ namespace Domino.Models
             return ret;
         }
 
+        public static List<string> RetrieveAllCustomer()
+        {
+            var ret = new List<string>();
+            var sql = "select DISTINCT Customer from ECOBaseInfo order by Customer";
+            var dbret = DBUtility.ExeLocalSqlWithRes(sql);
+            foreach (var line in dbret)
+            {
+                ret.Add(Convert.ToString(line[0]));
+            }
+            ret.Sort();
+            return ret;
+        }
+
         public static List<ECOBaseInfo> RetrieveAllWorkingECOBaseInfo()
         {
             var ret = new List<ECOBaseInfo>();
@@ -605,6 +618,55 @@ namespace Domino.Models
             var sql = "select ECOKey,ECONum,ECOType,PNDesc,Customer,Complex,RSM,PE,RiskBuild,InitRevison,FinalRevison"
                 + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement,FACustomerApproval,MiniPIPStatus,ECOHoldStartDate,ECOHoldEndDate,CurrentECOProcess,CurrentFlowType,APVal1 from ECOBaseInfo where (MiniPIPStatus='<MiniPIPStatus1>' or MiniPIPStatus='<MiniPIPStatus2>') and (PE='<PE>' or APVal1='<ActualPE>') order by InitRevison DESC";
             sql = sql.Replace("<MiniPIPStatus1>", DominoMiniPIPStatus.working).Replace("<MiniPIPStatus2>", DominoMiniPIPStatus.hold).Replace("<PE>",pe).Replace("<ActualPE>", pe);
+
+            var dbret = DBUtility.ExeLocalSqlWithRes(sql);
+            foreach (var line in dbret)
+            {
+                var tempitem = new ECOBaseInfo();
+                tempitem.ECOKey = Convert.ToString(line[0]);
+                tempitem.ECONum = Convert.ToString(line[1]);
+                tempitem.ECOType = Convert.ToString(line[2]);
+                tempitem.PNDesc = Convert.ToString(line[3]);
+                tempitem.Customer = Convert.ToString(line[4]);
+                tempitem.Complex = Convert.ToString(line[5]);
+                tempitem.RSM = Convert.ToString(line[6]);
+                tempitem.PE = Convert.ToString(line[7]);
+                tempitem.RiskBuild = Convert.ToString(line[8]);
+
+                tempitem.InitRevison = ConvertToDate(line[9]);
+                tempitem.FinalRevison = ConvertToDate(line[10]);
+                tempitem.TLAAvailable = ConvertToDate(line[11]);
+                tempitem.OpsEntry = ConvertToDate(line[12]);
+                tempitem.TestModification = ConvertToDate(line[13]);
+                tempitem.ECOSubmit = ConvertToDate(line[14]);
+                tempitem.ECOReviewSignoff = ConvertToDate(line[15]);
+                tempitem.ECOCCBSignoff = ConvertToDate(line[16]);
+
+                tempitem.QTRInit = Convert.ToString(line[17]);
+                tempitem.MCOIssued = Convert.ToString(line[18]);
+                tempitem.FirstArticleNeed = Convert.ToString(line[19]);
+                tempitem.FlowInfo = Convert.ToString(line[20]);
+                tempitem.PNImplement = Convert.ToString(line[21]);
+                tempitem.FACustomerApproval = Convert.ToString(line[22]);
+                tempitem.MiniPIPStatus = Convert.ToString(line[23]);
+
+                tempitem.ECOHoldStartDate = Convert.ToString(line[24]);
+                tempitem.ECOHoldEndDate = Convert.ToString(line[25]);
+                tempitem.CurrentECOProcess = Convert.ToString(line[26]);
+                tempitem.CurrentFlowType = Convert.ToString(line[27]);
+                tempitem.ActualPE = Convert.ToString(line[28]);
+                ret.Add(tempitem);
+            }
+
+            return ret;
+        }
+
+        public static List<ECOBaseInfo> RetrieveCustomerWorkingECOBaseInfo(string customer)
+        {
+            var ret = new List<ECOBaseInfo>();
+            var sql = "select ECOKey,ECONum,ECOType,PNDesc,Customer,Complex,RSM,PE,RiskBuild,InitRevison,FinalRevison"
+                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement,FACustomerApproval,MiniPIPStatus,ECOHoldStartDate,ECOHoldEndDate,CurrentECOProcess,CurrentFlowType,APVal1 from ECOBaseInfo where (MiniPIPStatus='<MiniPIPStatus1>' or MiniPIPStatus='<MiniPIPStatus2>') and Customer='<Customer>' order by InitRevison DESC";
+            sql = sql.Replace("<MiniPIPStatus1>", DominoMiniPIPStatus.working).Replace("<MiniPIPStatus2>", DominoMiniPIPStatus.hold).Replace("<Customer>", customer);
 
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
             foreach (var line in dbret)

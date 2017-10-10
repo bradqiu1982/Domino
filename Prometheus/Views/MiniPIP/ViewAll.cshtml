@@ -149,10 +149,28 @@
                                 <div class="col-lg-4">
                                     @if (ViewBag.minipipsummaryurl != null)
                                     {
-                                      <a href="@ViewBag.minipipsummaryurl" target="_blank">MiniPIP Summary Data File</a>
+                                        <a href="@ViewBag.minipipsummaryurl" target="_blank">MiniPIP Summary Data File</a>
                                     }
                                 </div>
+                                <div class="col-lg-2"></div>
+                            </div>
+                            <hr />
+                            <div class="row col-lg-12">
 
+                                @if (ViewBag.CustomerList != null)
+                                {
+                                    <div class="col-lg-2">
+                                        <label class="control-label" for="CustomerList">Customer Filter:</label>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        @Html.DropDownList("CustomerList", null, new { @id = "CustomerList", @class = "form-control", @onchange = "ShowCustomerWorkingMiniPIP()" })
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="col-lg-6"></div>
+                                }
+                                <div class="col-lg-4"></div>
                                 <div class="col-lg-2">
                                     <button MYTP="BT" data-toggle="tooltip" title="All MiniPIP" type="button" onclick="AllMiniPIP()" class="btn btn-default" style="width:8em;">All MiniPIP</button>
                                 </div>
@@ -161,6 +179,12 @@
                             function ShowFilteredMiniPIP() {
                                 if (document.getElementById("ecocardtypelist").value && document.getElementById("ecocardtypelist").value != 'NONE') {
                                     window.location.href = '/Domino/MiniPIP/SummaryMiniPIP?CardType=' + document.getElementById("ecocardtypelist").value;
+                                }
+                            }
+
+                            function ShowCustomerWorkingMiniPIP() {
+                                if (document.getElementById("CustomerList").value && document.getElementById("CustomerList").value != 'NONE') {
+                                    window.location.href = '/Domino/MiniPIP/ShowCustomerWorkingMiniPIP?Customer=' + document.getElementById("CustomerList").value;
                                 }
                             }
 
