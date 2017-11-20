@@ -212,6 +212,11 @@
 
     foreach (var item in Model)
     {
+        if (item.Count() == 0)
+        {
+            continue;
+        }
+
         if (string.Compare(item.ElementAt(0).EBaseInfo.MiniPIPStatus, Domino.Models.DominoMiniPIPStatus.hold) == 0)
         {
             otherlist.Add(item.ToList());

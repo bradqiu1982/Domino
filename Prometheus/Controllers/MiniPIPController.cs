@@ -758,8 +758,9 @@ namespace Domino.Controllers
                 Directory.CreateDirectory(imgdir);
             }catch (Exception ex) { }
 
+            RefreshAgileInfo();
+
             RefreshCardsInfo();
-            //RefreshAgileInfo();
 
             return RedirectToAction("ViewAll", "MiniPIP");
         }
@@ -857,16 +858,27 @@ namespace Domino.Controllers
             var econumlist = new List<string>();
             foreach (var eco in ecolist)
             {
-                econumlist.Add(eco.ECONum);
+                econumlist.Add(eco);
             }
 
-            logmaininfo(DateTime.Now.ToString() + "    " + "start refreshing agile attachement name.....\r\n");
-            DominoDataCollector.DownloadAgile(econumlist, this, DOMINOAGILEDOWNLOADTYPE.ATTACHNAME);
-            logmaininfo(DateTime.Now.ToString() + "    " + "agile attachement name is refreshed.....\r\n");
+            try
+            {
+                if (econumlist.Count > 0)
+                {
+                    logmaininfo(DateTime.Now.ToString() + "    " + "start refreshing agile workflow.....\r\n");
+                    DominoDataCollector.DownloadAgile(econumlist, this, DOMINOAGILEDOWNLOADTYPE.WORKFLOW);
+                    logmaininfo(DateTime.Now.ToString() + "    " + "agile workflow is refreshed.....\r\n");
+                }
+            }
+            catch (Exception ex) { }
 
-            logmaininfo(DateTime.Now.ToString() + "    " + "start refreshing agile workflow.....\r\n");
-            DominoDataCollector.DownloadAgile(econumlist, this, DOMINOAGILEDOWNLOADTYPE.WORKFLOW);
-            logmaininfo(DateTime.Now.ToString() + "    " + "agile workflow is refreshed.....\r\n");
+            //try
+            //{
+            //    logmaininfo(DateTime.Now.ToString() + "    " + "start refreshing agile attachement name.....\r\n");
+            //    DominoDataCollector.DownloadAgile(econumlist, this, DOMINOAGILEDOWNLOADTYPE.ATTACHNAME);
+            //    logmaininfo(DateTime.Now.ToString() + "    " + "agile attachement name is refreshed.....\r\n");
+            //}
+            //catch (Exception ex) { }
         }
 
         private List<SelectListItem> CreateSelectList(List<string> valist, string defVal)

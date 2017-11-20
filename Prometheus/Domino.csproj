@@ -203,6 +203,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\CfgUtility.cs" />
     <Compile Include="Models\CookieUtility.cs" />
     <Compile Include="Models\DBUtility.cs" />
     <Compile Include="Models\DominoDataCollector.cs" />
@@ -1098,6 +1099,7 @@
     <Content Include="userfiles\ImageUpload.ashx" />
     <Content Include="Views\DominoUser\UserCachedInfo.cshtml" />
     <Content Include="Views\MiniPIP\ModifyCardComment.cshtml" />
+    <Content Include="Scripts\npidepartmentmachine.cfg" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Scripts\agiledownloadwraper\jre\lib\applet\" />

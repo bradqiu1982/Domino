@@ -950,30 +950,40 @@ namespace Domino.Models
             return ecodone;
         }
 
-        public static List<ECOBaseInfo> RetrieveECOUnCompletedBaseInfo()
+        public static List<string> RetrieveECOUnCompletedBaseInfo()
         {
-            var alleco = ECOBaseInfo.RetrieveAllWorkingECOBaseInfo();
-            var econotdone = new List<ECOBaseInfo>();
-            foreach (var eco in alleco)
+            var ret = new List<string>();
+            var sql = "SELECT ECONum FROM ECOBaseInfo where CurrentECOProcess <> 'Completed' and ECOSubmit > '<in3month>' and ECONum <> '' and MiniPIPStatus = 'working'";
+            sql = sql.Replace("<in3month>", DateTime.Now.AddMonths(-3).ToString("yyyy-MM-dd HH:mm:ss"));
+            var dbret = DBUtility.ExeLocalSqlWithRes(sql);
+            foreach (var line in dbret)
             {
-                if (string.Compare(eco.MiniPIPStatus,DominoMiniPIPStatus.hold) == 0)
-                    continue;
-
-                var completecard = DominoVM.RetrieveSpecialCard(eco, DominoCardType.ECOComplete);
-                if (completecard.Count > 0)
-                {
-                    if (string.Compare(completecard[0].CardStatus, DominoCardStatus.done) != 0)
-                    {
-                        econotdone.Add(eco);
-                    }
-                }
-                else
-                {
-                    econotdone.Add(eco);
-                }
+                ret.Add(Convert.ToString(line[0]));
             }
+            return ret;
 
-            return econotdone;
+            //var alleco = ECOBaseInfo.RetrieveAllWorkingECOBaseInfo();
+            //var econotdone = new List<ECOBaseInfo>();
+            //foreach (var eco in alleco)
+            //{
+            //    if (string.Compare(eco.MiniPIPStatus,DominoMiniPIPStatus.hold) == 0)
+            //        continue;
+
+            //    var completecard = DominoVM.RetrieveSpecialCard(eco, DominoCardType.ECOComplete);
+            //    if (completecard.Count > 0)
+            //    {
+            //        if (string.Compare(completecard[0].CardStatus, DominoCardStatus.done) != 0)
+            //        {
+            //            econotdone.Add(eco);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        econotdone.Add(eco);
+            //    }
+            //}
+
+            //return econotdone;
         }
 
         public static List<ECOBaseInfo> RetrieveECOBaseInfo(string ECOKey)
