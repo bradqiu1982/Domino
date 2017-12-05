@@ -3393,8 +3393,11 @@ namespace Domino.Controllers
 
         private void StoreAgileAttch(string ECONUM,List<DominoVM> vm)
         {
+            var SAVELOCATION = (Server.MapPath("~/userfiles") + "\\docs\\Agile");
+            Directory.CreateDirectory(SAVELOCATION);
+
             var syscfgdict = DominoDataCollector.GetSysConfig(this);
-            var dir = syscfgdict["SAVELOCATION"] +"\\" + ECONUM;
+            var dir = SAVELOCATION +"\\"+ ECONUM;
             if (Directory.Exists(dir))
             {
                 //string datestring = DateTime.Now.ToString("yyyyMMdd");

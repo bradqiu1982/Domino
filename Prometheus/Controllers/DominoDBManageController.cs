@@ -51,24 +51,179 @@ namespace Domino.Controllers
 
         public ActionResult MoveDataBase()
         {
-            var sourcedb = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=" + System.IO.Path.Combine(HttpRuntime.AppDomainAppPath, "App_Data\\Domino.mdf") + ";Integrated Security=True;";
-            var targetdb = "Server=wuxinpi;User ID=DominoNPI;Password=abc@123;Database=DominoTrace;Connection Timeout=30;";
+            //var sourcedb = "Server=WUX-D80008792;User ID=DominoNPI;Password=abc@123;Database=DominoTrace;Connection Timeout=300;";
+            //var targetdb = "Server=wux-engsys01;User ID=DominoNPI;Password=abc@123;Database=DominoTrace;Connection Timeout=300;";
+
+            //var tablelist = new List<string>();
+            //tablelist.Add("ECOBaseInfo");
+            //tablelist.Add("ECOCard");
+            //tablelist.Add("ECOCardAttachment");
+            //tablelist.Add("ECOCardComment");
+            //tablelist.Add("ECOCardContent");
+            //tablelist.Add("ECOJOCheckInfo");
+            //tablelist.Add("ECOJOOrderInfo");
+            //tablelist.Add("ECOPendingUpdate");
+            //tablelist.Add("UserMatrix");
+            //tablelist.Add("UserRank");
+            //tablelist.Add("UserTable");
+
+            //var sourcedb = "Server=WUX-D80008792;User ID=dbg;Password=dbgpwd;Database=DebugDB;Connection Timeout=120;";
+            //var targetdb = "Server=wux-engsys01;User ID=dbg;Password=dbgpwd;Database=DebugDB;Connection Timeout=120;";
+
+            //var tablelist = new List<string>();
+            //tablelist.Add("AlignmentPower");
+            //tablelist.Add("BIError");
+            //tablelist.Add("BIROOTCAUSE");
+            //tablelist.Add("BITestData");
+            //tablelist.Add("BITestDataField");
+            //tablelist.Add("BITestResult");
+            //tablelist.Add("BITestResultDataField");
+            //tablelist.Add("BookReportRecord");
+            //tablelist.Add("ErrorComments");
+            //tablelist.Add("FileLoadedData");
+            //tablelist.Add("Issue");
+            //tablelist.Add("IssueAttachment");
+            //tablelist.Add("IssueAttribute");
+            //tablelist.Add("IssueComments");
+            //tablelist.Add("IssueIcare");
+            //tablelist.Add("IssueOBA");
+            //tablelist.Add("IssueRMA");
+            //tablelist.Add("IssueType");
+            //tablelist.Add("LinkVM");
+            //tablelist.Add("Log");
+            //tablelist.Add("MachineLink");
+            //tablelist.Add("ModuleTXOData");
+            //tablelist.Add("NeoMapData");
+            //tablelist.Add("OSAFailureVM");
+            //tablelist.Add("PJErrorAttachment");
+            //tablelist.Add("Project");
+            //tablelist.Add("ProjectCriticalError");
+            //tablelist.Add("ProjectError");
+            //tablelist.Add("ProjectErrorICare");
+            //tablelist.Add("ProjectEvent");
+            //tablelist.Add("ProjectException");
+            //tablelist.Add("ProjectMembers");
+            //tablelist.Add("ProjectMesTable");
+            //tablelist.Add("ProjectModelID");
+            //tablelist.Add("ProjectMoveHistory");
+            //tablelist.Add("ProjectPn");
+            //tablelist.Add("ProjectStation");
+            //tablelist.Add("ProjectSumDataSet");
+            //tablelist.Add("ProjectTestData");
+            //tablelist.Add("ProjectWorkflow");
+            //tablelist.Add("RELBackupData");
+            //tablelist.Add("RELMapData");
+            //tablelist.Add("RMABackupData");
+            //tablelist.Add("RMAMapData");
+            //tablelist.Add("SameAsDBTVM");
+            //tablelist.Add("ShareDoc");
+            //tablelist.Add("ShareTags");
+            //tablelist.Add("UserBlog");
+            //tablelist.Add("UserCacheInfo");
+            //tablelist.Add("UserGroupVM");
+            //tablelist.Add("UserKPIVM");
+            //tablelist.Add("UserLearn");
+            //tablelist.Add("UserMatrix");
+            //tablelist.Add("UserNet");
+            //tablelist.Add("UserRank");
+            //tablelist.Add("UserReviewedItems");
+            //tablelist.Add("UserTable");
+            //tablelist.Add("VCSELUsageTable");
+            //tablelist.Add("WaferRecord");
+            //tablelist.Add("WeeklyReport");
+            //tablelist.Add("WeeklyReportSetting");
+
+            //var sourcedb = "Server=WUX-D80008792;User ID=NebulaNPI;Password=abc@123;Database=NebulaTrace;Connection Timeout=120;";
+            //var targetdb = "Server=wux-engsys01;User ID=NebulaNPI;Password=abc@123;Database=NebulaTrace;Connection Timeout=120;";
+
+            //var tablelist = new List<string>();
+            //tablelist.Add("AgileAffectItem");
+            //tablelist.Add("AgileAttach");
+            //tablelist.Add("AgileHistory");
+            //tablelist.Add("AgilePageThree");
+            //tablelist.Add("AgileWorkFlow");
+            //tablelist.Add("BRAgileBaseInfo");
+            //tablelist.Add("BRComment");
+            //tablelist.Add("JOBaseInfo");
+            //tablelist.Add("JOComponentInfo");
+            //tablelist.Add("JOScheduleEventDataVM");
+            //tablelist.Add("JOShipTrace");
+            //tablelist.Add("JOSNStatus");
+            //tablelist.Add("MachineColumn");
+            //tablelist.Add("PMUpdateTime");
+            //tablelist.Add("PNErrorDistribute");
+            //tablelist.Add("PNWorkflow");
+            //tablelist.Add("ProjectColumn");
+            //tablelist.Add("ProjectLog");
+            //tablelist.Add("ProjectVM");
+            //tablelist.Add("UserCustomizeTheme");
+            //tablelist.Add("UserTable");
+
+            var sourcedb = "Server=WUX-D80008792;User ID=NPI;Password=NPI@NPI;Database=NPITrace;Connection Timeout=120;";
+            var targetdb = "Server=wux-engsys01;User ID=NPI;Password=NPI@NPI;Database=NPITrace;Connection Timeout=120;";
 
             var tablelist = new List<string>();
-            tablelist.Add("UserTable");
-            tablelist.Add("UserRank");
-            tablelist.Add("UserMatrix");
-            tablelist.Add("ECOPendingUpdate");
-
-            tablelist.Add("ECOJOOrderInfo");
-            tablelist.Add("ECOJOCheckInfo");
-            tablelist.Add("ECOCardContent");
-            tablelist.Add("ECOCardComment");
-
-            tablelist.Add("ECOCardAttachment");
-            tablelist.Add("ECOCard");
-            tablelist.Add("ECOBaseInfo");
-
+            //tablelist.Add("AlignmentPower");
+            //tablelist.Add("BIError");
+            //tablelist.Add("BIROOTCAUSE");
+            //tablelist.Add("BITestData");
+            //tablelist.Add("BITestDataField");
+            //tablelist.Add("BITestResult");
+            //tablelist.Add("BITestResultDataField");
+            //tablelist.Add("BookReportRecord");
+            //tablelist.Add("ErrorComments");
+            //tablelist.Add("FileLoadedData");
+            //tablelist.Add("Issue");
+            //tablelist.Add("IssueAttachment");
+            //tablelist.Add("IssueAttribute");
+            //tablelist.Add("IssueComments");
+            //tablelist.Add("IssueIcare");
+            //tablelist.Add("IssueOBA");
+            //tablelist.Add("IssueRMA");
+            //tablelist.Add("IssueType");
+            //tablelist.Add("LinkVM");
+            //tablelist.Add("Log");
+            //tablelist.Add("MachineLink");
+            //tablelist.Add("ModuleTXOData");
+            //tablelist.Add("NeoMapData");
+            //tablelist.Add("OSAFailureVM");
+            //tablelist.Add("PJErrorAttachment");
+            //tablelist.Add("Project");
+            //tablelist.Add("ProjectCriticalError");
+            //tablelist.Add("ProjectError");
+            //tablelist.Add("ProjectErrorICare");
+            //tablelist.Add("ProjectEvent");
+            //tablelist.Add("ProjectException");
+            //tablelist.Add("ProjectMembers");
+            //tablelist.Add("ProjectMesTable");
+            //tablelist.Add("ProjectModelID");
+            //tablelist.Add("ProjectMoveHistory");
+            //tablelist.Add("ProjectPn");
+            //tablelist.Add("ProjectStation");
+            //tablelist.Add("ProjectSumDataSet");
+            //tablelist.Add("ProjectTestData");
+            //tablelist.Add("ProjectWorkflow");
+            //tablelist.Add("RELBackupData");
+            //tablelist.Add("RELMapData");
+            //tablelist.Add("RMABackupData");
+            //tablelist.Add("RMAMapData");
+            //tablelist.Add("SameAsDBTVM");
+            //tablelist.Add("ShareDoc");
+            //tablelist.Add("ShareTags");
+            //tablelist.Add("UserBlog");
+            //tablelist.Add("UserCacheInfo");
+            //tablelist.Add("UserGroupVM");
+            //tablelist.Add("UserKPIVM");
+            //tablelist.Add("UserLearn");
+            //tablelist.Add("UserMatrix");
+            //tablelist.Add("UserNet");
+            //tablelist.Add("UserRank");
+            //tablelist.Add("UserReviewedItems");
+            //tablelist.Add("UserTable");
+            //tablelist.Add("VCSELUsageTable");
+            //tablelist.Add("WaferRecord");
+            //tablelist.Add("WeeklyReport");
+            //tablelist.Add("WeeklyReportSetting");
 
             foreach (var tab in tablelist)
             {
@@ -80,10 +235,10 @@ namespace Domino.Controllers
                     sourcecon = DBUtility.GetConnector(sourcedb);
 
                     targetcon = DBUtility.GetConnector(targetdb);
-                    var tempsql = "delete from " + tab;
-                    DBUtility.ExeSqlNoRes(targetcon, tempsql);
+                    //var tempsql = "delete from " + tab;
+                    //DBUtility.ExeSqlNoRes(targetcon, tempsql);
 
-                    for(int idx = 0; ;)
+                    for (int idx = 0; ;)
                     {
                         var endidx = idx + 100000;
 
@@ -118,6 +273,7 @@ namespace Domino.Controllers
                 }
                 catch (Exception ex)
                 {
+                    System.Windows.MessageBox.Show(ex.Message);
                     if (targetcon != null)
                     {
                         DBUtility.CloseConnector(targetcon);

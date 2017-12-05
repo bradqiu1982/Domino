@@ -316,7 +316,8 @@ namespace Domino.Models
             var syscfgdict = GetSysConfig(ctrl);
             var AGILEURL = syscfgdict["AGILEURL"];
             var LOCALSITEPORT = syscfgdict["LOCALSITEPORT"];
-            var SAVELOCATION = syscfgdict["SAVELOCATION"];
+            var SAVELOCATION = (ctrl.Server.MapPath("~/userfiles") + "\\docs\\Agile").Replace("\\", "/");
+            Directory.CreateDirectory(SAVELOCATION);
 
             var ecostr = string.Empty;
             foreach (var eco in ecolist)
@@ -337,10 +338,13 @@ namespace Domino.Models
 
         public static ECOWorkFlowInfo RetrieveAgileWorkFlowData(string ECONUM,Controller ctrl)
         {
+            var SAVELOCATION = (ctrl.Server.MapPath("~/userfiles") + "\\docs\\Agile");
+            Directory.CreateDirectory(SAVELOCATION);
+
             var rawdata = new List<ECOWorkFlowRAWData>();
 
             var syscfgdict = GetSysConfig(ctrl);
-            var dir = syscfgdict["SAVELOCATION"] + "\\" + ECONUM;
+            var dir = SAVELOCATION + "\\" + ECONUM;
             var workflowfile = dir + "\\" + ECONUM + "_WorkFlowTable.csv";
             if (FileExist(ctrl,workflowfile))
             {
