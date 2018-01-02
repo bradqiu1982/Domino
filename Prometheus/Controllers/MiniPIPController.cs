@@ -3063,18 +3063,18 @@ namespace Domino.Controllers
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
             if (baseinfos.Count > 0)
             {
-                if (string.Compare(baseinfos[0].CurrentECOProcess.ToUpper(), "COMPLETED") == 0)
-                {
+                //if (string.Compare(baseinfos[0].CurrentECOProcess.ToUpper(), "COMPLETED") == 0)
+                //{
                     baseinfos[0].MiniPIPStatus = DominoMiniPIPStatus.done;
                     baseinfos[0].UpdateECO();
                     SetNoticeInfo("Force complete MiniPIP "+ baseinfos[0].ECONum + " sucessfully !");
                     return RedirectToAction("CompletedMiniPIP", "MiniPIP");
-                }
-                else
-                {
-                    SetNoticeInfo("Fail to Force complete MiniPIP "+baseinfos[0].ECONum+". Current workflow process is "+ baseinfos[0].CurrentECOProcess + " not COMPLETED !");
-                    return RedirectToAction("ViewAll", "MiniPIP");
-                }
+                //}
+                //else
+                //{
+                //    SetNoticeInfo("Fail to Force complete MiniPIP "+baseinfos[0].ECONum+". Current workflow process is "+ baseinfos[0].CurrentECOProcess + " not COMPLETED !");
+                //    return RedirectToAction("ViewAll", "MiniPIP");
+                //}
             }
             
             return RedirectToAction("ViewAll", "MiniPIP");
