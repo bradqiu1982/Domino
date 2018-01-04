@@ -1997,6 +1997,17 @@ namespace Domino.Models
                                 tempinfo.ShipOrderQTY = line[13];
                                 tempinfo.ShippedQTY = line[14];
                                 tempinfo.ShipDate = line[19];
+
+                                try
+                                {
+                                    var shippedqty = Convert.ToInt32(tempinfo.ShippedQTY);
+                                    if (shippedqty == 0)
+                                    {
+                                        continue;
+                                    }
+                                }
+                                catch (Exception e) { }
+
                                 jolist.Add(tempinfo);
                             }
                         }
