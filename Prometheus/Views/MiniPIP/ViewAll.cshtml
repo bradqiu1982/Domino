@@ -67,6 +67,14 @@
     <div class="col-lg-12">&nbsp;</div>
 </div>
 
+@if (!string.IsNullOrEmpty(ViewBag.DupPNList))
+{
+    <script type="text/javascript">
+        $(function () {
+            alert("Following Product Request has duplication miniPIP: @ViewBag.DupPNList");
+        });
+    </script>
+}
 
 @if (ViewBag.badmin != null && ViewBag.badmin)
 {

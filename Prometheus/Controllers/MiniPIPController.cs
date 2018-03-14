@@ -183,6 +183,9 @@ namespace Domino.Controllers
 
             var updater = GetAdminAuth();
 
+            var DupPNDict = new Dictionary<string, List<ECOBaseInfo>>();
+            ViewBag.DupPNList = "";
+
             var baseinfos = ECOBaseInfo.RetrieveAllWorkingECOBaseInfo();
             var vm = new List<List<DominoVM>>();
             foreach (var item in baseinfos)
@@ -203,7 +206,16 @@ namespace Domino.Controllers
                     }
                 }
 
-
+                if (DupPNDict.ContainsKey(item.PNDesc))
+                {
+                    DupPNDict[item.PNDesc].Add(item);
+                }
+                else
+                {
+                    var pntemplist = new List<ECOBaseInfo>();
+                    pntemplist.Add(item);
+                    DupPNDict.Add(item.PNDesc, pntemplist);
+                }
 
                 var templist = DominoVM.RetrieveECOCards(item);
                 if (templist.Count > 0 && string.Compare(item.FlowInfo, DominoFlowInfo.Default) == 0)
@@ -232,6 +244,19 @@ namespace Domino.Controllers
                 if (forpereview)
                 {
                     vm.Add(templist);
+                }
+            }
+
+            foreach (var kv in DupPNDict)
+            {
+                if (kv.Value.Count > 1)
+                {
+                    ViewBag.DupPNList = "[Product Request: " + kv.Value[0].PNDesc + " PE: " + kv.Value[0].PE + " ECO NUM: ";
+                    foreach (var ecoinfo in kv.Value)
+                    {
+                        ViewBag.DupPNList = ViewBag.DupPNList + ecoinfo.ECONum+",";
+                    }
+                    ViewBag.DupPNList = ViewBag.DupPNList + "]";
                 }
             }
 
