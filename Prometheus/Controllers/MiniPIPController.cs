@@ -251,12 +251,12 @@ namespace Domino.Controllers
             {
                 if (kv.Value.Count > 1)
                 {
-                    ViewBag.DupPNList = ViewBag.DupPNList + "[Product Request: " + kv.Value[0].PNDesc + " PE: " + kv.Value[0].PE + " ECO NUM: ";
+                    ViewBag.DupPNList = ViewBag.DupPNList + " [Product Request: " + kv.Value[0].PNDesc + " PE: " + kv.Value[0].PE + " ECO NUM: ";
                     foreach (var ecoinfo in kv.Value)
                     {
                         ViewBag.DupPNList = ViewBag.DupPNList + ecoinfo.ECONum+",";
                     }
-                    ViewBag.DupPNList = ViewBag.DupPNList + "]";
+                    ViewBag.DupPNList = ViewBag.DupPNList + "] ;";
                 }
             }
 
