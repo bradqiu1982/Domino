@@ -184,3 +184,17 @@ CREATE TABLE [dbo].[UserTable] (
     [APVal3]     DATETIME       DEFAULT ('1982-05-06 10:00:00') NOT NULL
 );
 
+CREATE TABLE [dbo].[NewLoadMiniPIP] (
+    [MiniPIPID]   NVARCHAR (200) DEFAULT ('')  NOT NULL,
+	[OrderInfo]   NVARCHAR (200) DEFAULT ('')  NOT NULL,
+	[SpecailMaterial]   NVARCHAR (MAX) DEFAULT ('')  NOT NULL,
+	[PN]   NVARCHAR (200) DEFAULT ('')  NOT NULL,
+	[PE]   NVARCHAR (200) DEFAULT ('')  NOT NULL,
+	[Removed]   NVARCHAR (200) DEFAULT ('')  NOT NULL,
+    [AlertDate]     DATETIME       DEFAULT ('1982-05-06 10:00:00') NOT NULL,
+	[ResponseDate]     DATETIME       DEFAULT ('1982-05-06 10:00:00') NOT NULL,
+	[ResponseMachine]     NVARCHAR (200)  DEFAULT ('') NOT NULL,
+    [APVal1]     NVARCHAR (50)  DEFAULT ('') NOT NULL,
+    [APVal2]     NVARCHAR (200)  DEFAULT ('') NOT NULL,
+    [APVal3]     DATETIME       DEFAULT ('1982-05-06 10:00:00') NOT NULL
+);

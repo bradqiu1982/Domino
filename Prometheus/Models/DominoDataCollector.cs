@@ -679,6 +679,8 @@ namespace Domino.Models
                         baseinfo.ECOKey = DominoVM.GetUniqKey();
                         baseinfo.CreateECO();
 
+                        NewLoadMiniPIP.RegistNewLoadMiniPIP(baseinfo.ECOKey, baseinfo.PNDesc, baseinfo.PE);
+
                         var CardKey = DominoVM.GetUniqKey();
 
                         if (string.IsNullOrEmpty(baseinfo.ECONum))

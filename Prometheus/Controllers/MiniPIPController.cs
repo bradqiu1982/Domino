@@ -153,9 +153,7 @@ namespace Domino.Controllers
                 }
             }
 
-            //DominoVM.CleanDB();
-
-            //var baseinfo = new ECOBaseInfo();
+             //var baseinfo = new ECOBaseInfo();
             //baseinfo.ECOKey = DominoVM.GetUniqKey();
             //baseinfo.ECONum = "97807";
             //baseinfo.PNDesc = "FCBG410QB1C10-FC";
@@ -186,11 +184,13 @@ namespace Domino.Controllers
             var DupPNDict = new Dictionary<string, List<ECOBaseInfo>>();
             ViewBag.DupPNList = "";
 
+            var newloaddict = NewLoadMiniPIP.NewLoadPIPToShow();
+
             var baseinfos = ECOBaseInfo.RetrieveAllWorkingECOBaseInfo();
             var vm = new List<List<DominoVM>>();
             foreach (var item in baseinfos)
             {
-                if (string.IsNullOrEmpty(item.ECONum))
+                if (string.IsNullOrEmpty(item.ECONum) && !newloaddict.ContainsKey(item.ECOKey))
                     continue;
 
                 var loginer = updater.Split(new string[] { "@" }, StringSplitOptions.RemoveEmptyEntries)[0].Replace(".","").Replace(" ", "").ToUpper();
@@ -239,6 +239,11 @@ namespace Domino.Controllers
                     {
                         forpereview = true;
                     }
+                }
+
+                if (newloaddict.ContainsKey(item.ECOKey))
+                {
+                    forpereview = true;
                 }
 
                 if (forpereview)
