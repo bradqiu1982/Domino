@@ -74,6 +74,38 @@ namespace Domino.Models
             return ret;
         }
 
+        public static Dictionary<string, bool> NewLoadNeedOrderInfo()
+        {
+            var ret = new Dictionary<string, bool>();
+            var sql = "select MiniPIPID from NewLoadMiniPIP where Removed <> 'TRUE' and OrderInfo = ''";
+            var dbret = DBUtility.ExeLocalSqlWithRes(sql);
+            foreach (var line in dbret)
+            {
+                var mid = Convert.ToString(line[0]);
+                if (!ret.ContainsKey(mid))
+                {
+                    ret.Add(mid, true);
+                }
+            }//end foreach
+            return ret;
+        }
+
+        public static Dictionary<string, bool> NewLoadPIPModalToShow()
+        {
+            var ret = new Dictionary<string, bool>();
+            var sql = "select MiniPIPID from NewLoadMiniPIP where SpecailMaterial = '' and Removed <> 'TRUE' and OrderInfo <> ''";
+            var dbret = DBUtility.ExeLocalSqlWithRes(sql);
+            foreach (var line in dbret)
+            {
+                var mid = Convert.ToString(line[0]);
+                if (!ret.ContainsKey(mid))
+                {
+                    ret.Add(mid, true);
+                }
+            }//end foreach
+            return ret;
+        }
+
         public static void UpdateOrderInfo(string mid, string orderinfo)
         {
             var ord = RMSpectialCh(orderinfo);
@@ -87,11 +119,47 @@ namespace Domino.Models
             DBUtility.ExeLocalSqlNoRes(sql);
         }
 
-        public static void UpdateMaterial(string mid, string material)
+        public static List<NewLoadMiniPIP> RetrieveNewLoadMiniPIP(string mid)
         {
+            var alertlist = new List<NewLoadMiniPIP>();
+
+            var sql = "select MiniPIPID,OrderInfo,SpecailMaterial,PN,PE,AlertDate from NewLoadMiniPIP where MiniPIPID = '<MiniPIPID>'";
+            sql = sql.Replace("<MiniPIPID>",mid);
+            var dbret = DBUtility.ExeLocalSqlWithRes(sql);
+
+            foreach (var line in dbret)
+            {
+
+                    var tempvm = new NewLoadMiniPIP();
+                    tempvm.MiniPIPID = Convert.ToString(line[0]);
+                    tempvm.OrderInfo = Convert.ToString(line[1]);
+                    tempvm.SpecailMaterial = Convert.ToString(line[2]);
+                    tempvm.PN = Convert.ToString(line[3]);
+                    tempvm.PE = Convert.ToString(line[4]);
+
+                    alertlist.Add(tempvm);
+
+            }//end foreach
+
+            return alertlist;
+        }
+
+        public static void UpdateMaterial(string mid, string material,Controller ctrl)
+        {
+            if (string.IsNullOrEmpty(material))
+            {
+                ReceiveResponsed(mid, "NA");
+            }
+
             var sql = "update NewLoadMiniPIP set SpecailMaterial = '<SpecailMaterial>' where MiniPIPID = '<MiniPIPID>'";
             sql = sql.Replace("<MiniPIPID>", mid).Replace("<SpecailMaterial>", material.Replace("'", ""));
             DBUtility.ExeLocalSqlNoRes(sql);
+
+            if (!string.IsNullOrEmpty(material))
+            {
+                var alertlist = RetrieveNewLoadMiniPIP(mid);
+                SendNoticEmail(ctrl,alertlist);
+            }
         }
 
         public static void SendNoticEmail(Controller ctrl, List<NewLoadMiniPIP> alertlist)
@@ -121,11 +189,11 @@ namespace Domino.Models
                 {
                     var tempdata = "";
                     tempdata = tempdata + "PN: " + item.PN + " PE: " + item.PE + " Order: " + item.OrderInfo + " Special Material: " + item.SpecailMaterial + "\r\n";
-                    tempdata = tempdata + "http://wuxinpi.china.ads.finisar.com:8080/Domino/MiniPIP/ApproveMaterial?MID=" + item.MiniPIPID + "\r\n";
+                    tempdata = tempdata + "http://wuxinpi.china.ads.finisar.com:8080/Domino/MiniPIP/ApproveMaterial?MID=" + item.MiniPIPID + "  \r\n";
                     emailstr = emailstr + tempdata;
                 }
 
-                EmailUtility.SendEmail("MiniPIP Special Material OA", tolist, emailstr);
+                EmailUtility.SendEmail(ctrl,"MiniPIP Special Material OA", tolist, emailstr);
                 new System.Threading.ManualResetEvent(false).WaitOne(1000);
             }
         }

@@ -212,6 +212,7 @@
     <Compile Include="Models\DominoVM.cs" />
     <Compile Include="Models\EmailUtility.cs" />
     <Compile Include="Models\ExcelReader.cs" />
+    <Compile Include="Models\NewLoadMiniPIP.cs" />
     <Compile Include="Models\UserRankViewModel.cs" />
     <Compile Include="Models\DominoUserViewModels.cs" />
     <Compile Include="Models\WebPageVM.cs" />
@@ -1100,6 +1101,7 @@
     <Content Include="Views\DominoUser\UserCachedInfo.cshtml" />
     <Content Include="Views\MiniPIP\ModifyCardComment.cshtml" />
     <Content Include="Scripts\npidepartmentmachine.cfg" />
+    <Content Include="Views\MiniPIP\ApproveMaterial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Scripts\agiledownloadwraper\jre\lib\applet\" />

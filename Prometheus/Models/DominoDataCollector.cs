@@ -458,6 +458,11 @@ namespace Domino.Models
                             {
                                 continue;
                             }
+                            var filedate = DateTime.Parse(timestamp.Substring(0, 4) + "-" + timestamp.Substring(4, 2) + "-" + timestamp.Substring(6, 2) + " 07:30:00");
+                            if ((DateTime.Now - filedate).Days > 90)
+                            {
+                                continue;
+                            }
 
                             var fn = imgdir + Path.GetFileName(fd);
                             FileCopy(ctrl,fd, fn, true,true);

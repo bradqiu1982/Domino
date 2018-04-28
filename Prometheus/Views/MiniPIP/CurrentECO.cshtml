@@ -261,3 +261,84 @@
         }
         </div>
 </div>
+
+<div class="modal fade" id="SpecialMaterialModal" tabindex="-1" role="dialog" aria-labelledby="SpecialMaterialLabel" style="margin-top:5%">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="SpecialMaterialLabel">Specail Material</h4>
+            </div>
+            <div class="modal-body">
+                <p>DO we have special material ?</p>
+                <div class="row">
+                    <div class="col-sm-1"></div>
+                    <div class="col-sm-2">Material:</div>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="text" id="SpecialMaterial" name="SpecialMaterial">
+                    </div>
+                    <div class="col-sm-1"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="SPMYES" name="SPMYES" onclick="SPMYESCLICK()">Yes</button>
+                <button type="button" class="btn btn-warning" id="SPMNO" name="SPMNO" onclick="SPMNOCLICK()">No</button>
+                <button type="button" class="btn btn-default" id="SPMLater" name="SPMLater" onclick="SPMLaterCLICK()" >Later</button>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function SPMYESCLICK() {
+        var spmaterial =  $.trim($('#SpecialMaterial').val());
+        if (spmaterial === '')
+        {
+            alert("Special Material need to be input!")
+            return false;
+        }
+        $('#SpecialMaterialModal').modal('hide');
+        var ecokey = $('#ECOKey').val();
+        $.post('/Domino/MiniPIP/UpdateNewLoadSpecialMaterial', {
+            spmaterial: spmaterial,
+            ecokey: ecokey
+        },
+        function (output) {
+            $('#actionname').val('commitinfo');
+            $('#ecopendingform').submit();
+        });
+    }
+
+    function SPMNOCLICK() {
+        $('#SpecialMaterialModal').modal('hide');
+        var ecokey = $('#ECOKey').val();
+        $.post('/Domino/MiniPIP/UpdateNewLoadSpecialMaterial', {
+            spmaterial: '',
+            ecokey: ecokey
+        },
+        function (output) {
+            $('#actionname').val('commitinfo');
+            $('#ecopendingform').submit();
+        });
+    }
+</script>
+
+@if (ViewBag.NewLoadNeedOrderInfo != null && ViewBag.NewLoadNeedOrderInfo)
+{
+    <script type="text/javascript">
+        function SPMLaterCLICK() {
+            $('#SpecialMaterialModal').modal('hide');
+            $('#actionname').val('commitinfo');
+            $('#ecopendingform').submit();
+        }
+    </script>
+}
+else
+{
+    <script type="text/javascript">
+        function SPMLaterCLICK() {
+            $('#SpecialMaterialModal').modal('hide');
+        }
+    </script>
+}

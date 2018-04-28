@@ -22,8 +22,11 @@ TUNABLEQAEEPROMFILTER:::CHECKLISTEEPROM
 TUNABLEQALABELFAI:::\\wux-fs\Public\Quality\29.T-XFP TQM\17. FAI  Checking Record\FLI
 TUNABLEQALABELFILTER:::FLI_CHECK
 
-SPECIALMATERIALEMAIL:::brad.qiu@finisar.com
-##SPECIALMATERIALEMAIL:::sherry.zhang@finisar.com;ruilong.zhou@finisar.com
+SPECIALMATERIALEMAIL:::sherry.zhang@finisar.com;ruilong.zhou@finisar.com;brad.qiu@finisar.com
+APPEMAILADRESS:::WXNPI.Trace@finisar.com
+APPEMAILPWD:::abc@12345
+EMAILSERVER:::wmail.finisar.com
+
 
 ##MINIPIPECOFOLDER:::\\wux-fs\public\Project\CFP\OQC
 ##MINIPIPECOFILENAME:::Mini-PIP_log_current.xlsm

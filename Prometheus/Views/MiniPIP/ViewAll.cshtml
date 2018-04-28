@@ -226,7 +226,11 @@
             continue;
         }
 
-        if (string.Compare(item.ElementAt(0).EBaseInfo.MiniPIPStatus, Domino.Models.DominoMiniPIPStatus.hold) == 0)
+        if (ViewBag.newloaddict != null && ViewBag.newloaddict.ContainsKey(item.ElementAt(0).EBaseInfo.ECOKey))
+        {
+            newloadlist.Add(item.ToList());
+        }
+        else if (string.Compare(item.ElementAt(0).EBaseInfo.MiniPIPStatus, Domino.Models.DominoMiniPIPStatus.hold) == 0)
         {
             kickofflist.Add(item.ToList());
         }
@@ -238,13 +242,9 @@
         {
             reviselist.Add(item.ToList());
         }
-        else if (!string.IsNullOrEmpty(item.ElementAt(0).EBaseInfo.ECONum))
-        {
-            kickofflist.Add(item.ToList());
-        }
         else
         {
-            newloadlist.Add(item.ToList());
+            kickofflist.Add(item.ToList());
         }
     }
 
@@ -463,7 +463,7 @@
             <div class="panel panel-default" id="panelnewload" style="border-left-color:white;border-right-color:white;border-bottom-color:white;border-bottom-width:0px;margin-top:0px !important;">
                 <div class="panel-heading" style="background-color:#00C28D;">
                     <h4 class="panel-title">
-                        <a data-toggle="collapse" data-target="#collapsenewload" href="#collapsenewload" class="collapsed" style="font-family:'Arial Narrow'"><font color="white">New Loaded&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@(kickofflist.Count)</font></a>
+                        <a data-toggle="collapse" data-target="#collapsenewload" href="#collapsenewload" class="collapsed" style="font-family:'Arial Narrow'"><font color="white">New Loaded&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@(newloadlist.Count)</font></a>
                     </h4>
                 </div>
                 <div id="collapsenewload" class="panel-collapse collapse" style="border-left-color:white;border-right-color:white;border-bottom-color:white;border-bottom-width:0px">

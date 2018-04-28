@@ -1,6 +1,6 @@
 ﻿@if (ViewBag.CurrentCard != null)
 {
-    using (Html.BeginForm("ECOPending", "MiniPIP", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    using (Html.BeginForm("ECOPending", "MiniPIP", FormMethod.Post, new { enctype = "multipart/form-data",id = "ecopendingform",name= "ecopendingform" }))
     {
         @Html.AntiForgeryToken()
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -326,6 +326,7 @@
                                     </div>
                                     <div class="row col-lg-6">
                                         <input class="form-control text-box single-line" value="@ViewBag.CardKey" type="hidden" id="CardKey" name="CardKey" />
+                                        <input class="form-control text-box single-line" value="" type="hidden" id="actionname" name="actionname" />
                                     </div>
                                 </div>
 
@@ -346,14 +347,14 @@
                                         </div>
                                         <div class="row col-lg-1"></div>
                                         <div class="row col-lg-2">
-                                            <input type="submit" value="Commit Info" id="commitinfo" name="commitinfo" class="btn btn-default" />
+                                            <input type="button" value="Commit Info" id="commitinfo" name="commitinfo" class="btn btn-default" onclick="SubmitECOPending('commitinfo')"/>
                                         </div>
                                         <div class="row col-lg-2">
-                                            <input type="submit" value="Pass Card" id="submitcard" name="submitcard" class="btn btn-default" />
+                                            <input type="button" value="Pass Card" id="submitcard" name="submitcard" class="btn btn-default" onclick="SubmitECOPending('submitcard')"/>
                                         </div>
                                         <div class="row col-lg-2">
-                                            @if (ViewBag.badmin != null && ViewBag.badmin)
-                        { <input type="submit" value="Force Pass" id="forcecard" name="forcecard" class="btn btn-default" />}
+                                         @if (ViewBag.badmin != null && ViewBag.badmin)
+                                         { <input type="button" value="Force Pass" id="forcecard" name="forcecard" class="btn btn-default" onclick="SubmitECOPending('forcecard')"/>}
                                         </div>
                                         <script type="text/javascript">
                                             function deleteminipip() {
@@ -372,6 +373,57 @@
                                 </div>
 
                             </div>
-                            }
-                            }
+    }
+
+    if (ViewBag.NewLoadNeedOrderInfo != null && ViewBag.NewLoadNeedOrderInfo)
+    {
+        <script type="text/javascript">
+            function SubmitECOPending(actionname)
+            {
+                $('#actionname').val(actionname);
+
+                var orderinfo = $.trim($('#OrderInfo').val()).toUpperCase();
+                var ecokey = $('#ECOKey').val();
+
+                if (orderinfo === 'N/A' || orderinfo === 'NA') {
+                    alert('order info is NA');
+                    $.post('/Domino/MiniPIP/UpdateNewLoadOrderInfo', {
+                        orderinfo: orderinfo,
+                        ecokey: ecokey
+                    }, function (output) {
+                        $('#ecopendingform').submit();
+                    })
+                }
+                else {
+                    $.post('/Domino/MiniPIP/UpdateNewLoadOrderInfo', {
+                        orderinfo: orderinfo,
+                        ecokey: ecokey
+                    }, function (output) {
+                        $('#SpecialMaterialModal').modal({ backdrop: 'static' });
+                    })
+                }
+            }
+        </script>
+    }
+    else
+    {
+        <script type="text/javascript">
+            function SubmitECOPending(actionname)
+            {
+                $('#actionname').val(actionname);
+
+                $('#ecopendingform').submit();
+            }
+        </script>
+    }
+
+    if (ViewBag.shownewloadmodal)
+    {
+        <script type="text/javascript">
+            $(function () {
+                $('#SpecialMaterialModal').modal({ backdrop: 'static' });
+            });
+        </script>
+    }
+}
 

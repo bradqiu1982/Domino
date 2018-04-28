@@ -185,6 +185,7 @@ namespace Domino.Controllers
             ViewBag.DupPNList = "";
 
             var newloaddict = NewLoadMiniPIP.NewLoadPIPToShow();
+            ViewBag.newloaddict = newloaddict;
 
             var baseinfos = ECOBaseInfo.RetrieveAllWorkingECOBaseInfo();
             var vm = new List<List<DominoVM>>();
@@ -979,6 +980,38 @@ namespace Domino.Controllers
             return string.Empty;
         }
 
+        public JsonResult UpdateNewLoadOrderInfo()
+        {
+            var orderinfo = Request.Form["orderinfo"];
+            var ecokey = Request.Form["ecokey"];
+
+            NewLoadMiniPIP.UpdateOrderInfo(ecokey, orderinfo);
+
+            var ret = new JsonResult();
+            ret.Data = new { success = true };
+            return ret;
+        }
+
+        public JsonResult UpdateNewLoadSpecialMaterial()
+        {
+            var spmaterial = Request.Form["spmaterial"];
+            var ecokey = Request.Form["ecokey"];
+
+            NewLoadMiniPIP.UpdateMaterial(ecokey, spmaterial,this);
+
+            var ret = new JsonResult();
+            ret.Data = new { success = true };
+            return ret;
+        }
+
+        public ActionResult ApproveMaterial(string MID)
+        {
+            string IP = Request.UserHostName;
+            string compName = DetermineCompName(IP).ToUpper();
+            NewLoadMiniPIP.ReceiveResponsed(MID, compName);
+            return View();
+        }
+
         public ActionResult ECOPending(string ECOKey, string CardKey,string Refresh="No")
         {
             var ckdict = CookieUtility.UnpackCookie(this);
@@ -1100,6 +1133,19 @@ namespace Domino.Controllers
                     }
                 }
 
+                ViewBag.NewLoadNeedOrderInfo = false;
+                var newloadshowdict = NewLoadMiniPIP.NewLoadNeedOrderInfo();
+                if (newloadshowdict.ContainsKey(ECOKey))
+                {
+                    ViewBag.NewLoadNeedOrderInfo = true;
+                }
+
+                var newloadmodaldict = NewLoadMiniPIP.NewLoadPIPModalToShow();
+                ViewBag.shownewloadmodal = false;
+                if (newloadmodaldict.ContainsKey(ECOKey))
+                {
+                    ViewBag.shownewloadmodal = true;
+                }
                 GetNoticeInfo();
                 return View("CurrentECO", vm);
             }
@@ -1253,7 +1299,7 @@ namespace Domino.Controllers
                 
                 StoreAttachAndComment(CardKey, updater);
 
-                if (Request.Form["commitinfo"] != null)
+                if (string.Compare(Request.Form["actionname"], "commitinfo", true) == 0)
                 {
                     var redict = new RouteValueDictionary();
                     redict.Add("CardKey", CardKey);
@@ -1261,7 +1307,7 @@ namespace Domino.Controllers
                 }
 
 
-                if (Request.Form["forcecard"] == null)
+                if (string.Compare(Request.Form["actionname"],"forcecard",true) == 0)
                 {
                     if (string.IsNullOrEmpty(baseinfos[0].ECONum))
                     {

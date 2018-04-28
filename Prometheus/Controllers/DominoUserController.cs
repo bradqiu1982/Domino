@@ -44,7 +44,7 @@ namespace Domino.Controllers
 
             var toaddrs = new List<string>();
             toaddrs.Add(username);
-            EmailUtility.SendEmail("NPI Website Active Link",toaddrs, validatestr);
+            EmailUtility.SendEmail(this,"NPI Website Active Link",toaddrs, validatestr);
         }
 
         [HttpPost, ActionName("RegisterUser")]
@@ -168,7 +168,7 @@ namespace Domino.Controllers
 
             var toaddrs = new List<string>();
             toaddrs.Add(username);
-            EmailUtility.SendEmail("NPI Website Active Link", toaddrs, validatestr);
+            EmailUtility.SendEmail(this,"NPI Website Active Link", toaddrs, validatestr);
             return RedirectToAction("ResetNoticeA");
         }
 
