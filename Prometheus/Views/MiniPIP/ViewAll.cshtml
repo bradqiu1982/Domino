@@ -137,6 +137,12 @@
                                     window.location.href = '/Domino/MiniPIP/ShowECOMiniPIP?ECONum=' + document.getElementById("ECONumFilter").value;
                                 }
                             }
+
+                            function FilterPN() {
+                                if (document.getElementById("PNFilter").value) {
+                                    window.location.href = '/Domino/MiniPIP/ShowECOMiniPIPByPN?pndesc=' + document.getElementById("PNFilter").value;
+                                }
+                            }
                                 </script>
                             </div>
                             <hr />
@@ -178,7 +184,17 @@
                                 {
                                     <div class="col-lg-6"></div>
                                 }
-                                <div class="col-lg-4"></div>
+                                <div class="col-lg-4">
+                                    <div class="col-lg-4">
+                                        <label class="control-label">PN Desc:</label>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <input class="form-control text-box single-line" type="text" value="" id="PNFilter" name="PNFilter" placeholder="eg:FTL410QD"/>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <button data-toggle="tooltip" title="PN Filter" type="button" class="btn btn-default" onclick="FilterPN()"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+                                    </div>
+                                </div>
                                 <div class="col-lg-2">
                                     <button MYTP="BT" data-toggle="tooltip" title="All MiniPIP" type="button" onclick="AllMiniPIP()" class="btn btn-default" style="width:8em;">All MiniPIP</button>
                                 </div>

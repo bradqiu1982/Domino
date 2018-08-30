@@ -692,6 +692,43 @@ namespace Domino.Controllers
             return View("ViewAll", vm);
         }
 
+        public ActionResult ShowECOMiniPIPByPN(string pndesc)
+        {
+            var updater = GetAdminAuth();
+            var baseinfos = ECOBaseInfo.RetrieveECOBaseInfoWithECONumByPN(pndesc);
+            var vm = new List<List<DominoVM>>();
+            foreach (var item in baseinfos)
+            {
+                var templist = DominoVM.RetrieveECOCards(item);
+                vm.Add(templist);
+            }
+
+            var alluser = ECOBaseInfo.RetrieveAllPE();
+            var asilist = new List<string>();
+            asilist.Add("NONE");
+            asilist.AddRange(alluser);
+            ViewBag.FilterPEList = CreateSelectList(asilist, "");
+
+            var allcustomer = ECOBaseInfo.RetrieveAllCustomer();
+            asilist = new List<string>();
+            asilist.Add("NONE");
+            asilist.AddRange(allcustomer);
+            ViewBag.CustomerList = CreateSelectList(asilist, "");
+
+            var ecocardtypelistarray = new string[] { DominoCardType.ECOPending, DominoCardType.ECOSignoff1, DominoCardType.CustomerApprovalHold
+                                                        ,DominoCardType.ECOComplete,DominoCardType.SampleOrdering,DominoCardType.SampleBuilding
+                                                        ,DominoCardType.SampleShipment,DominoCardType.SampleCustomerApproval,DominoCardType.MiniPIPComplete };
+            asilist = new List<string>();
+            asilist.Add("NONE");
+            asilist.AddRange(ecocardtypelistarray);
+            ViewBag.ecocardtypelist = CreateSelectList(asilist, "");
+
+            ViewBag.HistoryInfos = DominoUserViewModels.RetrieveUserHistory(updater);
+            GetNoticeInfo();
+
+            return View("ViewAll", vm);
+        }
+
         public ActionResult CompletedMiniPIP()
         {
             var updater = GetAdminAuth();
@@ -792,6 +829,8 @@ namespace Domino.Controllers
             RefreshAgileInfo();
 
             RefreshCardsInfo();
+
+            NewLoadMiniPIP.SendNoticEmail(this);
 
             return RedirectToAction("ViewAll", "MiniPIP");
         }

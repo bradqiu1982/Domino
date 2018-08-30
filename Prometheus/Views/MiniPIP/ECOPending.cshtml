@@ -386,7 +386,6 @@
                 var ecokey = $('#ECOKey').val();
 
                 if (orderinfo === 'N/A' || orderinfo === 'NA') {
-                    alert('order info is NA');
                     $.post('/Domino/MiniPIP/UpdateNewLoadOrderInfo', {
                         orderinfo: orderinfo,
                         ecokey: ecokey
