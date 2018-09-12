@@ -1749,6 +1749,43 @@ namespace Domino.Models
                         }
                         catch (Exception ex) { }
 
+                        {
+                            var sb = new StringBuilder(jodict.Count * 30);
+                            sb.Append("('");
+                            foreach (var kv in jodict)
+                            {
+                                sb.Append(kv.Key + "','");
+                            }
+                            var jocond = sb.ToString();
+                            jocond = jocond.Substring(0, jocond.Length - 2);
+                            jocond += ")";
+
+                            var nsql = "select JO,ConfirmPeople,ConfirmTime from [NebulaTrace].[dbo].[FAFJoVM] where JO in <jocond> and ConfirmPeople <> ''";
+                            nsql = nsql.Replace("<jocond>", jocond);
+                            var ndbret = DBUtility.ExeNebulaSqlWithRes(nsql);
+                            foreach (var line in ndbret)
+                            {
+                                var jo = Convert.ToString(line[0]);
+                                var eg = Convert.ToString(line[1]);
+                                var dt = Convert.ToDateTime(line[2]).ToString("yyyy-MM-dd HH:mm:ss");
+
+                                var tempinfo = new ECOJOCheck();
+                                tempinfo.CardKey = cardkey;
+                                tempinfo.JO = jo;
+                                tempinfo.EEPROM = eg;
+                                tempinfo.EEPROMDT = dt;
+                                tempinfo.Label = eg;
+                                tempinfo.LabelDT = dt;
+                                tempinfo.TestData = eg;
+                                tempinfo.TestDateDT = dt;
+                                tempinfo.Costemic = eg;
+                                tempinfo.CostemicDT = dt;
+                                tempinfo.Status = "close";
+                                tempinfo.CheckType = DOMINOJOCHECKTYPE.ENGTYPE;
+                                jochecklist.Add(tempinfo);
+                            }//end foreach
+                        }
+
                         if (jochecklist.Count > 0)
                         {
                             DominoVM.UpdateJOCheckInfo(jochecklist, cardkey);
