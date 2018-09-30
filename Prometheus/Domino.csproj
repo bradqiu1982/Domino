@@ -1023,6 +1023,7 @@
     <Content Include="Scripts\exporting.js" />
     <Content Include="Scripts\HeartBeat4Domino.exe" />
     <Content Include="Scripts\heartbeat4domino.txt" />
+    <Content Include="Scripts\highcharts-more.js" />
     <Content Include="Scripts\highcharts.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
