@@ -1019,6 +1019,7 @@
     <Content Include="Scripts\DominoComplex.xml" />
     <Content Include="Scripts\DominoCycleTime.xml" />
     <Content Include="Scripts\DominoFABuilding.xml" />
+    <Content Include="Scripts\dominotrace_db.txt" />
     <Content Include="Scripts\DominoWorkLoad.xml" />
     <Content Include="Scripts\exporting.js" />
     <Content Include="Scripts\HeartBeat4Domino.exe" />
