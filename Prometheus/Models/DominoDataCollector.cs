@@ -1628,7 +1628,7 @@ namespace Domino.Models
                             var baseinfopn = string.Empty;
                             var excelpn = string.Empty;
 
-                            var expns = line[1].Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+                            var expns = line[1].Split(new string[] { ",","*" }, StringSplitOptions.RemoveEmptyEntries);
                             foreach (var expn in expns)
                             {
                                 if (baseinfo.PNDesc.Contains("xx"))
@@ -1651,8 +1651,7 @@ namespace Domino.Models
                                     excelpn = expn;
                                 }
 
-                                if ((string.Compare(line[3], "903") == 0 || string.Compare(line[3], "919") == 0)
-                                && excelpn.ToUpper().Contains(baseinfopn.ToUpper()))
+                                if (excelpn.ToUpper().Contains(baseinfopn.ToUpper()))
                                 {
                                     var tempinfo = new ECOJOOrderInfo();
                                     tempinfo.Description = line[1];
