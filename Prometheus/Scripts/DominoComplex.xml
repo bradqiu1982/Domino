@@ -34,21 +34,21 @@ $(function () {
         },
         series: [{
             type: 'column',
-            name: 'EXPEDITE',
+            name: 'Express PIP',
             data: [#EXPEDITE#],
             yAxis:0,
             color:'#bab8b8'
         },
         {
             type: 'column',
-            name: 'MEDIUM',
+            name: 'Medium',
             data: [#MEDIUM#],
             yAxis:0,
             color:'#90ed7d'
         },
         {
             type: 'column',
-            name: 'SMALL',
+            name: 'Simple',
             data: [#SMALL#],
             yAxis:0,
             color:'#7cb5ec'

@@ -512,6 +512,8 @@ namespace Domino.Models
             catch (Exception ex) { return string.Empty; }
         }
 
+       
+
         private static void updateecolist(List<List<string>> data, Controller ctrl, string localdir, string urlfolder)
         {
             var syscfgdict = GetSysConfig(ctrl);
@@ -558,6 +560,7 @@ namespace Domino.Models
                     baseinfo.ECOCCBSignoff = ConvertToDate(line[80]);
                     baseinfo.ECONum = line[81];
                     baseinfo.QTRInit = line[82];
+                    baseinfo.ECORevenue = UT.O2D(line[44]);
 
                     bool ecoexist = false;
                     foreach (var item in baseinfos)
@@ -587,6 +590,7 @@ namespace Domino.Models
                             item.ECOCCBSignoff = baseinfo.ECOCCBSignoff;
                             item.ECONum = baseinfo.ECONum;
                             item.QTRInit = baseinfo.QTRInit;
+                            item.ECORevenue = baseinfo.ECORevenue;
                             item.UpdateECO();
 
                             var pendingcard = DominoVM.RetrieveSpecialCard(item, DominoCardType.ECOPending);

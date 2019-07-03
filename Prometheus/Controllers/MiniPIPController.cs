@@ -3936,5 +3936,87 @@ namespace Domino.Controllers
             catch (Exception ex) { }
         }
 
+        public JsonResult NoticePESampleOrder()
+        {
+            var cardkey = Request.Form["crtcardkey"];
+            var cardinfo = DominoVM.RetrieveCard(cardkey);
+            if (cardinfo.Count > 0)
+            {
+                var baseinfo = ECOBaseInfo.RetrieveECOBaseInfo(cardinfo[0].ECOKey)[0];
+
+                var title = "Sample Ordering for ["+baseinfo.PNDesc+"] for ["
+                    + baseinfo.Customer+"] under ["+ baseinfo.ECONum + "]";
+                var tolist = new List<string>();
+                tolist.Add(baseinfo.PE.Replace(" ",".")+ "@finisar.com");
+                if (!string.IsNullOrEmpty(baseinfo.ActualPE))
+                { tolist.Add(baseinfo.ActualPE.Replace(" ", ".") + "@finisar.com"); }
+                tolist.Add("william.martinez@finisar.com");
+                tolist.Add("ruilong.zhou@finisar.com");
+                tolist.Add("DL-SHGWXICustomerFAIRminiPIP@finisar.com");
+
+                var infotable = new List<List<string>>();
+                var templist = new List<string>();
+                templist.Add("ECO Number");
+                templist.Add(baseinfo.ECONum);
+                infotable.Add(templist);
+                templist = new List<string>();
+                templist.Add("MiniPIP Flow");
+                templist.Add(baseinfo.ECOType);
+                infotable.Add(templist);
+                templist = new List<string>();
+                templist.Add("Order Info");
+                templist.Add(baseinfo.FirstArticleNeed);
+                infotable.Add(templist);
+
+                templist = new List<string>();
+                templist.Add("Product Requested");
+                templist.Add(baseinfo.PNDesc);
+                infotable.Add(templist);
+                templist = new List<string>();
+                templist.Add("Customer");
+                templist.Add(baseinfo.Customer);
+                infotable.Add(templist);
+                templist = new List<string>();
+                templist.Add("Type");
+                templist.Add(baseinfo.Complex);
+                infotable.Add(templist);
+
+                templist = new List<string>();
+                templist.Add("RSM");
+                templist.Add(baseinfo.RSM);
+                infotable.Add(templist);
+                templist = new List<string>();
+                templist.Add("PE");
+                templist.Add(baseinfo.PE);
+                infotable.Add(templist);
+                templist = new List<string>();
+                templist.Add("Risk Build");
+                templist.Add(baseinfo.RiskBuild);
+                infotable.Add(templist);
+                if (baseinfo.ECORevenue != 0)
+                {
+                    templist = new List<string>();
+                    templist.Add("ECO Revenue");
+                    templist.Add("$"+baseinfo.ECORevenue.ToString());
+                    infotable.Add(templist);
+                }
+                if (!string.IsNullOrEmpty(baseinfo.ActualPE))
+                {
+                    templist = new List<string>();
+                    templist.Add("Actual PE");
+                    templist.Add(baseinfo.ActualPE);
+                    infotable.Add(templist);
+                }
+
+
+                var content = EmailUtility.CreateTableHtml("Hi All", "Below is a notice of sample order:", "",infotable);
+                EmailUtility.SendEmail(this,title,tolist,content);
+                new System.Threading.ManualResetEvent(false).WaitOne(500);
+            }
+
+            var ret = new JsonResult();
+            ret.Data = new { sucess = true };
+            return ret;
+        }
     }
 }

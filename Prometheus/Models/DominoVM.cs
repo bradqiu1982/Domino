@@ -322,15 +322,18 @@ namespace Domino.Models
         public string MCOIssued { set; get; }
         public string PNImplement { set; get; }
         public string FACustomerApproval { set; get; }
+        public double ECORevenue { set; get; }
         public string MiniPIPStatus { set; get; }
+
 
         public string ECOHoldStartDate { set; get; }
         public string ECOHoldEndDate { set; get; }
-
         public string CurrentECOProcess { set; get; }
         public string CurrentFlowType { set; get; }
 
         public string ActualPE { set; get; }
+
+        
 
         private Dictionary<string, string> namedict = new Dictionary<string, string>();
         public Dictionary<string, string> NameDict { get { return namedict; } }
@@ -361,6 +364,7 @@ namespace Domino.Models
             namedict.Add("MCOIssued", "MCO Issued");
             namedict.Add("ECOType", "MiniPIP Flow");
             namedict.Add("FirstArticleNeed", "Order Info");
+            namedict.Add("ECORevenue", "ECO Revenue");
             namedict.Add("CurrentECOProcess", "ECO Status");
 
 
@@ -368,6 +372,7 @@ namespace Domino.Models
             namedict4viewall.Add("ECOType", "MiniPIP Flow");
             namedict4viewall.Add("PNDesc", "Product Requested");
             namedict4viewall.Add("PE", "PE");
+            namedict4viewall.Add("ECORevenue", "ECO Revenue");
             namedict4viewall.Add("CurrentECOProcess", "ECO Status");
 
             ECONum = string.Empty;
@@ -400,6 +405,7 @@ namespace Domino.Models
             CurrentFlowType = string.Empty;
             ActualPE = string.Empty;
             peconum = string.Empty;
+            ECORevenue = 0;
         }
 
         public static List<KeyValuePair<string, string>> RetrieveBaseInfoKV(ECOBaseInfo info)
@@ -439,7 +445,8 @@ namespace Domino.Models
                     catch (Exception ex) { val = string.Empty; }
 
                     if (!string.IsNullOrEmpty(val)
-                        && string.Compare(val, "N/A", true) != 0)
+                        && string.Compare(val, "N/A", true) != 0
+                        && string.Compare(val, "0", true) != 0)
                     {
                         ret.Add(new KeyValuePair<string, string>(info.NameDict[property.Name], val));
                     }
@@ -481,9 +488,9 @@ namespace Domino.Models
             SetDefaultDateValue();
 
             var sql = "insert into ECOBaseInfo(ECOKey,ECONum,ECOType,PNDesc,Customer,Complex,RSM,PE,RiskBuild,InitRevison,FinalRevison"
-                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement,FACustomerApproval,MiniPIPStatus,ECOHoldStartDate,ECOHoldEndDate,CurrentECOProcess,CurrentFlowType,APVal1)"
+                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement,FACustomerApproval,MiniPIPStatus,ECOHoldStartDate,ECOHoldEndDate,CurrentECOProcess,CurrentFlowType,APVal1,APVal2)"
                 + " values('<ECOKey>','<ECONum>','<ECOType>','<PNDesc>','<Customer>','<Complex>','<RSM>','<PE>','<RiskBuild>','<InitRevison>','<FinalRevison>'"
-                + ",'<TLAAvailable>','<OpsEntry>','<TestModification>','<ECOSubmit>','<ECOReviewSignoff>','<ECOCCBSignoff>','<QTRInit>','<MCOIssued>','<FirstArticleNeed>','<FlowInfo>','<PNImplement>','<FACustomerApproval>','<MiniPIPStatus>','<ECOHoldStartDate>','<ECOHoldEndDate>','<CurrentECOProcess>','<CurrentFlowType>','<ActualPE>')";
+                + ",'<TLAAvailable>','<OpsEntry>','<TestModification>','<ECOSubmit>','<ECOReviewSignoff>','<ECOCCBSignoff>','<QTRInit>','<MCOIssued>','<FirstArticleNeed>','<FlowInfo>','<PNImplement>','<FACustomerApproval>','<MiniPIPStatus>','<ECOHoldStartDate>','<ECOHoldEndDate>','<CurrentECOProcess>','<CurrentFlowType>','<ActualPE>','<ECORevenue>')";
 
 
             sql = sql.Replace("<ECOKey>", ECOKey).Replace("<ECONum>", ECONum).Replace("<ECOType>", ECOType).Replace("<PNDesc>", PNDesc).Replace("<Customer>", Customer)
@@ -493,7 +500,7 @@ namespace Domino.Models
                 .Replace("<QTRInit>", QTRInit).Replace("<MCOIssued>", MCOIssued).Replace("<FirstArticleNeed>", FirstArticleNeed)
                 .Replace("<FlowInfo>", FlowInfo).Replace("<PNImplement>", PNImplement).Replace("<FACustomerApproval>", FACustomerApproval)
                 .Replace("<MiniPIPStatus>", MiniPIPStatus).Replace("<ECOHoldStartDate>", ECOHoldStartDate).Replace("<ECOHoldEndDate>", ECOHoldEndDate)
-                .Replace("<CurrentECOProcess>", CurrentECOProcess).Replace("<CurrentFlowType>", CurrentFlowType).Replace("<ActualPE>", ActualPE);
+                .Replace("<CurrentECOProcess>", CurrentECOProcess).Replace("<CurrentFlowType>", CurrentFlowType).Replace("<ActualPE>", ActualPE).Replace("<ECORevenue>", ECORevenue.ToString());
 
             DBUtility.ExeLocalSqlNoRes(sql);
         }
@@ -506,7 +513,7 @@ namespace Domino.Models
             var sql = "update ECOBaseInfo set ECONum='<ECONum>',ECOType='<ECOType>',PNDesc='<PNDesc>',Customer='<Customer>',Complex='<Complex>',RSM='<RSM>',PE='<PE>',RiskBuild='<RiskBuild>',InitRevison='<InitRevison>',FinalRevison='<FinalRevison>'"
                 + ",TLAAvailable='<TLAAvailable>',OpsEntry='<OpsEntry>',TestModification='<TestModification>',ECOSubmit='<ECOSubmit>',ECOReviewSignoff='<ECOReviewSignoff>',ECOCCBSignoff='<ECOCCBSignoff>',QTRInit='<QTRInit>'"
                 + ",MCOIssued='<MCOIssued>',FirstArticleNeed='<FirstArticleNeed>',FlowInfo='<FlowInfo>',PNImplement='<PNImplement>',FACustomerApproval='<FACustomerApproval>',MiniPIPStatus='<MiniPIPStatus>',ECOHoldStartDate='<ECOHoldStartDate>'"
-                + ",ECOHoldEndDate='<ECOHoldEndDate>',CurrentECOProcess='<CurrentECOProcess>',CurrentFlowType='<CurrentFlowType>',APVal1='<ActualPE>' where ECOKey='<ECOKey>'";
+                + ",ECOHoldEndDate='<ECOHoldEndDate>',CurrentECOProcess='<CurrentECOProcess>',CurrentFlowType='<CurrentFlowType>',APVal1='<ActualPE>',APVal2='<ECORevenue>' where ECOKey='<ECOKey>'";
             
             sql = sql.Replace("<ECOKey>", ECOKey).Replace("<ECONum>", ECONum).Replace("<ECOType>", ECOType).Replace("<PNDesc>", PNDesc).Replace("<Customer>", Customer)
                 .Replace("<Complex>", Complex).Replace("<RSM>", RSM).Replace("<PE>", PE).Replace("<RiskBuild>", RiskBuild).Replace("<InitRevison>", InitRevison)
@@ -515,7 +522,7 @@ namespace Domino.Models
                 .Replace("<MCOIssued>", MCOIssued).Replace("<FirstArticleNeed>", FirstArticleNeed)
                 .Replace("<FlowInfo>", FlowInfo).Replace("<PNImplement>", PNImplement).Replace("<FACustomerApproval>", FACustomerApproval)
                 .Replace("<MiniPIPStatus>", MiniPIPStatus).Replace("<ECOHoldStartDate>", ECOHoldStartDate).Replace("<ECOHoldEndDate>", ECOHoldEndDate)
-                .Replace("<CurrentECOProcess>", CurrentECOProcess).Replace("<CurrentFlowType>", CurrentFlowType).Replace("<ActualPE>", ActualPE);
+                .Replace("<CurrentECOProcess>", CurrentECOProcess).Replace("<CurrentFlowType>", CurrentFlowType).Replace("<ActualPE>", ActualPE).Replace("<ECORevenue>", ECORevenue.ToString());
 
             DBUtility.ExeLocalSqlNoRes(sql);
         }
@@ -567,7 +574,7 @@ namespace Domino.Models
         {
             var ret = new List<ECOBaseInfo>();
             var sql = "select ECOKey,ECONum,ECOType,PNDesc,Customer,Complex,RSM,PE,RiskBuild,InitRevison,FinalRevison"
-                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement,FACustomerApproval,MiniPIPStatus,ECOHoldStartDate,ECOHoldEndDate,CurrentECOProcess,CurrentFlowType,APVal1 from ECOBaseInfo where (MiniPIPStatus='<MiniPIPStatus1>' or MiniPIPStatus='<MiniPIPStatus2>') order by InitRevison DESC";
+                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement,FACustomerApproval,MiniPIPStatus,ECOHoldStartDate,ECOHoldEndDate,CurrentECOProcess,CurrentFlowType,APVal1,APVal2 from ECOBaseInfo where (MiniPIPStatus='<MiniPIPStatus1>' or MiniPIPStatus='<MiniPIPStatus2>') order by InitRevison DESC";
             sql = sql.Replace("<MiniPIPStatus1>", DominoMiniPIPStatus.working).Replace("<MiniPIPStatus2>", DominoMiniPIPStatus.hold);
 
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
@@ -606,6 +613,7 @@ namespace Domino.Models
                 tempitem.CurrentECOProcess = Convert.ToString(line[26]);
                 tempitem.CurrentFlowType = Convert.ToString(line[27]);
                 tempitem.ActualPE = Convert.ToString(line[28]);
+                tempitem.ECORevenue = UT.O2D((string)line[29]);
                 ret.Add(tempitem);
             }
 
@@ -616,7 +624,7 @@ namespace Domino.Models
         {
             var ret = new List<ECOBaseInfo>();
             var sql = "select ECOKey,ECONum,ECOType,PNDesc,Customer,Complex,RSM,PE,RiskBuild,InitRevison,FinalRevison"
-                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement,FACustomerApproval,MiniPIPStatus,ECOHoldStartDate,ECOHoldEndDate,CurrentECOProcess,CurrentFlowType,APVal1 from ECOBaseInfo where (MiniPIPStatus='<MiniPIPStatus1>' or MiniPIPStatus='<MiniPIPStatus2>') and (PE='<PE>' or APVal1='<ActualPE>') order by InitRevison DESC";
+                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement,FACustomerApproval,MiniPIPStatus,ECOHoldStartDate,ECOHoldEndDate,CurrentECOProcess,CurrentFlowType,APVal1,APVal2 from ECOBaseInfo where (MiniPIPStatus='<MiniPIPStatus1>' or MiniPIPStatus='<MiniPIPStatus2>') and (PE='<PE>' or APVal1='<ActualPE>') order by InitRevison DESC";
             sql = sql.Replace("<MiniPIPStatus1>", DominoMiniPIPStatus.working).Replace("<MiniPIPStatus2>", DominoMiniPIPStatus.hold).Replace("<PE>",pe).Replace("<ActualPE>", pe);
 
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
@@ -655,6 +663,7 @@ namespace Domino.Models
                 tempitem.CurrentECOProcess = Convert.ToString(line[26]);
                 tempitem.CurrentFlowType = Convert.ToString(line[27]);
                 tempitem.ActualPE = Convert.ToString(line[28]);
+                tempitem.ECORevenue = UT.O2D((string)line[29]);
                 ret.Add(tempitem);
             }
 
@@ -665,7 +674,7 @@ namespace Domino.Models
         {
             var ret = new List<ECOBaseInfo>();
             var sql = "select ECOKey,ECONum,ECOType,PNDesc,Customer,Complex,RSM,PE,RiskBuild,InitRevison,FinalRevison"
-                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement,FACustomerApproval,MiniPIPStatus,ECOHoldStartDate,ECOHoldEndDate,CurrentECOProcess,CurrentFlowType,APVal1 from ECOBaseInfo where (MiniPIPStatus='<MiniPIPStatus1>' or MiniPIPStatus='<MiniPIPStatus2>') and Customer='<Customer>' order by InitRevison DESC";
+                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement,FACustomerApproval,MiniPIPStatus,ECOHoldStartDate,ECOHoldEndDate,CurrentECOProcess,CurrentFlowType,APVal1,APVal2 from ECOBaseInfo where (MiniPIPStatus='<MiniPIPStatus1>' or MiniPIPStatus='<MiniPIPStatus2>') and Customer='<Customer>' order by InitRevison DESC";
             sql = sql.Replace("<MiniPIPStatus1>", DominoMiniPIPStatus.working).Replace("<MiniPIPStatus2>", DominoMiniPIPStatus.hold).Replace("<Customer>", customer);
 
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
@@ -704,6 +713,7 @@ namespace Domino.Models
                 tempitem.CurrentECOProcess = Convert.ToString(line[26]);
                 tempitem.CurrentFlowType = Convert.ToString(line[27]);
                 tempitem.ActualPE = Convert.ToString(line[28]);
+                tempitem.ECORevenue = UT.O2D((string)line[29]);
                 ret.Add(tempitem);
             }
 
@@ -714,7 +724,7 @@ namespace Domino.Models
         {
             var ret = new List<ECOBaseInfo>();
             var sql = "select ECOKey,ECONum,ECOType,PNDesc,Customer,Complex,RSM,PE,RiskBuild,InitRevison,FinalRevison"
-                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement,FACustomerApproval,MiniPIPStatus,ECOHoldStartDate,ECOHoldEndDate,CurrentECOProcess,CurrentFlowType,APVal1 from ECOBaseInfo where MiniPIPStatus='<MiniPIPStatus>' order by InitRevison DESC";
+                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement,FACustomerApproval,MiniPIPStatus,ECOHoldStartDate,ECOHoldEndDate,CurrentECOProcess,CurrentFlowType,APVal1,APVal2 from ECOBaseInfo where MiniPIPStatus='<MiniPIPStatus>' order by InitRevison DESC";
             sql = sql.Replace("<MiniPIPStatus>", DominoMiniPIPStatus.done);
 
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
@@ -753,6 +763,7 @@ namespace Domino.Models
                 tempitem.CurrentECOProcess = Convert.ToString(line[26]);
                 tempitem.CurrentFlowType = Convert.ToString(line[27]);
                 tempitem.ActualPE = Convert.ToString(line[28]);
+                tempitem.ECORevenue = UT.O2D((string)line[29]);
                 ret.Add(tempitem);
             }
 
@@ -763,7 +774,7 @@ namespace Domino.Models
         {
             var ret = new List<ECOBaseInfo>();
             var sql = "select ECOKey,ECONum,ECOType,PNDesc,Customer,Complex,RSM,PE,RiskBuild,InitRevison,FinalRevison"
-                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement,FACustomerApproval,MiniPIPStatus,ECOHoldStartDate,ECOHoldEndDate,CurrentECOProcess,CurrentFlowType,APVal1 from ECOBaseInfo where MiniPIPStatus='<MiniPIPStatus>' and (PE='<PE>' or APVal1='<ActualPE>')  order by InitRevison DESC";
+                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement,FACustomerApproval,MiniPIPStatus,ECOHoldStartDate,ECOHoldEndDate,CurrentECOProcess,CurrentFlowType,APVal1,APVal2 from ECOBaseInfo where MiniPIPStatus='<MiniPIPStatus>' and (PE='<PE>' or APVal1='<ActualPE>')  order by InitRevison DESC";
             sql = sql.Replace("<MiniPIPStatus>", DominoMiniPIPStatus.done).Replace("<PE>",pe).Replace("<ActualPE>", pe);
 
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
@@ -802,6 +813,7 @@ namespace Domino.Models
                 tempitem.CurrentECOProcess = Convert.ToString(line[26]);
                 tempitem.CurrentFlowType = Convert.ToString(line[27]);
                 tempitem.ActualPE = Convert.ToString(line[28]);
+                tempitem.ECORevenue = UT.O2D((string)line[29]);
                 ret.Add(tempitem);
             }
 
@@ -812,7 +824,7 @@ namespace Domino.Models
         {
             var ret = new List<ECOBaseInfo>();
             var sql = "select ECOKey,ECONum,ECOType,PNDesc,Customer,Complex,RSM,PE,RiskBuild,InitRevison,FinalRevison"
-                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement,FACustomerApproval,MiniPIPStatus,ECOHoldStartDate,ECOHoldEndDate,CurrentECOProcess,CurrentFlowType,APVal1 from ECOBaseInfo order by InitRevison DESC";
+                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement,FACustomerApproval,MiniPIPStatus,ECOHoldStartDate,ECOHoldEndDate,CurrentECOProcess,CurrentFlowType,APVal1,APVal2 from ECOBaseInfo order by InitRevison DESC";
             
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
             foreach (var line in dbret)
@@ -850,6 +862,7 @@ namespace Domino.Models
                 tempitem.CurrentECOProcess = Convert.ToString(line[26]);
                 tempitem.CurrentFlowType = Convert.ToString(line[27]);
                 tempitem.ActualPE = Convert.ToString(line[28]);
+                tempitem.ECORevenue = UT.O2D((string)line[29]);
                 ret.Add(tempitem);
             }
 
@@ -860,7 +873,7 @@ namespace Domino.Models
         {
             var ret = new List<ECOBaseInfo>();
             var sql = "select ECOKey,ECONum,ECOType,PNDesc,Customer,Complex,RSM,PE,RiskBuild,InitRevison,FinalRevison"
-                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement,FACustomerApproval,MiniPIPStatus,ECOHoldStartDate,ECOHoldEndDate,CurrentECOProcess,CurrentFlowType,APVal1 from ECOBaseInfo where MiniPIPStatus <> '<MiniPIPStatus>' order by InitRevison DESC";
+                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement,FACustomerApproval,MiniPIPStatus,ECOHoldStartDate,ECOHoldEndDate,CurrentECOProcess,CurrentFlowType,APVal1,APVal2 from ECOBaseInfo where MiniPIPStatus <> '<MiniPIPStatus>' order by InitRevison DESC";
             sql = sql.Replace("<MiniPIPStatus>", DominoMiniPIPStatus.delete);
 
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
@@ -899,6 +912,7 @@ namespace Domino.Models
                 tempitem.CurrentECOProcess = Convert.ToString(line[26]);
                 tempitem.CurrentFlowType = Convert.ToString(line[27]);
                 tempitem.ActualPE = Convert.ToString(line[28]);
+                tempitem.ECORevenue = UT.O2D((string)line[29]);
                 ret.Add(tempitem);
             }
 
@@ -990,7 +1004,7 @@ namespace Domino.Models
         {
             var ret = new List<ECOBaseInfo>();
             var sql = "select ECOKey,ECONum,ECOType,PNDesc,Customer,Complex,RSM,PE,RiskBuild,InitRevison,FinalRevison"
-                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement,FACustomerApproval,MiniPIPStatus,ECOHoldStartDate,ECOHoldEndDate,CurrentECOProcess,CurrentFlowType,APVal1 from ECOBaseInfo where ECOKey='<ECOKey>'";
+                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement,FACustomerApproval,MiniPIPStatus,ECOHoldStartDate,ECOHoldEndDate,CurrentECOProcess,CurrentFlowType,APVal1,APVal2 from ECOBaseInfo where ECOKey='<ECOKey>'";
             sql = sql.Replace("<ECOKey>", ECOKey);
 
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
@@ -1029,6 +1043,7 @@ namespace Domino.Models
                 tempitem.CurrentECOProcess = Convert.ToString(line[26]);
                 tempitem.CurrentFlowType = Convert.ToString(line[27]);
                 tempitem.ActualPE = Convert.ToString(line[28]);
+                tempitem.ECORevenue = UT.O2D((string)line[29]);
                 ret.Add(tempitem);
             }
 
@@ -1040,7 +1055,7 @@ namespace Domino.Models
         {
             var ret = new List<ECOBaseInfo>();
             var sql = "select ECOKey,ECONum,ECOType,PNDesc,Customer,Complex,RSM,PE,RiskBuild,InitRevison,FinalRevison"
-                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement,FACustomerApproval,MiniPIPStatus,ECOHoldStartDate,ECOHoldEndDate,CurrentECOProcess,CurrentFlowType,APVal1 from ECOBaseInfo where ECONum='<ECONum>'";
+                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement,FACustomerApproval,MiniPIPStatus,ECOHoldStartDate,ECOHoldEndDate,CurrentECOProcess,CurrentFlowType,APVal1,APVal2 from ECOBaseInfo where ECONum='<ECONum>'";
             sql = sql.Replace("<ECONum>", ECONum);
 
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
@@ -1079,6 +1094,7 @@ namespace Domino.Models
                 tempitem.CurrentECOProcess = Convert.ToString(line[26]);
                 tempitem.CurrentFlowType = Convert.ToString(line[27]);
                 tempitem.ActualPE = Convert.ToString(line[28]);
+                tempitem.ECORevenue = UT.O2D((string)line[29]);
                 ret.Add(tempitem);
             }
 
@@ -1089,7 +1105,7 @@ namespace Domino.Models
         {
             var ret = new List<ECOBaseInfo>();
             var sql = "select ECOKey,ECONum,ECOType,PNDesc,Customer,Complex,RSM,PE,RiskBuild,InitRevison,FinalRevison"
-                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement,FACustomerApproval,MiniPIPStatus,ECOHoldStartDate,ECOHoldEndDate,CurrentECOProcess,CurrentFlowType,APVal1 from ECOBaseInfo where PNDesc like '%<PNDesc>%'";
+                + ",TLAAvailable,OpsEntry,TestModification,ECOSubmit,ECOReviewSignoff,ECOCCBSignoff,QTRInit,MCOIssued,FirstArticleNeed,FlowInfo,PNImplement,FACustomerApproval,MiniPIPStatus,ECOHoldStartDate,ECOHoldEndDate,CurrentECOProcess,CurrentFlowType,APVal1,APVal2 from ECOBaseInfo where PNDesc like '%<PNDesc>%'";
             sql = sql.Replace("<PNDesc>", pndesc);
 
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
@@ -1128,6 +1144,7 @@ namespace Domino.Models
                 tempitem.CurrentECOProcess = Convert.ToString(line[26]);
                 tempitem.CurrentFlowType = Convert.ToString(line[27]);
                 tempitem.ActualPE = Convert.ToString(line[28]);
+                tempitem.ECORevenue = UT.O2D((string)line[29]);
                 ret.Add(tempitem);
             }
 

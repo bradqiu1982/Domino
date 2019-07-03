@@ -154,6 +154,55 @@ namespace Domino.Models
             return true;
         }
 
+        public static string CreateTableHtml(string greetig, string description, string comment, List<List<string>> table)
+        {
+            var idx = 0;
+            var content = "<!DOCTYPE html>";
+            content += "<html>";
+            content += "<head>";
+            content += "<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />";
+            content += "<title></title>";
+            content += "</head>";
+            content += "<body>";
+            content += "<div><p>" + greetig + ",</p></div>";
+            content += "<div><p>" + description + ".</p></div>";
+            if (!string.IsNullOrEmpty(comment))
+            {
+                content += "<div><p>" + comment + "</p>";
+            }
+            if (table != null)
+            {
+                content += "<div><br>";
+                content += "<table border='1' cellpadding='0' cellspacing='0' width='100%'>";
+                content += "<thead style='background-color: #006DC0; color: #fff;'>";
+                foreach (var th in table[0])
+                {
+                    content += "<th>" + th + "</th>";
+                }
+                content += "</thead>";
+                foreach (var tr in table)
+                {
+                    if (idx > 0)
+                    {
+                        content += "<tr>";
+                        foreach (var td in tr)
+                        {
+                            content += "<td>" + td + "</td>";
+                        }
+                        content += "</tr>";
+                    }
+                    idx++;
+                }
+                content += "</table>";
+                content += "</div>";
+            }
+            content += "<br><br>";
+            content += "<div><p style='font-size: 12px; font-style: italic;'>This is a system generated message, please do not reply to this email.</p></div>";
+            content += "</body>";
+            content += "</html>";
+
+            return content;
+        }
 
         public static bool SendHtmlEmail(string title, List<string> tolist, string content)
         {

@@ -280,6 +280,9 @@
                             var idx = 0;
 
                             var keyvals = Domino.Models.ECOBaseInfo.RetrieveBaseInfoKV4ViewAll(item[0].EBaseInfo);
+                            var goldenstyle = "";
+                            if (item[0].EBaseInfo.ECORevenue >= 500000)
+                            { goldenstyle = "border-style:solid;border-color:#ffd700;border-radius:12px;"; }
 
                             <div class="row" style="padding:4px;">
                                 <div class="col-lg-4" style="padding:4px;">
@@ -307,7 +310,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-lg-8" style="padding:4px;">
+                                <div class="col-lg-8" style="padding:4px;@(goldenstyle)">
                                     @foreach (var card in item)
                                     {
                                         <div class="col-lg-1"><img MYTP="HOVER" src="~/Content/images/@(card.EBaseInfo.ECOType)/@(card.EBaseInfo.ECOType)-@(card.CardType)-@(card.CardStatus).png" onclick="GotoSpecialCard('/Domino/MiniPIP/@(card.CardType)?ECOKey=@(card.ECOKey)&CardKey=@(card.CardKey)')" style="height:200px; width:62px;" ></div>
@@ -352,6 +355,9 @@
                     {
                         var idx = 0;
                         var keyvals = Domino.Models.ECOBaseInfo.RetrieveBaseInfoKV4ViewAll(item[0].EBaseInfo);
+                        var goldenstyle = "";
+                        if (item[0].EBaseInfo.ECORevenue >= 500000)
+                        { goldenstyle = "border-style:solid;border-color:#ffd700;border-radius:12px;"; }
 
                     <div class="row">
                         <div class="col-lg-4">
@@ -379,7 +385,7 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-8">
+                        <div class="col-lg-8" style="@(goldenstyle)">
                             @foreach (var card in item)
                             {
                                 <div class="col-lg-1"><img MYTP="HOVER" src="~/Content/images/@(card.EBaseInfo.ECOType)/@(card.EBaseInfo.ECOType)-@(card.CardType)-@(card.CardStatus).png" onclick="GotoSpecialCard('/Domino/MiniPIP/@(card.CardType)?ECOKey=@(card.ECOKey)&CardKey=@(card.CardKey)')" style="height:200px; width:62px;"></div>

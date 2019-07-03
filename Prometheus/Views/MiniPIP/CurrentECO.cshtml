@@ -93,6 +93,9 @@
                 {
                     var keyvals = Domino.Models.ECOBaseInfo.RetrieveBaseInfoKV(item.ElementAt(0).EBaseInfo);
                     var idx = 0;
+                    var goldenstyle = "";
+                    if (item.ElementAt(0).EBaseInfo.ECORevenue >= 500000)
+                    { goldenstyle = "border-style:solid;border-color:#ffd700;border-radius:12px;"; }
 
                     <div class="row" style="padding:4px;">
                         <div class="col-lg-3" style="padding:4px;">
@@ -120,7 +123,7 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-9" style="padding:4px;">
+                        <div class="col-lg-9" style="padding:4px;@(goldenstyle)">
                             @if (string.IsNullOrEmpty(item.ElementAt(0).EBaseInfo.FlowInfo))
                             {
                                 {
@@ -171,6 +174,7 @@
                         </div>
                     </div>
                     <hr style="border-color:#ECECEC;margin-top:4px;margin-bottom:4px;" />
+                    <input type="text" class="hide" id="crtcardkey" name="crtcardkey" value="@ViewBag.CardKey">
                 }
             }
 
@@ -257,6 +261,17 @@
                     window.location.href = "/Domino/MiniPIP/ModifyCardComment?" + oBT;
                 }
             }
+
+            $(document).ready(function () {
+                $('body').on('click', '#noticepe', function () {
+                    var crtcardkey = $('#crtcardkey').val();
+                    $.post('/Domino/MiniPIP/NoticePESampleOrder', {
+                        crtcardkey: crtcardkey
+                    }, function (output) {
+                        alert("Sample Order Notice Email is sent!");
+                    });
+                });
+            });
         </script>
         }
         </div>
