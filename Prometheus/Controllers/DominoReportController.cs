@@ -945,7 +945,7 @@ namespace Domino.Controllers
                 return View();
             }
 
-            var fn = "CycleTime-data" + "-" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".csv";
+            var fn = "FABuilding-data" + "-" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".csv";
             string datestring = DateTime.Now.ToString("yyyyMMdd");
             string imgdir = Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
             if (!Directory.Exists(imgdir))
@@ -1455,6 +1455,193 @@ namespace Domino.Controllers
 
             return View();
         }
+
+
+
+        public ActionResult ECORevenue()
+        {
+            GetAdminAuth();
+
+            var charts = new string[] { DominoChartType.Department, DominoChartType.Customer, DominoChartType.PE, DominoChartType.Monthly, DominoChartType.Quarter };
+            var chartlist = new List<string>();
+            chartlist.AddRange(charts);
+            ViewBag.charttypelist = CreateSelectList(chartlist, "");
+
+            return View();
+        }
+
+        private void DepartRevenue(string datafile)
+        {
+            var startdate = DateTime.Parse(Request.Form["StartDate"]);
+            var enddate = DateTime.Parse(Request.Form["EndDate"]);
+            var title = Request.Form["ChartTitle"];
+
+            var revenuedict = DominoRPVM.RetrieveDepartRevenueData(startdate, enddate,datafile);
+            if (revenuedict.Count == 0)
+            {
+                return;
+            }
+
+            var ChartxAxisValues = string.Empty;
+            double AmountMAX = 0;
+            var RevenueList = string.Empty;
+
+
+            var departs = DominoUserViewModels.RetrieveAllDepartment();
+            foreach (var dpt in departs)
+            {
+                if (revenuedict.ContainsKey(dpt))
+                {
+                    ChartxAxisValues = ChartxAxisValues + "'" + dpt + "',";
+                    RevenueList = RevenueList + revenuedict[dpt].Revenue + ",";
+
+                    if (revenuedict[dpt].Revenue > AmountMAX)
+                        AmountMAX = revenuedict[dpt].Revenue;
+                }
+            }
+
+            ChartxAxisValues = ChartxAxisValues.Substring(0, ChartxAxisValues.Length - 1);
+            RevenueList = RevenueList.Substring(0, RevenueList.Length - 1);
+
+
+            var temptitle = "Depart Revenue -" + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd");
+            if (!string.IsNullOrEmpty(title.Trim()))
+                temptitle = title.Trim();
+
+            var tempscript = System.IO.File.ReadAllText(Server.MapPath("~/Scripts/DominoRevenue.xml"));
+            ViewBag.revenuechart = tempscript.Replace("#ElementID#", "revenuechart")
+                .Replace("#Title#", temptitle)
+                .Replace("#ChartxAxisValues#", ChartxAxisValues)
+                .Replace("#AmountMAX#", (AmountMAX + 1).ToString())
+                .Replace("#RevenueData#", RevenueList);
+        }
+
+        private void DictRevenue(string charttype,string datafile)
+        {
+            var startdate = DateTime.Parse(Request.Form["StartDate"]);
+            var enddate = DateTime.Parse(Request.Form["EndDate"]);
+            var title = Request.Form["ChartTitle"];
+
+            var revenuedict = new Dictionary<string, RevenueData>();
+
+            if (string.Compare(charttype, DominoChartType.PE) == 0)
+            {
+                revenuedict = DominoRPVM.RetrievePERevenueData(startdate, enddate,datafile);
+            }
+            else if (string.Compare(charttype, DominoChartType.Customer) == 0)
+            {
+                revenuedict = DominoRPVM.RetrieveCustomerRevenueData(startdate, enddate, datafile);
+            }
+            else if (string.Compare(charttype, DominoChartType.Monthly) == 0)
+            {
+                revenuedict = DominoRPVM.RetrieveMonthlyRevenueData(startdate, enddate,datafile);
+            }
+            else if (string.Compare(charttype, DominoChartType.Quarter) == 0)
+            {
+                revenuedict = DominoRPVM.RetrieveQuartRevenueData(startdate, enddate,datafile);
+            }
+
+
+            if (revenuedict.Count == 0)
+            {
+                return;
+            }
+
+            var ChartxAxisValues = string.Empty;
+            double AmountMAX = 0;
+            var RevenueList = string.Empty;
+
+            var pes = new List<string>();
+            if (string.Compare(charttype, DominoChartType.Monthly) == 0
+                || string.Compare(charttype, DominoChartType.Quarter) == 0)
+            {
+                pes = revenuedict.Keys.ToList();
+                pes.Sort(delegate (string sk1, string sk2)
+                {
+                    int ik1 = Convert.ToInt32(sk1.Replace("/", "").Replace("Q", ""));
+                    int ik2 = Convert.ToInt32(sk2.Replace("/", "").Replace("Q", ""));
+                    if (ik1 > ik2) return 1;
+                    if (ik1 < ik2) return -1;
+                    return 0;
+                });
+            }
+            else
+            {
+                pes = revenuedict.Keys.ToList();
+                pes.Sort();
+            }
+
+            foreach (var pe in pes)
+            {
+                if (revenuedict.ContainsKey(pe))
+                {
+                    ChartxAxisValues = ChartxAxisValues + "'" + pe.Split(new string[] { "@" }, StringSplitOptions.RemoveEmptyEntries)[0] + "',";
+
+                    RevenueList = RevenueList + revenuedict[pe].Revenue + ",";
+
+                    if (revenuedict[pe].Revenue > AmountMAX)
+                        AmountMAX = revenuedict[pe].Revenue;
+                }
+            }
+
+            ChartxAxisValues = ChartxAxisValues.Substring(0, ChartxAxisValues.Length - 1);
+            RevenueList = RevenueList.Substring(0, RevenueList.Length - 1);
+
+
+            var temptitle = charttype + " Revenue " + startdate.ToString("yyyy/MM/dd") + "-" + enddate.ToString("yyyy/MM/dd");
+            if (!string.IsNullOrEmpty(title.Trim()))
+                temptitle = title.Trim();
+
+            var tempscript = System.IO.File.ReadAllText(Server.MapPath("~/Scripts/DominoRevenue.xml"));
+            ViewBag.revenuechart = tempscript.Replace("#ElementID#", "revenuechart")
+                .Replace("#Title#", temptitle)
+                .Replace("#ChartxAxisValues#", ChartxAxisValues)
+                .Replace("#AmountMAX#", (AmountMAX + 1).ToString())
+                .Replace("#RevenueData#", RevenueList);
+        }
+
+        [HttpPost, ActionName("ECORevenue")]
+        [ValidateAntiForgeryToken]
+        public ActionResult ECORevenuePose()
+        {
+            GetAdminAuth();
+
+            var charts = new string[] { DominoChartType.Department, DominoChartType.Customer, DominoChartType.PE, DominoChartType.Monthly, DominoChartType.Quarter };
+            var chartlist = new List<string>();
+            chartlist.AddRange(charts);
+            ViewBag.charttypelist = CreateSelectList(chartlist, "");
+
+            if (string.IsNullOrEmpty(Request.Form["StartDate"])
+                || string.IsNullOrEmpty(Request.Form["EndDate"])
+                || (DateTime.Parse(Request.Form["StartDate"]) > DateTime.Parse(Request.Form["EndDate"])))
+            {
+                return View();
+            }
+
+            var fn = "ECORevenue-data" + "-" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".csv";
+            string datestring = DateTime.Now.ToString("yyyyMMdd");
+            string imgdir = Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
+            if (!Directory.Exists(imgdir))
+            {
+                Directory.CreateDirectory(imgdir);
+            }
+            var realpath = imgdir + fn;
+            ViewBag.cycleurl = "/userfiles/docs/" + datestring + "/" + fn;
+
+            var charttype = Request.Form["charttypelist"].ToString();
+            if (string.Compare(charttype, DominoChartType.Department) == 0)
+            {
+                DepartRevenue(realpath);
+            }
+            else
+            {
+                DictRevenue(charttype,realpath);
+            }
+
+            return View();
+        }
+
+
 
     }
 

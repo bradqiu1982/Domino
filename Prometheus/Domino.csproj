@@ -1020,6 +1020,7 @@
     <Content Include="Scripts\DominoComplex.xml" />
     <Content Include="Scripts\DominoCycleTime.xml" />
     <Content Include="Scripts\DominoFABuilding.xml" />
+    <Content Include="Scripts\DominoRevenue.xml" />
     <Content Include="Scripts\dominotrace_db.txt" />
     <Content Include="Scripts\DominoWorkLoad.xml" />
     <Content Include="Scripts\exporting.js" />
@@ -1105,6 +1106,7 @@
     <Content Include="Views\MiniPIP\ModifyCardComment.cshtml" />
     <Content Include="Scripts\npidepartmentmachine.cfg" />
     <Content Include="Views\MiniPIP\ApproveMaterial.cshtml" />
+    <Content Include="Views\DominoReport\ECORevenue.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Scripts\agiledownloadwraper\jre\lib\applet\" />

@@ -1,8 +1,9 @@
 ﻿
 @{
-    ViewBag.Title = "FABuilding";
+    ViewBag.Title = "ECORevenue";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 
 <div class="row">
     <div class="col-lg-12">&nbsp;</div>
@@ -17,7 +18,7 @@
         <div class="row">
             <ol class="breadcrumb" style="font-size:18px">
                 <li><a data-toggle="tooltip" title="Goto ViewAll" href="/Domino/MiniPIP/ViewAll">Working MiniPIP</a></li>
-                <li class="active">FA Building Time</li>
+                <li class="active">ECO Revenue</li>
             </ol>
         </div>
     </div>
@@ -25,7 +26,7 @@
 
 <hr />
 
-@using (Html.BeginForm("FABuilding", "DominoReport", FormMethod.Post, new { enctype = "multipart/form-data" }))
+@using (Html.BeginForm("ECORevenue", "DominoReport", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
 
@@ -69,10 +70,10 @@
             <div class="col-lg-12">
                 <div class="col-lg-6">
                     <div class="col-lg-3"><label class="control-label" for="charttypelist">Chart Type</label></div>
-                    
+
                     <div class="col-lg-9">
-                            @Html.DropDownList("charttypelist", null, new { @id = "charttypelist", @class = "form-control" })
-                        </div>
+                        @Html.DropDownList("charttypelist", null, new { @id = "charttypelist", @class = "form-control" })
+                    </div>
                 </div>
                 <div class="col-lg-6">
                     <div class="col-lg-3">
@@ -97,9 +98,9 @@
 
         <hr />
 
-        @if (ViewBag.fabuildingchart != null)
+        @if (ViewBag.revenuechart != null)
         {
-            @Html.Raw(ViewBag.fabuildingchart)
+            @Html.Raw(ViewBag.revenuechart)
 
             <script src="~/Scripts/highcharts.js"></script>
             <script src="~/Scripts/exporting.js"></script>
@@ -108,11 +109,11 @@
                 <div class="col-lg-12">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h3 class="panel-title">FA Building Time</h3>
+                            <h3 class="panel-title">Revenue Chart</h3>
                         </div>
                         <div class="panel-body">
                             <div class="col-lg-12">
-                                <div id="fabuildingchart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+                                <div id="revenuechart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
                             </div>
                         </div>
                     </div>
@@ -127,12 +128,12 @@
                 <div class="col-lg-12">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h3 class="panel-title">FABuilding Data</h3>
+                            <h3 class="panel-title">ECO Revenue Data</h3>
                         </div>
                         <div class="panel-body">
                             <div class="col-lg-1"></div>
                             <div class="col-lg-10">
-                                <a href="@ViewBag.cycleurl" target="_blank">FABuilding Data File</a>
+                                <a href="@ViewBag.cycleurl" target="_blank">ECO Revenue Data File</a>
                             </div>
                             <div class="col-lg-1"></div>
                         </div>
@@ -140,7 +141,6 @@
                 </div>
             </div>
         }
-
     </div>
 }
 

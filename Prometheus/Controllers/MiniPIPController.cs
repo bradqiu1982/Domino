@@ -3217,6 +3217,17 @@ namespace Domino.Controllers
             return RedirectToAction(vm[0].CardType, "MiniPIP", dict);
         }
 
+        public ActionResult DeleteAllJO(string CardKey)
+        {
+            DominoVM.DeletJOInfo(CardKey, null);
+
+            var vm = DominoVM.RetrieveCard(CardKey);
+            var dict = new RouteValueDictionary();
+            dict.Add("ECOKey", vm[0].ECOKey);
+            dict.Add("CardKey", vm[0].CardKey);
+            return RedirectToAction(vm[0].CardType, "MiniPIP", dict);
+        }
+
         public ActionResult DeleteJOEGCheck(string CardKey, string WipJob)
         {
             DominoVM.DeletJOCheckInfo(CardKey, WipJob, DOMINOJOCHECKTYPE.ENGTYPE);
@@ -3378,6 +3389,20 @@ namespace Domino.Controllers
             return RedirectToAction(vm[0].CardType, "MiniPIP", dict);
 
         }
+
+        public ActionResult DeleteAllJOStore(string CardKey, string WipJob)
+        {
+            DominoVM.DeletJOStore(CardKey, null);
+
+            var vm = DominoVM.RetrieveCard(CardKey);
+            var dict = new RouteValueDictionary();
+            dict.Add("ECOKey", vm[0].ECOKey);
+            dict.Add("CardKey", vm[0].CardKey);
+            return RedirectToAction(vm[0].CardType, "MiniPIP", dict);
+
+        }
+
+        
 
         public ActionResult GoBackToCardByCardKey(string CardKey)
         {
@@ -3938,6 +3963,9 @@ namespace Domino.Controllers
 
         public JsonResult NoticePESampleOrder()
         {
+            var syscfg = CfgUtility.GetSysConfig(this);
+            var noticepeoples = syscfg["SAMPLEORDERNOTICE"].Split(new string[] { ";","," },StringSplitOptions.RemoveEmptyEntries).ToList();
+
             var cardkey = Request.Form["crtcardkey"];
             var cardinfo = DominoVM.RetrieveCard(cardkey);
             if (cardinfo.Count > 0)
@@ -3950,9 +3978,7 @@ namespace Domino.Controllers
                 tolist.Add(baseinfo.PE.Replace(" ",".")+ "@finisar.com");
                 if (!string.IsNullOrEmpty(baseinfo.ActualPE))
                 { tolist.Add(baseinfo.ActualPE.Replace(" ", ".") + "@finisar.com"); }
-                tolist.Add("william.martinez@finisar.com");
-                tolist.Add("ruilong.zhou@finisar.com");
-                tolist.Add("DL-SHGWXICustomerFAIRminiPIP@finisar.com");
+                tolist.AddRange(noticepeoples);
 
                 var infotable = new List<List<string>>();
                 var templist = new List<string>();
@@ -4018,5 +4044,92 @@ namespace Domino.Controllers
             ret.Data = new { sucess = true };
             return ret;
         }
+
+        public JsonResult NoticeQACustomerApproveHold()
+        {
+            var syscfg = CfgUtility.GetSysConfig(this);
+            var noticepeoples = syscfg["CUSTOMEAPPROVENOTICE"].Split(new string[] { ";", "," }, StringSplitOptions.RemoveEmptyEntries).ToList();
+
+            var cardkey = Request.Form["crtcardkey"];
+            var cardinfo = DominoVM.RetrieveCard(cardkey);
+            if (cardinfo.Count > 0)
+            {
+                var baseinfo = ECOBaseInfo.RetrieveECOBaseInfo(cardinfo[0].ECOKey)[0];
+
+                var title = "Customer Approval Hold for [" + baseinfo.PNDesc + "] for ["
+                    + baseinfo.Customer + "] under [" + baseinfo.ECONum + "]";
+                var tolist = new List<string>();
+                tolist.Add(baseinfo.PE.Replace(" ", ".") + "@finisar.com");
+                if (!string.IsNullOrEmpty(baseinfo.ActualPE))
+                { tolist.Add(baseinfo.ActualPE.Replace(" ", ".") + "@finisar.com"); }
+                tolist.AddRange(noticepeoples);
+
+
+                var infotable = new List<List<string>>();
+                var templist = new List<string>();
+                templist.Add("ECO Number");
+                templist.Add(baseinfo.ECONum);
+                infotable.Add(templist);
+                templist = new List<string>();
+                templist.Add("MiniPIP Flow");
+                templist.Add(baseinfo.ECOType);
+                infotable.Add(templist);
+                templist = new List<string>();
+                templist.Add("Order Info");
+                templist.Add(baseinfo.FirstArticleNeed);
+                infotable.Add(templist);
+
+                templist = new List<string>();
+                templist.Add("Product Requested");
+                templist.Add(baseinfo.PNDesc);
+                infotable.Add(templist);
+                templist = new List<string>();
+                templist.Add("Customer");
+                templist.Add(baseinfo.Customer);
+                infotable.Add(templist);
+                templist = new List<string>();
+                templist.Add("Type");
+                templist.Add(baseinfo.Complex);
+                infotable.Add(templist);
+
+                templist = new List<string>();
+                templist.Add("RSM");
+                templist.Add(baseinfo.RSM);
+                infotable.Add(templist);
+                templist = new List<string>();
+                templist.Add("PE");
+                templist.Add(baseinfo.PE);
+                infotable.Add(templist);
+                templist = new List<string>();
+                templist.Add("Risk Build");
+                templist.Add(baseinfo.RiskBuild);
+                infotable.Add(templist);
+                if (baseinfo.ECORevenue != 0)
+                {
+                    templist = new List<string>();
+                    templist.Add("ECO Revenue");
+                    templist.Add("$" + baseinfo.ECORevenue.ToString());
+                    infotable.Add(templist);
+                }
+                if (!string.IsNullOrEmpty(baseinfo.ActualPE))
+                {
+                    templist = new List<string>();
+                    templist.Add("Actual PE");
+                    templist.Add(baseinfo.ActualPE);
+                    infotable.Add(templist);
+                }
+
+
+                var content = EmailUtility.CreateTableHtml("Hi All", "Below is a notice of Customer Approval Hold:", "", infotable);
+                EmailUtility.SendEmail(this, title, tolist, content);
+                new System.Threading.ManualResetEvent(false).WaitOne(500);
+            }
+
+            var ret = new JsonResult();
+            ret.Data = new { sucess = true };
+            return ret;
+        }
+
+
     }
 }

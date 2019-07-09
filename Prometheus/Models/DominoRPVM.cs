@@ -321,6 +321,38 @@ namespace Domino.Models
         }
     }
 
+    public class RevenueData {
+        public string ECONUM { set; get; }
+        public string PN { set; get; }
+        public string PE { set; get; }
+        public string Depart { set; get; }
+        public string Customer { set; get; }
+        public string Status { set; get; }
+        public double Revenue { set; get; }
+        public string ECOType { set; get; }
+
+        public DateTime InitReceiveDate { set; get; }
+        public DateTime ECOCompleteDate { set; get; }
+
+        public void AppendRevenueData(RevenueData rvdata)
+        {
+            Revenue += rvdata.Revenue;
+        }
+
+        public RevenueData()
+        {
+            ECONUM = "";
+            PN = "";
+            PE = "";
+            Depart = "";
+            Customer = "";
+            Status = "";
+            Revenue = 0;
+            ECOType = "";
+        }
+    }
+
+
     public class QACheckData
     {
         public QACheckData()
@@ -598,7 +630,7 @@ namespace Domino.Models
                         depart = uddict[wkload.PE];
                     }
 
-                    logreportinfo(filename, wkload.PN+","+wkload.ECONUM+","+wkload.Customer 
+                    logreportinfo(filename, wkload.PN.Replace(",","")+","+wkload.ECONUM+","+wkload.Customer.Replace(",", "")
                         + "," + wkload.Complex + "," + wkload.RSM + "," 
                         + wkload.PE.Split(new string[] { "@" }, StringSplitOptions.RemoveEmptyEntries)[0] + ","+ depart + ","+ WkloadConvert(status) + "\r\n");
 
@@ -1640,6 +1672,263 @@ namespace Domino.Models
 
             return ret;
         }
+
+
+        private static List<RevenueData> RetrieveAllRevenueData(DateTime startDate, DateTime endDate,Dictionary<string,string> departdict,string filename)
+        {
+
+            var allrevenue = new List<RevenueData>();
+            var alleco = ECOBaseInfo.RetrieveAllNotDeleteECOBaseInfo();
+            foreach (var eco in alleco)
+            {
+                if (eco.ECORevenue == 0)
+                { continue; }
+
+                if (string.Compare(DateTime.Parse(eco.InitRevison).ToString("yyyy-MM-dd"), "1982-05-06") == 0)
+                {
+
+                }
+                else
+                {
+                    var revenue = new RevenueData();
+
+                    revenue.InitReceiveDate = DateTime.Parse(DateTime.Parse(eco.InitRevison).ToString("yyyy-MM-dd") + " 07:30:00");
+                    var completecard = DominoVM.RetrieveSpecialCard(eco, DominoCardType.ECOComplete);
+                    if (completecard.Count > 0)
+                    {
+                        var cardinfo = DominoVM.RetrieveECOCompleteInfo(completecard[0].CardKey);
+                        if (string.IsNullOrEmpty(cardinfo.ECOCompleteDate))
+                        {
+                            revenue.ECOCompleteDate = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd") + " 07:30:00").AddDays(60);
+                        }
+                        else
+                        {
+                            revenue.ECOCompleteDate = DateTime.Parse(DateTime.Parse(cardinfo.ECOCompleteDate).ToString("yyyy-MM-dd") + " 07:30:00");
+                        }
+                    }
+                    else
+                    {
+                        revenue.ECOCompleteDate = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd") + " 07:30:00").AddDays(60);
+                    }
+
+                    if (startDate <= revenue.InitReceiveDate && revenue.InitReceiveDate <= endDate)
+                    {
+                        revenue.ECONUM = eco.ECONum;
+                        revenue.PN = eco.PNDesc;
+                        revenue.Revenue = eco.ECORevenue;
+                        revenue.Customer = eco.Customer;
+                        if (!eco.PE.Contains("@"))
+                        {
+                            revenue.PE = (eco.PE.Trim().Replace(" ", ".") + "@finisar.com").ToUpper();
+                        }
+                        else
+                        {
+                            revenue.PE = eco.PE;
+                        }
+                        revenue.Status = eco.MiniPIPStatus;
+                        revenue.ECOType = eco.ECOType;
+                        if (departdict.ContainsKey(revenue.PE))
+                        { revenue.Depart = departdict[revenue.PE]; }
+
+                        allrevenue.Add(revenue);
+                    }
+                    else if (startDate >= revenue.InitReceiveDate && startDate <= revenue.ECOCompleteDate)
+                    {
+                        revenue.ECONUM = eco.ECONum;
+                        revenue.PN = eco.PNDesc;
+                        revenue.Revenue = eco.ECORevenue;
+                        revenue.Customer = eco.Customer;
+                        if (!eco.PE.Contains("@"))
+                        {
+                            revenue.PE = (eco.PE.Trim().Replace(" ", ".") + "@finisar.com").ToUpper();
+                        }
+                        else
+                        {
+                            revenue.PE = eco.PE;
+                        }
+                        revenue.Status = eco.MiniPIPStatus;
+                        revenue.ECOType = eco.ECOType;
+                        if (departdict.ContainsKey(revenue.PE))
+                        { revenue.Depart = departdict[revenue.PE]; }
+
+                        allrevenue.Add(revenue);
+                    }
+
+                }//end else
+            }//end foreach
+
+            logreportinfo(filename, "ECONum,PN,PE,Customer,Revenue,ECOType,Status,InitReceiveDate,ECOCompleteDate\r\n");
+            foreach (var revenue in allrevenue)
+            {
+                logreportinfo(filename, revenue.ECONUM+","+ revenue.PN.Replace(",","")+","+ revenue.PE+","+ revenue.Customer.Replace(",", "") + ","+revenue.Revenue.ToString()+","+
+                    revenue.ECOType+","+revenue.Status+","+revenue.InitReceiveDate.ToString("yyyy-MM-dd")+","+revenue.ECOCompleteDate.ToString("yyyy-MM-dd")+"\r\n");
+            }
+
+            return allrevenue;
+        }
+
+
+        public static Dictionary<string, RevenueData> RetrieveDepartRevenueData(DateTime startDate, DateTime endDate,string filename)
+        {
+            var udlist = DominoUserViewModels.RetrieveAllUserDepart();
+            var uddict = new Dictionary<string, string>();
+            foreach (var ud in udlist)
+            {
+                uddict.Add(ud.UserName, ud.Depart);
+            }
+
+            var allrevenuedata = RetrieveAllRevenueData(startDate, endDate,uddict,filename);
+
+            var ret = new Dictionary<string, RevenueData>();
+
+            foreach (var rvdata in allrevenuedata)
+            {
+                if (string.IsNullOrEmpty(rvdata.Depart))
+                { continue; }
+                if (ret.ContainsKey(rvdata.Depart))
+                {
+                    ret[rvdata.Depart].AppendRevenueData(rvdata);
+                }
+                else
+                {
+                    ret.Add(rvdata.Depart, new RevenueData());
+                    ret[rvdata.Depart].AppendRevenueData(rvdata);
+                }
+            }//foreach
+
+
+            return ret;
+        }
+
+        public static Dictionary<string, RevenueData> RetrievePERevenueData(DateTime startDate, DateTime endDate, string filename)
+        {
+            var udlist = DominoUserViewModels.RetrieveAllUserDepart();
+            var uddict = new Dictionary<string, string>();
+            foreach (var ud in udlist)
+            {
+                uddict.Add(ud.UserName, ud.Depart);
+            }
+
+            var allrevenuedata = RetrieveAllRevenueData(startDate, endDate, uddict, filename);
+
+            var ret = new Dictionary<string, RevenueData>();
+
+            foreach (var rvdata in allrevenuedata)
+            {
+                if (string.IsNullOrEmpty(rvdata.PE))
+                { continue; }
+
+                if (ret.ContainsKey(rvdata.PE))
+                {
+                    ret[rvdata.PE].AppendRevenueData(rvdata);
+                }
+                else
+                {
+                    ret.Add(rvdata.PE, new RevenueData());
+                    ret[rvdata.PE].AppendRevenueData(rvdata);
+                }
+            }//foreach
+
+            return ret;
+        }
+
+        public static Dictionary<string, RevenueData> RetrieveCustomerRevenueData(DateTime startDate, DateTime endDate, string filename)
+        {
+            var udlist = DominoUserViewModels.RetrieveAllUserDepart();
+            var uddict = new Dictionary<string, string>();
+            foreach (var ud in udlist)
+            {
+                uddict.Add(ud.UserName, ud.Depart);
+            }
+
+            var allrevenuedata = RetrieveAllRevenueData(startDate, endDate, uddict, filename);
+
+            var ret = new Dictionary<string, RevenueData>();
+
+            foreach (var rvdata in allrevenuedata)
+            {
+                if (string.IsNullOrEmpty(rvdata.Customer))
+                { continue; }
+
+                if (ret.ContainsKey(rvdata.Customer))
+                {
+                    ret[rvdata.Customer].AppendRevenueData(rvdata);
+                }
+                else
+                {
+                    ret.Add(rvdata.Customer, new RevenueData());
+                    ret[rvdata.Customer].AppendRevenueData(rvdata);
+                }
+            }//foreach
+
+            return ret;
+        }
+
+        public static Dictionary<string, RevenueData> RetrieveMonthlyRevenueData(DateTime startDate, DateTime endDate, string filename)
+        {
+            var udlist = DominoUserViewModels.RetrieveAllUserDepart();
+            var uddict = new Dictionary<string, string>();
+            foreach (var ud in udlist)
+            {
+                uddict.Add(ud.UserName, ud.Depart);
+            }
+
+            var ret = new Dictionary<string, RevenueData>();
+            var ldate = RetrieveDateSpanByMonth(startDate.ToString(), endDate.ToString());
+            for (int idx = 0; idx < ldate.Count - 1; idx++)
+            {
+                var allrevenuedata = RetrieveAllRevenueData(ldate[idx], ldate[idx + 1], uddict, filename);
+                foreach (var rvdata in allrevenuedata)
+                {
+                    if (ret.ContainsKey(ldate[idx].ToString("yy/MM")))
+                    {
+                        ret[ldate[idx].ToString("yy/MM")].AppendRevenueData(rvdata);
+                    }
+                    else
+                    {
+                        ret.Add(ldate[idx].ToString("yy/MM"), new RevenueData());
+                        ret[ldate[idx].ToString("yy/MM")].AppendRevenueData(rvdata);
+                    }
+
+                }//foreach
+            }
+
+            return ret;
+        }
+
+        public static Dictionary<string, RevenueData> RetrieveQuartRevenueData(DateTime startDate, DateTime endDate, string filename)
+        {
+            var udlist = DominoUserViewModels.RetrieveAllUserDepart();
+            var uddict = new Dictionary<string, string>();
+            foreach (var ud in udlist)
+            {
+                uddict.Add(ud.UserName, ud.Depart);
+            }
+
+            var ret = new Dictionary<string, RevenueData>();
+            var ldate = RetrieveDateSpanByMonth(startDate.ToString(), endDate.ToString());
+            for (int idx = 0; idx < ldate.Count - 1; idx++)
+            {
+                var allrevenuedata = RetrieveAllRevenueData(ldate[idx], ldate[idx + 1], uddict, filename);
+                foreach (var rvdata in allrevenuedata)
+                {
+                    var key = QuartStr(ldate[idx]);
+                    if (ret.ContainsKey(key))
+                    {
+                        ret[key].AppendRevenueData(rvdata);
+                    }
+                    else
+                    {
+                        ret.Add(key, new RevenueData());
+                        ret[key].AppendRevenueData(rvdata);
+                    }
+
+                }//foreach
+            }
+
+            return ret;
+        }
+
 
         public static Dictionary<string, QACheckData> RetrieveDepartQACheckData(Controller ctrl,DateTime StartDate,DateTime EndDate)
         {

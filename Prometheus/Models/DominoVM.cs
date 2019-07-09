@@ -2086,9 +2086,19 @@ namespace Domino.Models
 
         public static void DeletJOInfo(string CardKey, string wipjob)
         {
-            var sql = "Update ECOJOOrderInfo Set APVal10 = 'delete' where CardKey = '<CardKey>' and APVal3 = '<APVal3>'";
-            sql = sql.Replace("<CardKey>", CardKey).Replace("<APVal3>", wipjob);
-            DBUtility.ExeLocalSqlNoRes(sql);
+            if (!string.IsNullOrEmpty(wipjob))
+            {
+                var sql = "Update ECOJOOrderInfo Set APVal10 = 'delete' where CardKey = '<CardKey>' and APVal3 = '<APVal3>'";
+                sql = sql.Replace("<CardKey>", CardKey).Replace("<APVal3>", wipjob);
+                DBUtility.ExeLocalSqlNoRes(sql);
+            }
+            else
+            {
+                var sql = "Update ECOJOOrderInfo Set APVal10 = 'delete' where CardKey = '<CardKey>'";
+                sql = sql.Replace("<CardKey>", CardKey);
+                DBUtility.ExeLocalSqlNoRes(sql);
+            }
+
         }
 
 
@@ -2234,9 +2244,19 @@ namespace Domino.Models
 
         public static void DeletJOStore(string CardKey, string jo)
         {
-            var sql = "Update ECOCardContent Set APVal3 = 'delete' where CardKey = '<CardKey>' and APVal1 = '<APVal1>'";
-            sql = sql.Replace("<CardKey>", CardKey).Replace("<APVal1>", jo);
-            DBUtility.ExeLocalSqlNoRes(sql);
+            if (!string.IsNullOrEmpty(jo))
+            {
+                var sql = "Update ECOCardContent Set APVal3 = 'delete' where CardKey = '<CardKey>' and APVal1 = '<APVal1>'";
+                sql = sql.Replace("<CardKey>", CardKey).Replace("<APVal1>", jo);
+                DBUtility.ExeLocalSqlNoRes(sql);
+            }
+            else
+            {
+                var sql = "Update ECOCardContent Set APVal3 = 'delete' where CardKey = '<CardKey>'";
+                sql = sql.Replace("<CardKey>", CardKey);
+                DBUtility.ExeLocalSqlNoRes(sql);
+            }
+
         }
 
         public static List<ECOJOMainStore> RetrieveJOMainStore(string cardkey)

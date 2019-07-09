@@ -52,7 +52,7 @@
                                         <th style="text-align:center;font-size:12px">Description</th>
                                         <th style="text-align:center;font-size:12px">Planner</th>
                                         <th style="text-align:center;font-size:12px">Creator</th>
-                                        <th style="text-align:center;font-size:12px">Remove</th>
+                                        <th style="text-align:center;font-size:12px"><button class="btn btn-default" type="button" value="CardKey=@(ViewBag.CardKey)" data-toggle="tooltip" title="Clean All" onclick="deletealljo(this)"><span class="glyphicon glyphicon-trash"  aria-hidden="true"></span></button></th>
                                     </tr>
                                 </thead>
 
@@ -69,7 +69,7 @@
                                             <td style="text-align:center;font-size:12px">@tempinfo.Description</td>
                                             <td style="text-align:center;font-size:12px">@tempinfo.Planner</td>
                                             <td style="text-align:center;font-size:12px">@tempinfo.Creator</td>
-                                            <td><button class="btn btn-default" type="button" value="CardKey=@(tempinfo.CardKey)&WipJob=@(tempinfo.WipJob)" onclick="deletejoinfo(this)"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button></td>
+                                            <td style="text-align:center;font-size:12px"><button class="btn btn-default" type="button" value="CardKey=@(tempinfo.CardKey)&WipJob=@(tempinfo.WipJob)" onclick="deletejoinfo(this)"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button></td>
                                         </tr>
                                     }
                                 </tbody>
@@ -79,6 +79,12 @@
                                 function deletejoinfo(oBT) {
                                     if (confirm("Warning: Do you really want to delete this JO information ?")) {
                                         window.location.href = "/Domino/MiniPIP/DeleteJOInfo?" + oBT.value;
+                                    }
+                                }
+
+                                function deletealljo(oBT) {
+                                    if (confirm("Warning: Do you really want to delete all JO information ?")) {
+                                        window.location.href = "/Domino/MiniPIP/DeleteAllJO?" + oBT.value;
                                     }
                                 }
                             </script>
@@ -201,7 +207,7 @@
                                     <tr>
                                         <th style="text-align:center;font-size:12px">Job Order</th>
                                         <th style="text-align:center;font-size:12px">Status</th>
-                                        <th style="text-align:center;font-size:12px">Remove</th>
+                                        <th style="text-align:center;font-size:12px"><button class="btn btn-default" type="button" value="CardKey=@(ViewBag.CardKey)" data-toggle="tooltip" title="Clean All" onclick="deletealljostore(this)"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button></th>
                                     </tr>
                                 </thead>
 
@@ -211,7 +217,7 @@
                                         <tr>
                                             <td style="text-align:center;font-size:12px">@tempinfo.JO</td>
                                             <td style="text-align:center;font-size:12px">@tempinfo.StoreStaus</td>
-                                            <td><button class="btn btn-default" type="button" value="CardKey=@(tempinfo.CardKey)&WipJob=@(tempinfo.JO)" onclick="deletejostore(this)"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button></td>
+                                            <td style="text-align:center;font-size:12px"><button class="btn btn-default" type="button" value="CardKey=@(tempinfo.CardKey)&WipJob=@(tempinfo.JO)" onclick="deletejostore(this)"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button></td>
                                         </tr>
                                     }
                                 </tbody>
@@ -220,6 +226,12 @@
                                             function deletejostore(oBT) {
                                                 if (confirm("Warning: Do you really want to delete this store information ?")) {
                                                     window.location.href = "/Domino/MiniPIP/DeleteJOStore?" + oBT.value;
+                                                }
+                                            }
+
+                                            function deletealljostore(oBT) {
+                                                if (confirm("Warning: Do you really want to delete all jo store information ?")) {
+                                                    window.location.href = "/Domino/MiniPIP/DeleteAllJOStore?" + oBT.value;
                                                 }
                                             }
                             </script>

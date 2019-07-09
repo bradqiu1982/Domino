@@ -1,0 +1,45 @@
+﻿<script type="text/javascript">
+  
+$(function () {
+
+    $('##ElementID#').highcharts({
+        title: {
+            text: '#Title#'
+        },
+        chart:
+        {
+          alignTicks: false,
+          zoomType: 'xy'
+        },
+        xAxis: {
+            categories: [#ChartxAxisValues#]
+        },
+        yAxis: [{
+            title: {
+                text: '$ Revenue'
+            },
+            min: 0,
+            max: #AmountMAX#
+        }],
+        plotOptions: {
+            column: {
+                dataLabels: {
+                    enabled: true,
+                    color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white'
+                }
+            }
+        },
+        series: [{
+            type: 'column',
+            name: 'Revenue',
+            data: [#RevenueData#],
+            yAxis:0,
+            color:'#90ed7d'
+        }]
+    });
+});
+
+</script>
+
+
+

@@ -271,6 +271,15 @@
                         alert("Sample Order Notice Email is sent!");
                     });
                 });
+
+                $('body').on('click', '#customernoticeqa', function () {
+                    var crtcardkey = $('#crtcardkey').val();
+                    $.post('/Domino/MiniPIP/NoticeQACustomerApproveHold', {
+                        crtcardkey: crtcardkey
+                    }, function (output) {
+                        alert("Customer Approve Hold Notice Email is sent!");
+                    });
+                });
             });
         </script>
         }
