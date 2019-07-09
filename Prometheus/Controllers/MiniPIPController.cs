@@ -4130,6 +4130,66 @@ namespace Domino.Controllers
             return ret;
         }
 
+        public List<string> ParseECOSignoffFiles(string paths)
+        {
+            var ret = new List<string>();
+            if (string.IsNullOrEmpty(paths) || !paths.ToUpper().Contains("/userfiles/".ToUpper()))
+            { return ret; }
+
+            var ps = paths.Split(new string[] { ":::" }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var p in ps)
+            {
+                ret.Add(Server.MapPath("~/userfiles") + p.Replace("/userfiles", "").Replace("/", "\\"));
+            }
+            return ret;
+        }
+
+        public JsonResult NoticeECOSignOff()
+        {
+            var syscfg = CfgUtility.GetSysConfig(this);
+            var noticepeoples = syscfg["ECOSIGNOFFNOTICE"].Split(new string[] { ";", "," }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            var cardkey = Request.Form["crtcardkey"];
+            var cardinfo = DominoVM.RetrieveCard(cardkey);
+            if (cardinfo.Count > 0)
+            {
+                var baseinfo = ECOBaseInfo.RetrieveECOBaseInfo(cardinfo[0].ECOKey)[0];
+
+                var title = "ECO Signoff for for [" + baseinfo.PNDesc + "] for ["
+                    + baseinfo.Customer + "] under [" + baseinfo.ECONum + "]";
+
+                var tolist = new List<string>();
+                tolist.Add(baseinfo.PE.Replace(" ", ".") + "@finisar.com");
+                if (!string.IsNullOrEmpty(baseinfo.ActualPE))
+                {
+                    tolist.Add(baseinfo.ActualPE.Replace(" ", ".") + "@finisar.com");
+                }
+                tolist.Add(baseinfo.RSM.Replace(" ", ".") + "@finisar.com");
+                tolist.AddRange(noticepeoples);
+
+                var signoffinfo = DominoVM.RetrieveSignoffInfo(cardkey);
+                var attlist = new List<string>();
+                attlist.AddRange(ParseECOSignoffFiles(signoffinfo.ECOQRFile));
+                attlist.AddRange(ParseECOSignoffFiles(signoffinfo.EEPROMPeerReview));
+                attlist.AddRange(ParseECOSignoffFiles(signoffinfo.ECOTraceview));
+                attlist.AddRange(ParseECOSignoffFiles(signoffinfo.SpecCompresuite));
+                attlist.AddRange(ParseECOSignoffFiles(signoffinfo.AgileCodeFile));
+                attlist.AddRange(ParseECOSignoffFiles(signoffinfo.AgileSpecFile));
+                attlist.AddRange(ParseECOSignoffFiles(signoffinfo.AgileTestFile));
+
+                var content = "Dear " + baseinfo.RSM + "\r\n\r\n";
+                content += "Please find enclosed FAIR for [" + baseinfo.PNDesc + "] for ["
+                    + baseinfo.Customer + "] under [" + baseinfo.ECONum + "] for your review and approval \r\n\r\n";
+                content += "Appreciate if you can reply the team in 48 hours and if need more time, please notify the team so we know this email reach your end. \r\n\r\n";
+                content += "Thank you for your support.";
+
+                EmailUtility.SendEmailWithAttach(this, title, tolist, content, attlist);
+                new System.Threading.ManualResetEvent(false).WaitOne(1500);
+            }
+
+            var ret = new JsonResult();
+            ret.Data = new { sucess = true };
+            return ret;
+        }
 
     }
 }

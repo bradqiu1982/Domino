@@ -154,6 +154,108 @@ namespace Domino.Models
             return true;
         }
 
+        public static bool SendEmailWithAttach(Controller ctrl, string title, List<string> tolist, string content, List<string> attaches, bool isHtml = true)
+        {
+            try
+            {
+                var syscfgdict = CfgUtility.GetSysConfig(ctrl);
+
+                var message = new MailMessage();
+                foreach (var att in attaches)
+                {
+                    var attach = new Attachment(att);
+                    message.Attachments.Add(attach);
+                }
+
+                message.IsBodyHtml = isHtml;
+                message.From = new MailAddress(syscfgdict["APPEMAILADRESS"]);
+                foreach (var item in tolist)
+                {
+                    if (!item.Contains("@"))
+                        continue;
+
+                    try
+                    {
+                        if (item.Contains(";"))
+                        {
+                            var ts = item.Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+                            foreach (var t in ts)
+                            {
+                                if (IsEmaileValid(t))
+                                {
+                                    message.To.Add(t);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (IsEmaileValid(item))
+                            {
+                                message.To.Add(item);
+                            }
+                        }
+                    }
+                    catch (Exception e) { logthdinfo("Address exception: " + e.Message); }
+                }
+
+                message.Subject = title;
+                message.Body = content.Replace("\r\n", "<br>").Replace("\r", "<br>");
+
+                SmtpClient client = new SmtpClient();
+                client.Host = syscfgdict["EMAILSERVER"];
+                client.EnableSsl = true;
+                client.Timeout = 60000;
+                client.DeliveryMethod = SmtpDeliveryMethod.Network;
+                client.UseDefaultCredentials = false;
+                client.Credentials = new NetworkCredential(syscfgdict["APPEMAILADRESS"], syscfgdict["APPEMAILPWD"]);
+
+                ServicePointManager.ServerCertificateValidationCallback
+                    = delegate (object s, X509Certificate certificate, X509Chain chain
+                    , SslPolicyErrors sslPolicyErrors) { return true; };
+
+                new Thread(() => {
+                    try
+                    {
+                        client.Send(message);
+                    }
+                    catch (SmtpFailedRecipientsException ex)
+                    {
+                        logthdinfo("SmtpFailedRecipientsException exception: " + ex.Message);
+                        try
+                        {
+                            message.To.Clear();
+                            foreach (var item in tolist)
+                            {
+                                if (ex.Message.Contains(item))
+                                {
+                                    try
+                                    {
+                                        message.To.Add(item);
+                                    }
+                                    catch (Exception e) { logthdinfo("Address exception2: " + e.Message); }
+                                }
+                            }
+                            client.Send(message);
+                        }
+                        catch (Exception ex1)
+                        {
+                            logthdinfo("nest exception1: " + ex1.Message);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        logthdinfo("send exception: " + ex.Message);
+                    }
+                }).Start();
+            }
+            catch (Exception ex)
+            {
+                logthdinfo("main exception: " + ex.Message);
+                return false;
+            }
+            return true;
+        }
+
         public static string CreateTableHtml(string greetig, string description, string comment, List<List<string>> table)
         {
             var idx = 0;

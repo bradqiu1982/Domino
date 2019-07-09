@@ -280,6 +280,15 @@
                         alert("Customer Approve Hold Notice Email is sent!");
                     });
                 });
+
+                $('body').on('click', '#signoffnotice', function () {
+                    var crtcardkey = $('#crtcardkey').val();
+                    $.post('/Domino/MiniPIP/NoticeECOSignOff', {
+                        crtcardkey: crtcardkey
+                    }, function (output) {
+                        alert("ECO SignOff Notice Email is sent!");
+                    });
+                });
             });
         </script>
         }
