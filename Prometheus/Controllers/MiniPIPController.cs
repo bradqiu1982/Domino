@@ -880,12 +880,14 @@ namespace Domino.Controllers
                         else if (string.Compare(cardtype, DominoCardType.ECOSignoff1) == 0)
                         {
                             DominoDataCollector.RefreshQAFAI(card.EBaseInfo, card.CardKey, this);
+                            DominoDataCollector.RefreshFormatEEPROMFile(card.EBaseInfo, card.CardKey, this);
                             logmaininfo(DateTime.Now.ToString() + " updated ECO " + card.EBaseInfo.ECONum + "  ECOSignoff1 info\r\n");
                             DominoVM.CardCanbeUpdate(card.CardKey);
                         }
                         else if (string.Compare(cardtype, DominoCardType.ECOSignoff2) == 0)
                         {
                             DominoDataCollector.RefreshQAFAI(card.EBaseInfo, card.CardKey, this);
+                            DominoDataCollector.RefreshFormatEEPROMFile(card.EBaseInfo, card.CardKey, this);
                             logmaininfo(DateTime.Now.ToString() + " updated ECO " + card.EBaseInfo.ECONum + "  ECOSignoff2 info\r\n");
                             DominoVM.CardCanbeUpdate(card.CardKey);
                         }
@@ -897,6 +899,8 @@ namespace Domino.Controllers
                         }
                         else if (string.Compare(cardtype, DominoCardType.SampleBuilding) == 0)
                         {
+                            DominoDataCollector.RefreshDumpEEPROMFile(card.EBaseInfo, card.CardKey, this);
+
                             DominoDataCollector.UpdateJOInfoFromExcel(this, card.EBaseInfo, card.CardKey);
                             DominoDataCollector.Update1STJOCheckFromExcel(this, card.EBaseInfo, card.CardKey);
                             DominoDataCollector.Update2NDJOCheckFromExcel(this, card.EBaseInfo, card.CardKey);
@@ -1526,7 +1530,8 @@ namespace Domino.Controllers
                         if (DominoVM.CardCanbeUpdate(CardKey) || string.Compare(Refresh, "YES", true) == 0)
                         {
                             DominoDataCollector.RefreshQAFAI(baseinfos[0], CardKey, this);
-                        }
+                            DominoDataCollector.RefreshFormatEEPROMFile(baseinfos[0], CardKey, this);
+                    }
                     }//if card is not finished,we refresh qa folder to get files
 
 
@@ -1576,7 +1581,8 @@ namespace Domino.Controllers
                 ViewBag.CurrentCard.FACategory = cardinfo.FACategory;
                 ViewBag.CurrentCard.RSMSendDate = cardinfo.RSMSendDate;
                 ViewBag.CurrentCard.RSMApproveDate = cardinfo.RSMApproveDate;
-                
+                ViewBag.CurrentCard.EEPROMFormatFile = cardinfo.EEPROMFormatFile;
+                ViewBag.CurrentCard.EEPROMDumpFile = cardinfo.EEPROMDumpFile;
 
                 if (!string.IsNullOrEmpty(cardinfo.RSMSendDate))
                 {
@@ -1995,6 +2001,7 @@ namespace Domino.Controllers
                     if (DominoVM.CardCanbeUpdate(CardKey) || string.Compare(Refresh, "YES", true) == 0)
                     {
                         DominoDataCollector.RefreshQAFAI(baseinfos[0], CardKey, this);
+                        DominoDataCollector.RefreshFormatEEPROMFile(baseinfos[0], CardKey, this);
                     }
                 }//if card is not finished,we refresh qa folder to get files
             
@@ -2045,6 +2052,8 @@ namespace Domino.Controllers
                 ViewBag.CurrentCard.RSMSendDate = cardinfo.RSMSendDate;
                 ViewBag.CurrentCard.RSMApproveDate = cardinfo.RSMApproveDate;
                 ViewBag.CurrentCard.ECOCustomerHoldDate = cardinfo.ECOCustomerHoldDate;
+                ViewBag.CurrentCard.EEPROMFormatFile = cardinfo.EEPROMFormatFile;
+                ViewBag.CurrentCard.EEPROMDumpFile = cardinfo.EEPROMDumpFile;
 
                 if (!string.IsNullOrEmpty(cardinfo.RSMSendDate))
                 {
@@ -2610,6 +2619,8 @@ namespace Domino.Controllers
                 {
                     if (DominoVM.CardCanbeUpdate(CardKey) || string.Compare(Refresh, "YES", true) == 0)
                     {
+                        DominoDataCollector.RefreshDumpEEPROMFile(baseinfos[0], CardKey, this);
+
                         DominoDataCollector.UpdateJOInfoFromExcel(this, baseinfos[0], CardKey);
                         DominoDataCollector.Update1STJOCheckFromExcel(this, baseinfos[0], CardKey);
                         DominoDataCollector.Update2NDJOCheckFromExcel(this, baseinfos[0], CardKey);
@@ -2628,6 +2639,29 @@ namespace Domino.Controllers
                     {
                         ViewBag.CurrentCard = card;
                         break;
+                    }
+                }
+
+                ViewBag.CurrentCard.EEPROMFormatFile = "";
+                ViewBag.CurrentCard.EEPROMDumpFile = "";
+                if (string.Compare(baseinfos[0].FlowInfo, DominoFlowInfo.Default, true) == 0)
+                {
+                    var signoffcards = DominoVM.RetrieveSpecialCard(baseinfos[0], DominoCardType.ECOSignoff1);
+                    if (signoffcards.Count > 0)
+                    {
+                        var signoffinfo = DominoVM.RetrieveSignoffInfo(signoffcards[0].CardKey);
+                        ViewBag.CurrentCard.EEPROMFormatFile = signoffinfo.EEPROMFormatFile;
+                        ViewBag.CurrentCard.EEPROMDumpFile = signoffinfo.EEPROMDumpFile;
+                    }
+                }
+                else
+                {
+                    var signoffcards = DominoVM.RetrieveSpecialCard(baseinfos[0], DominoCardType.ECOSignoff2);
+                    if (signoffcards.Count > 0)
+                    {
+                        var signoffinfo = DominoVM.RetrieveSignoffInfo(signoffcards[0].CardKey);
+                        ViewBag.CurrentCard.EEPROMFormatFile = signoffinfo.EEPROMFormatFile;
+                        ViewBag.CurrentCard.EEPROMDumpFile = signoffinfo.EEPROMDumpFile;
                     }
                 }
 

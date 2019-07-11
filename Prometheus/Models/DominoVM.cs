@@ -421,7 +421,8 @@ namespace Domino.Models
                     catch (Exception ex) { val = string.Empty; }
 
                     if (!string.IsNullOrEmpty(val)
-                        && string.Compare(val,"N/A",true) != 0)
+                        && string.Compare(val,"N/A",true) != 0
+                        && string.Compare(val, "0", true) != 0)
                     {
                         ret.Add(new KeyValuePair<string,string>(info.NameDict[property.Name], val));
                     }
@@ -1246,7 +1247,8 @@ namespace Domino.Models
             RSMSendDate = string.Empty;
             RSMApproveDate = string.Empty;
             ECOCustomerHoldDate = string.Empty;
-
+            EEPROMFormatFile = string.Empty;
+            EEPROMDumpFile = string.Empty;
 
             ECOCustomerApproveDate = string.Empty;
             ECOCustomerHoldStartDate = string.Empty;
@@ -1778,6 +1780,8 @@ namespace Domino.Models
         public string RSMSendDate { set; get; }
         public string RSMApproveDate { set; get; }
         public string ECOCustomerHoldDate { set; get; }
+        public string EEPROMFormatFile { set; get; }
+        public string EEPROMDumpFile { set; get; }
 
         public void UpdateSignoffInfo(string cardkey)
         {
@@ -1790,15 +1794,17 @@ namespace Domino.Models
                 DBUtility.ExeLocalSqlNoRes(csql);
             }
 
-            var sql = "Update ECOCardContent Set APVal1 = '<APVal1>',APVal2 = '<APVal2>',APVal3 = '<APVal3>',APVal4 = '<APVal4>',APVal5 = '<APVal5>',APVal6 = '<APVal6>'"
-                +",APVal7 = '<APVal7>',APVal8 = '<APVal8>',APVal9 = '<APVal9>',APVal10 = '<APVal10>',APVal11 = '<APVal11>',APVal12 = '<APVal12>',APVal13 = '<APVal13>'"
-                + ",APVal14 = '<APVal14>',APVal15 = '<APVal15>',APVal16 = '<APVal16>',APVal17 = '<APVal17>',APVal18 = '<APVal18>',APVal19 = '<APVal19>'  where CardKey = '<CardKey>'";
+            var sql = @"Update ECOCardContent Set APVal1 = '<APVal1>',APVal2 = '<APVal2>',APVal3 = '<APVal3>',APVal4 = '<APVal4>',APVal5 = '<APVal5>',APVal6 = '<APVal6>' 
+                            ,APVal7 = '<APVal7>',APVal8 = '<APVal8>',APVal9 = '<APVal9>',APVal10 = '<APVal10>',APVal11 = '<APVal11>',APVal12 = '<APVal12>',APVal13 = '<APVal13>'
+                            ,APVal14 = '<APVal14>',APVal15 = '<APVal15>',APVal16 = '<APVal16>',APVal17 = '<APVal17>',APVal18 = '<APVal18>',APVal19 = '<APVal19>'
+                            ,APVal20 = '<APVal20>',APVal21 = '<APVal21>'  where CardKey = '<CardKey>'";
 
             sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal1>", QAEEPROMCheck).Replace("<APVal2>", QALabelCheck).Replace("<APVal3>", PeerReviewEngineer)
                 .Replace("<APVal4>", PeerReview).Replace("<APVal5>", ECOAttachmentCheck).Replace("<APVal6>", ECOQRFile).Replace("<APVal7>", EEPROMPeerReview)
                 .Replace("<APVal8>", ECOTraceview).Replace("<APVal9>", SpecCompresuite).Replace("<APVal10>", ECOTRApprover).Replace("<APVal11>", ECOMDApprover)
                 .Replace("<APVal12>", MiniPVTCheck).Replace("<APVal13>", AgileCodeFile).Replace("<APVal14>", AgileSpecFile).Replace("<APVal15>", AgileTestFile)
-                .Replace("<APVal16>", FACategory).Replace("<APVal17>", RSMSendDate).Replace("<APVal18>", RSMApproveDate).Replace("<APVal19>", ECOCustomerHoldDate);
+                .Replace("<APVal16>", FACategory).Replace("<APVal17>", RSMSendDate).Replace("<APVal18>", RSMApproveDate).Replace("<APVal19>", ECOCustomerHoldDate)
+                .Replace("<APVal20>", EEPROMFormatFile).Replace("<APVal21>", EEPROMDumpFile);
 
             DBUtility.ExeLocalSqlNoRes(sql);
         }
@@ -1807,7 +1813,7 @@ namespace Domino.Models
         public static DominoVM RetrieveSignoffInfo(string cardkey)
         {
             var ret = new DominoVM();
-            var sql = "select CardKey,APVal1,APVal2,APVal3,APVal4,APVal5,APVal6,APVal7,APVal8,APVal9,APVal10,APVal11,APVal12,APVal13,APVal14,APVal15,APVal16,APVal17,APVal18,APVal19 from ECOCardContent where CardKey = '<CardKey>'";
+            var sql = "select CardKey,APVal1,APVal2,APVal3,APVal4,APVal5,APVal6,APVal7,APVal8,APVal9,APVal10,APVal11,APVal12,APVal13,APVal14,APVal15,APVal16,APVal17,APVal18,APVal19,APVal20,APVal21 from ECOCardContent where CardKey = '<CardKey>'";
             sql = sql.Replace("<CardKey>", cardkey);
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
             if (dbret.Count > 0)
@@ -1832,6 +1838,8 @@ namespace Domino.Models
                 ret.RSMSendDate = Convert.ToString(dbret[0][17]);
                 ret.RSMApproveDate = Convert.ToString(dbret[0][18]);
                 ret.ECOCustomerHoldDate = Convert.ToString(dbret[0][19]);
+                ret.EEPROMFormatFile = Convert.ToString(dbret[0][20]);
+                ret.EEPROMDumpFile = Convert.ToString(dbret[0][21]);
             }
             return ret;
         }

@@ -1346,6 +1346,201 @@ namespace Domino.Models
             }
         }
 
+        private static List<string> QAEEPROMFormatFilePath(ECOBaseInfo baseinfo, Controller ctrl)
+        {
+
+            var ret = new List<string>();
+            var syscfgdict = GetSysConfig(ctrl);
+            if (syscfgdict.ContainsKey("OAQADBSTRING"))
+            {
+                var conn = DBUtility.GetConnector(syscfgdict["OAQADBSTRING"]);
+                if (conn != null)
+                {
+                    var sql = @"SELECT TOP 1 [FileURL]  FROM [OA].[dbo].[View_OA_QA_FAI_Record_List] where (FileURL like '%\<pndesc>%' or FileURL like '%\EEPROMRef_<pndesc>%') and FileURL like '%EEPROM%' and FileURL like '%.txt' order by Updated_At desc";
+                    sql = sql.Replace("<pndesc>", baseinfo.PNDesc);
+
+                    var dbret = DBUtility.ExeSqlWithRes(conn, sql);
+                    foreach (var line in dbret)
+                    {
+                        try
+                        {
+                            var url = Convert.ToString(line[0]);
+                            ret.Add(url);
+                        }
+                        catch (Exception ex) { }
+                    }//end foreach
+                }//end if
+            }//end if
+
+            return ret;
+        }
+
+        public static void RefreshFormatEEPROMFile(ECOBaseInfo baseinfo, string CardKey, Controller ctrl)
+        {
+            var eepromfiles = QAEEPROMFormatFilePath(baseinfo, ctrl);
+            if (eepromfiles.Count > 0)
+            {
+                var signoffinfo = DominoVM.RetrieveSignoffInfo(CardKey);
+                var oafilename = Path.GetFileName(eepromfiles[0]).Replace(" ", "_").Replace("#", "").Replace("'", "")
+                            .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
+                if (string.IsNullOrEmpty(signoffinfo.EEPROMFormatFile))
+                {
+                    //update file
+                }
+                else
+                {
+                    var sysfilename = Path.GetFileName(signoffinfo.EEPROMFormatFile);
+                    if (string.Compare(oafilename, sysfilename, true) != 0)
+                    {
+                        //update file
+                    }
+                    else
+                    { return; }
+                }
+
+                string datestring = DateTime.Now.ToString("yyyyMMdd");
+                string imgdir = ctrl.Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
+                if (!DirectoryExists(ctrl, imgdir))
+                    Directory.CreateDirectory(imgdir);
+                var desfile = imgdir + oafilename;
+                
+                try
+                {
+                    FileCopy(ctrl, eepromfiles[0], desfile, true);
+                    signoffinfo.EEPROMFormatFile = "/userfiles/docs/" + datestring + "/" + oafilename;
+                    signoffinfo.UpdateSignoffInfo(CardKey);
+                }
+                catch (Exception ex) { }
+            }
+
+        }
+
+
+        private static List<string> GetFAFJoByPNDesc(string pndesc)
+        {
+            var ret = new List<string>();
+
+            var sql = @"select top 1 jo.APVal3 JobOrder,jo.APVal1 PNDESC,CONVERT(DATETIME,jo.APVal9) releasedate from [DominoTrace].[dbo].[ECOBaseInfo]  (nolock) inf 
+                              left join [DominoTrace].[dbo].[ECOCard] (nolock) cd on inf.ECOKey = cd.ECOKey
+                              left join [DominoTrace].[dbo].[ECOJOOrderInfo] (nolock) jo on cd.CardKey = jo.CardKey
+                              where inf.PNDesc = '<pndesc>' and jo.APVal3 like '%FAF' order by  CONVERT(DATETIME,jo.APVal9) desc";
+            sql = sql.Replace("<pndesc>", pndesc);
+
+            var dbret = DBUtility.ExeLocalSqlWithRes(sql);
+            foreach (var line in dbret)
+            {
+                ret.Add(Convert.ToString(line[0]));
+                var temppn = Convert.ToString(line[1]);
+                if (string.Compare(temppn.Substring(3, 1), ",") == 0)
+                {
+                    var pns = temppn.Split(new string[] {",","*"}, StringSplitOptions.RemoveEmptyEntries);
+                    ret.Add(pns[1].Trim());
+                }
+                else
+                {
+                    var pns = temppn.Split(new string[] { ",", "*" }, StringSplitOptions.RemoveEmptyEntries);
+                    ret.Add(pns[0].Trim());
+                }
+            }
+            return ret;
+        }
+
+        public static List<string> GetCustomerSNFromFAF(string jo)
+        {
+            var ret = new List<string>();
+            var sql = @"select CustomerSerialNum from [InsiteDB].[insite].[Container] (nolock) c 
+                          left join InsiteDB.insite.MfgOrder (nolock) jo on c.MfgOrderId = jo.MfgOrderId
+                          where jo.MfgOrderName = '<jocond>' and Len(ContainerName) = 7";
+            sql = sql.Replace("<jocond>", jo);
+            var dbret = DBUtility.ExeMESSqlWithRes(sql);
+            foreach (var line in dbret)
+            {
+                ret.Add(Convert.ToString(line[0]));
+            }
+            return ret;
+        }
+
+        public static string FindTraceViewFile(string sn, string pndesc)
+        {
+            var topdir = @"\\cn-traceview\Logfiles\Memory Map Archive\"+pndesc;
+            var files = Directory.EnumerateFiles(topdir, sn+"_EEPROM_HEX*", SearchOption.AllDirectories).ToList();
+            if (files.Count > 0)
+            {
+                files.Sort(delegate (string obj1, string obj2)
+                {
+                    var t1 = System.IO.File.GetCreationTime(obj1);
+                    var t2 = System.IO.File.GetCreationTime(obj2);
+                    return t2.CompareTo(t1);
+                });
+
+                return files[0];
+            }
+            return string.Empty;
+
+        }
+
+        public static void RefreshDumpEEPROMFile(ECOBaseInfo baseinfo, string CardKey, Controller ctrl)
+        {
+            DominoVM signoffinfo = null;
+            if (string.Compare(baseinfo.FlowInfo, DominoFlowInfo.Default, true) == 0)
+            {
+                var signoffcards = DominoVM.RetrieveSpecialCard(baseinfo, DominoCardType.ECOSignoff1);
+                if (signoffcards.Count > 0)
+                {
+                    signoffinfo = DominoVM.RetrieveSignoffInfo(signoffcards[0].CardKey);
+                }
+            }
+            else
+            {
+                var signoffcards = DominoVM.RetrieveSpecialCard(baseinfo, DominoCardType.ECOSignoff2);
+                if (signoffcards.Count > 0)
+                {
+                    signoffinfo = DominoVM.RetrieveSignoffInfo(signoffcards[0].CardKey);
+                }
+            }
+
+            if (signoffinfo != null && !string.IsNullOrEmpty(signoffinfo.EEPROMFormatFile) && string.IsNullOrEmpty(signoffinfo.EEPROMDumpFile))
+            {
+                var jolist = GetFAFJoByPNDesc(baseinfo.PNDesc);
+                if (jolist.Count > 0)
+                {
+                    var snlist = GetCustomerSNFromFAF(jolist[0]);
+                    foreach (var sn in snlist)
+                    {
+                        var traceviewfile = FindTraceViewFile(sn, jolist[1]);
+                        if (!string.IsNullOrEmpty(traceviewfile))
+                        {
+                            var oafilename = Path.GetFileName(traceviewfile).Replace(" ", "_").Replace("#", "").Replace("'", "")
+                            .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
+                            string datestring = DateTime.Now.ToString("yyyyMMdd");
+                            string imgdir = ctrl.Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
+                            if (!DirectoryExists(ctrl, imgdir))
+                                Directory.CreateDirectory(imgdir);
+                            var desfile = imgdir + oafilename;
+
+                            try
+                            {
+                                FileCopy(ctrl, traceviewfile, desfile, true);
+                                signoffinfo.EEPROMDumpFile = "/userfiles/docs/" + datestring + "/" + oafilename;
+                                signoffinfo.UpdateSignoffInfo(signoffinfo.CardKey);
+
+                                var spcard = DominoVM.RetrieveCard(CardKey);
+                                if (spcard.Count > 0
+                                    && string.Compare(spcard[0].CardStatus, DominoCardStatus.working) == 0)
+                                {
+                                    DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.pending);
+                                }
+                            }
+                            catch (Exception ex) { }
+
+                            return;
+                        }
+                    }
+                }
+            }
+
+        }
+
         private static void RefreshTunableQAFile(ECOBaseInfo baseinfo, string CardKey, Controller ctrl, string srcrootfolder, string eepromfilter)
         {
             if (DirectoryExists(ctrl, srcrootfolder))
