@@ -1249,6 +1249,9 @@ namespace Domino.Models
             ECOCustomerHoldDate = string.Empty;
             EEPROMFormatFile = string.Empty;
             EEPROMDumpFile = string.Empty;
+            EEPROMExcelTemplate = string.Empty;
+            EEPROMMaskFile = string.Empty;
+            CustomerApproveFile = string.Empty;
 
             ECOCustomerApproveDate = string.Empty;
             ECOCustomerHoldStartDate = string.Empty;
@@ -1782,6 +1785,9 @@ namespace Domino.Models
         public string ECOCustomerHoldDate { set; get; }
         public string EEPROMFormatFile { set; get; }
         public string EEPROMDumpFile { set; get; }
+        public string EEPROMExcelTemplate { set; get; }
+        public string EEPROMMaskFile { set; get; }
+        public string CustomerApproveFile { set; get; }
 
         public void UpdateSignoffInfo(string cardkey)
         {
@@ -1797,14 +1803,14 @@ namespace Domino.Models
             var sql = @"Update ECOCardContent Set APVal1 = '<APVal1>',APVal2 = '<APVal2>',APVal3 = '<APVal3>',APVal4 = '<APVal4>',APVal5 = '<APVal5>',APVal6 = '<APVal6>' 
                             ,APVal7 = '<APVal7>',APVal8 = '<APVal8>',APVal9 = '<APVal9>',APVal10 = '<APVal10>',APVal11 = '<APVal11>',APVal12 = '<APVal12>',APVal13 = '<APVal13>'
                             ,APVal14 = '<APVal14>',APVal15 = '<APVal15>',APVal16 = '<APVal16>',APVal17 = '<APVal17>',APVal18 = '<APVal18>',APVal19 = '<APVal19>'
-                            ,APVal20 = '<APVal20>',APVal21 = '<APVal21>'  where CardKey = '<CardKey>'";
+                            ,APVal20 = '<APVal20>',APVal21 = '<APVal21>',APVal22 = '<APVal22>',APVal23 = '<APVal23>',APVal24 = '<APVal24>'  where CardKey = '<CardKey>'";
 
             sql = sql.Replace("<CardKey>", cardkey).Replace("<APVal1>", QAEEPROMCheck).Replace("<APVal2>", QALabelCheck).Replace("<APVal3>", PeerReviewEngineer)
                 .Replace("<APVal4>", PeerReview).Replace("<APVal5>", ECOAttachmentCheck).Replace("<APVal6>", ECOQRFile).Replace("<APVal7>", EEPROMPeerReview)
                 .Replace("<APVal8>", ECOTraceview).Replace("<APVal9>", SpecCompresuite).Replace("<APVal10>", ECOTRApprover).Replace("<APVal11>", ECOMDApprover)
                 .Replace("<APVal12>", MiniPVTCheck).Replace("<APVal13>", AgileCodeFile).Replace("<APVal14>", AgileSpecFile).Replace("<APVal15>", AgileTestFile)
                 .Replace("<APVal16>", FACategory).Replace("<APVal17>", RSMSendDate).Replace("<APVal18>", RSMApproveDate).Replace("<APVal19>", ECOCustomerHoldDate)
-                .Replace("<APVal20>", EEPROMFormatFile).Replace("<APVal21>", EEPROMDumpFile);
+                .Replace("<APVal20>", EEPROMFormatFile).Replace("<APVal21>", EEPROMDumpFile).Replace("<APVal22>", EEPROMExcelTemplate).Replace("<APVal23>", EEPROMMaskFile).Replace("<APVal24>", CustomerApproveFile);
 
             DBUtility.ExeLocalSqlNoRes(sql);
         }
@@ -1813,7 +1819,7 @@ namespace Domino.Models
         public static DominoVM RetrieveSignoffInfo(string cardkey)
         {
             var ret = new DominoVM();
-            var sql = "select CardKey,APVal1,APVal2,APVal3,APVal4,APVal5,APVal6,APVal7,APVal8,APVal9,APVal10,APVal11,APVal12,APVal13,APVal14,APVal15,APVal16,APVal17,APVal18,APVal19,APVal20,APVal21 from ECOCardContent where CardKey = '<CardKey>'";
+            var sql = "select CardKey,APVal1,APVal2,APVal3,APVal4,APVal5,APVal6,APVal7,APVal8,APVal9,APVal10,APVal11,APVal12,APVal13,APVal14,APVal15,APVal16,APVal17,APVal18,APVal19,APVal20,APVal21,APVal22,APVal23,APVal24 from ECOCardContent where CardKey = '<CardKey>'";
             sql = sql.Replace("<CardKey>", cardkey);
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
             if (dbret.Count > 0)
@@ -1840,6 +1846,9 @@ namespace Domino.Models
                 ret.ECOCustomerHoldDate = Convert.ToString(dbret[0][19]);
                 ret.EEPROMFormatFile = Convert.ToString(dbret[0][20]);
                 ret.EEPROMDumpFile = Convert.ToString(dbret[0][21]);
+                ret.EEPROMExcelTemplate = Convert.ToString(dbret[0][22]);
+                ret.EEPROMMaskFile = Convert.ToString(dbret[0][23]);
+                ret.CustomerApproveFile = Convert.ToString(dbret[0][24]);
             }
             return ret;
         }

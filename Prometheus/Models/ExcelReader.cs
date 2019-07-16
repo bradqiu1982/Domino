@@ -151,7 +151,7 @@ bool updateLinks)
             return ret;
         }
 
-        public static List<List<string>> RetrieveDataFromExcel(string wholefn, string sheetname)
+        public static List<List<string>> RetrieveDataFromExcel(string wholefn, string sheetname, int columns = 99)
         {
             var data = new List<List<string>>();
 
@@ -176,7 +176,7 @@ bool updateLinks)
                     sheet = wkb.Sheets[sheetname] as Excel.Worksheet;
                 }
 
-                var ret = RetrieveDataFromExcel2(sheet);
+                var ret = RetrieveDataFromExcel2(sheet, columns);
 
                 wkb.Close();
                 excel.Quit();

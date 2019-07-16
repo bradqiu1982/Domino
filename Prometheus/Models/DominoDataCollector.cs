@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using System.Text;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Collections;
 
 namespace Domino.Models
 {
@@ -249,7 +250,7 @@ namespace Domino.Models
             }
         }
 
-        public static List<List<string>> RetrieveDataFromExcel(Controller ctrl, string filename,string sheetname)
+        public static List<List<string>> RetrieveDataFromExcel(Controller ctrl, string filename,string sheetname, int columns = 99)
         {
             try
             {
@@ -260,7 +261,7 @@ namespace Domino.Models
 
                 using (NativeMethods cv = new NativeMethods(folderuser, folderdomin, folderpwd))
                 {
-                    return ExcelReader.RetrieveDataFromExcel(filename, sheetname);
+                    return ExcelReader.RetrieveDataFromExcel(filename, sheetname,columns);
                 }
             }
             catch (Exception ex)
@@ -1416,14 +1417,25 @@ namespace Domino.Models
         }
 
 
-        private static List<string> GetFAFJoByPNDesc(string pndesc)
+        private static List<string> GetFAFJoByPNDesc(string pndesc,bool FAF=true)
         {
             var ret = new List<string>();
+            var sql = "";
+            if (FAF)
+            {
+                sql = @"select top 1 jo.APVal3 JobOrder,jo.APVal1 PNDESC,CONVERT(DATETIME,jo.APVal9) releasedate from [DominoTrace].[dbo].[ECOBaseInfo]  (nolock) inf 
+                                  left join [DominoTrace].[dbo].[ECOCard] (nolock) cd on inf.ECOKey = cd.ECOKey
+                                  left join [DominoTrace].[dbo].[ECOJOOrderInfo] (nolock) jo on cd.CardKey = jo.CardKey
+                                  where inf.PNDesc = '<pndesc>' and jo.APVal3 like '%FAF' order by  CONVERT(DATETIME,jo.APVal9) desc";
+            }
+            else
+            {
+                sql = @"select top 1 jo.APVal3 JobOrder,jo.APVal1 PNDESC,CONVERT(DATETIME,jo.APVal9) releasedate from [DominoTrace].[dbo].[ECOBaseInfo]  (nolock) inf 
+                                  left join [DominoTrace].[dbo].[ECOCard] (nolock) cd on inf.ECOKey = cd.ECOKey
+                                  left join [DominoTrace].[dbo].[ECOJOOrderInfo] (nolock) jo on cd.CardKey = jo.CardKey
+                                  where inf.PNDesc = '<pndesc>' order by  CONVERT(DATETIME,jo.APVal9) desc";
+            }
 
-            var sql = @"select top 1 jo.APVal3 JobOrder,jo.APVal1 PNDESC,CONVERT(DATETIME,jo.APVal9) releasedate from [DominoTrace].[dbo].[ECOBaseInfo]  (nolock) inf 
-                              left join [DominoTrace].[dbo].[ECOCard] (nolock) cd on inf.ECOKey = cd.ECOKey
-                              left join [DominoTrace].[dbo].[ECOJOOrderInfo] (nolock) jo on cd.CardKey = jo.CardKey
-                              where inf.PNDesc = '<pndesc>' and jo.APVal3 like '%FAF' order by  CONVERT(DATETIME,jo.APVal9) desc";
             sql = sql.Replace("<pndesc>", pndesc);
 
             var dbret = DBUtility.ExeLocalSqlWithRes(sql);
@@ -1460,10 +1472,18 @@ namespace Domino.Models
             return ret;
         }
 
-        public static string FindTraceViewFile(string sn, string pndesc)
+        public static string FindTraceViewFile(string topdir,string sn)
         {
-            var topdir = @"\\cn-traceview\Logfiles\Memory Map Archive\"+pndesc;
-            var files = Directory.EnumerateFiles(topdir, sn+"_EEPROM_HEX*", SearchOption.AllDirectories).ToList();
+            var files = new List<string>();
+            if (!string.IsNullOrEmpty(sn))
+            {
+                files = Directory.EnumerateFiles(topdir, "*"+sn+"_EEPROM_HEX*", SearchOption.AllDirectories).ToList();
+            }
+            else
+            {
+                files = Directory.EnumerateFiles(topdir, "*_EEPROM_HEX*", SearchOption.AllDirectories).ToList();
+            }
+                
             if (files.Count > 0)
             {
                 files.Sort(delegate (string obj1, string obj2)
@@ -1477,6 +1497,32 @@ namespace Domino.Models
             }
             return string.Empty;
 
+        }
+
+        private static void UpdateDumpEEPROMFile(ECOBaseInfo baseinfo, string CardKey, Controller ctrl, DominoVM signoffinfo,string traceviewfile)
+        {
+            var oafilename = Path.GetFileName(traceviewfile).Replace(" ", "_").Replace("#", "").Replace("'", "")
+            .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
+            string datestring = DateTime.Now.ToString("yyyyMMdd");
+            string imgdir = ctrl.Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
+            if (!DirectoryExists(ctrl, imgdir))
+                Directory.CreateDirectory(imgdir);
+            var desfile = imgdir + oafilename;
+
+            try
+            {
+                FileCopy(ctrl, traceviewfile, desfile, true);
+                signoffinfo.EEPROMDumpFile = "/userfiles/docs/" + datestring + "/" + oafilename;
+                signoffinfo.UpdateSignoffInfo(signoffinfo.CardKey);
+
+                var spcard = DominoVM.RetrieveCard(CardKey);
+                if (spcard.Count > 0
+                    && string.Compare(spcard[0].CardStatus, DominoCardStatus.working) == 0)
+                {
+                    DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.pending);
+                }
+            }
+            catch (Exception ex) { }
         }
 
         public static void RefreshDumpEEPROMFile(ECOBaseInfo baseinfo, string CardKey, Controller ctrl)
@@ -1507,36 +1553,45 @@ namespace Domino.Models
                     var snlist = GetCustomerSNFromFAF(jolist[0]);
                     foreach (var sn in snlist)
                     {
-                        var traceviewfile = FindTraceViewFile(sn, jolist[1]);
+                        var topdir = @"\\cn-traceview\Logfiles\Memory Map Archive\" + jolist[1];
+                        var traceviewfile = FindTraceViewFile(topdir,sn);
                         if (!string.IsNullOrEmpty(traceviewfile))
                         {
-                            var oafilename = Path.GetFileName(traceviewfile).Replace(" ", "_").Replace("#", "").Replace("'", "")
-                            .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
-                            string datestring = DateTime.Now.ToString("yyyyMMdd");
-                            string imgdir = ctrl.Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
-                            if (!DirectoryExists(ctrl, imgdir))
-                                Directory.CreateDirectory(imgdir);
-                            var desfile = imgdir + oafilename;
-
-                            try
-                            {
-                                FileCopy(ctrl, traceviewfile, desfile, true);
-                                signoffinfo.EEPROMDumpFile = "/userfiles/docs/" + datestring + "/" + oafilename;
-                                signoffinfo.UpdateSignoffInfo(signoffinfo.CardKey);
-
-                                var spcard = DominoVM.RetrieveCard(CardKey);
-                                if (spcard.Count > 0
-                                    && string.Compare(spcard[0].CardStatus, DominoCardStatus.working) == 0)
-                                {
-                                    DominoVM.UpdateCardStatus(CardKey, DominoCardStatus.pending);
-                                }
-                            }
-                            catch (Exception ex) { }
-
+                            UpdateDumpEEPROMFile(baseinfo, CardKey, ctrl, signoffinfo, traceviewfile);
                             return;
                         }
                     }
-                }
+                }//end if
+                else
+                {
+                    var topdir = @"\\cn-traceview\Logfiles\Memory Map Archive\" + baseinfo.PNDesc;
+                    if (Directory.Exists(topdir))
+                    {
+                        var traceviewfile = FindTraceViewFile(topdir, null);
+                        if (!string.IsNullOrEmpty(traceviewfile))
+                        {
+                            UpdateDumpEEPROMFile(baseinfo, CardKey, ctrl, signoffinfo, traceviewfile);
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        jolist = GetFAFJoByPNDesc(baseinfo.PNDesc);
+                        if (jolist.Count > 0)
+                        {
+                            topdir = @"\\cn-traceview\Logfiles\Memory Map Archive\" + jolist[0];
+                            if (Directory.Exists(topdir))
+                            {
+                                var traceviewfile = FindTraceViewFile(topdir, null);
+                                if (!string.IsNullOrEmpty(traceviewfile))
+                                {
+                                    UpdateDumpEEPROMFile(baseinfo, CardKey, ctrl, signoffinfo, traceviewfile);
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }//end else
             }
 
         }
@@ -2359,6 +2414,27 @@ namespace Domino.Models
 
             return ret;
         }
+
+
+
+        public static void ParseEEPROMFile(string EEPROMTemplateFile,string EEPROMMaskFile
+            , string EEPROMREFFile,string EEPROMSNFile,Controller ctrl)
+        {
+            var refrencedata = EPROMStructData.ParseEEPROMFile(EEPROMTemplateFile, EEPROMMaskFile, EEPROMREFFile, ctrl);
+            var actualdata = EPROMStructData.ParseEEPROMFile(EEPROMTemplateFile, EEPROMMaskFile, EEPROMSNFile, ctrl);
+            var actualdict = EPROMStructData.Convert2DictData(actualdata);
+            foreach (var item in refrencedata)
+            {
+                var key = item.TableNo + "_" + item.ByteIndx + "_" + item.BitPos + "_" + item.BitCount;
+                if (actualdict.ContainsKey(key))
+                {
+                    item.ActualValue = actualdict[key].ParamValue;
+                }
+            }//end foreach
+
+            return;
+        }
+
 
     }
 }

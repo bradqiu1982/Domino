@@ -211,6 +211,8 @@
     <Compile Include="Models\DominoUserCacheVM.cs" />
     <Compile Include="Models\DominoVM.cs" />
     <Compile Include="Models\EmailUtility.cs" />
+    <Compile Include="Models\EPROMContentData.cs" />
+    <Compile Include="Models\EPROMStructData.cs" />
     <Compile Include="Models\ExcelReader.cs" />
     <Compile Include="Models\NewLoadMiniPIP.cs" />
     <Compile Include="Models\UserRankViewModel.cs" />
@@ -1107,6 +1109,7 @@
     <Content Include="Scripts\npidepartmentmachine.cfg" />
     <Content Include="Views\MiniPIP\ApproveMaterial.cshtml" />
     <Content Include="Views\DominoReport\ECORevenue.cshtml" />
+    <Content Include="Views\MiniPIP\ParseEEPROMFile.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Scripts\agiledownloadwraper\jre\lib\applet\" />

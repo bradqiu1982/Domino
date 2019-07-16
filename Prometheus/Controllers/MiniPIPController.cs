@@ -1582,7 +1582,10 @@ namespace Domino.Controllers
                 ViewBag.CurrentCard.RSMSendDate = cardinfo.RSMSendDate;
                 ViewBag.CurrentCard.RSMApproveDate = cardinfo.RSMApproveDate;
                 ViewBag.CurrentCard.EEPROMFormatFile = cardinfo.EEPROMFormatFile;
-                ViewBag.CurrentCard.EEPROMDumpFile = cardinfo.EEPROMDumpFile;
+                ViewBag.CurrentCard.EEPROMExcelTemplate = cardinfo.EEPROMExcelTemplate;
+                ViewBag.CurrentCard.EEPROMMaskFile = cardinfo.EEPROMMaskFile;
+                ViewBag.CurrentCard.CustomerApproveFile = cardinfo.CustomerApproveFile;
+
 
                 if (!string.IsNullOrEmpty(cardinfo.RSMSendDate))
                 {
@@ -2053,7 +2056,9 @@ namespace Domino.Controllers
                 ViewBag.CurrentCard.RSMApproveDate = cardinfo.RSMApproveDate;
                 ViewBag.CurrentCard.ECOCustomerHoldDate = cardinfo.ECOCustomerHoldDate;
                 ViewBag.CurrentCard.EEPROMFormatFile = cardinfo.EEPROMFormatFile;
-                ViewBag.CurrentCard.EEPROMDumpFile = cardinfo.EEPROMDumpFile;
+                ViewBag.CurrentCard.EEPROMExcelTemplate = cardinfo.EEPROMExcelTemplate;
+                ViewBag.CurrentCard.EEPROMMaskFile = cardinfo.EEPROMMaskFile;
+                ViewBag.CurrentCard.CustomerApproveFile = cardinfo.CustomerApproveFile;
 
                 if (!string.IsNullOrEmpty(cardinfo.RSMSendDate))
                 {
@@ -2652,6 +2657,8 @@ namespace Domino.Controllers
                         var signoffinfo = DominoVM.RetrieveSignoffInfo(signoffcards[0].CardKey);
                         ViewBag.CurrentCard.EEPROMFormatFile = signoffinfo.EEPROMFormatFile;
                         ViewBag.CurrentCard.EEPROMDumpFile = signoffinfo.EEPROMDumpFile;
+                        ViewBag.CurrentCard.EEPROMExcelTemplate = signoffinfo.EEPROMExcelTemplate;
+                        ViewBag.CurrentCard.EEPROMMaskFile = signoffinfo.EEPROMMaskFile;
                     }
                 }
                 else
@@ -2662,6 +2669,8 @@ namespace Domino.Controllers
                         var signoffinfo = DominoVM.RetrieveSignoffInfo(signoffcards[0].CardKey);
                         ViewBag.CurrentCard.EEPROMFormatFile = signoffinfo.EEPROMFormatFile;
                         ViewBag.CurrentCard.EEPROMDumpFile = signoffinfo.EEPROMDumpFile;
+                        ViewBag.CurrentCard.EEPROMExcelTemplate = signoffinfo.EEPROMExcelTemplate;
+                        ViewBag.CurrentCard.EEPROMMaskFile = signoffinfo.EEPROMMaskFile;
                     }
                 }
 
@@ -3807,6 +3816,29 @@ namespace Domino.Controllers
 
             if (cardinfo != null)
             {
+                if (!string.IsNullOrEmpty(Request.Form["customerapprovefile"]))
+                {
+                    var internalreportfile = Request.Form["customerapprovefile"];
+                    var originalname = Path.GetFileNameWithoutExtension(internalreportfile)
+                        .Replace(" ", "_").Replace("#", "").Replace("'", "")
+                        .Replace("&", "").Replace("?", "").Replace("%", "").Replace("+", "");
+
+                    var url = "";
+                    foreach (var r in urls)
+                    {
+                        if (r.Contains(originalname))
+                        {
+                            url = r;
+                            break;
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(url))
+                    {
+                        cardinfo.CustomerApproveFile = url;
+                    }
+                }
+
                 if (!string.IsNullOrEmpty(Request.Form["qrfileupload"]))
                 {
                     var internalreportfile = Request.Form["qrfileupload"];
@@ -4187,8 +4219,8 @@ namespace Domino.Controllers
             if (cardinfo.Count > 0)
             {
                 var baseinfo = ECOBaseInfo.RetrieveECOBaseInfo(cardinfo[0].ECOKey)[0];
-
-                var title = "ECO Signoff for for [" + baseinfo.PNDesc + "] for ["
+   
+                var title = cardinfo[0].CardType + " for for [" + baseinfo.PNDesc + "] for ["
                     + baseinfo.Customer + "] under [" + baseinfo.ECONum + "]";
 
                 var tolist = new List<string>();
@@ -4202,15 +4234,9 @@ namespace Domino.Controllers
 
                 var signoffinfo = DominoVM.RetrieveSignoffInfo(cardkey);
                 var attlist = new List<string>();
-                attlist.AddRange(ParseECOSignoffFiles(signoffinfo.ECOQRFile));
-                attlist.AddRange(ParseECOSignoffFiles(signoffinfo.EEPROMPeerReview));
-                attlist.AddRange(ParseECOSignoffFiles(signoffinfo.ECOTraceview));
-                attlist.AddRange(ParseECOSignoffFiles(signoffinfo.SpecCompresuite));
-                attlist.AddRange(ParseECOSignoffFiles(signoffinfo.AgileCodeFile));
-                attlist.AddRange(ParseECOSignoffFiles(signoffinfo.AgileSpecFile));
-                attlist.AddRange(ParseECOSignoffFiles(signoffinfo.AgileTestFile));
+                attlist.AddRange(ParseECOSignoffFiles(signoffinfo.CustomerApproveFile));
 
-                var content = "Dear " + baseinfo.RSM + "\r\n\r\n";
+                var content = "Dear " + baseinfo.RSM + ",Bill,\r\n\r\n";
                 content += "Please find enclosed FAIR for [" + baseinfo.PNDesc + "] for ["
                     + baseinfo.Customer + "] under [" + baseinfo.ECONum + "] for your review and approval \r\n\r\n";
                 content += "Appreciate if you can reply the team in 48 hours and if need more time, please notify the team so we know this email reach your end. \r\n\r\n";
@@ -4223,6 +4249,14 @@ namespace Domino.Controllers
             var ret = new JsonResult();
             ret.Data = new { sucess = true };
             return ret;
+        }
+
+        public ActionResult ParseEEPROMFile()
+        {
+
+            DominoDataCollector.ParseEEPROMFile(@"\\wux-engsys01\d\FTLC1157RGPL-LB_EEPROM_A02.xls", @"\\wux-engsys01\d\MASK_FTLC1157RGPL-LB_EEPROM_A00.txt"
+                , @"\\wux-engsys01\d\FTLC1157RGPL-LB_EEPROM_A02.txt", @"\\wux-engsys01\d\FNX0BA9G7_EEPROM_HEX_FTLC1157_20190618_125940.txt", this);
+            return View();
         }
 
     }
