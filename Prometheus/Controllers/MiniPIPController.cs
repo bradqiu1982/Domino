@@ -880,14 +880,14 @@ namespace Domino.Controllers
                         else if (string.Compare(cardtype, DominoCardType.ECOSignoff1) == 0)
                         {
                             DominoDataCollector.RefreshQAFAI(card.EBaseInfo, card.CardKey, this);
-                            DominoDataCollector.RefreshFormatEEPROMFile(card.EBaseInfo, card.CardKey, this);
+                            //DominoDataCollector.RefreshFormatEEPROMFile(card.EBaseInfo, card.CardKey, this);
                             logmaininfo(DateTime.Now.ToString() + " updated ECO " + card.EBaseInfo.ECONum + "  ECOSignoff1 info\r\n");
                             DominoVM.CardCanbeUpdate(card.CardKey);
                         }
                         else if (string.Compare(cardtype, DominoCardType.ECOSignoff2) == 0)
                         {
                             DominoDataCollector.RefreshQAFAI(card.EBaseInfo, card.CardKey, this);
-                            DominoDataCollector.RefreshFormatEEPROMFile(card.EBaseInfo, card.CardKey, this);
+                            //DominoDataCollector.RefreshFormatEEPROMFile(card.EBaseInfo, card.CardKey, this);
                             logmaininfo(DateTime.Now.ToString() + " updated ECO " + card.EBaseInfo.ECONum + "  ECOSignoff2 info\r\n");
                             DominoVM.CardCanbeUpdate(card.CardKey);
                         }
@@ -899,7 +899,7 @@ namespace Domino.Controllers
                         }
                         else if (string.Compare(cardtype, DominoCardType.SampleBuilding) == 0)
                         {
-                            DominoDataCollector.RefreshDumpEEPROMFile(card.EBaseInfo, card.CardKey, this);
+                            //DominoDataCollector.RefreshDumpEEPROMFile(card.EBaseInfo, card.CardKey, this);
 
                             DominoDataCollector.UpdateJOInfoFromExcel(this, card.EBaseInfo, card.CardKey);
                             DominoDataCollector.Update1STJOCheckFromExcel(this, card.EBaseInfo, card.CardKey);
@@ -1530,7 +1530,7 @@ namespace Domino.Controllers
                         if (DominoVM.CardCanbeUpdate(CardKey) || string.Compare(Refresh, "YES", true) == 0)
                         {
                             DominoDataCollector.RefreshQAFAI(baseinfos[0], CardKey, this);
-                            DominoDataCollector.RefreshFormatEEPROMFile(baseinfos[0], CardKey, this);
+                            //DominoDataCollector.RefreshFormatEEPROMFile(baseinfos[0], CardKey, this);
                     }
                     }//if card is not finished,we refresh qa folder to get files
 
@@ -2004,7 +2004,7 @@ namespace Domino.Controllers
                     if (DominoVM.CardCanbeUpdate(CardKey) || string.Compare(Refresh, "YES", true) == 0)
                     {
                         DominoDataCollector.RefreshQAFAI(baseinfos[0], CardKey, this);
-                        DominoDataCollector.RefreshFormatEEPROMFile(baseinfos[0], CardKey, this);
+                        //DominoDataCollector.RefreshFormatEEPROMFile(baseinfos[0], CardKey, this);
                     }
                 }//if card is not finished,we refresh qa folder to get files
             
@@ -2624,7 +2624,7 @@ namespace Domino.Controllers
                 {
                     if (DominoVM.CardCanbeUpdate(CardKey) || string.Compare(Refresh, "YES", true) == 0)
                     {
-                        DominoDataCollector.RefreshDumpEEPROMFile(baseinfos[0], CardKey, this);
+                        //DominoDataCollector.RefreshDumpEEPROMFile(baseinfos[0], CardKey, this);
 
                         DominoDataCollector.UpdateJOInfoFromExcel(this, baseinfos[0], CardKey);
                         DominoDataCollector.Update1STJOCheckFromExcel(this, baseinfos[0], CardKey);
@@ -3833,9 +3833,12 @@ namespace Domino.Controllers
                         }
                     }
 
-                    if (!string.IsNullOrEmpty(url))
+                    if (!string.IsNullOrEmpty(url) && !cardinfo.CustomerApproveFile.ToUpper().Contains(originalname.ToUpper()))
                     {
-                        cardinfo.CustomerApproveFile = url;
+                        if (string.IsNullOrEmpty(cardinfo.CustomerApproveFile) || cardinfo.CustomerApproveFile.Contains(":::"))
+                        { cardinfo.CustomerApproveFile = cardinfo.CustomerApproveFile+url+":::"; }
+                        else
+                        { cardinfo.CustomerApproveFile = cardinfo.CustomerApproveFile+ ":::" + url + ":::"; }
                     }
                 }
 
@@ -3856,9 +3859,12 @@ namespace Domino.Controllers
                         }
                     }
 
-                    if (!string.IsNullOrEmpty(url))
+                    if (!string.IsNullOrEmpty(url) && !cardinfo.ECOQRFile.ToUpper().Contains(originalname.ToUpper()))
                     {
-                        cardinfo.ECOQRFile = url;
+                        if (string.IsNullOrEmpty(cardinfo.ECOQRFile) || cardinfo.ECOQRFile.Contains(":::"))
+                        { cardinfo.ECOQRFile = cardinfo.ECOQRFile + url + ":::"; }
+                        else
+                        { cardinfo.ECOQRFile = cardinfo.ECOQRFile + ":::" + url + ":::"; }
                     }
                 }
 
@@ -3879,9 +3885,12 @@ namespace Domino.Controllers
                         }
                     }
 
-                    if (!string.IsNullOrEmpty(url))
+                    if (!string.IsNullOrEmpty(url) && !cardinfo.EEPROMPeerReview.ToUpper().Contains(originalname.ToUpper()))
                     {
-                        cardinfo.EEPROMPeerReview = url;
+                        if (string.IsNullOrEmpty(cardinfo.EEPROMPeerReview) || cardinfo.EEPROMPeerReview.Contains(":::"))
+                        { cardinfo.EEPROMPeerReview = cardinfo.EEPROMPeerReview + url + ":::"; }
+                        else
+                        { cardinfo.EEPROMPeerReview = cardinfo.EEPROMPeerReview + ":::" + url + ":::"; }
                     }
                 }
 
@@ -3902,11 +3911,15 @@ namespace Domino.Controllers
                         }
                     }
 
-                    if (!string.IsNullOrEmpty(url))
+                    if (!string.IsNullOrEmpty(url) && !cardinfo.ECOTraceview.ToUpper().Contains(originalname.ToUpper()))
                     {
-                        cardinfo.ECOTraceview = url;
+                        if (string.IsNullOrEmpty(cardinfo.ECOTraceview) || cardinfo.ECOTraceview.Contains(":::"))
+                        { cardinfo.ECOTraceview = cardinfo.ECOTraceview + url + ":::"; }
+                        else
+                        { cardinfo.ECOTraceview = cardinfo.ECOTraceview + ":::" + url + ":::"; }
                     }
                 }
+
                 if (!string.IsNullOrEmpty(Request.Form["speccomfileupload"]))
                 {
                     var internalreportfile = Request.Form["speccomfileupload"];
@@ -3924,9 +3937,12 @@ namespace Domino.Controllers
                         }
                     }
 
-                    if (!string.IsNullOrEmpty(url))
+                    if (!string.IsNullOrEmpty(url) && !cardinfo.SpecCompresuite.ToUpper().Contains(originalname.ToUpper()))
                     {
-                        cardinfo.SpecCompresuite = url;
+                        if (string.IsNullOrEmpty(cardinfo.SpecCompresuite) || cardinfo.SpecCompresuite.Contains(":::"))
+                        { cardinfo.SpecCompresuite = cardinfo.SpecCompresuite + url + ":::"; }
+                        else
+                        { cardinfo.SpecCompresuite = cardinfo.SpecCompresuite + ":::" + url + ":::"; }
                     }
                 }
 
@@ -3947,11 +3963,15 @@ namespace Domino.Controllers
                         }
                     }
 
-                    if (!string.IsNullOrEmpty(url))
+                    if (!string.IsNullOrEmpty(url) && !cardinfo.AgileCodeFile.ToUpper().Contains(originalname.ToUpper()))
                     {
-                        cardinfo.AgileCodeFile = url;
+                        if (string.IsNullOrEmpty(cardinfo.AgileCodeFile) || cardinfo.AgileCodeFile.Contains(":::"))
+                        { cardinfo.AgileCodeFile = cardinfo.AgileCodeFile + url + ":::"; }
+                        else
+                        { cardinfo.AgileCodeFile = cardinfo.AgileCodeFile + ":::" + url + ":::"; }
                     }
                 }
+
                 if (!string.IsNullOrEmpty(Request.Form["specfileupload"]))
                 {
                     var internalreportfile = Request.Form["specfileupload"];
@@ -3969,9 +3989,12 @@ namespace Domino.Controllers
                         }
                     }
 
-                    if (!string.IsNullOrEmpty(url))
+                    if (!string.IsNullOrEmpty(url) && !cardinfo.AgileSpecFile.ToUpper().Contains(originalname.ToUpper()))
                     {
-                        cardinfo.AgileSpecFile = url;
+                        if (string.IsNullOrEmpty(cardinfo.AgileSpecFile) || cardinfo.AgileSpecFile.Contains(":::"))
+                        {  cardinfo.AgileSpecFile = cardinfo.AgileSpecFile + url + ":::"; }
+                        else
+                        { cardinfo.AgileSpecFile = cardinfo.AgileSpecFile + ":::" + url + ":::"; }
                     }
                 }
 
@@ -3992,9 +4015,12 @@ namespace Domino.Controllers
                         }
                     }
 
-                    if (!string.IsNullOrEmpty(url))
+                    if (!string.IsNullOrEmpty(url) && !cardinfo.AgileTestFile.ToUpper().Contains(originalname.ToUpper()))
                     {
-                        cardinfo.AgileTestFile = url;
+                        if (string.IsNullOrEmpty(cardinfo.AgileTestFile) || cardinfo.AgileTestFile.Contains(":::"))
+                        { cardinfo.AgileTestFile = cardinfo.AgileTestFile + url + ":::"; }
+                        else
+                        { cardinfo.AgileTestFile = cardinfo.AgileTestFile + ":::" + url + ":::"; }
                     }
                 }
             }
@@ -4236,11 +4262,70 @@ namespace Domino.Controllers
                 var attlist = new List<string>();
                 attlist.AddRange(ParseECOSignoffFiles(signoffinfo.CustomerApproveFile));
 
-                var content = "Dear " + baseinfo.RSM + ",Bill,\r\n\r\n";
-                content += "Please find enclosed FAIR for [" + baseinfo.PNDesc + "] for ["
-                    + baseinfo.Customer + "] under [" + baseinfo.ECONum + "] for your review and approval \r\n\r\n";
-                content += "Appreciate if you can reply the team in 48 hours and if need more time, please notify the team so we know this email reach your end. \r\n\r\n";
-                content += "Thank you for your support.";
+
+                var infotable = new List<List<string>>();
+                var templist = new List<string>();
+                templist.Add("ECO Number");
+                templist.Add(baseinfo.ECONum);
+                infotable.Add(templist);
+                templist = new List<string>();
+                templist.Add("MiniPIP Flow");
+                templist.Add(baseinfo.ECOType);
+                infotable.Add(templist);
+                templist = new List<string>();
+                templist.Add("Order Info");
+                templist.Add(baseinfo.FirstArticleNeed);
+                infotable.Add(templist);
+
+                templist = new List<string>();
+                templist.Add("Product Requested");
+                templist.Add(baseinfo.PNDesc);
+                infotable.Add(templist);
+                templist = new List<string>();
+                templist.Add("Customer");
+                templist.Add(baseinfo.Customer);
+                infotable.Add(templist);
+                templist = new List<string>();
+                templist.Add("Type");
+                templist.Add(baseinfo.Complex);
+                infotable.Add(templist);
+
+                templist = new List<string>();
+                templist.Add("RSM");
+                templist.Add(baseinfo.RSM);
+                infotable.Add(templist);
+                templist = new List<string>();
+                templist.Add("PE");
+                templist.Add(baseinfo.PE);
+                infotable.Add(templist);
+                templist = new List<string>();
+                templist.Add("Risk Build");
+                templist.Add(baseinfo.RiskBuild);
+                infotable.Add(templist);
+                if (baseinfo.ECORevenue != 0)
+                {
+                    templist = new List<string>();
+                    templist.Add("ECO Revenue");
+                    templist.Add("$" + baseinfo.ECORevenue.ToString());
+                    infotable.Add(templist);
+                }
+                if (!string.IsNullOrEmpty(baseinfo.ActualPE))
+                {
+                    templist = new List<string>();
+                    templist.Add("Actual PE");
+                    templist.Add(baseinfo.ActualPE);
+                    infotable.Add(templist);
+                }
+
+                var  commment = "";
+                commment += "Please find enclosed FAIR for [" + baseinfo.PNDesc + "] for ["
+                    + baseinfo.Customer + "] under [" + baseinfo.ECONum + "] for your review and approval </p><p>";
+                commment += "Appreciate if you can reply the team in 48 hours and if need more time, please notify the team so we know this email reach your end. </p><p>";
+                commment += "Thank you for your support.";
+
+                var content = EmailUtility.CreateTableHtml("Dear " + baseinfo.RSM + ",Bill,",
+                    commment, "", infotable);
+
 
                 EmailUtility.SendEmailWithAttach(this, title, tolist, content, attlist);
                 new System.Threading.ManualResetEvent(false).WaitOne(1500);
