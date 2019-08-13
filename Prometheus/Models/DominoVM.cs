@@ -640,6 +640,7 @@ namespace Domino.Models
                 tempitem.Complex = Convert.ToString(line[5]);
                 tempitem.RSM = Convert.ToString(line[6]);
                 tempitem.PE = Convert.ToString(line[7]);
+
                 tempitem.RiskBuild = Convert.ToString(line[8]);
 
                 tempitem.InitRevison = ConvertToDate(line[9]);
@@ -690,6 +691,7 @@ namespace Domino.Models
                 tempitem.Complex = Convert.ToString(line[5]);
                 tempitem.RSM = Convert.ToString(line[6]);
                 tempitem.PE = Convert.ToString(line[7]);
+
                 tempitem.RiskBuild = Convert.ToString(line[8]);
 
                 tempitem.InitRevison = ConvertToDate(line[9]);
@@ -740,6 +742,7 @@ namespace Domino.Models
                 tempitem.Complex = Convert.ToString(line[5]);
                 tempitem.RSM = Convert.ToString(line[6]);
                 tempitem.PE = Convert.ToString(line[7]);
+
                 tempitem.RiskBuild = Convert.ToString(line[8]);
 
                 tempitem.InitRevison = ConvertToDate(line[9]);
@@ -790,6 +793,7 @@ namespace Domino.Models
                 tempitem.Complex = Convert.ToString(line[5]);
                 tempitem.RSM = Convert.ToString(line[6]);
                 tempitem.PE = Convert.ToString(line[7]);
+
                 tempitem.RiskBuild = Convert.ToString(line[8]);
 
                 tempitem.InitRevison = ConvertToDate(line[9]);
@@ -839,6 +843,7 @@ namespace Domino.Models
                 tempitem.Complex = Convert.ToString(line[5]);
                 tempitem.RSM = Convert.ToString(line[6]);
                 tempitem.PE = Convert.ToString(line[7]);
+
                 tempitem.RiskBuild = Convert.ToString(line[8]);
 
                 tempitem.InitRevison = ConvertToDate(line[9]);
@@ -889,6 +894,7 @@ namespace Domino.Models
                 tempitem.Complex = Convert.ToString(line[5]);
                 tempitem.RSM = Convert.ToString(line[6]);
                 tempitem.PE = Convert.ToString(line[7]);
+
                 tempitem.RiskBuild = Convert.ToString(line[8]);
 
                 tempitem.InitRevison = ConvertToDate(line[9]);
@@ -1020,6 +1026,7 @@ namespace Domino.Models
                 tempitem.Complex = Convert.ToString(line[5]);
                 tempitem.RSM = Convert.ToString(line[6]);
                 tempitem.PE = Convert.ToString(line[7]);
+
                 tempitem.RiskBuild = Convert.ToString(line[8]);
 
                 tempitem.InitRevison = ConvertToDate(line[9]);
@@ -1071,6 +1078,7 @@ namespace Domino.Models
                 tempitem.Complex = Convert.ToString(line[5]);
                 tempitem.RSM = Convert.ToString(line[6]);
                 tempitem.PE = Convert.ToString(line[7]);
+
                 tempitem.RiskBuild = Convert.ToString(line[8]);
 
                 tempitem.InitRevison = ConvertToDate(line[9]);
@@ -1121,6 +1129,7 @@ namespace Domino.Models
                 tempitem.Complex = Convert.ToString(line[5]);
                 tempitem.RSM = Convert.ToString(line[6]);
                 tempitem.PE = Convert.ToString(line[7]);
+
                 tempitem.RiskBuild = Convert.ToString(line[8]);
 
                 tempitem.InitRevison = ConvertToDate(line[9]);

@@ -523,6 +523,7 @@ namespace Domino.Models
             foreach (var line in data)
             {
                 if (!string.IsNullOrEmpty(line[2])
+                    && !string.IsNullOrEmpty(line[8])
                     && !string.IsNullOrEmpty(line[12])
                     && !string.IsNullOrEmpty(line[23])
                     && (string.Compare(line[23], "C", true) == 0
