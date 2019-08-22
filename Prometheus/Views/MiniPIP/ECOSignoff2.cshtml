@@ -383,15 +383,26 @@
                                     <label class="control-label col-lg-1 text-left">Agile Code File</label>
                                     @if (!string.IsNullOrEmpty(ViewBag.CurrentCard.AgileCodeFile))
                                     {
-                                        var fns = ViewBag.CurrentCard.AgileCodeFile.Split(new char[] { '/' });
-                                        var fn = fns[fns.Length - 1];
-                                        <div class="col-lg-11 text-left">
-                                            <a href="@ViewBag.CurrentCard.AgileCodeFile" target="_blank">@fn</a>
+                                        var fns = ViewBag.CurrentCard.AgileCodeFile.Split(new string[] { ":::" }, StringSplitOptions.RemoveEmptyEntries);
+                                        <div class="col-lg-10 text-left">
+                                            <table>
+                                                <tbody>
+                                                    @foreach (var fn in fns)
+                                                    {
+                                                        var realname = fn.Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
+                                                        <tr>
+                                                            <td>
+                                                                <a href="@fn" target="_blank">@(realname[realname.Length - 1])</a>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
                                         </div>
                                     }
                                     else
                                     {
-                                        <label class="control-label col-lg-11 text-left"></label>
+                                        <label class="control-label col-lg-10 text-left"></label>
                                     }
                                 </div>
                             </div>
@@ -402,16 +413,28 @@
                                     <label class="control-label col-lg-1 text-left">Agile Spec File</label>
                                     @if (!string.IsNullOrEmpty(ViewBag.CurrentCard.AgileSpecFile))
                                     {
-                                        var fns = ViewBag.CurrentCard.AgileSpecFile.Split(new char[] { '/' });
-                                        var fn = fns[fns.Length - 1];
-                                        <div class="col-lg-11 text-left">
-                                            <a href="@ViewBag.CurrentCard.AgileSpecFile" target="_blank">@fn</a>
+                                        var fns = ViewBag.CurrentCard.AgileSpecFile.Split(new string[] { ":::" }, StringSplitOptions.RemoveEmptyEntries);
+                                        <div class="col-lg-10 text-left">
+                                            <table>
+                                                <tbody>
+                                                    @foreach (var fn in fns)
+                                                    {
+                                                        var realname = fn.Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
+                                                        <tr>
+                                                            <td>
+                                                                <a href="@fn" target="_blank">@(realname[realname.Length - 1])</a>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
                                         </div>
                                     }
                                     else
                                     {
-                                        <label class="control-label col-lg-11 text-left"></label>
+                                        <label class="control-label col-lg-10 text-left"></label>
                                     }
+
                                 </div>
                             </div>
                         </div>
@@ -421,16 +444,28 @@
                                     <label class="control-label col-lg-1 text-left">Agile Testing File</label>
                                     @if (!string.IsNullOrEmpty(ViewBag.CurrentCard.AgileTestFile))
                                     {
-                                        var fns = ViewBag.CurrentCard.AgileTestFile.Split(new char[] { '/' });
-                                        var fn = fns[fns.Length - 1];
-                                        <div class="col-lg-11 text-left">
-                                            <a href="@ViewBag.CurrentCard.AgileTestFile" target="_blank">@fn</a>
+                                        var fns = ViewBag.CurrentCard.AgileTestFile.Split(new string[] { ":::" }, StringSplitOptions.RemoveEmptyEntries);
+                                        <div class="col-lg-10 text-left">
+                                            <table>
+                                                <tbody>
+                                                    @foreach (var fn in fns)
+                                                    {
+                                                        var realname = fn.Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
+                                                        <tr>
+                                                            <td>
+                                                                <a href="@fn" target="_blank">@(realname[realname.Length - 1])</a>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
                                         </div>
                                     }
                                     else
                                     {
-                                        <label class="control-label col-lg-11 text-left"></label>
+                                        <label class="control-label col-lg-10 text-left"></label>
                                     }
+
                                 </div>
                             </div>
                         </div>
