@@ -299,7 +299,7 @@ namespace Domino.Models
                 content += "</div>";
             }
             content += "<br><br>";
-            content += "<div><p style='font-size: 12px; font-style: italic;'>This is a system generated message, please do not reply to this email.</p></div>";
+            content += "<div><p style='font-size: 12px; font-style: italic;'>This is a system generated message, please remove WXNPI.Trace when replying.</p></div>";
             content += "</body>";
             content += "</html>";
 
