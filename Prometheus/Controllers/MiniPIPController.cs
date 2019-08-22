@@ -4246,7 +4246,7 @@ namespace Domino.Controllers
             {
                 var baseinfo = ECOBaseInfo.RetrieveECOBaseInfo(cardinfo[0].ECOKey)[0];
    
-                var title = cardinfo[0].CardType + " for for [" + baseinfo.PNDesc + "] for ["
+                var title = "Fisrt Article for [" + baseinfo.PNDesc + "] for ["
                     + baseinfo.Customer + "] under [" + baseinfo.ECONum + "]";
 
                 var tolist = new List<string>();
