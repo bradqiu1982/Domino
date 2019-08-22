@@ -809,25 +809,25 @@ namespace Domino.Models
 
             if (month >= 5 && month <= 7)
             {
-                return date.ToString("yy") + "/Q1";
+                return date.AddYears(1).ToString("yy") + "/Q1";
             }
             else if (month >= 8 && month <= 10)
             {
-                return date.ToString("yy") + "/Q2";
+                return date.AddYears(1).ToString("yy") + "/Q2";
             }
             else if (month >= 2 && month <= 4)
             {
-                return date.AddYears(-1).ToString("yy") + "/Q4";
+                return date.ToString("yy") + "/Q4";
             }
             else
             {
                 if (month >= 11 && month <= 12)
                 {
-                    return date.ToString("yy") + "/Q3";
+                    return date.AddYears(1).ToString("yy") + "/Q3";
                 }
                 else
                 {
-                    return date.AddYears(-1).ToString("yy") + "/Q3";
+                    return date.ToString("yy") + "/Q3";
                 }
             }
         }
