@@ -184,7 +184,7 @@ namespace Domino.Models
                 sql = sql.Replace("<MIDCOND>", midcond).Replace("<AlertDate>", alertdate);
                 DBUtility.ExeLocalSqlNoRes(sql);
 
-                var emailstr = "Hi RuiLong\r\n Below is the specail material list for you to approve:\r\n";
+                var emailstr = "Hi Lance Chen\r\n Below is the specail material list for you to approve:\r\n";
                 foreach (var item in alertlist)
                 {
                     var tempdata = "";
