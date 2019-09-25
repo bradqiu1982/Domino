@@ -142,7 +142,7 @@ namespace Domino.Models
                     }
                     catch (Exception ex)
                     {
-                        logthdinfo("send exception: " + ex.Message);
+                        logthdinfo("Domino1 send exception: " + ex.Message);
                     }
                 }).Start();
             }
@@ -244,7 +244,7 @@ namespace Domino.Models
                     }
                     catch (Exception ex)
                     {
-                        logthdinfo("send exception: " + ex.Message);
+                        logthdinfo("Domino2 send exception: " + ex.Message);
                     }
                 }).Start();
             }
