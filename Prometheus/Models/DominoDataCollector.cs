@@ -352,6 +352,9 @@ namespace Domino.Models
                 var data = RetrieveDataFromExcel(ctrl,workflowfile, null);
                 foreach (var line in data)
                 {
+                    if (line.Count < 11)
+                    { continue; }
+
                     var tempdata = new ECOWorkFlowRAWData();
                     tempdata.StatusCode = line[0];
                     tempdata.WorkFlow = line[1];
