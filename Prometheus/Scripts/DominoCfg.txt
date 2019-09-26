@@ -25,7 +25,10 @@ TUNABLEQALABELFILTER:::FLI_CHECK
 SPECIALMATERIALEMAIL:::sherry.zhang@finisar.com;Lance.Chen@finisar.com;brad.qiu@finisar.com
 APPEMAILADRESS:::WXNPI.Trace@finisar.com
 APPEMAILPWD:::abc@12345
-EMAILSERVER:::wmail.finisar.com
+#EMAILSERVER:::wmail.finisar.com
+#EMAILSSL:::TRUE
+EMAILSERVER:::sny-mrs.ads.finisar.com
+EMAILSSL:::FALSE
 
 SAMPLEORDERNOTICE:::william.martinez@finisar.com;Lance.Chen@finisar.com;chengjing.wu@finisar.com;jose.escauriasa@finisar.com;Shan.Xia@finisar.com
 CUSTOMEAPPROVENOTICE:::william.martinez@finisar.com;nevin.niu@finisar.com;chengjing.wu@finisar.com;jose.escauriasa@finisar.com;Shan.Xia@finisar.com
