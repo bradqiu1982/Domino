@@ -826,6 +826,12 @@ namespace Domino.Controllers
                 Directory.CreateDirectory(imgdir);
             }catch (Exception ex) { }
 
+            try
+            {
+                HCRVM.LoadHCRVMData(this);
+            }
+            catch (Exception ex) { }
+
             RefreshAgileInfo();
 
             RefreshCardsInfo();
@@ -4342,6 +4348,86 @@ namespace Domino.Controllers
             DominoDataCollector.ParseEEPROMFile(@"\\wux-engsys01\d\FTLC1157RGPL-LB_EEPROM_A02.xls", @"\\wux-engsys01\d\MASK_FTLC1157RGPL-LB_EEPROM_A00.txt"
                 , @"\\wux-engsys01\d\FTLC1157RGPL-LB_EEPROM_A02.txt", @"\\wux-engsys01\d\FNX0BA9G7_EEPROM_HEX_FTLC1157_20190618_125940.txt", this);
             return View();
+        }
+
+        public ActionResult LoadHCRVMData()
+        {
+            try
+            {
+                //HCRVM.LoadHCRVMData(this);
+                //HCRVM.SendHCRHistoryWarningEmail("8152d5da849a44cdb9b97583309c2d8e", "EMMA XU", "EDRGEN2NEWPCBAVERSIONREL_1276467PCBACAPACITORCHAN", this);
+            }
+            catch (Exception ex) { }
+
+            return View();
+        }
+
+        public ActionResult ShowHCR(string HCRKey)
+        {
+            ViewBag.HCRKey = "";
+            if (!string.IsNullOrEmpty(HCRKey))
+            { ViewBag.HCRKey = HCRKey; }
+            return View();
+        }
+
+        public JsonResult ShowHCRData()
+        {
+            var hcrkey = Request.Form["hcrkey"];
+            var hcrdata = HCRVM.GetHCRByKey(hcrkey);
+
+            var datalist = new List<object>();
+            if (hcrdata.Count > 0)
+            {
+                datalist.Add(new
+                { k = "HCR Name", v = hcrdata[0].HCRName });
+                datalist.Add(new
+                { k = "HCR Create Date", v = hcrdata[0].CreateDate });
+                datalist.Add(new
+                { k = "HCR PM", v = hcrdata[0].PM });
+                datalist.Add(new
+                { k = "HCR ECO Owner", v = hcrdata[0].ECOOwner });
+                datalist.Add(new
+                { k = "HCR ECO Num", v = hcrdata[0].ECONum });
+                datalist.Add(new
+                { k = "HCR Change Items", v = hcrdata[0].ChangeItems });
+                datalist.Add(new
+                { k = "HCR Due Date", v = hcrdata[0].DueDate });
+                datalist.Add(new
+                { k = "HCR Status", v = hcrdata[0].HCRStatus });
+            }
+
+            var ret = new JsonResult();
+            ret.MaxJsonLength = Int32.MaxValue;
+            ret.Data = new
+            {
+                datalist = datalist
+            };
+            return ret;
+        }
+
+        public ActionResult ShowMiniPIP(string ECOKey)
+        {
+            var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
+            var cardlist = DominoVM.RetrieveECOCards(baseinfos[0]);
+            var cardkey = "";
+            foreach (var card in cardlist)
+            {
+                if (string.Compare(card.CardType, DominoCardType.ECOPending) == 0)
+                {
+                    cardkey = card.CardKey;
+                    break;
+                }
+            }
+
+            if (string.IsNullOrEmpty(cardkey))
+            { return RedirectToAction("ViewAll", "MiniPIP"); }
+            else
+            {
+                var routedict = new RouteValueDictionary();
+                routedict.Add("ECOKey", ECOKey);
+                routedict.Add("CardKey", cardkey);
+                return RedirectToAction("ECOPending", "MiniPIP", routedict);
+            }
         }
 
     }

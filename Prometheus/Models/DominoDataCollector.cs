@@ -516,12 +516,42 @@ namespace Domino.Models
             catch (Exception ex) { return string.Empty; }
         }
 
-       
+        private static bool MatchPNDesc(string ecopn,string hcrpn)
+        {
+            if (hcrpn.Contains("*"))
+            {
+                var hcrpns = hcrpn.Split(new string[] { "*" }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var p in hcrpns)
+                {
+                    if (!ecopn.Contains(p))
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            else
+            { return ecopn.Contains(hcrpn); }
+        }
+        
+        private static void SendHCRHistoryWarning(ECOBaseInfo baseinfo,List<HCRVM> hcrlist, Controller ctrl)
+        {
+            try
+            {
+                foreach (var hcr in hcrlist) {
+                    if (MatchPNDesc(baseinfo.PNDesc.ToUpper(),hcr.ProductAffect.ToUpper())) {
+                        HCRVM.SendHCRHistoryWarningEmail(baseinfo.ECOKey, baseinfo.PE, hcr.HCRKey, ctrl);
+                    }
+                }
+            }
+            catch (Exception ex) { }
+        } 
 
         private static void updateecolist(List<List<string>> data, Controller ctrl, string localdir, string urlfolder)
         {
             var syscfgdict = GetSysConfig(ctrl);
             var baseinfos = ECOBaseInfo.RetrieveAllExistECOBaseInfo();
+            var hcrlist = HCRVM.GetAllHCR();
 
             foreach (var line in data)
             {
@@ -692,6 +722,8 @@ namespace Domino.Models
                     {
                         baseinfo.ECOKey = DominoVM.GetUniqKey();
                         baseinfo.CreateECO();
+
+                        SendHCRHistoryWarning(baseinfo, hcrlist,ctrl);
 
                         NewLoadMiniPIP.RegistNewLoadMiniPIP(baseinfo.ECOKey, baseinfo.PNDesc, baseinfo.PE);
 
@@ -1909,7 +1941,7 @@ namespace Domino.Models
                                     excelpn = expn;
                                 }
 
-                                if (excelpn.ToUpper().Contains(baseinfopn.ToUpper()))
+                                if (excelpn.ToUpper().Contains(baseinfopn.ToUpper()) && line[11].ToUpper().Contains("FAF"))
                                 {
                                     var tempinfo = new ECOJOOrderInfo();
                                     tempinfo.Description = line[1];

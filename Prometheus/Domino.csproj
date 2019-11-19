@@ -97,6 +97,9 @@
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Runtime">
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.1\Facades\System.Runtime.dll</HintPath>
+    </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.4.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
@@ -243,6 +246,7 @@
     <Compile Include="Models\EPROMContentData.cs" />
     <Compile Include="Models\EPROMStructData.cs" />
     <Compile Include="Models\ExcelReader.cs" />
+    <Compile Include="Models\HCRVM.cs" />
     <Compile Include="Models\NewLoadMiniPIP.cs" />
     <Compile Include="Models\UserRankViewModel.cs" />
     <Compile Include="Models\DominoUserViewModels.cs" />
@@ -1055,6 +1059,7 @@
     <Content Include="Scripts\dominotrace_db.txt" />
     <Content Include="Scripts\DominoWorkLoad.xml" />
     <Content Include="Scripts\exporting.js" />
+    <Content Include="Scripts\hcr.js" />
     <Content Include="Scripts\HeartBeat4Domino.exe" />
     <Content Include="Scripts\heartbeat4domino.txt" />
     <Content Include="Scripts\highcharts-more.js" />
@@ -1139,6 +1144,8 @@
     <Content Include="Views\MiniPIP\ApproveMaterial.cshtml" />
     <Content Include="Views\DominoReport\ECORevenue.cshtml" />
     <Content Include="Views\MiniPIP\ParseEEPROMFile.cshtml" />
+    <Content Include="Views\MiniPIP\LoadHCRVMData.cshtml" />
+    <Content Include="Views\MiniPIP\ShowHCR.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Scripts\agiledownloadwraper\jre\lib\applet\" />

@@ -1,0 +1,65 @@
+﻿
+@{
+    ViewBag.Title = "ShowHCR";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="row">
+    <div class="col-lg-12">&nbsp;</div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">&nbsp;</div>
+</div>
+
+<style type="text/css">
+
+    th , td  {
+        text-align: center;
+        font-size: 15px !important;
+    }
+
+    .tb-caption {
+        text-align: center;
+        font-size: 20px;
+        color: #000;
+        font-weight: bold;
+    }
+</style>
+
+<script type="text/javascript" src="~/Scripts/hcr.js"></script>
+<script type="text/javascript">
+        $(function(){
+            HCR.init();
+        })
+</script>
+
+<div class="row">
+    <div class="col-lg-3">
+        <ol class="breadcrumb" style="font-size:18px">
+            <li><a href="/Domino/MiniPIP/ViewAll">Working MiniPIP Board</a></li>
+        </ol>
+    </div>
+    <div class="col-lg-3">
+        <button MYTP="BT" data-toggle="tooltip" title="Completed MiniPIP" type="button" onclick="CompletedMiniPIP()" class="btn btn-default" style="width:10.5em;">Completed MiniPIP</button>
+    </div>
+    <div class="col-lg-4">
+        <input class="hide" type="text" id="hcrkey" name="hcrkey" value="@ViewBag.HCRKey">
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-1"></div>
+    <div class="col-lg-10">
+        <table class="table table-hover  table-condensed table-striped" style="margin-top:1%">
+            <caption class="tb-caption">HCR INFORMATION</caption>
+            <thead><tr><th>ITEM</th><th>VAL</th></tr></thead>
+            <tbody id="hcrcontent"></tbody>
+        </table>
+    </div>
+    <div class="col-lg-1"></div>
+</div>
+
+
+

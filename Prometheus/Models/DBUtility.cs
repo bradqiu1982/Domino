@@ -196,7 +196,7 @@ namespace Domino.Models
             }
         }
 
-        public static bool ExeLocalSqlNoRes(string sql)
+        public static bool ExeLocalSqlNoRes(string sql, Dictionary<string, string> parameters = null)
         {
             var conn = GetLocalConnector();
             if (conn == null)
@@ -206,6 +206,17 @@ namespace Domino.Models
             {
                 var command = conn.CreateCommand();
                 command.CommandText = sql;
+                if (parameters != null)
+                {
+                    foreach (var param in parameters)
+                    {
+                        SqlParameter parameter = new SqlParameter();
+                        parameter.ParameterName = param.Key;
+                        parameter.SqlDbType = SqlDbType.NVarChar;
+                        parameter.Value = param.Value;
+                        command.Parameters.Add(parameter);
+                    }
+                }
                 command.ExecuteNonQuery();
                 CloseConnector(conn);
                 return true;
@@ -252,7 +263,7 @@ namespace Domino.Models
             }
         }
 
-        public static List<List<object>> ExeLocalSqlWithRes( string sql)
+        public static List<List<object>> ExeLocalSqlWithRes( string sql, Dictionary<string, string> parameters = null)
         {
             var ret = new List<List<object>>();
             var conn = GetLocalConnector();
@@ -264,6 +275,17 @@ namespace Domino.Models
 
                 var command = conn.CreateCommand();
                 command.CommandText = sql;
+                if (parameters != null)
+                {
+                    foreach (var param in parameters)
+                    {
+                        SqlParameter parameter = new SqlParameter();
+                        parameter.ParameterName = param.Key;
+                        parameter.SqlDbType = SqlDbType.NVarChar;
+                        parameter.Value = param.Value;
+                        command.Parameters.Add(parameter);
+                    }
+                }
                 sqlreader = command.ExecuteReader();
                 if (sqlreader.HasRows)
                 {
