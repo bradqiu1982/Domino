@@ -4385,6 +4385,8 @@ namespace Domino.Controllers
                 datalist.Add(new
                 { k = "HCR PM", v = hcrdata[0].PM });
                 datalist.Add(new
+                { k = "HCR Product", v = hcrdata[0].ProductAffect });
+                datalist.Add(new
                 { k = "HCR ECO Owner", v = hcrdata[0].ECOOwner });
                 datalist.Add(new
                 { k = "HCR ECO Num", v = hcrdata[0].ECONum });

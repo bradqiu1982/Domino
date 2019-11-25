@@ -518,9 +518,9 @@ namespace Domino.Models
 
         private static bool MatchPNDesc(string ecopn,string hcrpn)
         {
-            if (hcrpn.Contains("*"))
+            if (hcrpn.Contains("*") || hcrpn.Contains("X"))
             {
-                var hcrpns = hcrpn.Split(new string[] { "*" }, StringSplitOptions.RemoveEmptyEntries);
+                var hcrpns = hcrpn.Split(new string[] { "*","X" }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (var p in hcrpns)
                 {
                     if (!ecopn.Contains(p))
@@ -539,6 +539,9 @@ namespace Domino.Models
             try
             {
                 foreach (var hcr in hcrlist) {
+                    if (string.IsNullOrEmpty(hcr.ProductAffect.Trim()))
+                    { continue; }
+
                     if (MatchPNDesc(baseinfo.PNDesc.ToUpper(),hcr.ProductAffect.ToUpper())) {
                         HCRVM.SendHCRHistoryWarningEmail(baseinfo.ECOKey, baseinfo.PE, hcr.HCRKey, ctrl);
                     }

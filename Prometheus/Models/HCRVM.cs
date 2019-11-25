@@ -43,24 +43,27 @@ namespace Domino.Models
                 tempvm.DueDate = UT.O2T(line[8]).ToString("yyyy-MM-dd HH:mm:dd");
                 tempvm.HCRStatus = line[9].ToUpper();
 
+                var lastitem = HCRList.Last();
+
                 tempvm.HCRName = line[2];
                 if (string.IsNullOrEmpty(tempvm.HCRName))
-                {
-                    var item = HCRList.Last();
-                    tempvm.HCRName = item.HCRName;
-                    tempvm.CreateDate = item.CreateDate;
-                    tempvm.ProductAffect = item.ProductAffect;
-                    tempvm.PM = item.PM;
-                    tempvm.ECOOwner = item.ECOOwner;
-                }
-                else
-                {
-                    tempvm.CreateDate = line[1];
-                    tempvm.ProductAffect = line[3];
-                    tempvm.PM = line[4];
-                    tempvm.ECOOwner = line[5];
-                    
-                }
+                { tempvm.HCRName = lastitem.HCRName; }
+
+                tempvm.CreateDate = line[1];
+                if (string.IsNullOrEmpty(tempvm.CreateDate))
+                { tempvm.CreateDate = lastitem.CreateDate; }
+
+                tempvm.ProductAffect = line[3];
+                if (string.IsNullOrEmpty(tempvm.ProductAffect))
+                { tempvm.ProductAffect = lastitem.ProductAffect; }
+
+                tempvm.PM = line[4];
+                if (string.IsNullOrEmpty(tempvm.PM))
+                { tempvm.PM = lastitem.PM; }
+
+                tempvm.ECOOwner = line[5];
+                if (string.IsNullOrEmpty(tempvm.ECOOwner))
+                { tempvm.ECOOwner = lastitem.ECOOwner; }
 
                 var nkey = tempvm.HCRName;
                 if (nkey.Length > 30)
@@ -174,12 +177,16 @@ namespace Domino.Models
 
         private void UpdateData()
         {
-            var sql = "update HCRVM set ECONum=@ECONum,DueDate=@DueDate,HCRStatus=@HCRStatus where  HCRKey = @HCRKey";
+            var sql = "update HCRVM set ECONum=@ECONum,DueDate=@DueDate,HCRStatus=@HCRStatus,ProductAffect=@ProductAffect,PM=@PM,CreateDate=@CreateDate,ECOOwner=@ECOOwner where  HCRKey = @HCRKey";
             var dict = new Dictionary<string, string>();
             dict.Add("@HCRKey", HCRKey);
             dict.Add("@ECONum", ECONum);
             dict.Add("@DueDate", DueDate);
             dict.Add("@HCRStatus", HCRStatus);
+            dict.Add("@ProductAffect", ProductAffect);
+            dict.Add("@PM", PM);
+            dict.Add("@ECOOwner", ECOOwner);
+            dict.Add("@CreateDate", CreateDate);
             DBUtility.ExeLocalSqlNoRes(sql, dict);
         }
 
