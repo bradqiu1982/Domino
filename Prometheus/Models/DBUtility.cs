@@ -84,6 +84,7 @@ namespace Domino.Models
             {
                 var command = conn.CreateCommand();
                 command.CommandText = sql;
+                command.CommandText = "SET ARITHABORT ON;" + command.CommandText;
                 command.ExecuteNonQuery();
                 return true;
             }
@@ -108,6 +109,7 @@ namespace Domino.Models
 
                 var command = conn.CreateCommand();
                 command.CommandText = sql;
+                command.CommandText = "SET ARITHABORT ON;" + command.CommandText;
                 sqlreader = command.ExecuteReader();
                 if (sqlreader.HasRows)
                 {
@@ -206,6 +208,7 @@ namespace Domino.Models
             {
                 var command = conn.CreateCommand();
                 command.CommandText = sql;
+                command.CommandText = "SET ARITHABORT ON;" + command.CommandText;
                 if (parameters != null)
                 {
                     foreach (var param in parameters)
@@ -275,6 +278,7 @@ namespace Domino.Models
 
                 var command = conn.CreateCommand();
                 command.CommandText = sql;
+                command.CommandText = "SET ARITHABORT ON;" + command.CommandText;
                 if (parameters != null)
                 {
                     foreach (var param in parameters)
@@ -362,6 +366,7 @@ namespace Domino.Models
             {
                 var command = conn.CreateCommand();
                 command.CommandText = sql;
+                command.CommandText = "SET ARITHABORT ON;" + command.CommandText;
                 command.ExecuteNonQuery();
                 CloseConnector(conn);
                 return true;
@@ -394,6 +399,7 @@ namespace Domino.Models
                 var command = conn.CreateCommand();
                 command.CommandTimeout = 60;
                 command.CommandText = sql;
+                command.CommandText = "SET ARITHABORT ON;" + command.CommandText;
                 var sqlreader = command.ExecuteReader();
                 if (sqlreader.HasRows)
                 {
@@ -462,6 +468,7 @@ namespace Domino.Models
             {
                 var command = conn.CreateCommand();
                 command.CommandText = sql;
+                command.CommandText = "SET ARITHABORT ON;" + command.CommandText;
                 command.ExecuteNonQuery();
                 CloseConnector(conn);
                 return true;
@@ -494,6 +501,7 @@ namespace Domino.Models
                 var command = conn.CreateCommand();
                 command.CommandTimeout = 60;
                 command.CommandText = sql;
+                command.CommandText = "SET ARITHABORT ON;" + command.CommandText;
                 var sqlreader = command.ExecuteReader();
                 if (sqlreader.HasRows)
                 {
@@ -573,6 +581,7 @@ namespace Domino.Models
                 var command = conn.CreateCommand();
                 command.CommandTimeout = 60;
                 command.CommandText = sql;
+                command.CommandText = "SET ARITHABORT ON;" + command.CommandText;
                 if (parameters != null)
                 {
                     foreach (var param in parameters)

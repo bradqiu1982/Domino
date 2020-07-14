@@ -30,9 +30,10 @@ APPEMAILPWD:::abc@12345
 EMAILSERVER:::sny-mrs.ads.finisar.com
 EMAILSSL:::FALSE
 
-SAMPLEORDERNOTICE:::william.martinez@finisar.com;Lance.Chen@finisar.com;chengjing.wu@finisar.com;jose.escauriasa@finisar.com;Shan.Xia@finisar.com
-CUSTOMEAPPROVENOTICE:::william.martinez@finisar.com;nevin.niu@finisar.com;chengjing.wu@finisar.com;jose.escauriasa@finisar.com;Shan.Xia@finisar.com
-ECOSIGNOFFNOTICE:::william.martinez@finisar.com;nevin.niu@finisar.com;chengjing.wu@finisar.com;jose.escauriasa@finisar.com;Shan.Xia@finisar.com
+SAMPLEORDERNOTICE:::brad.qiu@finisar.com;Lance.Chen@finisar.com;chengjing.wu@finisar.com;jose.escauriasa@finisar.com;Shan.Xia@finisar.com
+CUSTOMEAPPROVENOTICE:::brad.qiu@finisar.com;nevin.niu@finisar.com;chengjing.wu@finisar.com;jose.escauriasa@finisar.com;Shan.Xia@finisar.com
+ECOSIGNOFFNOTICE:::brad.qiu@finisar.com;nevin.niu@finisar.com;chengjing.wu@finisar.com;jose.escauriasa@finisar.com;Shan.Xia@finisar.com
+AFTERRSM:::Brad
 
 ##MINIPIPECOFOLDER:::\\wux-fs\public\Project\CFP\OQC
 ##MINIPIPECOFILENAME:::Mini-PIP_log_current.xlsm
@@ -55,10 +56,10 @@ ECOSIGNOFFNOTICE:::william.martinez@finisar.com;nevin.niu@finisar.com;chengjing.
 ##JO2NDCHECKINFO:::\\wux-fs\public\Project\CFP\OQC
 AGILEURL:::http://sny-agile9app-p64:7001/Agile
 LOCALSITEPORT:::8080
-SAVELOCATION:::d:\Agile
+SAVELOCATION:::\\wux-engsys01.china.ads.finisar.com\Agile
 SHAREFOLDERUSER:::brad.qiu
 SHAREFOLDERDOMIN:::china
-SHAREFOLDERPWD:::wangle@4567895
+SHAREFOLDERPWD:::wangle@4567897
 OAQASWITH:::TRUE
 OAQADBSTRING:::Server=wux-prod03\prod01;uid=OA_FAI_Reader;pwd=123_FAI_#;Database=OA;Connection Timeout=30;
 DEMOECONUM:::E155220;E155508;E155206;E153282;E150849;E155901;E154011;E154347;E154801

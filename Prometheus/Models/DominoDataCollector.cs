@@ -328,12 +328,19 @@ namespace Domino.Models
 
             var args = downloadtype+" " + AGILEURL + " " + LOCALSITEPORT + " " + SAVELOCATION + " " + ecostr;
 
-            using (Process myprocess = new Process())
+            var folderuser = syscfgdict["SHAREFOLDERUSER"];
+            var folderdomin = syscfgdict["SHAREFOLDERDOMIN"];
+            var folderpwd = syscfgdict["SHAREFOLDERPWD"];
+
+            using (NativeMethods cv = new NativeMethods(folderuser, folderdomin, folderpwd))
             {
-                myprocess.StartInfo.FileName = Path.Combine(System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath, @"Scripts\agiledownloadwraper\AgileDownload.exe").Replace("\\", "/");
-                myprocess.StartInfo.Arguments = args;
-                myprocess.StartInfo.CreateNoWindow = true;
-                myprocess.Start();
+                using (Process myprocess = new Process())
+                {
+                    myprocess.StartInfo.FileName = Path.Combine(System.Web.Hosting.HostingEnvironment.ApplicationPhysicalPath, @"Scripts\agiledownloadwraper\AgileDownload.exe").Replace("\\", "/");
+                    myprocess.StartInfo.Arguments = args;
+                    myprocess.StartInfo.CreateNoWindow = true;
+                    myprocess.Start();
+                }
             }
         }
 
@@ -831,17 +838,12 @@ namespace Domino.Models
             var desfile = imgdir + syscfgdict["MINIPIPECOFILENAME"];
             try
             {
-                if (!DirectoryExists(ctrl,imgdir) || !FileExist(ctrl,desfile))
+                if (!DirectoryExists(ctrl,imgdir))
+                    Directory.CreateDirectory(imgdir);
+                var srcfile = syscfgdict["MINIPIPECOFOLDER"] + "\\" + syscfgdict["MINIPIPECOFILENAME"];
+                if (FileExist(ctrl,srcfile) )
                 {
-                    if (!DirectoryExists(ctrl,imgdir))
-                        Directory.CreateDirectory(imgdir);
-
-                    var srcfile = syscfgdict["MINIPIPECOFOLDER"] + "\\" + syscfgdict["MINIPIPECOFILENAME"];
-
-                    if (FileExist(ctrl,srcfile) && !FileExist(ctrl,desfile))
-                    {
-                        FileCopy(ctrl,srcfile, desfile, true);
-                    }
+                    FileCopy(ctrl,srcfile, desfile, true);
                 }
 
                 if (FileExist(ctrl,desfile))

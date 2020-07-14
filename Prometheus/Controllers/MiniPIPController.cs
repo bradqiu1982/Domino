@@ -3582,10 +3582,11 @@ namespace Domino.Controllers
 
         private void StoreAgileAttch(string ECONUM,List<DominoVM> vm)
         {
+            var syscfgdict = DominoDataCollector.GetSysConfig(this);
             var SAVELOCATION = (Server.MapPath("~/userfiles") + "\\docs\\Agile");
             Directory.CreateDirectory(SAVELOCATION);
 
-            var syscfgdict = DominoDataCollector.GetSysConfig(this);
+            
             var dir = SAVELOCATION +"\\"+ ECONUM;
             if (Directory.Exists(dir))
             {
@@ -3839,12 +3840,25 @@ namespace Domino.Controllers
                         }
                     }
 
-                    if (!string.IsNullOrEmpty(url) && !cardinfo.CustomerApproveFile.ToUpper().Contains(originalname.ToUpper()))
+                    if (!string.IsNullOrEmpty(url))
                     {
-                        if (string.IsNullOrEmpty(cardinfo.CustomerApproveFile) || cardinfo.CustomerApproveFile.Contains(":::"))
-                        { cardinfo.CustomerApproveFile = cardinfo.CustomerApproveFile+url+":::"; }
+                        if (string.IsNullOrEmpty(cardinfo.CustomerApproveFile))
+                        {
+                            cardinfo.CustomerApproveFile = cardinfo.CustomerApproveFile + url + ":::";
+                        }
                         else
-                        { cardinfo.CustomerApproveFile = cardinfo.CustomerApproveFile+ ":::" + url + ":::"; }
+                        {
+                            var fs = cardinfo.CustomerApproveFile.Split(new string[] { ":::" }, StringSplitOptions.RemoveEmptyEntries);
+                            var leftfs = new List<string>();
+                            leftfs.Add(url);
+                            foreach (var f in fs)
+                            {
+                                if (f.ToUpper().Contains(originalname.ToUpper()))
+                                { continue; }
+                                leftfs.Add(f);
+                            }
+                            cardinfo.CustomerApproveFile = string.Join(":::", leftfs);
+                        }
                     }
                 }
 
@@ -3865,13 +3879,27 @@ namespace Domino.Controllers
                         }
                     }
 
-                    if (!string.IsNullOrEmpty(url) && !cardinfo.ECOQRFile.ToUpper().Contains(originalname.ToUpper()))
+                    if (!string.IsNullOrEmpty(url))
                     {
-                        if (string.IsNullOrEmpty(cardinfo.ECOQRFile) || cardinfo.ECOQRFile.Contains(":::"))
-                        { cardinfo.ECOQRFile = cardinfo.ECOQRFile + url + ":::"; }
+                        if (string.IsNullOrEmpty(cardinfo.ECOQRFile))
+                        {
+                            cardinfo.ECOQRFile = cardinfo.ECOQRFile + url + ":::";
+                        }
                         else
-                        { cardinfo.ECOQRFile = cardinfo.ECOQRFile + ":::" + url + ":::"; }
+                        {
+                            var fs = cardinfo.ECOQRFile.Split(new string[] { ":::" }, StringSplitOptions.RemoveEmptyEntries);
+                            var leftfs = new List<string>();
+                            leftfs.Add(url);
+                            foreach (var f in fs)
+                            {
+                                if (f.ToUpper().Contains(originalname.ToUpper()))
+                                { continue; }
+                                leftfs.Add(f);
+                            }
+                            cardinfo.ECOQRFile = string.Join(":::", leftfs);
+                        }
                     }
+
                 }
 
                 if (!string.IsNullOrEmpty(Request.Form["peerfileupload"]))
@@ -3891,12 +3919,25 @@ namespace Domino.Controllers
                         }
                     }
 
-                    if (!string.IsNullOrEmpty(url) && !cardinfo.EEPROMPeerReview.ToUpper().Contains(originalname.ToUpper()))
+                    if (!string.IsNullOrEmpty(url))
                     {
-                        if (string.IsNullOrEmpty(cardinfo.EEPROMPeerReview) || cardinfo.EEPROMPeerReview.Contains(":::"))
-                        { cardinfo.EEPROMPeerReview = cardinfo.EEPROMPeerReview + url + ":::"; }
+                        if (string.IsNullOrEmpty(cardinfo.EEPROMPeerReview))
+                        {
+                            cardinfo.EEPROMPeerReview = cardinfo.EEPROMPeerReview + url + ":::";
+                        }
                         else
-                        { cardinfo.EEPROMPeerReview = cardinfo.EEPROMPeerReview + ":::" + url + ":::"; }
+                        {
+                            var fs = cardinfo.EEPROMPeerReview.Split(new string[] { ":::" }, StringSplitOptions.RemoveEmptyEntries);
+                            var leftfs = new List<string>();
+                            leftfs.Add(url);
+                            foreach (var f in fs)
+                            {
+                                if (f.ToUpper().Contains(originalname.ToUpper()))
+                                { continue; }
+                                leftfs.Add(f);
+                            }
+                            cardinfo.EEPROMPeerReview = string.Join(":::", leftfs);
+                        }
                     }
                 }
 
@@ -3917,12 +3958,25 @@ namespace Domino.Controllers
                         }
                     }
 
-                    if (!string.IsNullOrEmpty(url) && !cardinfo.ECOTraceview.ToUpper().Contains(originalname.ToUpper()))
+                    if (!string.IsNullOrEmpty(url))
                     {
-                        if (string.IsNullOrEmpty(cardinfo.ECOTraceview) || cardinfo.ECOTraceview.Contains(":::"))
-                        { cardinfo.ECOTraceview = cardinfo.ECOTraceview + url + ":::"; }
+                        if (string.IsNullOrEmpty(cardinfo.ECOTraceview))
+                        {
+                            cardinfo.ECOTraceview = cardinfo.ECOTraceview + url + ":::";
+                        }
                         else
-                        { cardinfo.ECOTraceview = cardinfo.ECOTraceview + ":::" + url + ":::"; }
+                        {
+                            var fs = cardinfo.ECOTraceview.Split(new string[] { ":::" }, StringSplitOptions.RemoveEmptyEntries);
+                            var leftfs = new List<string>();
+                            leftfs.Add(url);
+                            foreach (var f in fs)
+                            {
+                                if (f.ToUpper().Contains(originalname.ToUpper()))
+                                { continue; }
+                                leftfs.Add(f);
+                            }
+                            cardinfo.ECOTraceview = string.Join(":::", leftfs);
+                        }
                     }
                 }
 
@@ -3943,13 +3997,27 @@ namespace Domino.Controllers
                         }
                     }
 
-                    if (!string.IsNullOrEmpty(url) && !cardinfo.SpecCompresuite.ToUpper().Contains(originalname.ToUpper()))
+                    if (!string.IsNullOrEmpty(url))
                     {
-                        if (string.IsNullOrEmpty(cardinfo.SpecCompresuite) || cardinfo.SpecCompresuite.Contains(":::"))
-                        { cardinfo.SpecCompresuite = cardinfo.SpecCompresuite + url + ":::"; }
+                        if (string.IsNullOrEmpty(cardinfo.SpecCompresuite))
+                        {
+                            cardinfo.SpecCompresuite = cardinfo.SpecCompresuite + url + ":::";
+                        }
                         else
-                        { cardinfo.SpecCompresuite = cardinfo.SpecCompresuite + ":::" + url + ":::"; }
+                        {
+                            var fs = cardinfo.SpecCompresuite.Split(new string[] { ":::" }, StringSplitOptions.RemoveEmptyEntries);
+                            var leftfs = new List<string>();
+                            leftfs.Add(url);
+                            foreach (var f in fs)
+                            {
+                                if (f.ToUpper().Contains(originalname.ToUpper()))
+                                { continue; }
+                                leftfs.Add(f);
+                            }
+                            cardinfo.SpecCompresuite = string.Join(":::", leftfs);
+                        }
                     }
+
                 }
 
                 if (!string.IsNullOrEmpty(Request.Form["codefileupload"]))
@@ -3969,13 +4037,27 @@ namespace Domino.Controllers
                         }
                     }
 
-                    if (!string.IsNullOrEmpty(url) && !cardinfo.AgileCodeFile.ToUpper().Contains(originalname.ToUpper()))
+                    if (!string.IsNullOrEmpty(url))
                     {
-                        if (string.IsNullOrEmpty(cardinfo.AgileCodeFile) || cardinfo.AgileCodeFile.Contains(":::"))
-                        { cardinfo.AgileCodeFile = cardinfo.AgileCodeFile + url + ":::"; }
+                        if (string.IsNullOrEmpty(cardinfo.AgileCodeFile))
+                        {
+                            cardinfo.AgileCodeFile = cardinfo.AgileCodeFile + url + ":::";
+                        }
                         else
-                        { cardinfo.AgileCodeFile = cardinfo.AgileCodeFile + ":::" + url + ":::"; }
+                        {
+                            var fs = cardinfo.AgileCodeFile.Split(new string[] { ":::" }, StringSplitOptions.RemoveEmptyEntries);
+                            var leftfs = new List<string>();
+                            leftfs.Add(url);
+                            foreach (var f in fs)
+                            {
+                                if (f.ToUpper().Contains(originalname.ToUpper()))
+                                { continue; }
+                                leftfs.Add(f);
+                            }
+                            cardinfo.AgileCodeFile = string.Join(":::", leftfs);
+                        }
                     }
+
                 }
 
                 if (!string.IsNullOrEmpty(Request.Form["specfileupload"]))
@@ -3995,13 +4077,27 @@ namespace Domino.Controllers
                         }
                     }
 
-                    if (!string.IsNullOrEmpty(url) && !cardinfo.AgileSpecFile.ToUpper().Contains(originalname.ToUpper()))
+                    if (!string.IsNullOrEmpty(url))
                     {
-                        if (string.IsNullOrEmpty(cardinfo.AgileSpecFile) || cardinfo.AgileSpecFile.Contains(":::"))
-                        {  cardinfo.AgileSpecFile = cardinfo.AgileSpecFile + url + ":::"; }
+                        if (string.IsNullOrEmpty(cardinfo.AgileSpecFile))
+                        {
+                            cardinfo.AgileSpecFile = cardinfo.AgileSpecFile + url + ":::";
+                        }
                         else
-                        { cardinfo.AgileSpecFile = cardinfo.AgileSpecFile + ":::" + url + ":::"; }
+                        {
+                            var fs = cardinfo.AgileSpecFile.Split(new string[] { ":::" }, StringSplitOptions.RemoveEmptyEntries);
+                            var leftfs = new List<string>();
+                            leftfs.Add(url);
+                            foreach (var f in fs)
+                            {
+                                if (f.ToUpper().Contains(originalname.ToUpper()))
+                                { continue; }
+                                leftfs.Add(f);
+                            }
+                            cardinfo.AgileSpecFile = string.Join(":::", leftfs);
+                        }
                     }
+
                 }
 
                 if (!string.IsNullOrEmpty(Request.Form["testingfileupload"]))
@@ -4021,12 +4117,25 @@ namespace Domino.Controllers
                         }
                     }
 
-                    if (!string.IsNullOrEmpty(url) && !cardinfo.AgileTestFile.ToUpper().Contains(originalname.ToUpper()))
+                    if (!string.IsNullOrEmpty(url))
                     {
-                        if (string.IsNullOrEmpty(cardinfo.AgileTestFile) || cardinfo.AgileTestFile.Contains(":::"))
-                        { cardinfo.AgileTestFile = cardinfo.AgileTestFile + url + ":::"; }
+                        if (string.IsNullOrEmpty(cardinfo.AgileTestFile))
+                        {
+                            cardinfo.AgileTestFile = cardinfo.AgileTestFile + url + ":::";
+                        }
                         else
-                        { cardinfo.AgileTestFile = cardinfo.AgileTestFile + ":::" + url + ":::"; }
+                        {
+                            var fs = cardinfo.AgileTestFile.Split(new string[] { ":::" }, StringSplitOptions.RemoveEmptyEntries);
+                            var leftfs = new List<string>();
+                            leftfs.Add(url);
+                            foreach (var f in fs)
+                            {
+                                if (f.ToUpper().Contains(originalname.ToUpper()))
+                                { continue; }
+                                leftfs.Add(f);
+                            }
+                            cardinfo.AgileTestFile = string.Join(":::", leftfs);
+                        }
                     }
                 }
             }
@@ -4323,13 +4432,22 @@ namespace Domino.Controllers
                     infotable.Add(templist);
                 }
 
-                var  commment = "";
+                if (!string.IsNullOrEmpty(baseinfo.PNImplement))
+                {
+                    templist = new List<string>();
+                    templist.Add("Existed PN Implemented");
+                    templist.Add(baseinfo.PNImplement);
+                    infotable.Add(templist);
+                }
+
+
+                var commment = "";
                 commment += "Please find enclosed FAIR for [" + baseinfo.PNDesc + "] for ["
                     + baseinfo.Customer + "] under [" + baseinfo.ECONum + "] for your review and approval </p><p>";
                 commment += "Appreciate if you can reply the team in 48 hours and if need more time, please notify the team so we know this email reach your end. </p><p>";
                 commment += "Thank you for your support.";
 
-                var content = EmailUtility.CreateTableHtml("Dear " + baseinfo.RSM + ",Bill,",
+                var content = EmailUtility.CreateTableHtml("Dear " + baseinfo.RSM + ","+ syscfg["AFTERRSM"] + ",",
                     commment, "", infotable);
 
 
