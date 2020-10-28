@@ -503,7 +503,7 @@ namespace Domino.Models
 
                         if (!eco.PE.Contains("@"))
                         {
-                            tempworkload.PE = (eco.PE.Trim().Replace(" ", ".") + "@finisar.com").ToUpper();
+                            tempworkload.PE = (eco.PE.Trim().Replace(" ", ".") + "@II-VI.COM").ToUpper();
                         }
                         else
                         {
@@ -1015,7 +1015,7 @@ namespace Domino.Models
                     
                     if (!eco.PE.Contains("@"))
                     {
-                        tempcycle.PE = (eco.PE.Trim().Replace(" ", ".") + "@finisar.com").ToUpper();
+                        tempcycle.PE = (eco.PE.Trim().Replace(" ", ".") + "@II-VI.COM").ToUpper();
                     }
                     else
                     {
@@ -1450,7 +1450,7 @@ namespace Domino.Models
                     complexdata.Customer = eco.Customer;
                     if (!eco.PE.Contains("@"))
                     {
-                        complexdata.PE = (eco.PE.Trim().Replace(" ", ".") + "@finisar.com").ToUpper();
+                        complexdata.PE = (eco.PE.Trim().Replace(" ", ".") + "@II-VI.COM").ToUpper();
                     }
                     else
                     {
@@ -1719,7 +1719,7 @@ namespace Domino.Models
                         revenue.Customer = eco.Customer;
                         if (!eco.PE.Contains("@"))
                         {
-                            revenue.PE = (eco.PE.Trim().Replace(" ", ".") + "@finisar.com").ToUpper();
+                            revenue.PE = (eco.PE.Trim().Replace(" ", ".") + "@II-VI.COM").ToUpper();
                         }
                         else
                         {
@@ -1740,7 +1740,7 @@ namespace Domino.Models
                         revenue.Customer = eco.Customer;
                         if (!eco.PE.Contains("@"))
                         {
-                            revenue.PE = (eco.PE.Trim().Replace(" ", ".") + "@finisar.com").ToUpper();
+                            revenue.PE = (eco.PE.Trim().Replace(" ", ".") + "@II-VI.COM").ToUpper();
                         }
                         else
                         {

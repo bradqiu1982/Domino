@@ -4182,9 +4182,9 @@ namespace Domino.Controllers
                 var title = "Sample Ordering for ["+baseinfo.PNDesc+"] for ["
                     + baseinfo.Customer+"] under ["+ baseinfo.ECONum + "]";
                 var tolist = new List<string>();
-                tolist.Add(baseinfo.PE.Replace(" ",".")+ "@finisar.com");
+                tolist.Add(baseinfo.PE.Replace(" ",".")+ "@II-VI.COM");
                 if (!string.IsNullOrEmpty(baseinfo.ActualPE))
-                { tolist.Add(baseinfo.ActualPE.Replace(" ", ".") + "@finisar.com"); }
+                { tolist.Add(baseinfo.ActualPE.Replace(" ", ".") + "@II-VI.COM"); }
                 tolist.AddRange(noticepeoples);
 
                 var infotable = new List<List<string>>();
@@ -4266,9 +4266,9 @@ namespace Domino.Controllers
                 var title = "Customer Approval Hold for [" + baseinfo.PNDesc + "] for ["
                     + baseinfo.Customer + "] under [" + baseinfo.ECONum + "]";
                 var tolist = new List<string>();
-                tolist.Add(baseinfo.PE.Replace(" ", ".") + "@finisar.com");
+                tolist.Add(baseinfo.PE.Replace(" ", ".") + "@II-VI.COM");
                 if (!string.IsNullOrEmpty(baseinfo.ActualPE))
-                { tolist.Add(baseinfo.ActualPE.Replace(" ", ".") + "@finisar.com"); }
+                { tolist.Add(baseinfo.ActualPE.Replace(" ", ".") + "@II-VI.COM"); }
                 tolist.AddRange(noticepeoples);
 
 
@@ -4365,12 +4365,12 @@ namespace Domino.Controllers
                     + baseinfo.Customer + "] under [" + baseinfo.ECONum + "]";
 
                 var tolist = new List<string>();
-                tolist.Add(baseinfo.PE.Replace(" ", ".") + "@finisar.com");
+                tolist.Add(baseinfo.PE.Replace(" ", ".") + "@II-VI.COM");
                 if (!string.IsNullOrEmpty(baseinfo.ActualPE))
                 {
-                    tolist.Add(baseinfo.ActualPE.Replace(" ", ".") + "@finisar.com");
+                    tolist.Add(baseinfo.ActualPE.Replace(" ", ".") + "@II-VI.COM");
                 }
-                tolist.Add(baseinfo.RSM.Replace(" ", ".") + "@finisar.com");
+                tolist.Add(baseinfo.RSM.Replace(" ", ".") + "@II-VI.COM");
                 tolist.AddRange(noticepeoples);
 
                 var signoffinfo = DominoVM.RetrieveSignoffInfo(cardkey);

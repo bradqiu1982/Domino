@@ -95,7 +95,7 @@ namespace Domino.Controllers
                                         
                                     if (!data[idx][0].Contains("@"))
                                     {
-                                        templine.Add((data[idx][0].Trim().Replace(" ", ".") + "@finisar.com").ToUpper());
+                                        templine.Add((data[idx][0].Trim().Replace(" ", ".") + "@II-VI.COM").ToUpper());
                                     }
                                     else
                                     {

@@ -242,6 +242,8 @@ namespace Domino.Controllers
             var username = Request.Form["Email"].ToUpper();
             var password = Request.Form["Password"];
 
+            username = username.ToUpper().Replace("@FINISAR.COM", "@II-VI.COM");
+
             var dbret = DominoUserViewModels.RetrieveUser(username);
             if (dbret == null)
             {

@@ -2403,7 +2403,7 @@ namespace Domino.Models
                                 }
                                 else
                                 {
-                                    tempinfo.PE = (line[5].Replace(" ", ".") + "@finisar.com").ToUpper();
+                                    tempinfo.PE = (line[5].Replace(" ", ".") + "@II-VI.COM").ToUpper();
                                 }
 
                                 if (line[4].ToUpper().Contains("EEPROM") && line[4].ToUpper().Contains("FLI"))

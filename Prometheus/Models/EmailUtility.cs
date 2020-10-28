@@ -321,12 +321,12 @@ namespace Domino.Models
             try
             {
                 MailDefinition md = new MailDefinition();
-                md.From = "brad.qiu@finisar.com";
+                md.From = "brad.qiu@II-VI.COM";
                 md.Subject = title;
                 md.IsBodyHtml = true;
 
-                var message = md.CreateMailMessage("brad.qiu@finisar.com", new Dictionary<string, string>(), content, new System.Web.UI.Control());
-                //message.From = new MailAddress("brad.qiu@finisar.com");
+                var message = md.CreateMailMessage("brad.qiu@II-VI.COM", new Dictionary<string, string>(), content, new System.Web.UI.Control());
+                //message.From = new MailAddress("brad.qiu@II-VI.COM");
                 //foreach (var item in tolist)
                 //{
                 //    message.To.Add(item);
@@ -340,7 +340,7 @@ namespace Domino.Models
                 client.Timeout = 60000;
                 client.DeliveryMethod = SmtpDeliveryMethod.Network;
                 client.UseDefaultCredentials = false;
-                client.Credentials = new NetworkCredential("brad.qiu@finisar.com", "wangle@4321");
+                client.Credentials = new NetworkCredential("brad.qiu@II-VI.COM", "wangle@4321");
 
                 ServicePointManager.ServerCertificateValidationCallback
                     = delegate (object s, X509Certificate certificate, X509Chain chain

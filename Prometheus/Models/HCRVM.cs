@@ -98,9 +98,9 @@ namespace Domino.Models
                 var hcradmin = syscfg["HCRADMIN"].Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
                 var towholist = new List<string>(hcradmin);
                 if (!string.IsNullOrEmpty(PM))
-                { towholist.Add(PM.Replace(" ", ".") + "@finisar.com"); }
+                { towholist.Add(PM.Replace(" ", ".") + "@II-VI.COM"); }
                 if (!string.IsNullOrEmpty(ECOOwner))
-                { towholist.Add(ECOOwner.Replace(" ", ".") + "@finisar.com"); }
+                { towholist.Add(ECOOwner.Replace(" ", ".") + "@II-VI.COM"); }
 
                 var table = new List<List<string>>();
                 var line = new List<string>();
@@ -128,11 +128,11 @@ namespace Domino.Models
             var hcradmin = syscfg["HCRADMIN"].Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
             var towholist = new List<string>(hcradmin);
             if (!string.IsNullOrEmpty(PE))
-            { towholist.Add(PE.Replace(" ", ".") + "@finisar.com"); }
+            { towholist.Add(PE.Replace(" ", ".") + "@II-VI.COM"); }
             if (!string.IsNullOrEmpty(hcr.PM))
-            { towholist.Add(hcr.PM.Replace(" ", ".") + "@finisar.com"); }
+            { towholist.Add(hcr.PM.Replace(" ", ".") + "@II-VI.COM"); }
             if (!string.IsNullOrEmpty(hcr.ECOOwner))
-            { towholist.Add(hcr.ECOOwner.Replace(" ", ".") + "@finisar.com"); }
+            { towholist.Add(hcr.ECOOwner.Replace(" ", ".") + "@II-VI.COM"); }
 
 
             var table = new List<List<string>>();

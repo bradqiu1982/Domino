@@ -22,7 +22,7 @@ TUNABLEQAEEPROMFILTER:::CHECKLISTEEPROM
 TUNABLEQALABELFAI:::\\wux-fs\Public\Quality\26. WSS-TXFP-LNCD-Passive TQM\29.T-XFP TQM\17. FAI  Checking Record\FLI
 TUNABLEQALABELFILTER:::FLI_CHECK
 
-SPECIALMATERIALEMAIL:::sherry.zhang@finisar.com;Lance.Chen@finisar.com;brad.qiu@finisar.com
+SPECIALMATERIALEMAIL:::joy.zhou@II-VI.COM;jose.escauriasa@II-VI.COM;brad.qiu@II-VI.COM
 APPEMAILADRESS:::WXNPI.Trace@finisar.com
 APPEMAILPWD:::abc@12345
 #EMAILSERVER:::wmail.finisar.com
@@ -30,9 +30,9 @@ APPEMAILPWD:::abc@12345
 EMAILSERVER:::sny-mrs.ads.finisar.com
 EMAILSSL:::FALSE
 
-SAMPLEORDERNOTICE:::brad.qiu@finisar.com;Lance.Chen@finisar.com;chengjing.wu@finisar.com;jose.escauriasa@finisar.com;Shan.Xia@finisar.com
-CUSTOMEAPPROVENOTICE:::brad.qiu@finisar.com;nevin.niu@finisar.com;chengjing.wu@finisar.com;jose.escauriasa@finisar.com;Shan.Xia@finisar.com
-ECOSIGNOFFNOTICE:::brad.qiu@finisar.com;nevin.niu@finisar.com;chengjing.wu@finisar.com;jose.escauriasa@finisar.com;Shan.Xia@finisar.com
+SAMPLEORDERNOTICE:::brad.qiu@II-VI.COM;Lance.Chen@II-VI.COM;chengjing.wu@II-VI.COM;jose.escauriasa@II-VI.COM;Shan.Xia@II-VI.COM
+CUSTOMEAPPROVENOTICE:::brad.qiu@II-VI.COM;nevin.niu@II-VI.COM;chengjing.wu@II-VI.COM;jose.escauriasa@II-VI.COM;Shan.Xia@II-VI.COM
+ECOSIGNOFFNOTICE:::brad.qiu@II-VI.COM;nevin.niu@II-VI.COM;chengjing.wu@II-VI.COM;jose.escauriasa@II-VI.COM;Shan.Xia@II-VI.COM
 AFTERRSM:::Brad
 
 ##MINIPIPECOFOLDER:::\\wux-fs\public\Project\CFP\OQC
@@ -59,12 +59,12 @@ LOCALSITEPORT:::8080
 SAVELOCATION:::\\wux-engsys01.china.ads.finisar.com\Agile
 SHAREFOLDERUSER:::brad.qiu
 SHAREFOLDERDOMIN:::china
-SHAREFOLDERPWD:::wangle@4567897
+SHAREFOLDERPWD:::wangle@4567898
 OAQASWITH:::TRUE
 OAQADBSTRING:::Server=wux-prod03\prod01;uid=OA_FAI_Reader;pwd=123_FAI_#;Database=OA;Connection Timeout=30;
 DEMOECONUM:::E155220;E155508;E155206;E153282;E150849;E155901;E154011;E154347;E154801
 
 HCRFOLED:::\\wux-fs\public\Wuxi Parallel NPI\HCR registry\HCR registry.xlsx
-HCRADMIN:::windy.ju@finisar.com;brad.qiu@finisar.com
+HCRADMIN:::brad.qiu@II-VI.COM
 
 
