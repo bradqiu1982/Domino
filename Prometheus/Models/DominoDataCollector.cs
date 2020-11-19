@@ -246,7 +246,7 @@ namespace Domino.Models
             }
             catch (Exception ex)
             {
-                return null;
+                return new List<string>();
             }
         }
 
@@ -288,7 +288,7 @@ namespace Domino.Models
             }
             catch (Exception ex)
             {
-                return null;
+                return new List<string>();
             }
         }
 
@@ -562,6 +562,7 @@ namespace Domino.Models
             var syscfgdict = GetSysConfig(ctrl);
             var baseinfos = ECOBaseInfo.RetrieveAllExistECOBaseInfo();
             var hcrlist = HCRVM.GetAllHCR();
+            var allcustomerfolder = DirectoryEnumerateDirs(ctrl, syscfgdict["MINIPIPCUSTOMERFOLDER"]);
 
             foreach (var line in data)
             {
@@ -670,20 +671,21 @@ namespace Domino.Models
                                 var allattach = DominoVM.RetrieveCardExistedAttachment(pendingcard[0].CardKey);
 
                                 var customerfold = new List<string>();
-                                var allcustomerfolder = DirectoryEnumerateDirs(ctrl,syscfgdict["MINIPIPCUSTOMERFOLDER"]);
-                                foreach (var cf in allcustomerfolder)
+                                if (allcustomerfolder != null)
                                 {
-                                    var lastlevelfd = cf.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
-                                    var lastfd = lastlevelfd[lastlevelfd.Length - 1].Replace(" ", "").Replace("-", "").Replace("_", "").Replace("'", "").ToUpper();
-                                    var baseinfocustomer = baseinfo.Customer.Replace(" ", "").Replace("-", "").Replace("_", "").Replace("'", "").ToUpper();
-
-                                    if (lastfd.Contains(baseinfocustomer)
-                                        || baseinfocustomer.Contains(lastfd))
+                                    foreach (var cf in allcustomerfolder)
                                     {
-                                        customerfold.Add(cf);
+                                        var lastlevelfd = cf.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
+                                        var lastfd = lastlevelfd[lastlevelfd.Length - 1].Replace(" ", "").Replace("-", "").Replace("_", "").Replace("'", "").ToUpper();
+                                        var baseinfocustomer = baseinfo.Customer.Replace(" ", "").Replace("-", "").Replace("_", "").Replace("'", "").ToUpper();
+
+                                        if (lastfd.Contains(baseinfocustomer)
+                                            || baseinfocustomer.Contains(lastfd))
+                                        {
+                                            customerfold.Add(cf);
+                                        }
                                     }
                                 }
-
                                     foreach (var cf in customerfold)
                                     { 
                                         var MiniPIPDocFolder = cf + "\\" + baseinfo.PNDesc;
@@ -768,17 +770,19 @@ namespace Domino.Models
                         }
 
                         var customerfold = new List<string>();
-                        var allcustomerfolder = DirectoryEnumerateDirs(ctrl,syscfgdict["MINIPIPCUSTOMERFOLDER"]);
-                        foreach (var cf in allcustomerfolder)
+                        if (allcustomerfolder != null)
                         {
-                            var lastlevelfd = cf.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
-                            var lastfd = lastlevelfd[lastlevelfd.Length - 1].Replace(" ","").Replace("-", "").Replace("_", "").Replace("'", "").ToUpper();
-                            var baseinfocustomer = baseinfo.Customer.Replace(" ", "").Replace("-", "").Replace("_", "").Replace("'", "").ToUpper();
-
-                            if (lastfd.Contains(baseinfocustomer)
-                                || baseinfocustomer.Contains(lastfd))
+                            foreach (var cf in allcustomerfolder)
                             {
-                                customerfold.Add(cf);
+                                var lastlevelfd = cf.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
+                                var lastfd = lastlevelfd[lastlevelfd.Length - 1].Replace(" ", "").Replace("-", "").Replace("_", "").Replace("'", "").ToUpper();
+                                var baseinfocustomer = baseinfo.Customer.Replace(" ", "").Replace("-", "").Replace("_", "").Replace("'", "").ToUpper();
+
+                                if (lastfd.Contains(baseinfocustomer)
+                                    || baseinfocustomer.Contains(lastfd))
+                                {
+                                    customerfold.Add(cf);
+                                }
                             }
                         }
 
@@ -862,6 +866,7 @@ namespace Domino.Models
             string datestring = DateTime.Now.ToString("yyyyMMdd");
             string imgdir = ctrl.Server.MapPath("~/userfiles") + "\\docs\\" + datestring + "\\";
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
+            var allcustomerfolder = DirectoryEnumerateDirs(ctrl,syscfgdict["MINIPIPCUSTOMERFOLDER"]);
 
             foreach (var item in baseinfos)
             {
@@ -883,17 +888,20 @@ namespace Domino.Models
                         var allattach = DominoVM.RetrieveCardExistedAttachment(pendingcard[0].CardKey);
 
                         var customerfold = new List<string>();
-                        var allcustomerfolder = DirectoryEnumerateDirs(ctrl,syscfgdict["MINIPIPCUSTOMERFOLDER"]);
-                        foreach (var cf in allcustomerfolder)
-                        {
-                            var lastlevelfd = cf.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
-                            var lastfd = lastlevelfd[lastlevelfd.Length - 1];
-                            if (lastfd.ToUpper().Contains(item.Customer.ToUpper())
-                                || item.Customer.ToUpper().Contains(lastfd.ToUpper()))
+
+                        if (allcustomerfolder != null) {
+                            foreach (var cf in allcustomerfolder)
                             {
-                                customerfold.Add(cf);
+                                var lastlevelfd = cf.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
+                                var lastfd = lastlevelfd[lastlevelfd.Length - 1];
+                                if (lastfd.ToUpper().Contains(item.Customer.ToUpper())
+                                    || item.Customer.ToUpper().Contains(lastfd.ToUpper()))
+                                {
+                                    customerfold.Add(cf);
+                                }
                             }
                         }
+
 
                         foreach (var cf in customerfold)
                         {

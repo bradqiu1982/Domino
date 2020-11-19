@@ -841,6 +841,12 @@ namespace Domino.Controllers
             return RedirectToAction("ViewAll", "MiniPIP");
         }
 
+        public ActionResult RefreshECOList()
+        {
+            DominoDataCollector.RefreshECOList(this);
+            return RedirectToAction("ViewAll", "MiniPIP");
+        }
+
         private void RefreshCardsInfo()
         {
             try
