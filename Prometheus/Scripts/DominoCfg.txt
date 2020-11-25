@@ -23,7 +23,7 @@ TUNABLEQALABELFAI:::\\wux-fs\Public\Quality\26. WSS-TXFP-LNCD-Passive TQM\29.T-X
 TUNABLEQALABELFILTER:::FLI_CHECK
 
 SPECIALMATERIALEMAIL:::joy.zhou@II-VI.COM;jose.escauriasa@II-VI.COM;brad.qiu@II-VI.COM
-APPEMAILADRESS:::WXNPI.Trace@finisar.com
+APPEMAILADRESS:::WXNPI.Trace@II-VI.com
 APPEMAILPWD:::abc@12345
 #EMAILSERVER:::wmail.finisar.com
 #EMAILSSL:::TRUE
@@ -58,7 +58,7 @@ AGILEURL:::http://sny-agile9app-p64:7001/Agile
 LOCALSITEPORT:::8080
 SAVELOCATION:::\\wux-engsys01.china.ads.finisar.com\Agile
 SHAREFOLDERUSER:::brad.qiu
-SHAREFOLDERDOMIN:::china
+SHAREFOLDERDOMIN:::chn
 SHAREFOLDERPWD:::wangle@4567898
 OAQASWITH:::TRUE
 OAQADBSTRING:::Server=wux-prod03\prod01;uid=OA_FAI_Reader;pwd=123_FAI_#;Database=OA;Connection Timeout=30;

@@ -528,6 +528,13 @@ namespace Domino.Models
             DBUtility.ExeLocalSqlNoRes(sql);
         }
 
+        public void UpdateECONum()
+        {
+            var sql = "update ECOBaseInfo set ECONum='<ECONum>' where ECOKey='<ECOKey>'";
+            sql = sql.Replace("<ECOKey>", ECOKey).Replace("<ECONum>", ECONum);
+            DBUtility.ExeLocalSqlNoRes(sql);
+        }
+
         private static string ConvertToDate(object obj)
         {
             try

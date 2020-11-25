@@ -1906,10 +1906,17 @@ namespace Domino.Controllers
 
             var ECOKey = Request.Form["ECOKey"];
             var CardKey = Request.Form["CardKey"];
+            var ECONum = Request.Form["ECONum"].Trim().Replace("'","");
 
             var baseinfos = ECOBaseInfo.RetrieveECOBaseInfo(ECOKey);
             if (baseinfos.Count > 0)
             {
+                if (!string.IsNullOrEmpty(ECONum) && string.Compare(ECONum, baseinfos[0].ECONum, true) != 0)
+                {
+                    baseinfos[0].ECONum = ECONum;
+                    baseinfos[0].UpdateECONum();
+                }
+
                 DominoVM cardinfo = DominoVM.RetrieveECOCompleteInfo(CardKey);
                 cardinfo.ECOCompleted = Request.Form["ECOCompletedList"].ToString();
                 cardinfo.ECOCompleteDate = ConvertToDate(Request.Form["ECOCompleteDate"]);
