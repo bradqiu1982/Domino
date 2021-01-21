@@ -1049,6 +1049,7 @@
     <Content Include="Scripts\agiledownloadwraper\jre\lib\sound.properties" />
     <Content Include="Scripts\agiledownloadwraper\jre\lib\tzdb.dat" />
     <Content Include="Scripts\agiledownloadwraper\jre\lib\tzmappings" />
+    <Content Include="Scripts\agiledownloadwraper\jre\bin\agileprodiivinet.crt" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\Domino-db-script.txt" />
     <Content Include="Scripts\DominoCfg.txt" />
