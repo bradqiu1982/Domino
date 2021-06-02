@@ -126,20 +126,20 @@ namespace Domino.Controllers
                             }
                             else
                             {
-                                return Redirect("http://wuxinpi.china.ads.finisar.com:8081/");
+                                return Redirect("http://wuxinpi.chn.ii-vi.net:8081/");
                             }
                         }
-                        catch (Exception ex) { return Redirect("http://wuxinpi.china.ads.finisar.com:8081/"); }
+                        catch (Exception ex) { return Redirect("http://wuxinpi.chn.ii-vi.net:8081/"); }
 
                     }
                     else
                     {
-                        return Redirect("http://wuxinpi.china.ads.finisar.com:8081/");
+                        return Redirect("http://wuxinpi.chn.ii-vi.net:8081/");
                     }
                 }
                 else
                 {
-                    return Redirect("http://wuxinpi.china.ads.finisar.com:8081/");
+                    return Redirect("http://wuxinpi.chn.ii-vi.net:8081/");
                 }
             }
             else if (Request.Cookies["activenpidomino"] == null && smartkey == null)
@@ -149,7 +149,7 @@ namespace Domino.Controllers
                 var machinedict = CfgUtility.GetNPIMachine(this);
                 if (!string.IsNullOrEmpty(compName) && !machinedict.ContainsKey(compName))
                 {
-                    return Redirect("http://wuxinpi.china.ads.finisar.com:8081/");
+                    return Redirect("http://wuxinpi.chn.ii-vi.net:8081/");
                 }
             }
 

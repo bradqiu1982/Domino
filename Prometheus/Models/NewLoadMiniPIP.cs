@@ -189,7 +189,7 @@ namespace Domino.Models
                 {
                     var tempdata = "";
                     tempdata = tempdata + "PN: " + item.PN + " PE: " + item.PE + " Order: " + item.OrderInfo + " Special Material: " + item.SpecailMaterial + "\r\n";
-                    tempdata = tempdata + "http://wuxinpi.china.ads.finisar.com:8080/Domino/MiniPIP/ApproveMaterial?MID=" + item.MiniPIPID + "  \r\n";
+                    tempdata = tempdata + "http://wuxinpi.chn.ii-vi.net:8080/Domino/MiniPIP/ApproveMaterial?MID=" + item.MiniPIPID + "  \r\n";
                     emailstr = emailstr + tempdata;
                 }
 

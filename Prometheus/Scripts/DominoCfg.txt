@@ -56,10 +56,10 @@ AFTERRSM:::Brad
 ##JO2NDCHECKINFO:::\\wux-fs\public\Project\CFP\OQC
 AGILEURL:::http://sny-agile9app-p64:7001/Agile
 LOCALSITEPORT:::8080
-SAVELOCATION:::\\wux-engsys01.china.ads.finisar.com\Agile
+SAVELOCATION:::\\wux-engsys01.chn.ii-vi.net\Agile
 SHAREFOLDERUSER:::brad.qiu
 SHAREFOLDERDOMIN:::chn
-SHAREFOLDERPWD:::wangle@4567898
+SHAREFOLDERPWD:::wangle@4567892
 OAQASWITH:::TRUE
 OAQADBSTRING:::Server=wux-prod03\prod01;uid=OA_FAI_Reader;pwd=123_FAI_#;Database=OA;Connection Timeout=30;
 DEMOECONUM:::E155220;E155508;E155206;E153282;E150849;E155901;E154011;E154347;E154801

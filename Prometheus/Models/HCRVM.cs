@@ -112,7 +112,7 @@ namespace Domino.Models
                 line.Add(ECOOwner); line.Add(ECONum); line.Add(ChangeItems);
                 line.Add(DueDate); line.Add(HCRStatus); table.Add(line);
                 var comment = "This HCR is close to/over its due date,please check it.<br>HCR Link:<br>" +
-                    "http://wuxinpi.china.ads.finisar.com:8080/Domino/MiniPIP/ShowHCR?HCRKey=" + HCRKey;
+                    "http://wuxinpi.chn.ii-vi.net:8080/Domino/MiniPIP/ShowHCR?HCRKey=" + HCRKey;
 
                 var content = EmailUtility.CreateTableHtml("Hi Guys", "This is a HCR Due Date Waring",comment, table);
                 EmailUtility.SendEmail(ctrl, "HCR DUE DATE WARNING:" + HCRName,towholist, content);
@@ -146,9 +146,9 @@ namespace Domino.Models
             line.Add(hcr.DueDate); line.Add(hcr.HCRStatus); table.Add(line);
 
             var comment = "Please make sure your current MiniPIP follow this updated HCR.<br>HCR Link:<br>"+
-                "http://wuxinpi.china.ads.finisar.com:8080/Domino/MiniPIP/ShowHCR?HCRKey=" + hcr.HCRKey
+                "http://wuxinpi.chn.ii-vi.net:8080/Domino/MiniPIP/ShowHCR?HCRKey=" + hcr.HCRKey
                 + "<br>Current MiniPIP link:<br>"
-                + "http://wuxinpi.china.ads.finisar.com:8080/Domino/MiniPIP/ShowMiniPIP?ECOKey=" + ECOKey;
+                + "http://wuxinpi.chn.ii-vi.net:8080/Domino/MiniPIP/ShowMiniPIP?ECOKey=" + ECOKey;
 
             var content = EmailUtility.CreateTableHtml("Hi Guys", "This is an updated HCR of current product: "+hcr.ProductAffect, comment , table);
             EmailUtility.SendEmail(ctrl, "HCR HISTORY WARNING: " + hcr.HCRName, towholist, content);
